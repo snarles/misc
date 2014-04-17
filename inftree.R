@@ -6,6 +6,7 @@ plotkn = function(k,n=1,x=x) {
     y = 1-(1-y1)^k    
     y1 = y^k
   }
+  y = 1-(1-y1)^k
   plot(x,y,type="l")
   lines(x,y1,col="blue")
   lines(x,x,col="red")
@@ -19,7 +20,7 @@ plotkn = function(k,n=1,x=x) {
 plotk2 = function(p,q,k) {
   xx = q*x^k + (1-q)*p
   y = q*(1-(1-xx)^k) + (1-q)*p
-  plot(x,y,ylim=c(-1,1),type="l")
+  plot(x,y,ylim=c(0,1),type="l")
   lines(x,xx,col="blue")
   lines(x,x,col="red")
   abline(0,0)
