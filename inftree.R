@@ -32,4 +32,18 @@ plotk2 = function(p,q,k) {
   #title(paste("k=",k,"  p=",p," q=", q),sub=crit)
 }
 
-
+addgame = function(k,n) {
+  v = c(.5,1)
+  vals = numeric(n)
+  for (i in 1:n) {
+    if ((n - i) %% 2 == 0) {
+      v = v^k
+    }
+    else {
+      v = 1-(1-v)^k
+    }
+    v = .5*c(v,1) + .5*c(0,v)
+    vals[i]=(sum(1-v)-(i+1)/2)*(-1)^(n-i)
+  }
+  vals
+}
