@@ -159,6 +159,32 @@ while (length(solinds) < npieces && count < 100) {
     print(paste("del",ndel))
   }
 }
+solinds <- sort(solinds)
 
-solinds
-res$deviance
+ii <- 0
+board <- matrix(0,board.x,board.y)
+while (ii < npieces) {
+  ii <- ii+1
+  board.n <- matrix(amat[,solinds[ii]][1:board.xy],board.x,board.y)
+  board <- board + ii*board.n
+}
+board
+
+boxcoords.x <- c(0,0,1,1)
+boxcoords.y <- c(0,1,1,0)
+xl <- c(0,board.y)
+yl <- c(0,board.x)
+if (board.x > board.y) {
+  xl <- c(0,board.x) - (board.x-board.y)/2
+}
+if (board.x < board.y) {
+  yl <- c(0,board.y) - (board.y-board.x)/2
+}
+pdf("temp.pdf")
+plot(NA,NA,xlim=xl,ylim=yl)
+for (ii in 1:board.x) {
+  for (jj in 1:board.y) {
+    polygon(jj-1 + boxcoords.x,ii-1+boxcoords.y,col=piececolors[board[ii,jj]])
+  }
+}
+dev.off()
