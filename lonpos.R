@@ -59,6 +59,7 @@ allpiecerot <- function(piece) {
   if (dim(piece)[1] != dim(piece)[2]) {
     pm <- c(pm, allpiecemirror(t(piece)))
   }
+  pm
 }
 
 allpieceplace <- function(piece,board) {
@@ -82,16 +83,77 @@ board.x <- 5
 board.y <- 11
 board.xy <- board.x * board.y
 
-piecesvec <- list()
+piecesmir <- list()
 ii=0
 while (ii < 12) {
-  ii=ii+1
-  vecmat <- matrix(0,board.xy, 0)
-  piece <- pieces[[ii]]
-  p.x <- dim(piece)[1]
-  p.y <- dim(piece)[2]
-  board <- matrix(0,board.x,board.y)
-  vm <- allpieceplace(piece,board)
+  ii = ii+1
+  piecesmir[[ii]] <- allpiecerot(pieces[[ii]])
 }
 
+piecesvec <- list()
+ii=0
+board <- matrix(0,board.x,board.y)
+while (ii < 12) {
+  ii=ii+1
+  vecmat <- matrix(0,board.xy,0)
+  pm <- piecesmir[[ii]]
+  for (jj in 1:length(pm)) {
+    piece <- pm[[jj]]
+    vecmat <- cbind(vecmat,allpieceplace(piece,board))
+  }
+  piecesvec[[ii]] <- vecmat
+}
+
+# ii <- 12
+# dim(piecesvec[[ii]])
+# matrix(piecesvec[[ii]][,14],board.x,board.y)
+
+npieces <- length(piecesvec)
+placevec <- rep(0,npieces)
+randsolveb <- function(placevec=rep(0,npieces)) {
+  print(paste(placevec,collapse=","))
+  board <- numeric(board.xy)
+  for (ii in which(placevec !=0)) {
+    board <- board + piecesvec[[ii]][,placevec[ii]]
+  }
+  flag <- T
+  count <- 0
+  while (flag) {
+    count <- count+1
+    if (count > 2) {
+      flag <- F
+    }
+    jj <- sample(which(placevec==0),1)
+    pv <- piecesvec[[jj]]
+    kk <- sample(dim(pv)[2],1)
+    max(board + pv[,kk]) < 2
+    if (max(board + pv[,kk]) < 2) {
+      placevec2<-placevec
+      placevec2[jj]=kk
+      if (sum(placevec2==0)==0) {
+        return(placevec2)
+      }
+      else {
+        placevec <- placevec2
+        placevec3 <- randsolveb(placevec2)
+        if (sum(placevec3==0)==0) {
+          return(placevec3)
+        }
+      }
+    }
+  }
+  return(placevec)
+}
+
+count <- 0
+sol <- 0
+flag <- T
+while (flag) {
+  count <- count+1
+  if (count > 10000) {flag <- F}
+  tt <- randsolveb()
+  if (sum(tt==0)==0) {
+    sol <- tt
+  }
+}
 
