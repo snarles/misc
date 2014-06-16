@@ -31,6 +31,11 @@ piececolors <- c(rgb(1,.5,0), rgb(1,0,0), rgb(0,0,1), rgb(1,1,.8),
                  rgb(0,1,0),  rgb(1,1,1), rgb(.8,.8,1), rgb(1,.7,.7),
                  rgb(1,1,0), rgb(1,0,1), rgb(.7,1,0), rgb(.5,.5,.5))
 
+library(nnls)
+install.packages("nnls")
+res <- nnls(matrix(rnorm(9),3,3),rnorm(3))
+names(res)
+res$x
 uniquecolumns <- function(mat) {
   keep <- rep(T,dim(mat)[2])
   for (i in 1:(dim(mat)[2]-1)) {
@@ -95,8 +100,11 @@ while (ii < 12) {
 }
 
 piecesvec <- list()
+npieces <- length(pieces)
+
 ii=0
 board <- matrix(0,board.x,board.y)
+amat <- matrix(0,board.xy+npieces,0)
 while (ii < 12) {
   ii=ii+1
   vecmat <- matrix(0,board.xy,0)
@@ -106,13 +114,51 @@ while (ii < 12) {
     vecmat <- cbind(vecmat,allpieceplace(piece,board))
   }
   piecesvec[[ii]] <- vecmat
+  temp <- matrix(0,npieces,dim(vecmat)[2])
+  temp[ii,] <- 1
+  amat <- cbind(amat, rbind(vecmat,temp))
 }
+amat0 <- amat
 
 # ii <- 12
 # dim(piecesvec[[ii]])
 # matrix(piecesvec[[ii]][,14],board.x,board.y)
 
-npieces <- length(piecesvec)
-placevec <- rep(0,npieces)
+amat <- amat0
+bvec0 <- rep(1,board.xy+npieces)
+bvec <- bvec0
+solinds <- c()
+count <- 0
 
+while (length(solinds) < npieces && count < 100) {
+  count <- count+1
+  permu <- sample(dim(amat)[2],dim(amat)[2])
+  placed <- bvec*0
+  if (length(solinds) > 0) {
+    placed <- apply(t(t(amat[,solinds])),1,sum)
+  }
+  placed
+  res <- nnls(amat[,permu],bvec - placed)
+  print(res$deviance)
+  print(solinds)
+  if (res$deviance < 1e-6) {
+    xtemp <- res$x
+    xtemp2 <- 0*permu
+    xtemp2[permu] <- xtemp
+    ind <- order(-xtemp2)[1]
+    solinds <- c(solinds,ind)
+  }
+  if (res$deviance >= 1e-6) {
+    ndel <- floor(rexp(1)+1)
+    if (ndel >= length(solinds)) {
+      solinds <- c()
+    }
+    if (ndel < length(solinds)) {
+      solinds <- solinds[1:(length(solinds)-ndel)]
+    }
+    print(paste("del",ndel))
+  }
+}
 
+solinds
+res$deviance
