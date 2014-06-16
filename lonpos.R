@@ -27,6 +27,10 @@ pieces[[12]]<- rbind(c(0,1,0),
                      c(1,1,1),
                      c(0,1,0))
 
+piececolors <- c(rgb(1,.5,0), rgb(1,0,0), rgb(0,0,1), rgb(1,1,.8),
+                 rgb(0,1,0),  rgb(1,1,1), rgb(.8,.8,1), rgb(1,.7,.7),
+                 rgb(1,1,0), rgb(1,0,1), rgb(.7,1,0), rgb(.5,.5,.5))
+
 uniquecolumns <- function(mat) {
   keep <- rep(T,dim(mat)[2])
   for (i in 1:(dim(mat)[2]-1)) {
@@ -110,50 +114,5 @@ while (ii < 12) {
 
 npieces <- length(piecesvec)
 placevec <- rep(0,npieces)
-randsolveb <- function(placevec=rep(0,npieces)) {
-  print(paste(placevec,collapse=","))
-  board <- numeric(board.xy)
-  for (ii in which(placevec !=0)) {
-    board <- board + piecesvec[[ii]][,placevec[ii]]
-  }
-  flag <- T
-  count <- 0
-  while (flag) {
-    count <- count+1
-    if (count > 2) {
-      flag <- F
-    }
-    jj <- sample(which(placevec==0),1)
-    pv <- piecesvec[[jj]]
-    kk <- sample(dim(pv)[2],1)
-    max(board + pv[,kk]) < 2
-    if (max(board + pv[,kk]) < 2) {
-      placevec2<-placevec
-      placevec2[jj]=kk
-      if (sum(placevec2==0)==0) {
-        return(placevec2)
-      }
-      else {
-        placevec <- placevec2
-        placevec3 <- randsolveb(placevec2)
-        if (sum(placevec3==0)==0) {
-          return(placevec3)
-        }
-      }
-    }
-  }
-  return(placevec)
-}
 
-count <- 0
-sol <- 0
-flag <- T
-while (flag) {
-  count <- count+1
-  if (count > 10000) {flag <- F}
-  tt <- randsolveb()
-  if (sum(tt==0)==0) {
-    sol <- tt
-  }
-}
 
