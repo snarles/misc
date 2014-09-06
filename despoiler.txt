@@ -1,0 +1,17 @@
+f = open('ishino1raw.txt','r')
+tt = f.read().split('\n')
+f.close()
+
+tt = [int(ttt.replace('\t','')) for ttt in tt if ttt!='']
+
+s = ''
+while (len(tt) > 0):
+    sub = sorted(tt[:6])
+    tt = tt[6:]
+    s = s+', '.join([str(s) for s in sub])
+    s = s+'\n'
+
+f = open('ishino1.txt','w')
+f.write(s)
+f.close()
+
