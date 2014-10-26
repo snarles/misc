@@ -38,3 +38,11 @@ fs = mat %*% z
 matplot(ts,fs[,1:10],type="l")
 sups = apply(fs,2,max)
 hist(sups)
+
+lambdas.t = 0*lambdas
+for (ii in 1:nlam) {
+  temp = -kappa + ii*(1i)
+  lambdas.t[ii] = Re((exp(pi*temp)-1)/temp)
+}
+plot(lambdas.t,lambdas)
+plot(lambdas.t/lambdas)
