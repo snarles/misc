@@ -2,8 +2,8 @@
 
 # verify the eigendecomposition
 
-kappa = 2
-p = 3
+kappa = 1
+p = 1
 nlam = 1000
 lambdas = numeric(nlam)
 intres = 10000
@@ -24,6 +24,7 @@ plot(ts,c0,type="l")
 for (ii in 1:20) {
   lines(ts,cprox2[,ii]+mean(c0),col=rainbow(20)[ii])
 }
+
 #plot(lambdas)
 plot(cumsum(lambdas),type="l")
 #plot(log(10*ts))
@@ -32,10 +33,13 @@ plot(cumsum(lambdas),type="l")
 
 a = t(t(ts)) %x% t(rep(0:nlam))
 mat = cbind(cos(a),sin(a))
-mat = t(t(mat)*rep(c(mean(c0),lambdas),2))
-nrep = 1000
+mat = t(t(mat)*rep(c(sqrt(mean(c0)),sqrt(lambdas)),2))
+nrep = 10000
 z = matrix(rnorm(2*nrep*(nlam+1)),2*(nlam+1),nrep)
 fs = mat %*% z
+dim(fs)
+temp = fs[1:2,] %*% t(fs)/nrep
+plot(ts,temp[1,],type='l'); lines(ts,c0,col='red')
 matplot(ts,fs[,1:10],type="l")
 sups = apply(fs,2,max)
 hist(sups)
