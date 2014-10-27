@@ -3,7 +3,7 @@
 # verify the eigendecomposition
 
 kappa = 2
-p = 1
+p = 3
 nlam = 1000
 lambdas = numeric(nlam)
 intres = 10000
@@ -18,6 +18,7 @@ for (ii in 1:nlam) {
   cprox[,ii] = ll * cos(ii*ts)
 }
 cprox2 = t(apply(cprox,1,cumsum))
+
 dim(cprox2)
 plot(ts,c0,type="l")
 for (ii in 1:20) {
