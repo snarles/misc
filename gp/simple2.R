@@ -43,8 +43,9 @@ plot(cumsum(lambdas),type="l")
 
 a = t(t(ts)) %x% t(rep(0:nlam))
 mat = cbind(cos(a),sin(a))
-mat = t(t(mat)*rep(c(mean(c0),lambdas),2))
+mat = t(t(mat)*sqrt(rep(c(mean(c0),lambdas),2)))
 nrep = 1000
+
 z = matrix(rnorm(2*nrep*(nlam+1)),2*(nlam+1),nrep)
 fs = mat %*% z
 matplot(ts,fs[,1:10],type="l")
