@@ -42,10 +42,10 @@ plot the trajectory of the box and the rain particles in a 3d plot:
 <p><img src="cropped_im2_tr.png">
 
 <p>The top edge of the box traces out a parallelogram of length <i>l</i>
-and height <i>T</i>, and normal vector (0,0,1). The right edge of the
+and height <i>T</i>, and normal vector (0,-1,0). The right edge of the
 box traces out a parallelogram of length <i>L =
 &radic;((d-l)<sup>2</sup> + T<sup>2</sup>)</i>, with normal
-vector <i>(-T,0,d-l)/L</i>.  In this three-dimensional space, the
+vector <i>(T,0,l-d)/L</i>.  In this three-dimensional space, the
 rainfall can be represented as a vector field where the direction at
 every point in the space is (0,-r,1).  Since we only care about the
 relative amount of exposure to the rain, the global scaling of the
@@ -53,11 +53,11 @@ vector field does not matter.
 
 <p>The total exposure to rain is equal to the total flux of the two
   parallelograms in this vector field.  The flux of the parallelogram
-  traced out by the top edge is <i>lT</i>. The flux of the
+  traced out by the top edge is <i>rlT</i>. The flux of the
   parallelogram traced out by the right edge is <i>h(d-l)</i>. Hence
-  the total flux is <i>lT + h(d-l)</i>.  This is clearly minimized
-  by <i>T=0</i>, which results in the minimum flux <i>lT</i>.  Hence
-  you should run as fast as possible.
+  the total flux is <i>lrT + h(d-l)</i>.  This is clearly minimized
+  by <i>T=0</i>, which results in the minimum flux <i>h(d-l)</i>.
+  Hence you should run as fast as possible.
 
 <p>The reader can check that adding an <i>x</i> velocity component to
 the rain (slanted rain) does not change the conclusion; nor does
