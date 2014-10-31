@@ -1,0 +1,88 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+%\newcommand{\Var}{\text{Var}}
+
+Charles Zheng
+
+\section{Background}
+
+\noindent\textbf{Theorem (Borell-TIS inequality)}
+Let $f_t$ be a gaussian process such that $\mathbb{E}[f_t] = 0$
+Then on any set $D$, and $u > 0$, 
+\[
+\mathbb{P}[\sup_D f_t > u + \mathbb{E}[\sup_D f_t]] \leq \exp(-u^2/(2\sigma_{max}^2))
+\]
+where
+\[
+\sigma_{max} = \sup_D \E[f_t^2]
+\]
+
+\section{Supremum of an isotropic GP}
+
+Let $f_t$ be a gaussian process on $\mathbb{R}^D$, with $\Cov(f_t,f_u)
+= C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
+Then if $f_t$ is bounded on an interval,
+\[
+\mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[-T,T]^D}
+    f_t}{\sqrt{2D\log(T)}} = 1
+\right) = 1
+\]
+
+Sketch of proof:
+
+\emph{1. Lower bound}.
+
+Fix $T$. Let $\delta =exp(\sqrt{\log(T)})$ and consider
+$t_1,...,t_{(2T/\delta)^D}$ on a square lattice of spacing $\delta$ on
+$[-T,T]^D$.  Let $Z_{t_1},\hdots, Z_{t_{(2T/\delta)^D}}$ iid
+$N(0,1-C(\delta))$.  By Slepian's inequality,
+$\mathbb{P}(\max_{t_1,\hdots,t_{(2T/\delta)^D}} f_t > u) \geq
+\mathbb{P}(\max_{t_1,\hdots,t_{(2T/\delta)^D}} Z_t > u)$.  Now note
+that as $T \to \infty$, 
+\[
+\mathbb{P}\left(\lim_{T \to \infty}\frac{\max
+    Z_t}{\sqrt{2D\log(T)}} = 1
+\right) = 1
+\]
+This suggests, and with some more detailed analysis, implies that
+\[
+\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
+    f_t}{\sqrt{2D\log(T)}} \geq 1
+\right) = 1
+\]
+
+\emph{1. Upper bound}.
+
+Partition $[-T,T]^D$ into hypercubes of edge length 1.
+By union bound and Borrell-TIS inequality,
+\[\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D
+\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D e^{-u^2/2}\]
+This can be used to show
+\[
+\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
+    f_t}{\sqrt{2D\log(T)}} \leq 1
+\right) = 1
+\]
+
+
+
+\section{Nonexistence of unbounded isotropic GP}
+
+\end{document}
