@@ -13,11 +13,12 @@
 run?  This question was posed by my classmates at Stanford.
 Intuitively, it seems that you will minimize your exposure to the rain
 by making your trip back home as short as possible.  On the other
-hand, if you run very quickly, you will start "running into" raindrops
-in a horizontal direction.  In the limit of infinite speed, you will
-hit every raindrop that is currently between you and your destination.
-So, is there an "optimal" speed to run, which is not infinite?  This
-is a puzzle suitable for a introductory physics class.
+hand, if you run very quickly, it seems plausible that you would start
+"running into" more raindrops in a horizontal direction.  In the limit
+of infinite speed, you will hit every raindrop that is currently
+between you and your destination.  So, is there an "optimal" speed to
+run, which is not infinite?  This is a puzzle suitable for a
+introductory physics class.
 
 <h2>A model</h2>
 
@@ -28,7 +29,7 @@ destination is (<i>d</i>,0).  The box moves at speed <i>v</i> until
 the right edge of the box reaches <i>d</i>. Meanwhile, rain is hitting
 the top edge and the right edge of the box.  The rain is considered to
 be "uniformly distributed" in the two-dimensional space, and is
-fall[ing downward with velocity <i>r</i>.
+falling downwards with velocity <i>r</i>.
 
 <p><img src="cropped_im1_tr.png">
 
@@ -41,7 +42,7 @@ plot the trajectory of the box and the rain particles in a 3d plot:
 <p><img src="cropped_im2_tr.png">
 
 <p>The top edge of the box traces out a parallelogram of length <i>l</i>
-and height <i>T</i>, and normal vector (0,0,1). The left edge of the
+and height <i>T</i>, and normal vector (0,0,1). The right edge of the
 box traces out a parallelogram of length <i>L =
 &radic;((d-l)<sup>2</sup> + T<sup>2</sup>)</i>, with normal
 vector <i>(-T,0,d-l)/L</i>.  In this three-dimensional space, the
@@ -50,15 +51,16 @@ every point in the space is (0,-r,1).  Since we only care about the
 relative amount of exposure to the rain, the global scaling of the
 vector field does not matter.
 
-<p>The total exposure to rain is equal to the total flux.  The flux of
-the parallelogram traced out by the top edge is <i>lT</i>. The flux of
-the parallelogram traced out by the left edge is <i>h(d-l)</i>. Hence
-the total flux is <i>lT + h(d-l)</i>.  This is clearly minimized
-by <i>T=0</i>, which results in the minimum flux <i>lT</i>.  Hence you
-should run as fast as possible.
+<p>The total exposure to rain is equal to the total flux of the two
+  parallelograms in this vector field.  The flux of the parallelogram
+  traced out by the top edge is <i>lT</i>. The flux of the
+  parallelogram traced out by the right edge is <i>h(d-l)</i>. Hence
+  the total flux is <i>lT + h(d-l)</i>.  This is clearly minimized
+  by <i>T=0</i>, which results in the minimum flux <i>lT</i>.  Hence
+  you should run as fast as possible.
 
-<p>The reader can check that adding an <i>x</i> velocity component to the
-rain (slanted rain) does not change the conclusion, either, nor does
+<p>The reader can check that adding an <i>x</i> velocity component to
+the rain (slanted rain) does not change the conclusion; nor does
 adding a third spatial dimension.
 
 <p><i>A rainy Halloween in Stanford, 2014.</i>
