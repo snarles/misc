@@ -34,6 +34,24 @@ where
 \sigma_{max} = \sup_D \E[f_t^2]
 \]
 
+\noindent\textbf{Theorem (Slepian's inequality)}
+If $f$ and $g$ are as bounded, centered gaussian processes, and
+\[
+\mathbb{E}[(f_t-f_s)^2] \leq \mathbb{E}[(g_t-g_s)^2]
+\]
+then
+\[
+\mathbb{P}[\sup_{t \in D} f_t  > u] \leq \mathbb{P}[\sup_{t \in D} g_t  > u]
+\]
+
+\noindent\textbf{Theorem.} Let $f$ be centered stationary Gaussian
+process on a compact group $T$. Then the following three conditions
+are equivalent: (i) $f_t$ is continuous (ii) $f_t$ is bounded (iii)
+\[
+\int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon < \infty 
+\]
+
+
 \section{Supremum of an isotropic GP}
 
 Let $f_t$ be a gaussian process on $\mathbb{R}^D$, with $\Cov(f_t,f_u)
@@ -81,8 +99,77 @@ This can be used to show
 \right) = 1
 \]
 
+\section{One-dimensional isotropic gaussian processes}
 
+Now that 
+\[
+C_\kappa(t) = [1-\kappa|t|]_+
+\]
+is a covariance kernel. This implies the following:
+
+Suppose $C(0) = 1$, $-C''(t) > 0$ for $t > 0$ and $-\int_0^\infty t
+C'(t) <\infty$.
+Then $C(t)$ is a covariance kernel for a gaussian process.
+This is because one can find a mixture density $\rho(k)$ such that
+\[
+C(t) = \int_0^\infty C_\kappa(t) \rho(\kappa) d\kappa
+\]
 
 \section{Nonexistence of unbounded isotropic GP}
+
+We attempt to show that if $C(t) = 0$, $C(t) \to \infty$ as $t \to
+\infty$, and $C(t) > 0$ for $t \neq 0$, that $f_t$ is continuous and
+therefore bounded on an interval.
+Otherwise,
+\[
+\int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon \to \infty
+\]
+
+This in turn implies something like
+\[
+\lambda(\{t: C(t) > 1-\epsilon\}) \sim \exp(-\exp(1/t))
+\]
+
+We can try to derive a contradiction.
+Let $\rho(\kappa)$ be the reflected Fourier transform of $C(t)$, so
+\[
+C(t) = \int_0^\infty \rho(\kappa) \cos(\kappa t)
+\]
+Since $C(0)=1$, $\rho(\kappa)$ is a probability distribution.
+We know that $\rho$ has no first moment because $C(t)$ is
+nondifferentiable at 0.
+
+It must be that $-C'(t) \geq \text{const}/t^2$ as $t \to 0$.
+Meanwhile
+\[
+-C'(t) = \int_0^\infty \rho(\kappa) \kappa \sin(\kappa t) d\kappa
+\]
+
+We have to show that the intergral on the right can't possible tend to
+$\text{const}/t$ as $t \to 0$.
+
+We know that $\kappa \sin(\kappa t)$ is positive from 0 to
+$\frac{\pi}{t}$.
+Hence we have
+\[
+\int_0^{\frac{\pi}{t}}\kappa \sin(\kappa t) \rho(\kappa) d\kappa \sim
+\text{const} 1/t
+\]
+for $t$ small.
+It remains to show that the rest of the integral
+\[
+\int_{\frac{\pi}{t}}^\infty \kappa \sin(\kappa t) \rho(\kappa) d\kappa \sim
+\text{const} 1/t
+\]
+can't be too large. For any particular $t$ in $[0,\delta]$ it could be
+large, but it may be possible to show that the average value of the
+above interval is small for $t \in [\delta/2,\delta]$, say.
+Then we would have to show that this suffices to establish that
+$\int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon \to \infty$.
+
+
+\section{References}
+
+Adler RF, Taylor J. \emph{Random Fields and Geometry}
 
 \end{document}
