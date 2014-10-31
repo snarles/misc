@@ -1,0 +1,316 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+\pagestyle{fancy}
+\fancyhead[L]{CHARLES ZHENG Stats 350 HW}
+
+\section{Markov Semigroups}
+
+Below we will review the use of semigroups in concentation
+inequalities, and their use in deriving hypercontractive inequalities,
+Hypercontractive inequalities are important for deriving
+various concentration of measure results, but we refer to the
+interested reader to [LeDoux] and [Chatterjee] for the motivation
+behind hypercontractivity.
+
+In this report we begin examining semigroups first in the setting of
+Euclidean space under Gaussian measure and next the hypercube under
+uniform measure,
+and then move to more general examples.
+
+We take material from [LeDoux] and [Chatterjee], but add details and
+intuition when possible.
+
+\section{Gaussian case}
+
+\subsection{Preliminaries}
+
+Consider the Gaussian measure,
+\[ \mu(A) = C_n \int_A e^{-U(x)} dt \]
+for $U(x) = -||x||_2^2/2$, where $C_n$ is a normalizing constant
+(explicitly, $C_n = (2\pi)^{-n/2}$).
+Define the operator
+\[
+L = \Delta - \nabla U \cdot \nabla
+\]
+Define the Dirichlet form $\mathcal{E}(f,g) = \mu(f(-Lg))$.
+We claim that
+\begin{equation}\label{innerproductf}
+\mathcal{E}(f,g) =\mu(f(-Lg))=\int f(-Lg) d\mu = \int \nabla f \cdot \nabla g d \mu
+\end{equation}
+
+We will now derive \eqref{innerproductf}. Recall that if $\Omega$ is an open
+bounded subset of $\mathbb{R}^n$ with smooth boundary $\Gamma$,
+$\hat{v}$ is the unit surface normal to $\Gamma$, $u$ a
+function and ${\bf v}$ a vector-valued function, both continuously
+differentiable,  then
+\begin{equation}\label{intparts}
+\int_\Omega \nabla u \cdot {\bf v}(x) d\Omega = \int_\Gamma u({\bf
+  v}\cdot \hat{v}) d\Gamma-\int_\Omega
+u \nabla \cdot {\bf v} d\Omega
+\end{equation}
+
+Note that 
+\begin{align*}
+\nabla \cdot ((\nabla g(x)) e^{-U(x)}) 
+&= (\nabla \cdot \nabla g(x))e^{-U(x)} + \nabla g(x) \cdot (\nabla
+e^{-U(x)}) 
+\\&= \Delta g(x) e^{-U(x)} + \nabla g(x) \cdot (-\nabla U(x)
+e^{-U(x)})
+\\&= (\Delta g(x) - \nabla g(x) \cdot \nabla U(x)) e^{-U(x)}
+\\&= Lg(x) e^{-U(x)}
+\end{align*}
+Furthermore, note that $\nabla g(x) e^{-U(x)}$ vanishes as $||x||_2
+\to \infty$.
+Therefore applying integration py parts, we can ignore the boundary
+term in \eqref{intparts} and obtain
+\begin{align*}
+\int_{\mathbb{R}^n} f(x) (-Lg(x)) e^{-U(x)} dx
+&= -\int_{\mathbb{R}^n} f(x) \nabla\cdot ((\nabla g(x)) e^{-U(x)}) dx
+\\&= \int_{\mathbb{R}^n} \nabla f(x) \cdot ((\nabla g(x)) e^{-U(x)}) dx
+\end{align*}
+which, up to normalization terms, gives $\int f(-Lg)d\mu = \int \nabla
+f \cdot \nabla g d\mu$.
+
+$L$ is an infinitesimal generator for the semigroup of operators
+$P_t$, by the \emph{heat} equation
+\[
+\frac{\partial}{\partial t} P_t f(x) |_{t=u} = L P_u f(x)
+\]
+which is also written as $\partial_t P_t = L P_t$.
+Alternatively,
+\[
+P_t = e^{tL} = \sum_{k=0}^\infty \frac{t^k}{k!} L^k
+\]
+Here is an intuitive explanation for understanding the equivalence of
+the two forms.
+For small $\delta$, we know that by definition, $P_{t+\delta} f
+\approx f + \delta L P_t f$.
+However, to get an accurate approximation for $P_{t+u}$ for $u$ large,
+we should first approximate 
+\[P_{t + (u/k)} \approx f + \frac{u}{k} LP_t
+f = (I + \frac{u}{k}) f\]
+where $I$ is the identity operator, then approximate
+\[P_{t + 2(u/k)} \approx f + \frac{u}{k} L P_{t+(u/k)} f =
+(I+\frac{u}{k}) P_{t + (u/k)} f \approx (I + \frac{u}{k}L)^2 f\]
+and so on,
+hence
+\[
+P_{t+u} f \approx (I + \frac{u}{k}L)^k f
+\]
+Taking $k \to \infty$, we get the
+exponential form $P_{t+u} = e^{uL}P_t$.
+The semigroup property follows automatically from the exponential form:
+\[P_{t+s} = e^{(t+s)L} = e^{tL} e^{sL} = P_t P_s\]
+given the appropriate conditions for the convergence of the infinite
+series, etc.
+
+We will also use the following fact in the proof of hypercontractivity.
+Defining $\text{Cov}_\mu(f,g) = \mu(fg)-\mu(f)\mu(g)$,
+\begin{equation}\label{covf}
+\text{Cov}_\mu (f,g) = \mu(fg)-\mu(f)\mu(g) = \int_0^\infty
+\mathcal{E}(f,P_t g) dt
+\end{equation}
+under appropriate conditions.
+For a proof, please refer to Chatterjee (2014).
+
+
+\subsection{The Ornstein-Uhlembeck Semigroup}
+
+In the case of the gaussian measure, where $U(x) = -||x||^2/2$,
+we know the explicit form of $P_t$:
+\[
+P_t f(x) = C_n \int f(e^{-t}x + \sqrt{1-e^{-2t}}z) e^{-||z||^2/} dz =
+\textbf{E}[f(e^{-t}x + \sqrt{1-e^{-2t}}Z)]
+\]
+
+An important consequence is that
+\begin{equation}\label{limitE}
+\lim_{t \to \infty} f(x) = \textbf{E}[f(Z)] = \gamma^n(f).
+\end{equation}
+
+Another consequence is that for any $t \geq 0$,
+\begin{equation}\label{intE}
+\E[P_t f(Z)] = \textbf{E}[f(e^{-t}Z + \sqrt{1-e^{-2t}}Z')] = \textbf{E}[f(Z)] = \gamma^n(f)
+\end{equation} 
+where $Z, Z'$ are independent standard normal variates,
+hence $e^{-t}Z + \sqrt{1-e^{-2t}}Z'$ has the same distribution as $Z$.
+
+Let us verify that $P_t$ satisfies the heat equation.
+On one hand, assuming we can differentiate under the integral sign,
+\begin{align}
+\frac{\partial}{\partial t} P_t f(x) &= \textbf{E}\left[
+\frac{\partial}{\partial t} f(e^{-t}x + \sqrt{1-e^{-2t}}Z)\right]
+\\&= \textbf{E}\left[
+\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)
+\left(e^{-t} + \frac{e^{-2t}}{\sqrt{1-e^{-2t}}}Z\right)
+\right]
+\\&= e^{-t}x\textbf{E}[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] +
+\frac{e^{-2t}}{\sqrt{1-e^{-2t}}} \textbf{E}[Z \nabla f(e^{-t}x +
+\sqrt{1-e^{-2t}}Z)]
+\intertext{Using the identity $\textbf{E}Zg(Z) = \textbf{E}g'(Z)$}
+&= e^{-t}x\textbf{E}[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] +
+\frac{e^{-2t}}{\sqrt{1-e^{-2t}}} \textbf{E}\left[\sum_{i=1}^n
+\frac{\partial^2}{\partial Z_i^2} f'(e^{-t}x +
+\sqrt{1-e^{-2t}}Z)\right]
+\\&= e^{-t}x\textbf{E}[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] +
+\frac{e^{-2t}}{\sqrt{1-e^{-2t}}} \textbf{E}\left[\sum_{i=1}^n
+\sqrt{1-e^{-2t}} \frac{\partial^2 f (w)}{\partial w_i^2}\bigg|_{w = e^{-t}x +
+\sqrt{1-e^{-2t}}Z}\right]
+\\&= e^{-t}x\textbf{E}[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] +
+e^{-2t} \textbf{E}\left[\sum_{i=1}^n \frac{\partial^2 f (w)}{\partial w_i^2}\bigg|_{w = e^{-t}x +
+\sqrt{1-e^{-2t}}Z}\right]
+\\&= e^{-t}x\E[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] +
+e^{-2t} \E\left[\Delta f(e^{-t}x +\sqrt{1-e^{-2t}}Z)\right]
+\label{dtside}
+\end{align}
+
+On the other hand,
+\begin{align}
+LP_t f(x) &= \Delta P_t f(x) + x \cdot \nabla P_t f(x)
+\\&= \Delta \E[f(e^{-t}x + \sqrt{1-e^{-2t}}Z)] + x \cdot
+\nabla \E[f(e^{-t}x + \sqrt{1-e^{-2t}}Z)]
+\\&= \E\left[\sum_{i=1}^n \frac{\partial^2}{\partial x_i^2}
+  f(e^{-t}x + \sqrt{1-e^{-2t}}Z)\right] + \sum_{i=1}^n \E\left[x_i
+\frac{\partial}{\partial x_i}f(e^{-t}x + \sqrt{1-e^{-2t}}Z)\right]
+\\&= \E\left[\sum_{i=1}^n e^{-2t} f''(e^{-t}x +
+  \sqrt{1-e^{-2t}}Z)\right] + \sum_{i=1}^n \E\left[e^{-t} x_i f'(e^{-t}x + \sqrt{1-e^{-2t}}Z)\right]
+\\&= e^{-2t} \E\left[\Delta f(e^{-t}x
+  +\sqrt{1-e^{-2t}}Z)\right] + 
+e^{-t}x\E[\nabla f(e^{-t}x + \sqrt{1-e^{-2t}}Z)]
+\end{align}
+which matches \eqref{dtside}.
+
+\subsection{Ornstein-Uhlembeck process}
+
+The OU semigroup can also be written as
+\[
+P_t f(x) = \E[f(X_t)]
+\]
+where $X_t$ is the \emph{Ornstein-Uhlembeck process} with $X_0 = x$.
+
+The OU process is defined by
+\[
+X_t = e^{-t} X_0 + e^{-t} W_{e^{2t}-1}
+\]
+where $W_t$ is standard Brownian motion.
+
+An easy consequence of the representation $P_t f(x) =
+\E[f(X_t)]$ is the following.
+For $g$ positive,
+\begin{equation}\label{csstep}
+|P_t f(x)|^2 \leq (P_t g (x)) (P_t \frac{f^2}{g}(x))
+\end{equation}
+which follows from the Cauchy-Schwartz inequality,
+\begin{align}
+|P_t f(x)|^2 &= \E^2\left[\frac{f(X_t)}{\sqrt{g}(X_t)} \sqrt{g}(X_t)\right]
+\\&\leq \E\left[ \frac{f^2(X_t)}{g(X_t)}\right] \E[g(X_t)] = (P_t \frac{f^2}{g}(x))(P_t g (x))
+\end{align}
+
+However, as we will not use any other property of the OU process in the proof of
+hypercontractivity, we will refer the interested reader to Karatzas
+and Shreve (1991) for more details.
+
+\subsection{Proof of Hypercontractivity}
+
+The hypercontractive inequality for the OU semigroup was first proved
+by Nelson (1973): we now state his result.
+
+
+\noindent\textbf{Proposition.}
+\emph{Let $P_t$ be the OU semigroup. For any $p > 1$, and $t > 0$, there exists a
+  $q = q(t,p) > p$ such that for any $f \in L^2(\mu)$, the following
+  holds:}
+\[
+||P_t f||_{L^q(\mu)} \leq ||f||_{L^2(\mu)}
+\]
+\emph{Furthermore, the above holds with $q(t,p) = 1+(p-1)e^{2t}$.}
+
+We follow the proof in Chatterjee (2014), which makes use of the
+logarithmic Sobolev inequality for gaussian measures,
+
+\noindent\textbf{Lemma.} (Gaussian log Sobolev inequality)
+\emph{Let $\gamma^n$ be the standard gaussian measure in
+  $\mathbb{R}^n$.
+Then if $f: \mathbb{R}^n \to \mathbb{R}$ is an absolutely continuous
+function, then}
+\[
+\gamma^n\left(f^2 \log \frac{f^2}{\gamma^n (f^2)}\right) \leq \gamma^n(2||\nabla f||_2^2)
+\]
+\emph{where $\gamma^n(\cdot)$ denotes expectation wrt the measure $\gamma^n$.}
+
+Recall also the identity \eqref{innerproductf} which implies that
+$\gamma^n((f)(Lg)) = -\gamma^n(\nabla f\cdot \nabla g)$.
+
+\noindent\textbf{Proof of Lemma.}
+
+Begin by defining $v = f^2$.
+Then
+\begin{align}
+\gamma^n\left(f^2 \log \frac{f^2}{\gamma^n (f^2)}\right) 
+&=\gamma^n\left(v \log \frac{v}{\gamma^n (v)}\right)
+\\&= \gamma^n(v \log v) - \gamma^n(v)\log \gamma^n(v)
+\\&= \gamma^n(v \log v) - \gamma^n(v \log \gamma^n(v))
+\intertext{using the property \eqref{limitE}}
+&= \gamma^n((P_0 v)(\log P_0 v)) - \gamma^n((P_\infty v)(\log
+P_\infty v))
+\\&= -\int_0^\infty \frac{\partial}{\partial t} \gamma^n((P_t v)(\log
+P_t v)) dt
+\\&= -\int_0^\infty  \gamma^n\left( ( \frac{\partial}{\partial t} P_t v)(\log
+P_t v)\right) + \gamma^n\left( (  P_t v)( \frac{\partial}{\partial t}\log
+ P_t v)\right) dt
+\\&= -\int_0^\infty  \gamma^n\left( ( L P_t v)(\log
+P_t v)\right) + \gamma^n\left( (  P_t v)( \frac{LP_t v}{
+ P_t v})\right) dt
+\\&= -\int_0^\infty \gamma^n((LP_t v) (1+\log P_t v)) dt
+\\&= \int_0^\infty \mathcal{E}(P_t v, 1+\log P_t v) dt
+\\&= \int_0^\infty \gamma^n((\nabla P_t v) \cdot (\nabla \log P_t v)) dt
+\\&= \int_0^\infty \gamma^n(\nabla P_t v \cdot \frac{\nabla P_t}{P_t
+  v}) dt
+\\&= \int_0^\infty \gamma^n\left(\frac{||\nabla P_t v||_2^2}{P_t v}\right) dt
+\\&= \int_0^\infty \gamma^n\left(\frac{e^{-2t}||P_t \nabla
+    v||_2^2}{P_t v}\right) dt
+\intertext{using \eqref{csstep}, which was a consequence of Cauchy-Schwartz,}
+&\leq \int_0^\infty \gamma^n\left(\frac{e^{-2t}(P_t v)(P_t
+    \frac{||\nabla v||^2 }{v})}{P_t v}\right) dt
+\\&= \int_0^\infty \gamma^n \left(e^{-2t} P_t
+    \frac{||\nabla v||^2 }{v} \right)  dt
+\\&= \int_0^\infty e^{-2t} \gamma^n\left(P_t
+    \frac{||\nabla v||^2 }{v} \right) dt
+\intertext{using \eqref{intE},}
+&= \int_0^\infty e^{-2t} \gamma^n\left(\frac{||\nabla v||^2 }{v}
+\right) dt
+\\&= \frac{1}{2} \gamma^n\left(\frac{||\nabla v||^2 }{v}\right)
+\intertext{and since $v=f^2$}
+\\&= \frac{1}{2} \gamma^n\left(\frac{||2f \nabla f||^2 }{f^2}\right)
+\\&\leq \frac{1}{2} \gamma^n\left(\frac{4 f^2 ||\nabla f||^2 }{f^2}\right)
+\\&= 2\gamma^n (||\nabla f||_2^2)
+\end{align}
+as desired. $\Box$.
+
+\section{References}
+
+\noindent Chatterjee, S. (2014). \emph{Superconcentration and Related
+  Topics}.  Springer.
+
+
+\noindent Ledoux, M. (2005). \emph{The concentration of measure phenomenon}
+(Vol. 89). American Mathematical Soc..
+
+\end{document}

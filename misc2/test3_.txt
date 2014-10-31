@@ -1,0 +1,38 @@
+comboscore <- function(v) {
+  m1 <- 1/(2+abs(v[2]-v[3]))
+  m2 <- 1/(2+abs(v[4]-v[5]))
+  m3 <- 1/(2+abs(v[6]-v[1]))
+  (1+m1)*(1+m2)*(1+m3)
+}
+
+maxcombo <- function(v1,v2,v3) {
+  current <- 0
+  bestind <- 0
+  for (i in 1:dim(v1)[1]) {
+    for (j in 1:dim(v2)[1]) {
+	  for (k in 1:dim(v3)[1]) {
+	    temp <- comboscore(c(v1[i,],v2[j,],v3[k,]))
+		if (temp > current) {
+		  current <- temp
+		  bestind <- c(i,j,k)
+		}
+	  }
+	}
+  }
+  c(current,bestind)
+}
+
+nn <- 100
+ns <- 2:20
+n.reps <- 1000
+res <- matrix(0, length(ns), n.reps)
+for (ii in 1:n.reps) {
+  for (jj in 1:length(ns)) {
+    n <- ns[jj]
+    v1 <- matrix(sample(nn,n*2,T),n,2)
+    v2 <- matrix(sample(nn,n*2,T),n,2)
+    v3 <- matrix(sample(nn,n*2,T),n,2)
+    res[jj,ii] <- maxcombo(v1,v2,v3)[1]
+  }
+}
+

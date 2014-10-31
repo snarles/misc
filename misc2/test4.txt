@@ -1,0 +1,109 @@
+# testing effect of optimal hand order in card duel
+
+hand.size <- 5
+deck.size <- 10
+
+scriptcardduel <- function(a,o) {
+  a <- a[o,sample(deck.size,hand.size,T)]
+  current <- c(1,1)
+  while (max(current) < hand.size) {
+	win <- (runif(1) < a[current[1],current[2]])
+	if (win) {current[2] <- current[2]+1}
+	if (!win) {current[1] <- current[1]+1}
+  }
+  win
+}
+
+reactcardduel <- function(a,o1,o2=sample(deck.size,hand.size,T),pchoice=0) {
+  player.left <- rep(F,dim(a)[1])
+  player.left[o1] <- T
+  opp.left <- rep(F,deck.size)
+  opp.left[o2] <- T
+  opp.seen <- rep(F,deck.size)
+  opp.elim <- rep(F, deck.size)
+  if (pchoice==0) {
+    mu <- apply(a,1,mean)-10*(!player.left)
+	pchoice <- order(-mu)[1]
+  }
+  while (sum(player.left)*sum(opp.left) > 0) {
+    echoice <- o2[which(opp.left[o2])][1]
+	win <- (runif(1) < a[pchoice,echoice])
+	opp.seen[echoice] <- T
+	print(c(pchoice,echoice))
+	if (win) {opp.left[echoice] <- F; opp.elim[echoice] <- T}
+	if (!win) {player.left[pchoice] <- F}
+	n.seen <- sum(opp.seen)
+	pvec1 <- opp.seen/hand.size
+	pvec2 <- (1-opp.elim)/(sum(1-opp.elim)) * (hand.size-n.seen)/hand.size
+	mu <- (a %*% (pvec1+pvec2))-10*(!player.left)
+	pchoice <- order(-mu)[1]
+  }
+  win  
+}
+
+multireactduel <- function(a,o1,pchoice=0,n.its=1000) {
+  temp <- numeric(n.its)
+  for (i in 1:n.its) {temp[i] <- reactcardduel(a,o1,sample(deck.size,hand.size),pchoice)}
+  mean(temp)
+}
+
+
+multiscriptduel <- function(a,o,n.its=10000) {
+  temp <- numeric(n.its)
+  for (i in 1:n.its) {temp[i] <- scriptcardduel(a,o)}
+  mean(temp)
+}
+
+approxduel <- function(a) {
+  p <- mean(a)
+  1-pnbinom(hand.size-1,hand.size,1-p)
+}
+
+randmat <- function(a,b,p=.5) {
+  matrix(rbinom(a*b,1,p),a,b)
+}
+
+a <- randmat(deck.size,deck.size)
+
+mu <- apply(a,1,mean)
+
+n.hands <- 1
+n.perms <- 1
+
+res <- array(0,c(n.perms+1,hand.size+3,n.hands))
+for (i in 1:n.hands) {
+  inds <- sample(deck.size,hand.size)
+  temp <- approxduel(a[inds,])
+  for (j in 1:n.perms) {
+    o <- sample(inds,hand.size)
+	res[j,,i] <- c(o, temp, multiscriptduel(a,o),multiscriptduel(a,o))
+  }
+  o <- inds[order(-mu[inds])]
+  res[n.perms+1,,i] <- c(o, temp, multiscriptduel(a,o),multiscriptduel(a,o))
+}
+
+winner <- matrix(0,n.hands,hand.size)
+for (i in 1:n.hands) {
+  temp <- res[,,i]
+  ind <- order(-temp[,7])[1]
+  winner[i,] <- temp[ind,1:hand.size]
+}
+
+n.its <- 1000
+a <- randmat(deck.size,deck.size,.3)
+a[a==0] <- 0.5
+inds <- sample(deck.size,hand.size)
+mu <- apply(a,1,mean)
+o1 <- inds[order(-mu[inds])]
+multireactduel(a,o1,0,n.its)
+multireactduel(a,o1,o1[1],n.its)
+multireactduel(a,o1,o1[2],n.its)
+multireactduel(a,o1,o1[3],n.its)
+multireactduel(a,o1,o1[4],n.its)
+multireactduel(a,o1,o1[5],n.its)
+oo1 <- sample(o1); multiscriptduel(a,oo1,n.its)
+oo2 <- sample(o1); multiscriptduel(a,oo2,n.its)
+oo3 <- sample(o1); multiscriptduel(a,oo3,n.its)
+oo4 <- sample(o1); multiscriptduel(a,oo4,n.its)
+
+

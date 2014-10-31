@@ -1,0 +1,18 @@
+set.seed(0)
+
+char.st <- c("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
+randstring <- function(n,k) {
+  l <- length(char.st)
+  ans <- c("")
+  for (i in 1:n) {
+    ans[i] <- paste(char.st[floor(runif(k)*l+1)],collapse="")
+  }
+  ans
+}
+
+n.cards <- 100
+cardtab <- matrix(0,n.cards,n.cards)
+cardtab[row(cardtab) < col(cardtab)] <- runif(n.cards * (n.cards-1)/2)
+temp <- cardtab; temp[row(cardtab) >= col(cardtab)] <- 1
+cardtab <- cardtab + 1-t(temp)
+cardnames <- randstring(n.cards, 5)

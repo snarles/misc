@@ -1,0 +1,61 @@
+raritystr <- function(i) {
+  ans <- character(length(i))
+  first <- c("common","uncommon","rare","super rare","ultra rare","hyper rare")
+  ans[i < 7] <- first[i[i<7]]
+  pre <- c("","kilo ","mega ","giga ","tera ","exa ","zetta ")
+  ans[(i>6) & (i < 12)] <- paste(pre[i[(i>6) & (i < 12)]-4],"rare",sep="")
+  n.yottas <- floor((i-5)/7)
+  mm <- max(c(1,n.yottas))
+  for (j in 1:mm) {
+    ans[n.yottas==j] <- paste(rep("yotta",j),collapse=" ")
+  }
+  ans[n.yottas >0] <- paste(pre[((i[n.yottas >0]-4) %% 7)],ans[n.yottas>0]," rare",sep="")
+  ans
+}
+
+# card distribution test
+
+n <- 12
+probs <- numeric(0)
+rarities <- numeric(0)
+for (i in 1:n) {
+  probs <- c(probs,rep(1/(4^i),2^i))
+  rarities <- c(rarities,rep(i,2^i))
+}
+probs <- probs/sum(probs)
+
+n.collect <- 1000
+
+s <- rmultinom(n.collect,1,probs)
+s2 <- t(apply(s,1,cumsum))
+s3 <- apply((s2>0),2,sum)
+s4 <- apply(s2,1,function(a) {which(a==1)[1]})
+plot(1:n.collect,s3)
+
+ll <- length(probs)
+plot(NA,NA,ylim=c(1,ll),xlim=c(1,n.collect))
+for (i in 1:ll) {
+  lines(c(s4[i],n.collect),c(i,i))  
+}
+
+final <- which(s2[,n.collect]>0)
+rarities[final]
+
+ff <- function(kk) {
+  k <- 100
+  i <- 1:200
+  c(sum(kk^(i-k) * (1-exp(-(kk-1)*(kk^(2*(k-i)))))),
+    sum(kk^(i-k) * (1-exp(-(kk-1)*(kk^(2*(k-i)))))^2))
+}
+
+kgrow <- function(D,n=10) {
+  ans <- numeric(n)
+  k <- 1
+  s <- 0
+  for (i in 1:n) {
+    ans[i] <- k
+	s <- s+k
+	k <- (1+log(i))*(i^((1/D)-1))/s
+  }
+  ans
+}

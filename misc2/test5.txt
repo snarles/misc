@@ -1,0 +1,81 @@
+# changing enemy AI to make optimal strategy nontrivial
+
+whowins <- function(a,o1,o2) {
+  a <- a[o1,o2]
+  current <- c(1,1)
+  while (max(current) < 5) {
+	win <- (runif(1) < a[current[1],current[2]])
+	if (win) {current[2] <- current[2]+1}
+	if (!win) {current[1] <- current[1]+1}
+  }
+  win
+}
+
+makeorder <- function(p) {
+  o <- numeric(5)
+  for (i in 1:5) {
+    ind <- which(rmultinom(1,1,p/sum(p))==1)
+	p[ind] <- 0
+	o[i] <- ind
+  }
+  o
+}
+
+multiscriptduel <- function(a,o,emu,n.its=1000) {
+  temp <- numeric(n.its)
+  for (i in 1:n.its) {
+    inds <- sample(dim(a)[2],5)
+	o2 <- inds[makeorder(emu[inds])]
+    temp[i] <- whowins(a,o,o2)
+  }
+  mean(temp)
+}
+
+randmat <- function(a,b,p=.5) {
+  matrix(rbinom(a*b,1,p),a,b)
+}
+
+itervecs <- function(a,n.its=1,expf=2) {
+  p1 <- rep(1/dim(a)[1],dim(a)[1])
+  p2 <- rep(1/dim(a)[2],dim(a)[2])
+  for (i in 1:n.its) {
+    p1.n <- exp(expf * (as.vector(a %*% p2)))
+	p2.n <- exp(expf * (1-as.vector(p1 %*% a)))
+	p1 <- p1.n/sum(p1.n)
+	p2 <- p2.n/sum(p2.n)
+  }
+  list(p1,p2)
+}
+
+a <- randmat(20,20)
+
+mu <- apply(a,1,mean)
+
+res <- itervecs(a,10,10)
+emu <- res[[2]]
+mu2 <- res[[1]]
+
+n.hands <- 100
+n.perms <- 10
+
+res <- array(0,c(n.perms+2,6,n.hands))
+for (i in 1:n.hands) {
+  inds <- sample(20,5)
+  for (j in 1:n.perms) {
+    o <- sample(inds,5)
+	res[j,,i] <- c(o, multiscriptduel(a,o,emu))
+  }
+  o <- inds[order(-mu[inds])]
+  res[n.perms+1,,i] <- c(o, multiscriptduel(a,o,emu))
+  o <- inds[order(-mu2[inds])]
+  res[n.perms+2,,i] <- c(o, multiscriptduel(a,o,emu))
+}
+
+winner <- matrix(0,n.hands,5)
+for (i in 1:n.hands) {
+  temp <- res[,,i]
+  ind <- order(-temp[,6])[1]
+  winner[i,] <- temp[ind,1:5]
+}
+eye <- diag(rep(1,20))
+mu <- apply(eye[winner[,1],],2,sum)

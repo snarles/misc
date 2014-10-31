@@ -1,0 +1,60 @@
+noun.point <- 6
+of.point <- 16
+
+attr.names <- rbind(
+c("Nature's","Civilization's","Hell's","Civilization's","Civilization's"),
+c("Sexy","Innocent","Sexy","Innocent","Sexy"),
+c("Virtuous","Virtuous","Daring","Admirable","Admirable"),
+c("Mute","Blind","Insane","Deaf","Blind"),
+c("Mournful","Apologetic","Regretful","Apologetic","Catatonic"),
+
+c("Elemental","Angel","Dragon","Sphinx","Demon"),
+c("Tyrant","King","Warlord","Merchant","Despot"),
+c("Warrior","Knight","Ronin","Ninja","Knight"),
+c("Botanist","Lawyer","Arsonist","Cartographer","Lawyer"),
+c("Shaman","Mage","Shaman","Mage","Witch"),
+c("Hero","Hero","Outlaw","Explorer","Villain"),
+
+c("Spirit","Clone","Spirit","Cyborg","Zombie"),
+c("Parrot","Eagle","Parrot","Raven","Raven"),
+c("Tiger","Lion","Wolverine","Familiar","Chupacabra"),
+c("Apple","Apple","Lemon","Apple","Toadstool"),
+
+c("Harmony","Victory","Destruction","Tranquility","Destruction"),
+c("Evolution","Order","Chaos","Science","Devastation"),
+c("Life","Life","Love","Knowledge","Death"),
+c("Vengeance","Justice","Vengeance","Balance","Vengeance"),
+c("Dreams","Memories","Dreams","Prophecies","Nightmares"))
+
+gen.str <- function(co,v) {
+  v <- sort(v)
+  v1 <- v[v<of.point]
+  v2 <- v[v>=of.point]
+  str1 <- paste(attr.names[v1,co],collapse=" ")
+  str2 <- ""
+  str3 <- ""
+  if (length(v2) > 0) {
+    temp <- attr.names[v2,co]
+	if (length(v2)==1) {
+	  str2 <- temp
+	}
+	if (length(v2)==2) {
+	  str2 <- paste(temp,collapse=" and ")
+	}
+	if (length(v2) > 2) {
+	  str2 <- paste(
+	    paste(temp[-length(temp)],collapse=", "),
+		temp[length(temp)],sep=", and ")
+	}
+  }
+  if (sum(v < of.point) > 0 && sum(v >= of.point) > 0) {
+    str3 <- " "
+  }
+  if (sum(v < of.point & v >= noun.point) > 0 && sum(v >= of.point) > 0) {
+    str3 <- " of "
+  }
+  paste(str1,str3,str2,sep="")
+}
+
+co <- sample(5,1); v <- sample(20,2)
+gen.str(co,v)

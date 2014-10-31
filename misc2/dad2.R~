@@ -1,0 +1,17 @@
+empprob <- function(a,b,res0=10000) {
+  m1 <- length(a)
+  m2 <- length(b)
+  mat1 <- matrix(rexp(m1*res0),res0,m1)
+  mat2 <- matrix(rexp(m2*res0),res0,m2)
+  sums <- mat1 %*% a - mat2 %*% b
+  sum(sums > 0)/res0
+}
+
+calcCs <- function(a) {
+  m <- length(a)
+  ans <- numeric(m)
+  for (i in 1:m) {
+    ans[i] = a[i]^m/prod(a[i]-a[-i])
+  }
+  ans
+}

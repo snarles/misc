@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<h1>A procedurally generated card-based RPG</h1>
+
+<p>by Charles Zheng
+
+<h2>Introduction</h2>
+
+<p>As a sort of experiment, we employ procedural generation to create a infinite card-based RPG:
+a game in which players collect cards, configure their deck, and defeat AI-controlled opponents in
+card duels to win more cards and unlock new opponents, and can continue to do so indefinitely as the game automatically generates new cards and challenges.
+Our goal is to design the game so that the pacing is properly controlled:
+if the player ever gets stuck at a point where they are unable to unlock new opponents,
+the cards they need to advance should always be obtainable from opponents the player can beat;
+on the other hand, the player should not be able to assemble an invincible collection of cards with allows
+them to steamroll through a string of challenges without being forced to stop and farm cards.
+Since we can not rely on playtesting to adjust the pacing of an infinite game, we propose to do so by using probability theory to analyze a rough model of game progression.
+
+<h2>Basic structure of the game</h2>
+
+<p>An infinite matrix is generated which determines which cards beat which other cards.  The entries of the matrix are populated by independent fair coin flips.
+
+<p>The player starts with an initial collection of cards drawn from the same pool of cards used by the starting enemies.  From these, the player forms a deck of 10 or more cards.
+
+<p>At the beginning of the battle, the player and enemy each draw 5 cards.  Each round, the player and enemy simultaneously choose a card from their hand.  The enemy AI simply chooses a card uniformly at random from their hand.  If the player's card "beats" the enemy's card, the enemy's card is discarded while the player's card returns to their hand--and vice versa.  If both combatants choose the same card, the tie is broken by a coin flip.  Combat continues in this way until either the player runs out of cards, in which case the player loses, or the enemy runs of cards, in which case the player wins.  The reward for winning is a chance to obtain a chosen card from the enemy's hand.  The probability of getting the card reward depends on the how many cards the player has remaining in their hand.
+
+<p>Players do not choose to duel individual enemies, but rather choose to participate certain "challenges".  A challenge consists of a sequence of enemies with set levels, which must be fought using the same deck. The player must play each enemy in a series of games: the player must win the majority of the game in the series, or exit the challenge.  Completing the challenge then unlocks additional challenges.
+
+<p>As the player accumulates more cards, their ability to complete an arbitrary challenge increases.  Some theoretical analysis will help inform how to scale the difficulty of the challenges.
+
+<h2>An approximate model for combat</h2>
+
+<p>Even given the simplicity of the combat system, it is nontrivial to compute the exact win rate a player can expect using a certain deck against a certain enemy, especially since the optimal strategy for the player may be quite complex.  Nevertheless, we will hope for the best and attempt to approximate this probability.
+
+<p>Our heuristic for estimating for the duel win rate between the player and enemy is as follows.  Let p be the probability that a card selected uniformly at random from the player's hand beats a card selected from the enemy's hand.  If we were to assume that the player's card beats the enemy's card with probability p each time, then the number of the enemy's cards the player beats has a negative binomial distribution NB(5,1-p), so the probability of winning is Pr[NB(5,1-p)>=5].
+
+<p>In simulations, this approximation seems to work well when compared to the empirical win rates obtained from having the player play cards uniformly at random.
+
+<h2>Implications for game progression</h2>
+
+<p>Every card available to the player has a certain win rate against a particular enemy's deck.  Suppose the player has the ability to farm N different kinds of cards, and wants to defeat a challenge with K opponents, we can form M, an N x K matrix containing the card vs. opponent win rates.  Any deck the player could construct consists of a mix of these N cards: let the player's deck composition be represented by a vector d.
+
+<p>If the number of games in each series is large, then being able to win the challenge is a matter of finding a deck which has a win rate of above 50% against each enemy in the challenge.  If we take our approximation at face value, this amounts to finding a vector d such that (d'M)_1,..,(d'M)_K > 0.5.
+
+<p>The first question we ask is whether it is possible for the player to construct a deck with the needed properties.  Let's assume that the N cards accessible by the players, and the cards used by each enemy are independently generated.  This means that for any random card, its win probabilities against each of the K enemy decks are independent, with mean 0.5 and variances which depend on the enemy deck compositions.  If the enemy deck consists of the same copy of 1 card, the variance of the card vs deck win probability is 1/4; if the enemy deck consists of 10 different cards, the variance is 1/40.  We will require that all the variances be the same, v.
+
+<p>For K large, the average card vs deck win probabilities for a given card is Gaussian with mean 0.5 and variance v.  Consider forming a deck out of one copy of each card with  with average win probability above 0.5 + z * sqrt(v).  The number of cards in the deck is N*(1-Phi(z)), where Phi is the cdf of a standard normal.  The expected win probability of the deck vs each of the opponent's decks is marginally Gaussian with
+<pre>
+E[win prob of deck vs. enemy deck i] = 0.5 + sqrt(v) * E[Z|Z>z]
+Var[win prob of deck vs. enemy deck i] ~= v*(var[Z|Z > z] + 1)/(N*(1-Phi(z)))
+</pre>
+We want to ensure than the minimum of these win probabilities is greater than 0.5.  The minimum has
+<pre>
+E[minimum win prob of deck vs. enemy deck i] = 0.5 + sqrt(v) * E[Z|Z>z] - sqrt((v*(var[Z|Z > z] + 1)/(N*(1-Phi(z))))*s(K)
+where s(K) = sqrt(2*log(K)-log(2*pi(2*log(K)-log(2pi))))*(1+0.57/log(K))
+</pre>
+and the variance is can be treated as a constant.
+Thus we need
+<pre>
+N > s(K)^2 * Var[Z|Z>z]+1/((1-Phi(z))*(E[Z|Z>z])^2)
+</pre>
+Minimizing the expression with respect to z gives the optimal z close to z=0.7
+Hence we get
+<pre>
+N > 3.05 * s(K)^2
+</pre>
+This means that unless K is exponential in N, the player will be able to construct a suitable deck.
+Of course, an exponential growth rate in K would be truly ridiculous.
+Then the time we may need to worry about the player getting stuck are the early stages of the game, when N is small.
+But this can easily be checked by playtesting.
+
+<p>The next question is whether the player can amass an "invincible" collection
+capable of constructing decks which can beat any randomly generated challenge with probability close to 1.
+
+
+
+</body>
+</html>

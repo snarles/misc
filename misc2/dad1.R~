@@ -1,0 +1,13 @@
+res0 <- 1000
+len0 <- 10
+zs <- len0 * (1:res0)/res0
+fab <- function(a,b) {
+  1/(a-b) * exp(-zs/b)*(exp(-zs*(1/a-1/b))-1)
+}
+a <- 1
+b <- 1.2
+ff <- fab(a,b)
+empsampl <- a*exp(res0) + b*exp(res0)
+x1 <- 1
+x2 <- 2
+sum(empsampl > x1 & emps < x2)

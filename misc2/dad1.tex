@@ -1,0 +1,96 @@
+\documentclass[11pt]{letter} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+
+Charles Zheng
+
+Suppose $X_1,\hdots,X_n$ are uniform on the simplex, so
+$X_1+\cdots+X_n=1$.
+We wish to compute $\Pr[a_1 X_1 + \cdots + a_n X_n  > 0]$.
+
+Fact: one can write $X_i = E_i/(\sum_i E_i)$  where $E_1,\hdots,E_n$
+are iid exponential.
+Hence
+\[
+\Pr[a_1 X_1 + \cdots + a_n X_n  > 0] = \Pr[a_1 E_1 + \cdots + a_n E_n
+> 0]
+\]
+
+WLOG take $a_1 \geq \cdots \geq a_n$.
+The general case is easy to write for $a_1 > \cdots > a_n$,
+but it is also straightforward to work out what happens if $a_i = a_j$
+for some $i \neq j$.
+
+For $a > b > 0$, the distribution of $aE_1 + bE_2$ is
+\begin{align*}
+f_{a,b}(z) &= \int_0^z \frac{1}{a}e^{-x/a} \frac{1}{b} e^{-(z-x)/b} dx
+\\&= \frac{1}{ab} \int_0^z e^{-z/b}e^{-x(\frac{1}{a}-\frac{1}{b})} dx
+\\&= \frac{1}{ab}e^{-z/b} \left[\frac{1}{\frac{1}{a} - \frac{1}{b}} 
+e^{-x(\frac{1}{a}-\frac{1}{b})} \right]_0^z
+\\&= \frac{1}{a-b} e^{-z/b} [e^{-z(a^{-1}-b^{-1})}-1]
+\\&= \frac{1}{a-b} [e^{-z/a} - e^{-z/b}] = \frac{a^{-1}e^{-z/a}}{a^{-1}(a-b)} + \frac{b^{-1}e^{-z/b}}{b^{-1}(b-a)}
+\end{align*}
+
+It is clear from the above form that the distribution of $aE_1 +
+bE_2 + cE_3$ for $a > b > c > 0$ is
+\begin{align*}
+f_{a,b,c}(z) &=
+\frac{\frac{1}{a-c}e^{-z/a}+\frac{1}{c-a}e^{-z/c}}{a^{-1}(a-b)}
++ \frac{\frac{1}{b-c}e^{-z/b} + \frac{1}{c-b}e^{-z/c}}{b^{-1}(b-a)}
+\\&=\frac{\frac{a}{a-c}e^{-z/a}+\frac{a}{c-a}e^{-z/c}}{(a-b)}
++ \frac{\frac{b}{b-c}e^{-z/b} + \frac{b}{c-b}e^{-z/c}}{(b-a)}
+\\&= \frac{a}{(a-c)(a-b)} e^{-z/a} + \frac{b}{(b-c)(b-a)} e^{-z/b} +
+\frac{c}{(c-a)(c-b)} e^{-z/b}
+\end{align*}
+
+Now it is easy to see what will happen for general $a_1 > \hdots > a_m
+> 0$ since if for $f_{a_1,\hdots,a_i}$ the coefficient of the
+$e^{-z/a_j}$ term is $C_{j,i}$,
+the coefficient of the $e^{-z/a_j}$ term for $f_{a_1,\hdots,a_{i+1}}$
+will be $\frac{a_1}{a_1-a_{i+1}}C_i$.
+Hence the general form is
+\[
+f_{a_1,\hdots,a_m}(z) = \sum_{j=1}^m \frac{a_j^{m-1}}{\prod_{k \neq
+    j}(a_j-a_k)} a_j^{-1} e^{-z/a_j}
+\]
+
+Now suppose that $a_1 > \cdots > a_m > 0 > a_{m+1} > \cdots > a_n$.
+We need to compute
+\begin{align*}
+\Pr[a_1 E_1 &+ \cdots + a_n E_n > 0] = \Pr[a_1 E_1 + \cdots + a_m E_m
+> (-a_{m+1})E_{m+1} + \cdots + (-a_n) E_n]
+\\&= \int_0^\infty \int_0^x f_{a_1,\hdots,a_m}(x)
+f_{-a_{m+1},\hdots,-a_n}(y) dy dx
+\\&= \int_0^\infty \int_0^x \left[\sum_{j=1}^m
+  \frac{a_j^{m-1}}{\prod_{m \geq k \neq
+    j}(a_j-a_k)} a_j^{-1} e^{-x/a_j} \right]\left[\sum_{j=m+1}^n
+\frac{(-a_j)^{n-m-1}}{\prod_{m < k \neq
+    j}(-a_j+a_k)} (-a_j^{-1})e^{-y/(-a_j)}\right]
+\\&= \sum_{j=1}^m \sum_{\ell=m+1}^n C_jC_\ell
+\Pr[Exponential(a_j) > Exponential(-a_\ell)]
+\\&= \sum_{j=1}^m \sum_{\ell=m+1}^n C_jC_\ell \frac{a_j}{a_j-a_\ell}
+\end{align*}
+where $C_j = \frac{a_j^{m-1}}{\prod_{m \geq k \neq
+    j}(a_j-a_k)}$ and $C_\ell = \frac{(-a_\ell)^{n-m-1}}{\prod_{m < k \neq
+    \ell}(-a_\ell+a_k)}$.
+
+
+
+
+\end{document}

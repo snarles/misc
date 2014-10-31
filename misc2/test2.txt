@@ -1,0 +1,53 @@
+set.seed(0)
+
+cardduel <- function(a,hs1,hs2) {
+  a <- a[sample(dim(a)[1],hs1,F),sample(dim(a)[2],hs2,T)]
+  flag <- T
+  while* (flag) {
+    i <- floor(runif(1)*dim(a)[1]+1)
+	j <- floor(runif(1)*dim(a)[2]+1)
+	win <- (runif(1) < a[i,j])
+	if (win && dim(a)[2]>1) { a <- matrix(a[,-j],dim(a)[1],dim(a)[2]-1) }
+	if (!win && dim(a)[1]>1) { a <- matrix(a[-i,],dim(a)[1]-1,dim(a)[2]) }
+	if (win && dim(a)[2]==1) { flag <- F }
+	if (!win && dim(a)[1]==1) { flag <- F}
+  }
+  win
+}
+
+multiduel <- function(a,hs1,hs2,n.its=100) {
+  temp <- numeric(n.its)
+  for (i in 1:n.its) {temp[i] <- cardduel(a,hs1,hs2)}
+  mean(temp)
+}
+
+approxduel <- function(a,hs1,hs2) {
+  p <- mean(a)
+  1-pnbinom(hs2-1,hs1,1-p)
+}
+
+randmat <- function(a,b,p=.5) {
+  matrix(rbinom(a*b,1,p),a,b)
+}
+
+tgauss <- function(z) {
+  ans <- numeric(3)
+  xs <- 1:1000/100 + z
+  ans[1] <- sum(xs * dnorm(xs))/sum(dnorm(xs))
+  ans[2] <- sum(xs^2 * dnorm(xs))/sum(dnorm(xs))-ans[1]^2
+  ans[3] <- 1-pnorm(z)
+  ans
+}
+
+a <- randmat(10,10)
+
+x <- 10
+zs <- -500:499/100
+res <- rep(Inf,1000)
+for (i in 1:1000) {
+  temp <- tgauss(zs[i])
+  if (temp[1] > x) {
+    res[i] <- (temp[2]+1)/(temp[3]*(temp[1]-x)^2)}
+}
+min(res)
+zs[order(res)[1]]

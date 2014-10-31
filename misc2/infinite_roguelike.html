@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<h1>An infinite roguelike</h1>
+
+<p>by Charles Zheng
+
+<h2>Introduction</h2>
+
+<p>Competitive games which initially provide interesting puzzles for the player eventually get solved:
+a set of strategies is worked out which guide optimal play of the game,
+and as the game is better understood, many of the players become bored of the game and move onto other games. This is one reason why game developers often release period updates to a game to add new content and refresh interest. However, the rate at which content is added to the game should be controlled.
+This is because there are two different types of players who enjoy the game for different reasons:
+"explorers", who enjoy exploring novel content and discovering secret mechanics,
+and "engineers", who enjoy optimizing their game play. The release of new content has an obvious appeal to explorers, however, it may not necessarily receive a warm welcome from engineers, since new mechanics and options could obsolete game-playing strategies developed and polished by engineers.  Content should be released regularly enough to satisfy explorers, but not so quickly as to outpace the ability of engineers to invent, test, refine, and exploit strategies based on the existing content.
+ 
+<p>Procedural content generation opens up the possibility of creating a game which already contains an infinite amount of content hidden in the game itself.  Starting from a random seed, the game uses procedures to generate new content as soon as the player starts to exhaust the existing content.  However, for the reasons discussed above, it would be desirable to have in-game mechanisms which can act to control the rate at which new content can be discovered by the player community.  Such a task seemingly requires the game developer to anticipate the characteristics of the entire game community before the game is even fully designed--a seemingly daunting task.  But in this article, we will attempt to use some mathematical models to inform how such a game could be implemented, with the obvious disclaimer that any the success of any such content control system can only be judged by testing with real players.
+
+<p>Our focus will be on roguelike games--single player games in which a character fights enemies, gains rewards to upgrade their character, and tries to survive as long as possible.  The genre is well-suited for a game with infinite content because of the fact that players will regularly complete games (by dying or by "ascending", a type of victory condition) and because extensive knowledge and strategy can be employed to maximize a player's chances of survival.  In this way, it becomes feasible to create metrics for measuring player performance in a roguelike.  In turn, such a performance metric provides a way to control content:  in order for players to unlock content, they must complete multiple high-quality playthroughs, where quality is measured by the performance metric.  The quality requirement is crucial to prevent players from unlocking content by merely grinding mindlessly, thus ensuring that the process for unlocking content is engaging rather than repetitive.
+
+<h2>A simple roguelike: Random card RPG</h2>
+
+<p>To demonstrate our idea, we present a game which is overly abstracted and simplified.  Since we take minimal considerations for human-friendliness in designing the game, we expect the game to be close to unplayable.  However, it is not implausible that the core framework of the game, when combined with more sophisticated generation models, could serve as the basis for an enjoyable and challenging game.
+
+<p>The survival mechanic is that the player has starts with 100 lives; they die if they lose their last life.  The player has an inventory of cards. From these cards they form their deck, which must consist of 20 cards, possibly with repeats.  In addition, the player initially possesses 5 special resurrection tokens--these allow the player to avoid losing combat, but also form the basis of the content control system.  Each turn, the player chooses to visit an area.  Initially, three areas are unlocked, but more can be unlocked by defeating special encounters.  Visiting an area either triggers a combat encounter with an enemy, or results in a "trap" which costs the player one life.  Advanced areas have more difficult enemies but lower trap rates, encouraging players to move into advanced areas as soon as they can handle the combats.
+
+<p>At the beginning of combat, the player draws five cards from their deck: the player will only be able to select among this set of five cards for the rest of the combat.  The enemy's has a fixed set of one or more cards specific to their enemy type (which may contain repeats).  In each combat round, the player and the enemy simultaneously choose a card.  The player's chosen card and the enemy's chosen card are revealed.  A weighted coin is flipped to determine whether the player's card beats the enemy's card, or vice versa.  The coin flip probability is obtained from a procedurally generated lookup table which contains the matchup probability for any pair of cards in the game.  The card which is beaten is eliminated, and cannot be used again for the rest of the combat.  The player wins if they eliminate all of the enemy's cards.  If the player's own cards are eliminated, they have the option to use a resurrection token: if they do so, the player's eliminated cards are restored.  Otherwise, the players loses on combat, and loses one life as a result. Player's cards are eliminated only temporarily; after the combat, they remain safe and intact in the player's deck.  The reward for winning combat depends on the enemy type: some enemies have a random chance of dropping one of their own cards for the player to add to the inventory; some special enemies unlock new areas or extend the player's lifeline of turns.
+
+<p>The lookup table for the cards is just an infinite matrix of iid uniform[0,1] variates.
+
+<p>The area and enemy structure are generated hierarchically: this provides an easy way to create some semblance of unity in the game.  The initial areas are numbered 1 - 3.  Each initial area can unlock three more difficult "daughter" areas: for instance, area 2 unlocks daughter areas 2.1, 2.2, and 2.3.  This tree structure continues indefinitely: area 2.2 unlocks daughter areas 2.2.1, 2.2.2, and 2.2.3.
+
+<p>In order so that areas can share common enemies, and enemies can share common cards, we make use of the following generation scheme.  All randomization is done using a pre-specified seed, so that all players are playing the same game. Card pool 0 consists of 25 cards.  We randomly partition card pool 0 into sub-pool 1+2+3, with 10 cards, and sub-pools 1+2, 2+3, and 1+3, each with 5 cards.  We form sub-pools 1, 2, and 3 by generating five new cards for each. Then we define card pool 1 as the union of sub-pools 1, 1+2,1+3, and 1+2+3, and define card pools 2 and 3 similarly.  In the same way that we created card pools 1, 2, and 3 from card pool 0, we create card pools 1.1, 1.2, and 1.3 from card pool 1, and so on, to generate a card pool for each area.
+
+<p>With the card pools and sub-pools in place, we generate enemies for each area.  All enemies in the initial areas have "size 3"--that is, card-sets of size 3.  The second-stage areas have a mix of enemies from the initial areas and new enemies of size 4.  This continues for the following stages: each daughter area inherits some of the enemies from its parent area, while adding new enemies with possibly bigger sizes.  In addition, each area has a special "boss" enemy with a bigger size, which unlocks new areas.  We discuss the size progression in the theoretical section.
+
+<p>Enemy 1+2+3 is generated by drawing its card set randomly with replacement from card sub-pool 1+2+3.  Enemy 1+2 is generated from the union of sub-pools 1+2 and sub-pool 1+2+3.  Enemy 1 is generated from card pool 1.  Then, area 1 contains enemy 1+2+3, enemy 1+2, enemy 1+3, and enemy 1, in addition to boss 1, which is generated from card pool 1.  We populate all of the areas similarly.
+
+<p>The player's starting deck is generated anew for each playthrough.  To create a deck with greater redundancy, we first sample 10 cards with replacement from card pool 0, then create the player's starting deck by sampling 20 times with replacement from the 10 cards.
+
+<p>Given specification for boss appearance probabilites, card drop rates, and hazard probabilities for each area, this description already suffices for a simple roguelike, with infinite content.  However, due to the player life limitation, the amount of content the player can realistically access remains limited.  Adding a content control system actually amounts to hiding secret mechanics by which the player can access entirely new areas parallel to the system of three areas.  But before we reveal our proposed method of doing so via resurrection tokens, we discuss the basic gameplay of the roguelike in the next section.
+
+
+</body>
+</html>
