@@ -18,7 +18,7 @@ badguy = function(ts) {
 }
 
 maxt = (1/sqrt(log(5)) - 1)/(-20*(1/sqrt(log(4))-1/sqrt(log(5)))) + 1/5
-ts = -1000:1000/1000
+ts = c(seq(1,.1,-.01),1/(10:1000))
 plot(ts,badguy(ts),type='l')
 points(maxt,0)
 
@@ -30,10 +30,51 @@ kerf= function(ts,kappa) {
     return (ans)
 }
 
-bd2 = ts*0
-a0 = (1-(1/sqrt(log(5))))/(1-1/(maxt*5))
-bd2 = bd2 + a0*kerf(ts,1/maxt)
+kerfs = function(ts, kappas, coefs) {
+    ans = 0*ts
+    for (ii in 1:length(kappas)) {
+        ans = ans + coefs[ii]*kerf(ts,kappas[ii])
+    }
+    return(ans)
+}
 
 bd1 = badguy(ts)
+a0 = (1-(1/sqrt(log(5))))/(1-1/(maxt*5))
+nits = 100
+coefs = numeric(nits)
+coefs[1] = a0
+kknots=  1/(3+(1:nits))
+kknots[1] = maxt
+ii=1
+for (ii in 2:nits) {
+    #plot(ts,bd1,type='l')
+    #lines(ts,kerfs(ts,1/kknots[1:ii],coefs[1:ii]),col='red')
+    #ii=ii+1    
+    nn = ii+4
+    val = kerfs(1/nn,1/kknots[1:(ii-1)],coefs[1:(ii-1)])
+    ygap = (1-1/sqrt(log(nn))) - val
+    anew = ygap/kerf(1/nn,1/kknots[ii])
+    coefs[ii]=anew
+    #kerfs(1/nn,1/kknots[1:ii],coefs[1:ii])
+    #1-1/sqrt(log(nn))
+}
+
+bd2 = kerfs(ts,1/kknots,coefs)
 plot(ts,bd1,type='l')
 lines(ts,bd2,col='red')
+
+plot(cumsum(coefs),type='l')
+
+# fourier transform
+
+ts = (-1e6:1e6)/1e5
+bd = badguy(ts)
+
+# fourier transform
+ft= function(ts, y, kappas) {
+    ans = 0*kappas
+    for (ii in 1:length(kappas)) {
+        ans = sum(cos(kappas*ts) * y)
+    }
+}
+ks = ft(ts,bd,seq(0,100,.1))
