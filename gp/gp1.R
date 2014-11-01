@@ -67,14 +67,19 @@ plot(cumsum(coefs),type='l')
 
 # fourier transform
 
-ts = (-1e6:1e6)/1e5
+ts = (-1e4:1e4)/1e3
 bd = badguy(ts)
 
 # fourier transform
 ft= function(ts, y, kappas) {
     ans = 0*kappas
     for (ii in 1:length(kappas)) {
-        ans = sum(cos(kappas*ts) * y)
+        ans[ii] = sum(cos(kappas[ii]*ts) * y)
     }
+    return(ans)
 }
-ks = ft(ts,bd,seq(0,100,.1))
+
+kappas = seq(0,100,.1)
+ks = ft(ts,bd,kappas)
+plot(kappas,ks,type='l')
+min(ks)
