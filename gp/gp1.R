@@ -38,6 +38,16 @@ kerfs = function(ts, kappas, coefs) {
     return(ans)
 }
 
+# fourier transform
+ft= function(ts, y, kappas) {
+    ans = 0*kappas
+    for (ii in 1:length(kappas)) {
+        ans[ii] = sum(cos(kappas[ii]*ts) * y)
+    }
+    return(ans)
+}
+
+
 bd1 = badguy(ts)
 a0 = (1-(1/sqrt(log(5))))/(1-1/(maxt*5))
 nits = 100
@@ -67,19 +77,22 @@ plot(cumsum(coefs),type='l')
 
 # fourier transform
 
-ts = (-1e5:1e5)/1e4
+ts = (-1e4:1e4)/1e3
 bd = badguy(ts)
-
-# fourier transform
-ft= function(ts, y, kappas) {
-    ans = 0*kappas
-    for (ii in 1:length(kappas)) {
-        ans[ii] = sum(cos(kappas[ii]*ts) * y)
-    }
-    return(ans)
-}
-
-kappas = seq(0,100,.1)
-ks = ft(ts,bd,kappas)
-plot(kappas,ks,type='l')
+kappas = 1:1000
+lambdas = ft(ts,bd,kappas)
+plot(kappas,lambdas,type='l')
 min(ks)
+nlam = length(lambdas)
+c0 = bd
+
+a = t(t(ts)) %x% t(rep(0:nlam))
+mat = cbind(cos(a),sin(a))
+mat = t(t(mat)*rep(c(sqrt(mean(c0)),sqrt(lambdas)),2))
+nrep = 10
+z = matrix(rnorm(2*nrep*(nlam+1)),2*(nlam+1),nrep)
+fs = mat %*% z
+dim(fs)
+temp = fs[1:2,] %*% t(fs)/nrep
+plot(ts,temp[1,],type='l'); lines(ts,c0,col='red')
+matplot(ts[1:1000],fs[1:1000,1:2],type='l')
