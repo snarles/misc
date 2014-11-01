@@ -74,15 +74,21 @@ Therefore for some $\epsilon_0 > 0$, some other constant $C$,
 \]
 for all $\epsilon < \epsilon_0$.
 
-This cannot be possible if $\bar{C}(t) <
-\frac{\bar{C}(2t)}{2}-\frac{1}{4}$ for all $t < t_0$ for some constant
-$D$.
-
-Yet, due to positive definiteness, we have
+Yet, from the triangle inequality, we have
 \[
-0 \leq \Var(f_0- f_t - f_{-t}) = 1+ 4\bar{C}(t) - 2\bar{C}(2t)
+||f_{-t}-f_0||_2 + ||f_0 - f_t||_2 \leq ||f_{-t}-f_{t}||_2
 \]
-a contradiction.
+or
+\[
+2\sqrt{\bar{C}(t)} \leq \sqrt{\bar{C}(2t)}
+\]
+so $4\bar{C}(t) \geq \bar{C}(2t)$ for all $t > 0$.
+
+This means that
+\[
+\lambda(\{t: \bar{C}(t) < \epsilon\}) \geq 2\lambda(\{t: \bar{C}(t) < 4\epsilon\})
+\]
+for sufficiently small $t$.
 
 \section{Supremum of an isotropic GP}
 
