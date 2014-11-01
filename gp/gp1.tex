@@ -44,13 +44,29 @@ then
 \mathbb{P}[\sup_{t \in D} f_t  > u] \leq \mathbb{P}[\sup_{t \in D} g_t  > u]
 \]
 
-\noindent\textbf{Theorem.} Let $f$ be centered stationary Gaussian
+\noindent\textbf{Theorem.}\label{entropy} Let $f$ be centered stationary Gaussian
 process on a compact group $T$. Then the following three conditions
 are equivalent: (i) $f_t$ is continuous (ii) $f_t$ is bounded (iii)
 \[
 \int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon < \infty 
 \]
 
+\section{Isotropic GPs are bounded}
+
+Take centered isotropic $f_t$ on the real line with $C(t) > 0$ for $t
+\neq 0$.  We will show that $f_t$ is bounded on the interval $[0,T]$.
+
+Otherwise, it follows from theorem \ref{entropy} that 
+for some constant $C$ and $\varepsilon_0 > 0$, we have
+\[
+H(\varepsilon) > \frac{C}{\varepsilon^4}
+\]
+for all $\varepsilon < \varepsilon_0$.
+We have
+\[
+H(\varepsilon) = \log(N(\varepsilon)) \leq \log(T) - \log(\lambda(\{t:
+C(t) > 1-\frac{\varepsilon}{2}\}))
+\]
 
 \section{Supremum of an isotropic GP}
 
@@ -115,57 +131,6 @@ This is because one can find a mixture density $\rho(k)$ such that
 C(t) = \int_0^\infty C_\kappa(t) \rho(\kappa) d\kappa
 \]
 
-\section{Nonexistence of unbounded isotropic GP}
-
-We attempt to show that if $C(t) = 0$, $C(t) \to \infty$ as $t \to
-\infty$, and $C(t) > 0$ for $t \neq 0$, that $f_t$ is continuous and
-therefore bounded on an interval.
-Otherwise,
-\[
-\int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon \to \infty
-\]
-
-This in turn implies something like
-\[
-\lambda(\{t: C(t) > 1-\epsilon\}) \sim \exp(-\exp(1/t))
-\]
-
-We can try to derive a contradiction.
-Let $\rho(\kappa)$ be the reflected Fourier transform of $C(t)$, so
-\[
-C(t) = \int_0^\infty \rho(\kappa) \cos(\kappa t)
-\]
-Since $C(0)=1$, $\rho(\kappa)$ is a probability distribution.
-We know that $\rho$ has no first moment because $C(t)$ is
-nondifferentiable at 0.
-
-It must be that $-C'(t) \geq \text{const}/t^2$ as $t \to 0$.
-Meanwhile
-\[
--C'(t) = \int_0^\infty \rho(\kappa) \kappa \sin(\kappa t) d\kappa
-\]
-
-We have to show that the intergral on the right can't possible tend to
-$\text{const}/t$ as $t \to 0$.
-
-We know that $\kappa \sin(\kappa t)$ is positive from 0 to
-$\frac{\pi}{t}$.
-Hence we have
-\[
-\int_0^{\frac{\pi}{t}}\kappa \sin(\kappa t) \rho(\kappa) d\kappa \sim
-\text{const} 1/t
-\]
-for $t$ small.
-It remains to show that the rest of the integral
-\[
-\int_{\frac{\pi}{t}}^\infty \kappa \sin(\kappa t) \rho(\kappa) d\kappa \sim
-\text{const} 1/t
-\]
-can't be too large. For any particular $t$ in $[0,\delta]$ it could be
-large, but it may be possible to show that the average value of the
-above interval is small for $t \in [\delta/2,\delta]$, say.
-Then we would have to show that this suffices to establish that
-$\int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon \to \infty$.
 
 
 \section{References}
