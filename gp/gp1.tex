@@ -57,6 +57,28 @@ Take centered isotropic $f_t$ on the real line with $C(t) > 0$ for $t
 \neq 0$.  We will show that $f_t$ is bounded on the interval
 $[0,T]$. Let $\bar{C}(t) = 1-C(t)$.
 
+From the triangle inequality, we have
+\[
+||f_{-t}-f_0||_2 + ||f_0 - f_t||_2 \leq ||f_{-t}-f_{t}||_2
+\]
+or
+\[
+2\sqrt{\bar{C}(t)} \leq \sqrt{\bar{C}(2t)}
+\]
+so $4\bar{C}(t) \geq \bar{C}(2t)$ for all $t > 0$.
+
+Now define $G(t) = \sup_{s > t} C(s)$ for $t \geq 0$.  If $G(t) = 1$
+for $t > 0$, then $f_t$ is a random constant function and we are done.
+Otherwise, $G(t)$ is a decreasing function which has $G(t) < 1$ for
+all $t >0$.
+
+This means that
+\[
+\lambda(\{t: \bar{C}(t) < \epsilon\}) \geq 2\lambda(\{t: \bar{C}(t) < 4\epsilon\})
+\]
+for sufficiently small $t$.
+
+
 Otherwise, it follows from theorem \ref{entropy} that 
 for some constant $C$ and $\varepsilon_0 > 0$, we have
 \[
@@ -73,23 +95,10 @@ Therefore for some $\epsilon_0 > 0$, some other constant $C$,
 \lambda(\{t: \bar{C}(t) < \epsilon\}) < \exp(-\frac{C}{\epsilon^2})
 \]
 for all $\epsilon < \epsilon_0$.
-
-Yet, from the triangle inequality, we have
+But
 \[
-||f_{-t}-f_0||_2 + ||f_0 - f_t||_2 \leq ||f_{-t}-f_{t}||_2
+\lambda(\{t: \bar{C}(t) < \epsilon\}) \leq \lambda(\{t: \bar{G}(t) < \epsilon\})
 \]
-or
-\[
-2\sqrt{\bar{C}(t)} \leq \sqrt{\bar{C}(2t)}
-\]
-so $4\bar{C}(t) \geq \bar{C}(2t)$ for all $t > 0$.
-
-This means that
-\[
-\lambda(\{t: \bar{C}(t) < \epsilon\}) \geq 2\lambda(\{t: \bar{C}(t) < 4\epsilon\})
-\]
-for sufficiently small $t$.
-
 \section{Supremum of an isotropic GP}
 
 Let $f_t$ be a gaussian process on $\mathbb{R}^D$, with $\Cov(f_t,f_u)
