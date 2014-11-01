@@ -51,59 +51,38 @@ are equivalent: (i) $f_t$ is continuous (ii) $f_t$ is bounded (iii)
 \int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon < \infty 
 \]
 
-\section{Isotropic GPs are locally bounded}
+\section{Example of unbounded isotropic GP}
 
-Take centered isotropic $f_t$ on the real line with $C(t) > 0$ for $t
-\neq 0$.  We will show that $f_t$ is bounded on the interval
-$[0,T]$. Let $\bar{C}(t) = 1-C(t)$.
+Note that 
+\[
+C_\kappa(t) = [1-\kappa|t|]_+
+\]
+is a covariance kernel. This implies the following:
 
-From the triangle inequality, we have
+Suppose $C(0) = 1$, $-C'(t) > 0$ for $t > 0$ but $-C'(t)$ decreasing
+for $t > 0$.
+Then $C(t)$ is a covariance kernel for a gaussian process.
+This is because one can find a mixture density $\rho(k)$ such that
 \[
-||f_{-t}-f_0||_2 + ||f_0 - f_t||_2 \leq ||f_{-t}-f_{t}||_2
+C(t) = \int_0^\infty C_\kappa(t) \rho(\kappa) d\kappa
 \]
-or
-\[
-2\sqrt{\bar{C}(t)} \leq \sqrt{\bar{C}(2t)}
-\]
-so $4\bar{C}(t) \geq \bar{C}(2t)$ for all $t > 0$.
 
-Now define $G(t) = \sup_{s > t} C(s)$ for $t \geq 0$.  If $G(t) = 1$
-for $t > 0$, then $f_t$ is a random constant function and we are done.
-Otherwise, $G(t)$ is a decreasing function which has $G(t) < 1$ for
-all $t >0$.
-
-This means that
-\[
-\lambda(\{t: \bar{C}(t) < \epsilon\}) \geq 2\lambda(\{t: \bar{C}(t) < 4\epsilon\})
+Then define 
+\[C(t) = \begin{cases}
+1-\frac{1}{\sqrt{\log(-|t|)}} & \text{ for }t \in
+[-\exp(-\sqrt{3/2}),\exp(\sqrt{3/2})]\\
+\left[1-\frac{1}{\sqrt{3/2}} - \frac{t}{2 \exp(-\sqrt{3/2})(3/2)^{3/2}}\right]_+
+& \text{ for }|t| > \exp(\sqrt{3/2})
+\end{cases}
 \]
-for sufficiently small $t$.
+It follows that by Theorem \ref{entropy} that $f_t$ is unbounded.
 
 
-Otherwise, it follows from theorem \ref{entropy} that 
-for some constant $C$ and $\varepsilon_0 > 0$, we have
-\[
-H(\varepsilon) > \frac{C}{\varepsilon^4}
-\]
-for all $\varepsilon < \varepsilon_0$.
-We have
-\[
-H(\varepsilon) = \log(N(\varepsilon)) \leq \log(T) - \log(\lambda(\{t:
-C(t) > 1-\frac{\varepsilon}{2}\}))
-\]
-Therefore for some $\epsilon_0 > 0$, some other constant $C$,
-\[
-\lambda(\{t: \bar{C}(t) < \epsilon\}) < \exp(-\frac{C}{\epsilon^2})
-\]
-for all $\epsilon < \epsilon_0$.
-But
-\[
-\lambda(\{t: \bar{C}(t) < \epsilon\}) \leq \lambda(\{t: \bar{G}(t) < \epsilon\})
-\]
 \section{Supremum of an isotropic GP}
 
 Let $f_t$ be a gaussian process on $\mathbb{R}^D$, with $\Cov(f_t,f_u)
 = C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
-Then since we know $f_t$ is bounded on an interval,
+Then supposing $f_t$ is bounded on an interval,
 \[
 \mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[-T,T]^D}
     f_t}{\sqrt{2D\log(T)}} = 1
@@ -146,21 +125,6 @@ This can be used to show
 \right) = 1
 \]
 
-\section{One-dimensional isotropic gaussian processes}
-
-Now that 
-\[
-C_\kappa(t) = [1-\kappa|t|]_+
-\]
-is a covariance kernel. This implies the following:
-
-Suppose $C(0) = 1$, $-C''(t) > 0$ for $t > 0$ and $-\int_0^\infty t
-C'(t) <\infty$.
-Then $C(t)$ is a covariance kernel for a gaussian process.
-This is because one can find a mixture density $\rho(k)$ such that
-\[
-C(t) = \int_0^\infty C_\kappa(t) \rho(\kappa) d\kappa
-\]
 
 
 

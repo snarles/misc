@@ -67,7 +67,7 @@ plot(cumsum(coefs),type='l')
 
 # fourier transform
 
-ts = (-1e4:1e4)/1e3
+ts = (-1e5:1e5)/1e4
 bd = badguy(ts)
 
 # fourier transform
