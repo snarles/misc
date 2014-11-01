@@ -17,7 +17,7 @@
 \newcommand{\diag}{\text{diag}}
 \newcommand{\argmax}{\text{argmax}}
 \newcommand{\Cov}{\text{Cov}}
-%\newcommand{\Var}{\text{Var}}
+\newcommand{\Var}{\text{Var}}
 
 Charles Zheng
 
@@ -51,10 +51,11 @@ are equivalent: (i) $f_t$ is continuous (ii) $f_t$ is bounded (iii)
 \int_0^\infty \sqrt{H(\varepsilon)} d\varepsilon < \infty 
 \]
 
-\section{Isotropic GPs are bounded}
+\section{Isotropic GPs are locally bounded}
 
 Take centered isotropic $f_t$ on the real line with $C(t) > 0$ for $t
-\neq 0$.  We will show that $f_t$ is bounded on the interval $[0,T]$.
+\neq 0$.  We will show that $f_t$ is bounded on the interval
+$[0,T]$. Let $\bar{C}(t) = 1-C(t)$.
 
 Otherwise, it follows from theorem \ref{entropy} that 
 for some constant $C$ and $\varepsilon_0 > 0$, we have
@@ -67,12 +68,27 @@ We have
 H(\varepsilon) = \log(N(\varepsilon)) \leq \log(T) - \log(\lambda(\{t:
 C(t) > 1-\frac{\varepsilon}{2}\}))
 \]
+Therefore for some $\epsilon_0 > 0$, some other constant $C$,
+\[
+\lambda(\{t: \bar{C}(t) < \epsilon\}) < \exp(-\frac{C}{\epsilon^2})
+\]
+for all $\epsilon < \epsilon_0$.
+
+This cannot be possible if $\bar{C}(t) <
+\frac{\bar{C}(2t)}{2}-\frac{1}{4}$ for all $t < t_0$ for some constant
+$D$.
+
+Yet, due to positive definiteness, we have
+\[
+0 \leq \Var(f_0- f_t - f_{-t}) = 1+ 4\bar{C}(t) - 2\bar{C}(2t)
+\]
+a contradiction.
 
 \section{Supremum of an isotropic GP}
 
 Let $f_t$ be a gaussian process on $\mathbb{R}^D$, with $\Cov(f_t,f_u)
 = C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
-Then if $f_t$ is bounded on an interval,
+Then since we know $f_t$ is bounded on an interval,
 \[
 \mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[-T,T]^D}
     f_t}{\sqrt{2D\log(T)}} = 1
