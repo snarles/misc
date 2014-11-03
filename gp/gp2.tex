@@ -131,7 +131,11 @@ Hence
 \begin{equation}\label{bcres1}
 \sum_{n=1}^\infty \mathbb{P}(\sup_{t \in [0,T]} (1-\varepsilon)\sqrt{2\log(T_0+n-1)}) < \infty
 \end{equation}
-which by Borel-Cantelli implies the result $\Box$.
+which by Borel-Cantelli, and the fact that
+\[
+\liminf_{T \to \infty} \frac{\sup_{[0,T]} f_t}{\sqrt{2 \log(T)}} \leq \liminf_{n \to \infty} \frac{\sup_{[0,T_0+n]} f_t}{\sqrt{2 \log(T_0+n-1)}}
+\]
+implies the result $\Box$.
 
 \begin{theorem}
 Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
