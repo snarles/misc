@@ -71,8 +71,8 @@ Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
 = C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
 Then supposing $f_t$ is bounded on $[0,1]$,
 \[
-\mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}} = 1
+\mathbb{P}\left(\liminf_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} \geq 1
 \right) = 1
 \]
 \end{theorem}
@@ -81,21 +81,20 @@ Then supposing $f_t$ is bounded on $[0,1]$,
 
 It suffices to prove
 \[
-\mathbb{P}\left( 1-\varepsilon \leq \lim_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}} \leq 1+\varepsilon
-\right) = 1
+\mathbb{P}\left( 1-\varepsilon \leq \liminf_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}}\right) = 1
 \]
-for arbitrary $\epsilon \in (0,1)$.
+for arbitrary $\varepsilon \in (0,1)$.
 
-Take $\epsilon \in (0,1)$.
+Take $\varepsilon \in (0,1)$.
 
 Find $\tau > 0$ such that $C(\tau) <
 \frac{\varepsilon}{2-\varepsilon}$ and find $T_0 > 0$ such that $T > \max\{ 2\tau,\frac{2-\varepsilon}{\varepsilon} \log(2\tau), e^{\frac{1-C(\tau)}{(1-\varepsilon)^2}}\}$.  For each of $n =
-1,\hdots,$, let $T = T_0 + n - 1$, and let let $m = \lfloor
+1,\hdots,$, let $T = T_0 + n$, and let let $m = \lfloor
 \frac{T+1}{\tau} \rfloor$.  Define $t_k = k\tau$ for $k = 1,\hdots,m$.
-Let $Z_1,\hdots, Z_m$ be iid $N(0,1-C(\tau))$.  We have
+Let $Z_1,\hdots, Z_m$ be iid $N(0,1-C(\tau))$.  For $i \neq j$, we have
 \[
-\mathbb{E}[(Z_i - Z_j)^2] \leq 2(1-C(\tau)) \leq 2(1-C((i-j)\tau)) = \mathbb{E}[(f_{t_i}-f_{t_j})^2]
+\mathbb{E}[(Z_i - Z_j)^2] = 2(1-C(\tau)) \leq 2(1-C((i-j)\tau)) = \mathbb{E}[(f_{t_i}-f_{t_j})^2]
 \]
 
 Hence by Slepian's inequality,
@@ -122,36 +121,48 @@ we have
 \\&\leq \left(1-\left(\frac{\sqrt{1-C(\tau)}}{u} - \frac{(1-C(\tau))^{3/2}}{u^3}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right)^m
 \\&\leq \left(1-\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right)^m
 \\& \leq \exp\left(-m\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right) 
+\\& \leq \exp\left(-m\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\phi\left(\left(1-\frac{\varepsilon}{2}\right)\sqrt{2 \log\left(\frac{T}{\tau}-1\right)}\right)\right) 
+\\& = \exp\left(-\frac{m}{\sqrt{2\pi}\left(\frac{T}{\tau}-1\right)^{(1-\frac{\varepsilon}{2})^2}}\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\right)
+\\& \leq \exp\left(-\frac{\frac{T}{\tau}-1}{\sqrt{2\pi}\left(\frac{T}{\tau}-1\right)^{(1-\frac{\varepsilon}{2})^2}}\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\right)
+\\& = \exp\left(-\frac{\left(\frac{T}{\tau}-1\right)^{1-(1-\frac{\varepsilon}{2})^2}}{\sqrt{2\pi}}\left(\frac{\sqrt{1-C(\tau)}}{2(1-\varepsilon)\sqrt{2\log(T-1)}}\right)\right)
+\\& = \exp\left(-\frac{\left(\frac{T_0 + n}{\tau}-1\right)^{1-(1-\frac{\varepsilon}{2})^2}}{\sqrt{2\pi}}\left(\frac{\sqrt{1-C(\tau)}}{2(1-\varepsilon)\sqrt{2\log(T_0+n-1)}}\right)\right)
 \end{align}
+Hence
+\begin{equation}\label{bcres1}
+\sum_{n=1}^\infty \mathbb{P}(\sup_{t \in [0,T]} (1-\varepsilon)\sqrt{2\log(T_0+n-1)}) < \infty
+\end{equation}
+which by Borel-Cantelli implies the result $\Box$.
 
-Now note
-that as $T \to \infty$,
+\begin{theorem}
+Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
+= C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
+Then supposing $f_t$ is bounded on $[0,1]$,
 \[
-\mathbb{P}\left(\lim_{T \to \infty}\frac{\max
-    Z_t}{\sqrt{2D\log(T)}} = 1
+\lim_{T \infty \infty }\mathbb{P}\left(1-\varepsilon \leq \lim_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} \leq 1+\varepsilon
 \right) = 1
 \]
-This suggests, and with some more detailed analysis, implies that
+for all $\varepsilon \in (0,1)$.
+\end{theorem}
+
+\noindent\textbf{Proof.}
+
+The lower bound follows from the previous result.
+Let $\mu=\mathbb{E}[\sup_{[0,1]} f_t]$, so that
 \[
-\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
-    f_t}{\sqrt{2D\log(T)}} \geq 1
-\right) = 1
+\mathbb{P}[\sup_{t \in [0,1]} f_t > u] \leq e^{-(u-\mu)^2/2}
 \]
-
-\emph{1. Upper bound}.
-
-Partition $[-T,T]^D$ into hypercubes of edge length 1.
-By union bound and Borrell-TIS inequality,
-\[\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D
-\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D e^{-u^2/2}\]
-This can be used to show
+for all $u > \mu$.
+For any $T >0$, letting $n = \lceil T \rceil$ using union bound and isotropy, we have
 \[
-\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
-    f_t}{\sqrt{2D\log(T)}} \leq 1
-\right) = 1
+\mathbb{P}[\sup_{t \in [0,T]} f_t > u]  \leq \mathbb{P}[\max_{i = \{1,\hdots,n\}} \sup_{t \in [i-1,i]} f_t > u] \leq n\mathbb{P}[\sup_{t \in [0,1]} f_t > u] \leq ne^{-(u-\mu)^2/2}
 \]
-
-
+for all $u > \mu$.
+Therefore, defining $u = (1+\varepsilon)\sqrt{2\log(T)}$, and taking $n$ large enough so that $u > \mu$, we get
+\[
+\mathbb{P}[\sup_{t \in [0,T]} f_t > u] \leq ne^{-(u-\mu)^2/2} = \frac{n}{(n+1)^{(1+\varepsilon)^2}}\exp\left(-\mu (1+\varepsilon)\sqrt{2\log(n+1)} - \frac{\mu^2}{2}\right)
+\]
+which tends to 0 as $T \to \infty$. $\Box$
 
 
 \section{References}
