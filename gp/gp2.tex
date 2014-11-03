@@ -89,6 +89,7 @@ for arbitrary $\varepsilon \in (0,1)$.
 
 Take $\varepsilon \in (0,1)$.
 
+First we establish an almost sure lower bound for $\sup_{[0,T]}f_t / \sqrt{2\log T}$.
 Find $\tau > 0$ such that $C(\tau) <
 \frac{\varepsilon}{2-\varepsilon}$ and find $T_0 > 0$ such that $T > \max\{ 2\tau,\frac{2-\varepsilon}{\varepsilon} \log(2\tau), e^{\frac{1-C(\tau)}{(1-\varepsilon)^2}}\}$.  For each of $n =
 1,\hdots,$, let $T = T_0 + n$, and let let $m = \lfloor
@@ -139,10 +140,11 @@ which by Borel-Cantelli, and the fact that
 implies
 \begin{equation}\label{lb}
 \mathbb{P}\left(\liminf_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}} \geq 1
+    f_t}{\sqrt{2 \log(T)}} \geq 1-\varepsilon
 \right) = 1
 \end{equation}
 
+Now we will establish the almost sure upper bound for $\sup_{[0,T]} f_t/\sqrt{2\log T}$.
 Let $\mu=\mathbb{E}[\sup_{[0,1]} f_t]$, so that
 \[
 \mathbb{P}[\sup_{t \in [0,1]} f_t > u] \leq e^{-(u-\mu)^2/2}
@@ -150,18 +152,18 @@ Let $\mu=\mathbb{E}[\sup_{[0,1]} f_t]$, so that
 for all $u > \mu$.
 Note that
 \begin{align}
-\mathbb{P}\left(\limsup \frac{\sup_{t \in [0,T]} f_t}{\sqrt{2\log T}} > 1+\varepsilon \right)  \leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbb{1}\{\sup_{t \in [0,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)
-\\& \leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbb{1}\{\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)\label{ineq1}
+\mathbb{P}\left(\limsup_{T \to \infty} \frac{\sup_{t \in [0,T]} f_t}{\sqrt{2\log T}} > 1+\varepsilon \right)  &\leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbf{1}\{\sup_{t \in [0,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)
+\\& \leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbf{1}\{\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)\label{ineq1}
 \end{align}
 Meanwhile,
 \[
-\sum_{n=1}^\infty \mathbb{P}\left(\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)} \right) \leq  \sum_{n=1}^\infty e^{-(\sqrt{2\log(n-1)-\mu})^2/2} < \infty
+\sum_{n=1}^\infty \mathbb{P}\left(\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)} \right) \leq  \sum_{n=1}^\infty e^{-((1-\varepsilon)^2\sqrt{2\log(n-1)}-\mu)^2/2} < \infty
 \]
 Hence by the Borel-Cantelli lemma and \eqref{ineq1},
 \[
 \mathbb{P}\left(\limsup \frac{\sup_{t \in [0,T]} f_t}{\sqrt{2\log T}} > 1+\varepsilon \right) =1
 \]
-Combining this with \eqref{lb} yields the desired result. $\Box$.
+Combining this with \eqref{lb}, and taking $\varepsilon$ to zero, yields the desired result. $\Box$.
 
 \section{References}
 
