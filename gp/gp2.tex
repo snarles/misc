@@ -1,0 +1,161 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Var}{\text{Var}}
+\newtheorem{theorem}{Theorem}
+
+Charles Zheng
+
+\section{Background}
+
+\begin{theorem}
+\label{bound}
+Define $\phi(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}$ and
+\[
+\Psi(x) = \int_x^\infty \phi(t) dt
+\]
+for $x \in \mathbb{R}$.
+Then
+\[
+\left(\frac{1}{x^3}-\frac{1}{x}\right) \phi(x) \leq \Psi(x) \leq \frac{1}{x}\phi(x)
+\]
+\end{theorem}
+
+\begin{theorem}
+\label{bt}
+\textbf{(Borell-TIS inequality)}
+Let $f_t$ be a gaussian process such that $\mathbb{E}[f_t] = 0$
+Then on any measurable set $D$, and $u > 0$, 
+\[
+\mathbb{P}[\sup_D f_t > u + \mathbb{E}[\sup_D f_t]] \leq \exp(-u^2/(2\sigma_{max}^2))
+\]
+where
+\[
+\sigma_{max} = \sup_D \E[f_t^2]
+\]
+\end{theorem}
+
+\begin{theorem}\label{slepian}
+\textbf{(Slepian's inequality)}
+If $f$ and $g$ are as bounded, centered gaussian processes, and
+\[
+\mathbb{E}[(f_t-f_s)^2] \leq \mathbb{E}[(g_t-g_s)^2]
+\]
+then
+\[
+\mathbb{P}[\sup_{t \in D} f_t  > u] \leq \mathbb{P}[\sup_{t \in D} g_t  > u]
+\]
+\end{theorem}
+
+\section{Supremum of an isotropic GP}
+
+\begin{theorem}
+Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
+= C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
+Then supposing $f_t$ is bounded on $[0,1]$,
+\[
+\mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} = 1
+\right) = 1
+\]
+\end{theorem}
+
+\noindent\textbf{Proof.}
+
+It suffices to prove
+\[
+\mathbb{P}\left( 1-\varepsilon \leq \lim_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} \leq 1+\varepsilon
+\right) = 1
+\]
+for arbitrary $\epsilon \in (0,1)$.
+
+Take $\epsilon \in (0,1)$.
+
+Find $\tau > 0$ such that $C(\tau) <
+\frac{\varepsilon}{2-\varepsilon}$ and find $T_0 > 0$ such that $T > \max\{ 2\tau,\frac{2-\varepsilon}{\varepsilon} \log(2\tau), e^{\frac{1-C(\tau)}{(1-\varepsilon)^2}}\}$.  For each of $n =
+1,\hdots,$, let $T = T_0 + n - 1$, and let let $m = \lfloor
+\frac{T+1}{\tau} \rfloor$.  Define $t_k = k\tau$ for $k = 1,\hdots,m$.
+Let $Z_1,\hdots, Z_m$ be iid $N(0,1-C(\tau))$.  We have
+\[
+\mathbb{E}[(Z_i - Z_j)^2] \leq 2(1-C(\tau)) \leq 2(1-C((i-j)\tau)) = \mathbb{E}[(f_{t_i}-f_{t_j})^2]
+\]
+
+Hence by Slepian's inequality,
+\[
+\mathbb{P}(\sup_{t \in [0,T]} f_t > u) \geq
+\mathbb{P}(\max_{i \in \{1,\hdots,m\}} f_{t_i} > u) \geq
+\mathbb{P}(\max_{i \in \{1,\hdots,m\}} Z_i > u)\]
+for all $u > 0$.
+Thus, taking $u = (1-\varepsilon)\sqrt{2\log(T+1)}$
+so that
+\[
+u \leq 
+\left(1-\frac{\varepsilon}{2}\right) \sqrt{2(1-C(\tau)) \log\left(\frac{T}{\tau}-1\right)}
+\]
+and
+\[
+\frac{\sqrt{1-C(\tau)}}{u} - \frac{(1-C(\tau))^{3/2}}{u^3} \leq \frac{\sqrt{1-C(\tau)}}{2u}
+\]
+we have
+\begin{align}
+\mathbb{P}(\sup_{t \in [0,T]} f_t < \sqrt{2\log (T-1)}(1-\epsilon))
+&\leq \mathbb{P}(\max_{i \in \{1,\hdots,m\}} Z_i < u)
+\\&= \left(1-\Psi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right)^m
+\\&\leq \left(1-\left(\frac{\sqrt{1-C(\tau)}}{u} - \frac{(1-C(\tau))^{3/2}}{u^3}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right)^m
+\\&\leq \left(1-\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right)^m
+\\& \leq \exp\left(-m\left(\frac{\sqrt{1-C(\tau)}}{2u}\right)\phi\left(\frac{u}{\sqrt{1-C(\tau)}}\right)\right) 
+\end{align}
+
+Now note
+that as $T \to \infty$,
+\[
+\mathbb{P}\left(\lim_{T \to \infty}\frac{\max
+    Z_t}{\sqrt{2D\log(T)}} = 1
+\right) = 1
+\]
+This suggests, and with some more detailed analysis, implies that
+\[
+\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
+    f_t}{\sqrt{2D\log(T)}} \geq 1
+\right) = 1
+\]
+
+\emph{1. Upper bound}.
+
+Partition $[-T,T]^D$ into hypercubes of edge length 1.
+By union bound and Borrell-TIS inequality,
+\[\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D
+\mathbb{P}(\sup_{[-T,T]^D} f_t \geq u) \leq (2T)^D e^{-u^2/2}\]
+This can be used to show
+\[
+\mathbb{P}\left(\limsup_{T \to \infty}\frac{\sup_{[-T,T]^D}
+    f_t}{\sqrt{2D\log(T)}} \leq 1
+\right) = 1
+\]
+
+
+
+
+\section{References}
+
+Adler RF, Taylor J. \emph{Random Fields and Geometry}
+
+\end{document}
