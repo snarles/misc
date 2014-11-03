@@ -71,8 +71,8 @@ Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
 = C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
 Then supposing $f_t$ is bounded on $[0,1]$,
 \[
-\mathbb{P}\left(\liminf_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}} \geq 1
+\mathbb{P}\left(\lim_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} = 1
 \right) = 1
 \]
 \end{theorem}
@@ -82,7 +82,8 @@ Then supposing $f_t$ is bounded on $[0,1]$,
 It suffices to prove
 \[
 \mathbb{P}\left( 1-\varepsilon \leq \liminf_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}}\right) = 1
+    f_t}{\sqrt{2 \log(T)}} \leq \limsup_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} \leq 1+\varepsilon \right) = 1
 \]
 for arbitrary $\varepsilon \in (0,1)$.
 
@@ -135,39 +136,32 @@ which by Borel-Cantelli, and the fact that
 \[
 \liminf_{T \to \infty} \frac{\sup_{[0,T]} f_t}{\sqrt{2 \log(T)}} \leq \liminf_{n \to \infty} \frac{\sup_{[0,T_0+n]} f_t}{\sqrt{2 \log(T_0+n-1)}}
 \]
-implies the result $\Box$.
-
-\begin{theorem}
-Let $f_t$ be a gaussian process on $\mathbb{R}$, with $\Cov(f_t,f_u)
-= C(t-u)$, where $C(0) = 1$, and $C(t) \to 0$ as $||t|| \to \infty$.
-Then supposing $f_t$ is bounded on $[0,1]$,
-\[
-\lim_{T \infty \infty }\mathbb{P}\left(1-\varepsilon \leq \lim_{T \to \infty}\frac{\sup_{[0,T]}
-    f_t}{\sqrt{2 \log(T)}} \leq 1+\varepsilon
+implies
+\begin{equation}\label{lb}
+\mathbb{P}\left(\liminf_{T \to \infty}\frac{\sup_{[0,T]}
+    f_t}{\sqrt{2 \log(T)}} \geq 1
 \right) = 1
-\]
-for all $\varepsilon \in (0,1)$.
-\end{theorem}
+\end{equation}
 
-\noindent\textbf{Proof.}
-
-The lower bound follows from the previous result.
 Let $\mu=\mathbb{E}[\sup_{[0,1]} f_t]$, so that
 \[
 \mathbb{P}[\sup_{t \in [0,1]} f_t > u] \leq e^{-(u-\mu)^2/2}
 \]
 for all $u > \mu$.
-For any $T >0$, letting $n = \lceil T \rceil$ using union bound and isotropy, we have
+Note that
+\begin{align}
+\mathbb{P}\left(\limsup \frac{\sup_{t \in [0,T]} f_t}{\sqrt{2\log T}} > 1+\varepsilon \right)  \leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbb{1}\{\sup_{t \in [0,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)
+\\& \leq \mathbb{P}\left(\sum_{n=1}^\infty \mathbb{1}\{\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)}\} = \infty \right)\label{ineq1}
+\end{align}
+Meanwhile,
 \[
-\mathbb{P}[\sup_{t \in [0,T]} f_t > u]  \leq \mathbb{P}[\max_{i = \{1,\hdots,n\}} \sup_{t \in [i-1,i]} f_t > u] \leq n\mathbb{P}[\sup_{t \in [0,1]} f_t > u] \leq ne^{-(u-\mu)^2/2}
+\sum_{n=1}^\infty \mathbb{P}\left(\sup_{t \in [n-1,n]} f_t > (1+\varepsilon) \sqrt{2\log (n-1)} \right) \leq  \sum_{n=1}^\infty e^{-(\sqrt{2\log(n-1)-\mu})^2/2} < \infty
 \]
-for all $u > \mu$.
-Therefore, defining $u = (1+\varepsilon)\sqrt{2\log(T)}$, and taking $n$ large enough so that $u > \mu$, we get
+Hence by the Borel-Cantelli lemma and \eqref{ineq1},
 \[
-\mathbb{P}[\sup_{t \in [0,T]} f_t > u] \leq ne^{-(u-\mu)^2/2} = \frac{n}{(n+1)^{(1+\varepsilon)^2}}\exp\left(-\mu (1+\varepsilon)\sqrt{2\log(n+1)} - \frac{\mu^2}{2}\right)
+\mathbb{P}\left(\limsup \frac{\sup_{t \in [0,T]} f_t}{\sqrt{2\log T}} > 1+\varepsilon \right) =1
 \]
-which tends to 0 as $T \to \infty$. $\Box$
-
+Combining this with \eqref{lb} yields the desired result. $\Box$.
 
 \section{References}
 
