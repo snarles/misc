@@ -80,7 +80,7 @@ partition.kids <- function(res) {
 
 #p = c(.2,.4,.3,.1)
 p = runif(5); p =p/sum(p)
-n.fam = 1000
+n.fam = 100000
 res <- gen.pop(p,n.fam)
                                         # check that the family sizes are the right distribution
 counts <- apply(t(1:n.fam),2,function(fam.id) {sum(res$famid==fam.id)})
