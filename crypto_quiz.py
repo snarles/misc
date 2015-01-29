@@ -23,7 +23,7 @@ for i in range(ntrials):
             flag = False
 
 ntrials = input("number of decoding trials: ")
-for i in range(ntrials):
+for i in range(ntrials, 2*ntrials):
     word = words[i]
     solution = ''.join([codebook[s] for s in word])
     flag = True
