@@ -12,7 +12,7 @@ codebook = {i : j for (i,j) in zip(code0, code)}
 print(codebook)
 npr.shuffle(words)
 
-ntrials = input("number of trials: ")
+ntrials = input("number of encoding trials: ")
 for i in range(ntrials):
     word = words[i]
     solution = ''.join([codebook[s] for s in word])
@@ -21,3 +21,14 @@ for i in range(ntrials):
         answer = raw_input(word + ': ')
         if answer==solution:
             flag = False
+
+ntrials = input("number of decoding trials: ")
+for i in range(ntrials):
+    word = words[i]
+    solution = ''.join([codebook[s] for s in word])
+    flag = True
+    while flag:
+        answer = raw_input(solution + ': ')
+        if answer==word:
+            flag = False
+
