@@ -3,20 +3,7 @@ import numpy as np
 import numpy.random as npr
 import string
 
-def enumwords(depth):
-    words = []
-    stems = [['']] + [[] for i in range(depth)]
-    for l in range(depth):
-        for stem in stems[l]:
-            chs = twl.children(stem)
-            for c in chs:
-                if c == '$':
-                    words.append(stem)
-                else:
-                    stems[l+1].append(stem + c)
-    return words, stems
-
-words, stems = enumwords(7)
+words = list(twl.iterator())
 
 codestring = raw_input("enter code: ")
 code = [s for s in codestring]
