@@ -1,0 +1,8 @@
+Delgado, Mauricio R., et al. "Tracking the hemodynamic responses to reward and punishment in the striatum." Journal of neurophysiology 84.6 (2000): 3072-3077.
+
+David C. Van Essen, Stephen M. Smith, Deanna M. Barch, Timothy E.J. Behrens, Essa Yacoub, Kamil Ugurbil, for the WU-Minn HCP Consortium. (2013). The WU-Minn Human Connectome Project: An overview. NeuroImage 80(2013):62-79. 
+
+Matthew F. Glasser, Stamatios N. Sotiropoulos, J. Anthony Wilson, Timothy S. Coalson, Bruce Fischl, Jesper L. Andersson, Junqian Xu, Saad Jbabdi, Matthew Webster, Jonathan R. Polimeni, David C. Van Essen, and Mark Jenkinson (2013). 
+The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage 80: 105-124.
+
+Avants, Brian B., et al. "Symmetric diffeomorphic image registration with cross-correlation: evaluating automated labeling of elderly and neurodegenerative brain." Medical image analysis 12.1 (2008): 26-41.
