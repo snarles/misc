@@ -1,0 +1,196 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+
+
+%\maketitle
+
+\noindent\textbf{Analysis of Diffusion MRI data}\\
+\noindent\textbf{Charles Zheng} \emph{(joint work with A. Rokem, F. Pestilli and T. Hastie)}\\
+\\
+Diffusion MRI (dMRI) is the only non-invasive method currently available to
+measure the structure of the human white matter \emph{in vivo}. Human white
+matter consists almost entirely of the nerve fibers that connect between
+different parts of the brain, and that form the neural networks that support
+human cognition and behavior. Scientists and clinicians use the resulting maps
+of the white matter to assess connectivity between different parts of the brain
+and also to clarify the relationship between properties of the tissues within
+the white matter and cognition, both in healthy individuals and in cases where
+cognition functions are damaged through disease.
+
+The measurement relies on the application of directional magnetic field
+gradients, which generates images that are attenuated in the locations in the
+brain in which there is a high rate of diffusion along each gradient
+direction. For example, in a location containing a large proportion of fibers
+oriented along the right-left direction (approximately parallel to the line
+connecting the participant's ears), the signal would be attentuated when the
+diffusion gradient is applied along this direction, and would be high when a
+gradient is applied along the front-back direction. The analysis of dMRI data
+constructs models of the configuration of fibers at each location in the brain
+(measured on the mm scale) and these models are then used as the basis for
+tractography. 
+
+Though several algorithms and models have been proposed over the years [Frank,
+Tournier, Behrens, Dell'Acqua], a major problem in dMRI is the accurate
+estimation of the directions and relative abundances of white matter tracts in
+each measurement location. In particular, many of the methods require a prior
+assumption about the number of fiber populations in every location, or strct
+assumptions about the sparseness of the fiber orientation distribution
+function. In this project, we developed methods to fit these models, without
+strict assumptions of sparsesness, and methods to evaluate the models for their
+accuracy and reliability.
+
+The data we analyzed consists of a set of 10 non-diffusion weighted MRI images
+that serve as a baseline ($S_0$) , and 150 dMRI images, each consisting of
+$106\times 76 \times 81$ volumetric pixels, or voxels at a spatial resolution
+of approximately 2x2x2 $mm^3$.  In a pre-processing step, we identify the
+voxels which contain white matter.  Our goal is to infer the number $k$ of
+distinct fiber populations located in each voxel, along with the
+directions $v_1,\hdots,v_k$ and relative abundances $w_1,\hdots,w_k$.\\
+
+\noindent\textbf{Current Work}
+
+The 150 diffusion-weighted measurement direction, $x_1,\hdots,x_{150}$ are
+spaced evenly on the unit sphere.  In a given voxel, let $y_1,\hdots,y_{150}$
+denote the intensities of that voxel in each of the dMRI images.  The
+statistical model we employ is a variation of the \emph{sparse fascicle model}
+first proposed by Frank 2001.  Under this model, the signal measured in
+direction $x_i$ is distributed by $y_i \sim Rician(S_0 \sum_{j=1}^k w_j
+e^{-\kappa(v_j^T x_i)}, \sigma^2)$ where $S_0$ is the basline non-diffusion
+weighted MRI signal, $\kappa$ is an unknown parameter produced from the
+interaction of tissue properties and the measurement process, and $\sigma^2$ is a
+noise parameter.  The Rician distribution as follows: for $X \sim Rician(\mu,\sigma^2)$,
+we have $\frac{X^2}{\sigma^2} \sim \chi^2_2(\frac{\mu^2}{\sigma^2})$.
+
+Existing approaches for estimating the directions and weights rely on
+assumptions about the number of fibers.  We develop a method for
+\emph{nonparametrically} estimating the fiber directions and weights
+(Zheng 2014), which therefore makes no assumptions about the number of
+fibers.  Our algorithm, elastic basis pursuit (EBP), finds the
+directions $\hat{v}_1,\hdots,\hat{v}_{\hat{k}}$ and weights
+$\hat{w}_1,\hdots,\hat{w}_{\hat{k}}$ which globally minimize the
+residual sum of squares $\sum_{i=1}^{150}\left(y_i -
+\sum_{j=1}^{\hat{k}} \hat{w}_j e^{-\kappa(\hat{v}_j^T x_i)}\right)^2$.
+The algorithm proceeds in a forward stepwise manner: in each step, it
+finds the fiber direction with the greatest correlation to the current
+residual and adds that direction to the active set.  Then, the
+coefficients, or weights, of each direction in the active set are
+updated.  Due to a property of non-negative least squares, some of the
+coefficients will become zero--the corresponding directions are then
+pruned from the active set.  The algorithm grows and shrinks the
+active set of directions as needed--hence the name, \emph{elastic
+  basis pursuit}.  In contrast to similar existing approaches (Rokem
+2013), our method does not employ discretization, resulting in more
+accurate estimates (Figure 1.)\\
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.3]{NIPS2014Figure4.png}
+\caption { Simulated comparison of estimated directions. Black: true
+  fiber directions (A) Diffusion Tensor Imaging (B) Non-negative least
+  squares, a discretized approximation to EBP. (C) EBP}
+\label{fig:results_sim}
+\end{figure}
+
+\noindent\textbf{Future Work}
+
+One of the open problems in the DWI literature is estimating the
+number of fiber populations in each voxel, especially in a
+computationally] efficient manner.  We are developing an approach for
+estimating the number of fibers by using the \emph{facility location
+problem}.  
+
+We begin with an estimated fiber orientation
+distribution function (fODF) obtained from EBP: this estimated fODF
+has directions $\hat{v}_1,\hdots,\hat{v}_{\hat{k}}$ and weights
+$\hat{w}_1,\hdots,\hat{w}_{\hat{k}}$.  Generally, $\hat{k}$ is an
+overestimate of the number of directions, because many
+of the estimated directions occur in tightly concentrated clusters;
+we would expect the number of fibers to correspond to the number of these clusters
+rather than the number of directions.
+
+This motivates the definition of effective sparsity.  Define the
+arc-length distance $d_{arc}$ by $d_{arc}(v,w) = \cos^{-1}(|v'w|)$.
+Choose a threshold paramter $\tau > 0$, then let $\ell$ be the
+smallest number such that there exist prototypes $u_1,\hdots,u_\ell$
+such that the total within-cluster distance is less than $\tau$, i.e.
+\[
+\sum_{i=1}^{\hat{k}} \hat{w}_i \min_{j=1}^\ell  d_{arc}(\hat{v}_i, u_j) < \tau
+\]
+Then the effective sparsity (under threshold $\tau$) is defined by the number $k$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.18, trim = 10mm 10mm 10mm 10mm, clip]{figure_cccso3d_bg.png}
+\includegraphics[scale=0.18, trim = 10mm 10mm 10mm 30mm, clip]{figure_cccso3d_1.png}
+\caption{(a) An anatomical image of the intersecting slices in the MRI image of the brain.
+(b) The estimated fiber directions in each voxel of a section of the corpus callosum (the vertically oriented slice)
+intersecting a section of the central semioval (horizontally oriented slice)}
+\label{fig:bg}
+\end{figure}
+
+We propose to develop efficient algorithms for computing the effective
+sparsity, borrowing from the literature on the uncapacitated facility
+location (Jain, 2002).  Given a cost parameter $c$, a list of
+estimated directions $v_1,\hdots,v_K$ and weights $w_1,\hdots,w_K$, as
+well as a dense sampling on the half-sphere of possible 'facility
+locations', or directions of fiber populations, $U \subset
+\mathbb{RP}^2$, the Jain-Mahdian-Saberi algorithm finds the subset
+$u_{1},\hdots,u_{m}$ which approximately optimizes
+\begin{equation}\label{eq:flp}
+\min_m \min_{u_{1},\hdots,u_{m}} cm + \sum_{i=1}^K w_i \min_l d_{arc}(v_i, u_{l})
+\end{equation}
+We make the
+observation that by varying $c$ from 0 to $\frac{\pi}{2}$, one varies
+the number $m$ from $\hat{k}$ to 1, and the total within-cluster distance  increases from zero to its maximum value.
+We have tested this clustering approach in real data: the result can
+be seen in
+figure \ref{fig:bg}.  However, our current approach is computationally
+inefficient, since it relies on solving the optimization problem
+\eqref{eq:flp}
+once for each cost value $c$ on a dense grid of cost values in
+$[0,\pi/2]$,
+resulting in redundant computation.
+Therefore we propose to develop a \emph{homotopy algorithm} which
+obtains the \emph{entire path of solutions} for cost parameter $c$ in
+$[0,\pi/2]$ in a computationally efficient manner.
+An illustration of the homotopy algorithm in the one-dimensional case
+is presented in figure \ref{fig:homotopy}; however, we will apply the
+algorithm in the spherical domain.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.18]{illus_homotopy.pdf}
+\caption{The homotopy path for the facility location problem, with
+clients located at points 1,3, 6, and 8 on the y-axis.
+Solid lines indicate facility locations.}
+\label{fig:homotopy}
+\end{figure}
+
+
+\textbf{References}
+\small{
+Zheng C, Pestilli F, Rokem A. Deconvolution of High-Dimensional Mixtures via Boosting, with Application to Diffusion-Weighted MRI of Human Brain.  Accepted to \emph{NIPS 2014}.
+
+Jain K, Mahdian M, Saberi A. A new greedy approach to facility location problems. STOC 02
+}
+
+\end{document}
+
+

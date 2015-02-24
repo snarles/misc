@@ -1,0 +1,88 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+
+
+%\maketitle
+
+\noindent\textbf{Evaluation of inter-subject registration methods for fMRI data}\\
+Charles Zheng, STAT 312
+\\
+
+\noindent\textbf{Goals}
+
+The aim of this project is to improve statistical methodology for testing hypothesis about differences or similarities in task-fMRI responses explained by demographic factors (age, gender, ethnicity) or disease status.
+
+We address the sub-problem of comparing two subjects.  Such a comparison involves three steps:
+
+\begin{enumerate}
+\item Registration of the brains of the two subjects
+\item Computation of region-level statistics, where regions may be defined based on the registration.  That is to say, computing voxel-level statistics does not make sense when there is no 1-1 map of voxels between subjects.  So we define small regions which do have a 1-1 map between subjects.  The region-level statistics may be computed by averaging the spactially localized signal over all voxels in the respective regions.
+\item Comparison of the region-level statistics between subjects, and multiple hypothesis testing of those statistics using FWER or FDR
+\end{enumerate}
+
+
+
+\noindent\textbf{Problem}
+
+There are multiple ways to do the registration (step 1), from rigid transformations to diffeomorphic approaches [Avants 2009].  Furthermore, there is the question of what reference images should be used to do the registration.  One could use T1-weighted images, T2-weighted images, or diffusion-weighted images.
+
+The problem is to evaluate the different methods of doing registration based on the effects of the registration procedure on the downstream analysis of fMRI reponses.  Considering the fact that registration involves a combination of a method and a choice of image or images, we can split the problem two sub-problems:
+
+\begin{enumerate}
+\item How the choice of registration algorithm (rigid transform vs diffeomorphism) affects the downstream analysis
+\item How the choice of image affects the downstream analysis (T1, T2 or diffusion) when using diffeomorphic registration
+\end{enumerate}
+
+The second sub-problem is more novel than the first sub-problem because we are unaware of application of diffeomorphic registration to diffusion data.
+However, we will start by focusing on the first sub-problem (choice of algorithm).
+
+Next, we should specify how to do the evaluation.
+The final method of evaluation we choose may be informed by trial-and-error experimentation.
+However, a starting point is to simply look at the whole-brain cross-correlation between subjects, and compare that measure to some \emph{a priori} metric for similarity between subjects.
+For example, we might suspect \emph{a priori} that two randomly chosen female brains will have more whole-brain cross-correlation than a randomly chosen female brain and a randomly chosen male chain.
+The difference between these two cross-correlations will be a statistic $S$.
+For a given registration method, we will collect samples of this statistic $S$, by using triples of subjects (female, female, male) which are obtained from the Washington-Minnesota Human Connectome Project.
+Then we perform a single hypothesis test: is there a difference between the mean value of $S$ between the distributions obtained from rigid regstration vs diffeomorphic registration?
+\\
+
+\noindent\textbf{Data and Software}
+
+The data are obtained from the HCP project.
+It consists of 500 subjects with demographic information (gender, age) as well as preprocessed task-fMRI scans for a battery of tests (gambling, language, etc.) plus structural and diffusion MRI scans.
+
+We will use the python module dipy, which implements diffeomorphic registration algorithm described in Avants 2009.
+\\
+
+\noindent\textbf{References}
+
+\small{
+Delgado, Mauricio R., et al. "Tracking the hemodynamic responses to reward and punishment in the striatum." Journal of neurophysiology 84.6 (2000): 3072-3077.
+
+David C. Van Essen, Stephen M. Smith, Deanna M. Barch, Timothy E.J. Behrens, Essa Yacoub, Kamil Ugurbil, for the WU-Minn HCP Consortium. (2013). The WU-Minn Human Connectome Project: An overview. NeuroImage 80(2013):62-79. 
+
+Matthew F. Glasser, Stamatios N. Sotiropoulos, J. Anthony Wilson, Timothy S. Coalson, Bruce Fischl, Jesper L. Andersson, Junqian Xu, Saad Jbabdi, Matthew Webster, Jonathan R. Polimeni, David C. Van Essen, and Mark Jenkinson (2013). 
+The minimal preprocessing pipelines for the Human Connectome Project. Neuroimage 80: 105-124.
+
+Avants, Brian B., et al. "Symmetric diffeomorphic image registration with cross-correlation: evaluating automated labeling of elderly and neurodegenerative brain." Medical image analysis 12.1 (2008): 26-41.
+}
+
+\end{document}
+
+
