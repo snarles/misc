@@ -1,0 +1,10 @@
+ddir <- "/home/snarles/stat312data"
+list.files(ddir)
+load(paste0(ddir, "/all_voxel_locations.RData"))
+load(paste0(ddir, "/valid_index.RData"))
+load(paste0(ddir, "/feature_train.RData"))
+train_resp_all <- read.csv(paste0(ddir, "/train_resp_all.csv"))
+valid_resp_all <- read.csv(paste0(ddir, "/valid_resp_all.csv"))
+load(paste0(ddir, "/feature_valid.RData"))
+load(paste0(ddir, "/train_stim.RData"))
+load(paste0(ddir, "/valid_stim.RData"))
