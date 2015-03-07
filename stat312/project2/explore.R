@@ -8,60 +8,95 @@ load(paste0(ddir, "/valid_index.RData"))
 #load(paste0(ddir, "/feature_train.RData"))
 #train_resp_all <- read.csv(paste0(ddir, "/train_resp_all.csv"), header = FALSE)
 #valid_resp_all <- read.csv(paste0(ddir, "/valid_resp_all.csv"), header = FALSE)
-#load(paste0(ddir, "/feature_valid.RData"))
+load(paste0(ddir, "/feature_valid.RData"))
 #load(paste0(ddir, "/train_stim.RData"))
 load(paste0(ddir, "/valid_stim.RData"))
 load(paste0(ddir, "/valid_v1.RData"))
 load(paste0(ddir, "/v1_locations.RData"))
 dim(valid_v1)
-nvox <- 1331
 ntime <- 1560
+nvalid <- 120
 
-# apply rank transform
-valid_v1_rank <- apply(valid_v1, 2, rank)/nvox
-dim(valid_v1_rank)
-apply(valid_v1_rank, 2, min)
+v1_filt <- (apply(valid_v1, 1, function(x) {sum(is.na(x))}) == 0)
+v1_locations <- v1_locations[v1_filt, ]
+valid_v1 <- valid_v1[v1_filt, ]
 
-# select 20 images, try to learn subspace
-filt_imgs <- sample(120, 20)
-filt_valid_index <- valid_index[valid_index %in% filt_imgs]
-filt_v1_rank <- valid_v1_rank[, valid_index %in% filt_imgs]
-dim(filt_v1_rank)
-svd_res <- svd(filt_v1_rank) # svd is u %*% diag(d) %*% t(v)
-temp <- eval(quote(u %*% diag(d) %*% t(v)), envir = svd_res)
-temp[1:10]
-filt_v1_rank[1:10]
+nvox <- sum(v1_filt) #1294
 
-comp1 <- matrix(filt_valid_index[row(base_dists)],
-                nrow = length(filt_valid_index))
+# get means by index
+valid_means <- matrix(0, nvalid, nvox)
+for (i in 1:nvalid) {
+  valid_means[i, ] <- apply(valid_v1[, valid_index == i], 1, mean)
+}
+valid_means[1, ]
 
-comp2 <- matrix(filt_valid_index[col(base_dists)],
-                nrow = length(filt_valid_index))
+# apply cutoff for feature_valid
 
-compd <- row(base_dists)==col(base_dists)
+stddevs <- apply(feature_valid, 2, sd)
+gwp_filt_inds <- which(stddevs > 0.1)
+feature_valid_filt <- feature_valid[, gwp_filt_inds]
 
-twincomp <- matrix(
-  filt_valid_index[row(base_dists)] == filt_valid_index[col(base_dists)],
-  nrow = length(filt_valid_index)
-)
-othercomp <- !twincomp
-diag(twincomp) <- !diag(twincomp)
+# apply canonical correlation analysis
+library(PMA)
+K_ <- 20
+res <- CCA(valid_means, feature_valid_filt, penaltyx = 0.1, penaltyz = 0.1, K = K_)
+summary(res)
+dim(res$u)
+library(rgl)
 
-# baseline distance
-base_dists <- fastPdist2(t(filt_v1_rank), t(filt_v1_rank))
-base_twins <- base_dists[twincomp]
-summary(base_twins)
-base_other <- base_dists[othercomp]
-summary(base_other)
-
-base_probs <- numeric(length(unique(filt_valid_index)))
-
-for (i in 1:length(unique(filt_valid_index))) {
-  img_ind <- filt_valid_index[i]
-  twins <- base_dists[comp1 == img_ind & comp2 == img_ind & !compd]
-  others <- base_dists[comp1 == img_ind & comp2 != img_ind]
-  base_probs[i] <- sum(sample(others, 1000, TRUE) > 
-                         sample(twins, 1000, TRUE))/1000
+# plot u[,1]
+plot3d(v1_locations)
+cols <- rainbow(K_)
+for (i in 1:K_) {
+  points3d(v1_locations[res$u[, i] != 0, ], col=cols[i], size = K_ - i)
 }
 
-base_probs
+# apply the dimensionality reduction
+dim(res$u)
+dim(valid_v1)
+valid_reduced <- t(res$u) %*% valid_v1
+dim(valid_reduced)
+mu_valid_reduced <- t(res$u) %*% t(valid_means)
+grand_mu_reduced <- apply(mu_valid_reduced, 1, mean)
+length(grand_mu_reduced)
+
+# estimate covariances
+covs_valid_reduced <- array(0, dim = c(K_, K_, nvalid))
+for (i in 1:nvalid) {
+  covs_valid_reduced[, , i] <- cov(t(valid_reduced[, valid_index==i]))
+}
+grand_cov_reduced <- apply(covs_valid_reduced, c(1,2), mean)
+dim(grand_cov_reduced)
+
+library(corrplot)
+corrplot(grand_cov_reduced, is.corr = FALSE)
+corrplot(covs_valid_reduced[, , 1], is.corr = FALSE)
+corrplot(covs_valid_reduced[, , 2], is.corr = FALSE)
+
+# distance matrix of 120 x 120 images based on grand mean
+mu_centered <- mu_valid_reduced - grand_mu_reduced
+mdists <- matrix(0, nvalid, nvalid)
+for (i in 1:nvalid) {
+  mdists[i, ] <- mahalanobis(t(mu_valid_reduced), mu_valid_reduced[, i], grand_cov_reduced)
+}
+corrplot(mdists, is.corr = FALSE)
+
+# do K-means based on whitened coordinates
+# inverse square root funtion
+isqrtm <- function(m) {
+  res <- eigen(m)
+  d <- res$values
+  d[d < 0] <- 0
+  d[d > 0] <- 1/sqrt(d[d > 0])
+  v <- res$vectors
+  return (v %*% diag(d) %*% t(v))
+}
+whiten_mat <- isqrtm(grand_cov_reduced)
+mu_whitened <- whiten_mat %*% mu_centered
+dim(mu_whitened)
+res_k <- kmeans(t(mu_whitened), centers = 10)
+res_k$cluster
+
+table(res_k$cluster)
+
+
