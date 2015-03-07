@@ -94,9 +94,29 @@ isqrtm <- function(m) {
 whiten_mat <- isqrtm(grand_cov_reduced)
 mu_whitened <- whiten_mat %*% mu_centered
 dim(mu_whitened)
-res_k <- kmeans(t(mu_whitened), centers = 10)
+res_k <- kmeans(t(mu_whitened), centers = 20)
 res_k$cluster
-
 table(res_k$cluster)
-
-
+# write the clusters
+library(png)
+for (ind in 1:max(res_k$cluster)) {
+  fname = paste("cluster",ind,".png",sep="")
+  nclust <- sum(res_k$cluster == ind)
+  nrows <- ceiling(nclust / 5)
+  bigimg <- matrix(0, 128 * nrows, 128 * 5)
+  xloc <- 0
+  yloc <- 0
+  for (ind in which(res_k$cluster == ind)) {
+    img <- valid_stim[ind,]+.5
+    img[img > 1]=1
+    img[img < 0]=0
+    img <- matrix(img,128,128)
+    bigimg[128*yloc + 1:128, 128*xloc + 1:128] <- img
+    xloc <- xloc + 1
+    if (xloc > 4) {
+      yloc <- yloc + 1
+      xloc <- 0
+    }
+  }
+  writePNG(bigimg,fname)
+}
