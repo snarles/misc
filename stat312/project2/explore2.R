@@ -1,66 +1,15 @@
 #############################################################
-##                DATA PREPROCESSING                       ##
+##                          LOADING                        ##
 #############################################################
 
 library(Rcpp)
 sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
-
 ddir <- "/home/snarles/stat312data"
-list.files(ddir)
+load(paste0(ddir, "/preproc_version1.RData"))
 
-## get indices of V1 from larger matrix
-load(paste0(ddir, "/all_voxel_locations.RData"))
-dim(voxel.loc) # 25915 3
-load(paste0(ddir, "/v1_locations.RData"))
-dim(v1_locations) # 1331 3
-library(prodlim)
-v1_inds <- row.match(data.frame(v1_locations), data.frame(voxel.loc))
-
-## extract V1 voxels in training data (run once)
-#temp <- read.csv(paste0(ddir, "/allVoxTrain.csv"), header = FALSE)
-#train_v1 <- temp[v1_inds, ]
-#save(train_v1, file = "train_v1.RData")
-load(paste0(ddir, "/train_v1.RData"))
-
-load(paste0(ddir, "/valid_index.RData"))
-train_index <- read.csv(paste0(ddir, "/indexTrain.csv"), header = FALSE)
-train_index <- as.vector(train_index)
-load(paste0(ddir, "/feature_valid.RData"))
-load(paste0(ddir, "/feature_train.RData"))
-dim(feature_train) # 1750 10921
-dim(feature_valid) # 120 10921
-#load(paste0(ddir, "/train_stim.RData"))
-#load(paste0(ddir, "/valid_stim.RData"))
-load(paste0(ddir, "/valid_v1.RData"))
-load(paste0(ddir, "/wavpyr.RData"))
-dim(valid_v1) # 1331 1560
-dim(train_v1) # 1331 3500
-
-ntime <- 1560
-nvalid <- 120
-ntrain <- 1750
-
-## Remove missing values
-v1_filt1 <- (apply(valid_v1, 1, function(x) {sum(is.na(x))}) == 0)
-v1_filt2 <- (apply(train_v1, 1, function(x) {sum(is.na(x))}) == 0)
-v1_filt <- v1_filt1 & v1_filt2
-v1_locations <- v1_locations[v1_filt, ]
-valid_v1 <- valid_v1[v1_filt, ]
-train_v1 <- train_v1[v1_filt, ]
-(nvox <- sum(v1_filt)) #1294
-
-## apply cutoff for features (run once)
-#stddevs <- apply(feature_valid, 2, sd)
-#gwp_filt_inds <- which(stddevs > 0.1)
-#feature_valid_filt <- feature_valid[, gwp_filt_inds]
-#feature_train_filt <- feature_train[, gwp_filt_inds]
-#wav.pyr_filt <- wav.pyr[gwp_filt_inds, ]
-#save(feature_valid_filt, feature_train_filt, wav.pyr_filt, gwp_filt_inds,
-#     file = paste0(ddir, '/data_feature_filt.RData'))
-load(paste0(ddir, '/data_feature_filt.RData'))
-
-## standardize features
-
+#############################################################
+##                          CCA                            ##
+#############################################################
 
 
 # get means by index
