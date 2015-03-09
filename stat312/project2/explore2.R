@@ -35,59 +35,31 @@ library(rgl)
   }
 }
 
+dim(res$v)
+dim(feature_valid_sdd)
 
-
-
-# plot v[, 1]
+# plot v
 {
-  plot(res$v[, 1])
-  image(get_filter(res$v[, 1], wav.pyr_filt))
+  old.par <- par()
+  layout(matrix(1:16, 4, 4))
+  par(mar = c(0,0,0,0))
+  for (i in 1:16) {
+    image(get_filter(res$v[, i], wav.pyr_filt))
+  }
+  par(old.par)
 }
 
+## apply the dimensionality reduction
+valid_coords <- feature_valid_sdd %*% res$v
+train_coords <- feature_train_sdd %*% res$v
+dim(valid_coords)
+dim(train_coords)
 
-# apply the dimensionality reduction
-dim(res$u)
-dim(valid_v1)
-valid_reduced <- t(res$u) %*% valid_v1
-dim(valid_reduced)
-mu_valid_reduced <- t(res$u) %*% t(valid_means)
-grand_mu_reduced <- apply(mu_valid_reduced, 1, mean)
-length(grand_mu_reduced)
-
-# estimate covariances
-covs_valid_reduced <- array(0, dim = c(K_, K_, nvalid))
-for (i in 1:nvalid) {
-  covs_valid_reduced[, , i] <- cov(t(valid_reduced[, valid_index==i]))
-}
-grand_cov_reduced <- apply(covs_valid_reduced, c(1,2), mean)
-dim(grand_cov_reduced)
-
-library(corrplot)
-corrplot(grand_cov_reduced, is.corr = FALSE)
-corrplot(covs_valid_reduced[, , 1], is.corr = FALSE)
-corrplot(covs_valid_reduced[, , 2], is.corr = FALSE)
-
-# distance matrix of 120 x 120 images based on grand mean
-mu_centered <- mu_valid_reduced - grand_mu_reduced
-mdists <- matrix(0, nvalid, nvalid)
-for (i in 1:nvalid) {
-  mdists[i, ] <- mahalanobis(t(mu_valid_reduced), mu_valid_reduced[, i], grand_cov_reduced)
-}
-corrplot(mdists, is.corr = FALSE)
+# distance matrix of 1750 x 1750 images based on grand mean
+mdists <- fastPdist2(train_coords, train_coords)
 
 # do K-means based on whitened coordinates
 # inverse square root funtion
-isqrtm <- function(m) {
-  res <- eigen(m)
-  d <- res$values
-  d[d < 0] <- 0
-  d[d > 0] <- 1/sqrt(d[d > 0])
-  v <- res$vectors
-  return (v %*% diag(d) %*% t(v))
-}
-whiten_mat <- isqrtm(grand_cov_reduced)
-mu_whitened <- whiten_mat %*% mu_centered
-dim(mu_whitened)
 res_k <- kmeans(t(mu_whitened), centers = 20)
 res_k$cluster
 table(res_k$cluster)
