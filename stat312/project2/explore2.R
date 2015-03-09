@@ -6,34 +6,44 @@ library(Rcpp)
 sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
 ddir <- "/home/snarles/stat312data"
 load(paste0(ddir, "/preproc_version1.RData"))
+source("source1.R")
 
 #############################################################
 ##                          CCA                            ##
 #############################################################
-
 
 # get means by index
 valid_means <- matrix(0, nvalid, nvox)
 for (i in 1:nvalid) {
   valid_means[i, ] <- apply(valid_v1[, valid_index == i], 1, mean)
 }
-valid_means[1, ]
-
 
 # apply canonical correlation analysis
 library(PMA)
 K_ <- 20
-res <- CCA(valid_means, feature_valid_filt, penaltyx = 0.1, penaltyz = 0.1, K = K_)
+res <- CCA(valid_means, feature_valid_sdd, penaltyx = 0.1, penaltyz = 0.1, K = K_)
 summary(res)
 dim(res$u)
 library(rgl)
 
-# plot u[,1]
-plot3d(v1_locations)
-cols <- rainbow(K_)
-for (i in 1:K_) {
-  points3d(v1_locations[res$u[, i] != 0, ], col=cols[i], size = K_ - i)
+# plot u
+{
+  plot3d(v1_locations)
+  cols <- rainbow(K_)
+  for (i in 1:K_) {
+    points3d(v1_locations[res$u[, i] != 0, ], col=cols[i], size = K_ - i)
+  }
 }
+
+
+
+
+# plot v[, 1]
+{
+  plot(res$v[, 1])
+  image(get_filter(res$v[, 1], wav.pyr_filt))
+}
+
 
 # apply the dimensionality reduction
 dim(res$u)

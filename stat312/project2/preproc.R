@@ -19,10 +19,10 @@ dim(v1_locations) # 1331 3
 library(prodlim)
 v1_inds <- row.match(data.frame(v1_locations), data.frame(voxel.loc))
 
-## extract V1 voxels in training data (run once)
-#temp <- read.csv(paste0(ddir, "/allVoxTrain.csv"), header = FALSE)
-#train_v1 <- temp[v1_inds, ]
-#save(train_v1, file = "train_v1.RData")
+## extract V1 voxels in training data
+temp <- read.csv(paste0(ddir, "/allVoxTrain.csv"), header = FALSE)
+train_v1 <- temp[v1_inds, ]
+save(train_v1, file = "train_v1.RData")
 load(paste0(ddir, "/train_v1.RData"))
 load(paste0(ddir, "/valid_index.RData"))
 savelist <- c(savelist, "valid_index")
@@ -58,16 +58,16 @@ savelist <- c(savelist, "valid_v1")
 savelist <- c(savelist, "train_v1")
 savelist <- c(savelist, "v1_locations")
 
-## apply cutoff for features (run once)
-#load(paste0(ddir, "/wavpyr.RData"))
-#stddevs <- apply(feature_valid, 2, sd)
-#gwp_filt_inds <- which(stddevs > 0.1)
-#feature_valid_filt <- feature_valid[, gwp_filt_inds]
-#feature_train_filt <- feature_train[, gwp_filt_inds]
-#wav.pyr_filt <- wav.pyr[gwp_filt_inds, ]
-#save(feature_valid_filt, feature_train_filt, wav.pyr_filt, gwp_filt_inds,
-#     file = paste0(ddir, '/data_feature_filt.RData'))
-load(paste0(ddir, '/data_feature_filt.RData'))
+## apply cutoff for features
+load(paste0(ddir, "/wavpyr.RData"))
+stddevs <- apply(feature_valid, 2, sd)
+gwp_filt_inds <- which(stddevs > 0.1)
+feature_valid_filt <- feature_valid[, gwp_filt_inds]
+feature_train_filt <- feature_train[, gwp_filt_inds]
+wav.pyr_filt <- wav.pyr[, gwp_filt_inds]
+save(feature_valid_filt, feature_train_filt, wav.pyr_filt, gwp_filt_inds,
+     file = paste0(ddir, '/data_feature_filt.RData'))
+#load(paste0(ddir, '/data_feature_filt.RData'))
 dim(wav.pyr_filt)
 dim(feature_train_filt)
 dim(feature_valid_filt)
