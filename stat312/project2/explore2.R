@@ -102,7 +102,23 @@ for (ind in 1:max(res_k$cluster)) {
 }
 
 #############################################################
-##            K-NN classification for validation           ##
+##        Distance matrix between coordinates              ##
+#############################################################
+
+valid_dm <- fastPdist2(valid_coords, valid_coords)
+train_dm <- fastPdist2(train_coords, train_coords)
+
+
+#############################################################
+##        Gaussian classification for validation           ##
 #############################################################
 
 dim(valid_resp)
+dim(train_resp)
+
+classes <- sample(nvalid, 20)
+res <- do_gauss_class(valid_resp, valid_index, classes, 11)
+res$err_rate
+
+
+
