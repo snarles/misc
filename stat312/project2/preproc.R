@@ -20,9 +20,11 @@ library(prodlim)
 v1_inds <- row.match(data.frame(v1_locations), data.frame(voxel.loc))
 
 ## extract V1 voxels in training data
-temp <- read.csv(paste0(ddir, "/allVoxTrain.csv"), header = FALSE)
+temp <- read.csv(paste0(ddir, "/allVoxTrain.csv"), header = FALSE,
+                 stringsAsFactors = FALSE)
 train_v1 <- temp[v1_inds, ]
-save(train_v1, file = "train_v1.RData")
+train_v1[,1] <- as.numeric(train_v1[, 1])
+save(train_v1, file = paste0(ddir, "train_v1.RData"))
 load(paste0(ddir, "/train_v1.RData"))
 load(paste0(ddir, "/valid_index.RData"))
 savelist <- c(savelist, "valid_index")

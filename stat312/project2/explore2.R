@@ -7,6 +7,7 @@ sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-
 ddir <- "/home/snarles/stat312data"
 load(paste0(ddir, "/preproc_version1.RData"))
 source("source1.R")
+load(paste0(ddir, "/train_stim.RData"))
 
 #############################################################
 ##                          CCA                            ##
@@ -26,7 +27,7 @@ summary(res)
 dim(res$u)
 library(rgl)
 
-# plot u
+## plot u
 {
   plot3d(v1_locations)
   cols <- rainbow(K_)
@@ -35,10 +36,7 @@ library(rgl)
   }
 }
 
-dim(res$v)
-dim(feature_valid_sdd)
-
-# plot v
+## plot v
 {
   old.par <- par()
   layout(matrix(1:16, 4, 4))
@@ -52,28 +50,41 @@ dim(feature_valid_sdd)
 ## apply the dimensionality reduction
 valid_coords <- feature_valid_sdd %*% res$v
 train_coords <- feature_train_sdd %*% res$v
+dim(res$u)
+dim(valid_v1)
+valid_resp <- t(res$u) %*% valid_v1
+tra <- as.matrix(train_v1)
+tra[1:4, 1:4]
+train_resp <- t(res$u) %*% 
+
 dim(valid_coords)
 dim(train_coords)
 
-# distance matrix of 1750 x 1750 images based on grand mean
+## distance matrix of 1750 x 1750 images based on grand mean
 mdists <- fastPdist2(train_coords, train_coords)
 
-# do K-means based on whitened coordinates
-# inverse square root funtion
-res_k <- kmeans(t(mu_whitened), centers = 20)
-res_k$cluster
+#############################################################
+##                  Look at clusters                       ##
+#############################################################
+
+## do K-means
+res_k <- kmeans(train_coords, centers = 100)
+length(res_k$cluster)
 table(res_k$cluster)
-# write the clusters
+## write the clusters
 library(png)
+ind <- 1
 for (ind in 1:max(res_k$cluster)) {
-  fname = paste("cluster",ind,".png",sep="")
+  fname = paste("train_clust/",ind,".png",sep="")
   nclust <- sum(res_k$cluster == ind)
   nrows <- ceiling(nclust / 5)
   bigimg <- matrix(0, 128 * nrows, 128 * 5)
   xloc <- 0
   yloc <- 0
-  for (ind in which(res_k$cluster == ind)) {
-    img <- valid_stim[ind,]+.5
+  inds <- which(res_k$cluster == ind)
+  if (length(inds) > 25) inds <- inds[1:25]
+  for (ind in inds) {
+    img <- train_stim[ind,]+.5
     img[img > 1]=1
     img[img < 0]=0
     img <- matrix(img,128,128)
