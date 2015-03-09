@@ -8,6 +8,8 @@ ddir <- "/home/snarles/stat312data"
 load(paste0(ddir, "/preproc_version1.RData"))
 source("source1.R")
 load(paste0(ddir, "/train_stim.RData"))
+train_v1[,1] <- as.numeric(train_v1[, 1])
+train_v1 <- as.matrix(train_v1)
 
 #############################################################
 ##                          CCA                            ##
@@ -53,9 +55,10 @@ train_coords <- feature_train_sdd %*% res$v
 dim(res$u)
 dim(valid_v1)
 valid_resp <- t(res$u) %*% valid_v1
-tra <- as.matrix(train_v1)
-tra[1:4, 1:4]
-train_resp <- t(res$u) %*% 
+train_resp <- t(res$u) %*% train_v1
+
+class(train_v1)
+which(sapply(train_v1, class) != "numeric")
 
 dim(valid_coords)
 dim(train_coords)
@@ -97,3 +100,9 @@ for (ind in 1:max(res_k$cluster)) {
   }
   writePNG(bigimg,fname)
 }
+
+#############################################################
+##            K-NN classification for validation           ##
+#############################################################
+
+dim(valid_resp)
