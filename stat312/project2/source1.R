@@ -63,3 +63,22 @@ do_gauss_class <- function(resp, index, classes, ntraining) {
               training_inds = training_inds)
   return(ans)
 }
+
+library(quadprog)
+
+solve_unif <- function(dm, h) {
+  trans_dm <- exp(-(dm/h)^2)
+  kg <- dim(dm)[2]
+  w <- solve(trans_dm, rep(1, kg))
+  if (min(w) > 0) {
+    w <- w/sum(w)
+  } else {
+    res <- solve.QP(trans_dm, rep(0, kg),
+                    cbind(rep(1, kg), diag(rep(1, kg))),
+                    c(1, rep(0, kg)), meq = 1)
+    w <- res$solution
+    w[w < 0] <- 0
+    w <- w/sum(w)
+  }
+  return (w)  
+}

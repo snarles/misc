@@ -4,6 +4,11 @@
 
 library(Rcpp)
 sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
+dist_mat <- function(x) {
+  dm <- fastPdist2(x, x)
+  diag(dm) <- 0
+  dm
+}
 ddir <- "/home/snarles/stat312data"
 load(paste0(ddir, "/preproc_version1.RData"))
 source("source1.R")
@@ -105,9 +110,34 @@ for (ind in 1:max(res_k$cluster)) {
 ##        Distance matrix between coordinates              ##
 #############################################################
 
-valid_dm <- fastPdist2(valid_coords, valid_coords)
-train_dm <- fastPdist2(train_coords, train_coords)
+valid_dm <- dist_mat(valid_coords)
+train_dm <- dist_mat(train_coords)
 
+sum(is.na(train_dm))
+
+plot(solve_unif(valid_dm, 10))
+
+w <- solve_unif(train_dm, 5)
+plot(w)
+
+
+
+dim(valid_dm)
+
+h_band <- 3
+
+
+
+trans_valid_dm <- exp(-(valid_dm/h_band)^2)
+sol1 <- solve(trans_valid_dm, rep(1, nvalid))
+
+dim(trans_valid_dm)
+
+res <- solve.QP(trans_valid_dm, rep(0, nvalid),
+                cbind(rep(1, nvalid), diag(rep(1, nvalid))),
+                c(1, rep(0, nvalid)), meq = 1)
+plot(sol1, res$solution)
+plot(trans_valid_dm[1, ])
 
 #############################################################
 ##        Gaussian classification for validation           ##
