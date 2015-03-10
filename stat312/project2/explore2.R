@@ -15,6 +15,8 @@ source("source1.R")
 load(paste0(ddir, "/train_stim.RData"))
 train_v1[,1] <- as.numeric(train_v1[, 1])
 train_v1 <- as.matrix(train_v1)
+train_index <- unlist(train_index)
+class(train_index)
 
 #############################################################
 ##                          CCA                            ##
@@ -61,9 +63,6 @@ dim(res$u)
 dim(valid_v1)
 valid_resp <- t(res$u) %*% valid_v1
 train_resp <- t(res$u) %*% train_v1
-
-class(train_v1)
-which(sapply(train_v1, class) != "numeric")
 
 dim(valid_coords)
 dim(train_coords)
@@ -113,32 +112,6 @@ for (ind in 1:max(res_k$cluster)) {
 valid_dm <- dist_mat(valid_coords)
 train_dm <- dist_mat(train_coords)
 
-sum(is.na(train_dm))
-
-plot(solve_unif(valid_dm, 10))
-
-w <- solve_unif(train_dm, 5)
-plot(w)
-
-
-
-dim(valid_dm)
-
-h_band <- 3
-
-
-
-trans_valid_dm <- exp(-(valid_dm/h_band)^2)
-sol1 <- solve(trans_valid_dm, rep(1, nvalid))
-
-dim(trans_valid_dm)
-
-res <- solve.QP(trans_valid_dm, rep(0, nvalid),
-                cbind(rep(1, nvalid), diag(rep(1, nvalid))),
-                c(1, rep(0, nvalid)), meq = 1)
-plot(sol1, res$solution)
-plot(trans_valid_dm[1, ])
-
 #############################################################
 ##        Gaussian classification for validation           ##
 #############################################################
@@ -146,9 +119,56 @@ plot(trans_valid_dm[1, ])
 dim(valid_resp)
 dim(train_resp)
 
-classes <- sample(nvalid, 20)
-res <- do_gauss_class(valid_resp, valid_index, classes, 11)
-res$err_rate
+temp <- mu_covs_by_group(valid_resp, valid_index)
+cov_mat <- apply(temp$covs, c(1, 2), mean)
+
+results_noweight <- repeat_function(100,
+                     function() {
+                       classes <- sample(nvalid, 30, TRUE)
+                       res <- do_gauss_class(valid_resp, valid_index, 
+                                             classes, 11,
+                                             cov_mat = cov_mat)
+                       res$err_rate                             
+                     })
+misc_noweight <- mean(unlist(results_noweight))
+
+w_valid <- solve_unif(valid_dm, 5)
+results_weight <- repeat_function(100,
+                    function() {
+                      classes <- sample(nvalid, 30, TRUE, w_valid)
+                      res <- do_gauss_class(valid_resp, valid_index,
+                                            classes, 11,
+                                            cov_mat = cov_mat)
+                      res$err_rate                             
+                    })
+misc_weight <- mean(unlist(results_weight))
+misc_noweight
+misc_weight
+
+#############################################################
+##        Gaussian classification for training             ##
+#############################################################
 
 
+results_noweight <- repeat_function(100,
+                      function() {
+                        classes <- sample(ntrain, 10, TRUE)
+                        res <- do_gauss_class(train_resp, train_index, 
+                                              classes, 1,
+                                              cov_mat = cov_mat)
+                        res$err_rate                             
+                      })
+misc_noweight <- mean(unlist(results_noweight))
 
+w_train <- solve_unif(train_dm, 5)
+results_weight <- repeat_function(100,
+                    function() {
+                      classes <- sample(ntrain, 10, TRUE, w_train)
+                      res <- do_gauss_class(train_resp, train_index, 
+                                            classes, 1,
+                                            cov_mat = cov_mat)
+                      res$err_rate                             
+                    })
+misc_weight <- mean(unlist(results_weight))
+misc_noweight
+misc_weight

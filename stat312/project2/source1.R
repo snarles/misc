@@ -16,8 +16,8 @@ mu_covs_by_group <- function(mat, groups) {
   mus <- matrix(0, p, kg)
   covs <- array(0, c(p, p, kg))
   for (i in 1:kg) {
-    mus[, i] <- apply(mat[, groups==ug[i]], 1, mean)
-    covs[, , i] <- cov(t(mat[, groups==ug[i]]))
+    mus[, i] <- apply(mat[, groups==ug[i], drop = FALSE], 1, mean)
+    covs[, , i] <- cov(t(mat[, groups==ug[i], drop = FALSE]))
   }
   ans <- list(mus = mus, covs = covs)
   return (ans)
@@ -41,7 +41,8 @@ isqrtm <- function(m) {
   return (v %*% diag(d) %*% t(v))
 }
 
-do_gauss_class <- function(resp, index, classes, ntraining) {
+do_gauss_class <- function(resp, index, classes, ntraining, ..., 
+                           cov_mat) {
   resp <- resp[, index %in% classes]
   index <- index[index %in% classes]
   ug <- unique(index)
@@ -49,7 +50,11 @@ do_gauss_class <- function(resp, index, classes, ntraining) {
   temp <- mu_covs_by_group(resp[, training_filt],
                            index[training_filt])
   mu_est <- temp$mus
-  cov_est <- apply(temp$covs, c(1, 2), mean)
+  if (missing(cov_mat)) {
+    cov_est <- apply(temp$covs, c(1, 2), mean)
+  } else {
+    cov_est <- cov_mat
+  }
   test_resp <- resp[, !training_filt]
   test_index <- index[!training_filt]
   whiten_mat <- isqrtm(cov_est)
@@ -60,7 +65,7 @@ do_gauss_class <- function(resp, index, classes, ntraining) {
   ans <- list(err_rate = err_rate,
               index_est = index_est,
               test_index = test_index,
-              training_inds = training_inds)
+              training_filt = training_filt)
   return(ans)
 }
 
@@ -81,4 +86,12 @@ solve_unif <- function(dm, h) {
     w <- w/sum(w)
   }
   return (w)  
+}
+
+repeat_function <- function(times, f, ...) {
+  results <- list(times)
+  for (i in 1:times) {
+    results[[i]] <- f(...)
+  }
+  results
 }
