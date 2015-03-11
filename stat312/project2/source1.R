@@ -62,6 +62,12 @@ do_gauss_class <- function(resp, index, classes, ntraining, ...,
                       t(whiten_mat %*% mu_est))
   index_est <- ug[apply(malas, 1, function(v) order(v)[1])]
   err_rate <- sum(test_index != index_est)/length(test_index)
+  for (i in unique(classes)) {
+    ndups <- sum(classes == i)
+    pen <- sum(test_index == index_est & test_index == i) *
+      (ndups - 1)/ndups/length(test_index)
+    err_rate <- err_rate + pen
+  }
   ans <- list(err_rate = err_rate,
               index_est = index_est,
               test_index = test_index,

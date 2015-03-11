@@ -122,37 +122,44 @@ dim(train_resp)
 temp <- mu_covs_by_group(valid_resp, valid_index)
 cov_mat <- apply(temp$covs, c(1, 2), mean)
 
-results_noweight <- repeat_function(100,
+results_noweight <- repeat_function(10000,
                      function() {
-                       classes <- sample(nvalid, 30, TRUE)
+                       classes <- sample(nvalid, 10, TRUE)
                        res <- do_gauss_class(valid_resp, valid_index, 
                                              classes, 11,
                                              cov_mat = cov_mat)
                        res$err_rate                             
                      })
 misc_noweight <- mean(unlist(results_noweight))
+se_noweight <- sd(unlist(results_noweight))/sqrt(10000)
 
-w_valid <- solve_unif(valid_dm, 5)
-results_weight <- repeat_function(100,
+
+w_valid <- solve_unif(valid_dm, 0.2)
+results_weight <- repeat_function(10000,
                     function() {
-                      classes <- sample(nvalid, 30, TRUE, w_valid)
+                      classes <- sample(nvalid, 10, TRUE, w_valid)
                       res <- do_gauss_class(valid_resp, valid_index,
                                             classes, 11,
                                             cov_mat = cov_mat)
                       res$err_rate                             
                     })
 misc_weight <- mean(unlist(results_weight))
+se_weight <- sd(unlist(results_weight))/sqrt(10000)
+
 misc_noweight
+se_noweight
+
 misc_weight
+se_weight
 
 #############################################################
 ##        Gaussian classification for training             ##
 #############################################################
 
 
-results_noweight <- repeat_function(100,
+results_noweight <- repeat_function(1000,
                       function() {
-                        classes <- sample(ntrain, 10, TRUE)
+                        classes <- sample(ntrain, 100, TRUE)
                         res <- do_gauss_class(train_resp, train_index, 
                                               classes, 1,
                                               cov_mat = cov_mat)
@@ -161,9 +168,9 @@ results_noweight <- repeat_function(100,
 misc_noweight <- mean(unlist(results_noweight))
 
 w_train <- solve_unif(train_dm, 5)
-results_weight <- repeat_function(100,
+results_weight <- repeat_function(1000,
                     function() {
-                      classes <- sample(ntrain, 10, TRUE, w_train)
+                      classes <- sample(ntrain, 100, TRUE, w_train)
                       res <- do_gauss_class(train_resp, train_index, 
                                             classes, 1,
                                             cov_mat = cov_mat)
