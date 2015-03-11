@@ -1,0 +1,203 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{multirow}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+
+\title[Experimental Design Project]{Uniform Image Selection for fMRI studies}
+
+\author{Charles Zheng} % Your name
+\institute[Stanford] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{Stanford University}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+\frametitle{How should researchers choose images?}
+\begin{itemize}
+\item \emph{Relevance}. Using natural images, because we care about how the brain percieves typical scenes in the real world.
+\item \emph{Control}. Using artificially generated images (like gratings) with known parameters
+\item \emph{Diversity}. Using a broad set of images to convincingly demonstrate generalizability
+\end{itemize}
+In this work we only deal with the question of \emph{diversity}
+\end{frame}
+
+\begin{frame}
+\frametitle{Questions about diversity}
+\begin{enumerate}
+\item How can we define diversity?
+\item How can researchers maximize this measure of diversity in their image set?
+\item How does diversity affect metrics such as classification performance?
+\item How can diversity improve generalizability?
+\end{enumerate}
+
+To explore these questions, we use the dataset from \emph{Kay et al.}
+\end{frame}
+
+\section{Defining diversity}
+
+\frame{\sectionpage}
+
+\begin{frame}
+\frametitle{Defining diversity}
+\begin{itemize}
+\item A first step in defining diversity is \emph{dimensionality reduction} of images to a low-dimensional representation
+\item Next, we need a \emph{distance metric} on the low-dimensional space
+\item With coordinates and a distance metric, we can define a measure of diversity
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Dimensionality reduction}
+\begin{itemize}
+\item Suppose we have ``training data'' for $K$ images
+\item A $K \times p_f$ matrix $X$ of image features (e.g. Gabor filters)
+\item A $K \times p_v$ matrix $Y$ of mean voxel responses
+\item Use \emph{sparse canonical correlation analysis} to find a $p_f
+  \times d$ image basis $U$ and a $p_v \times d$ voxel basis $V$
+\item Use the image basis $U$ to define coordinates
+\end{itemize}
+\end{frame}
+
+% demonstration in data
+
+\begin{frame}
+\frametitle{A measure of diversity}
+\begin{itemize}
+\item We have coordinates $z$ for any image, and a distance metric $d(z_1, z_2)$
+\item Suppose that the coordinates of all images form a continuous, compact support set $S$
+\item We will define the diversity of a distribution $P$ supported on $S$
+\item Let $Z_1$, $Z_2$ be random points drawn from $P$
+\item Let $\kappa(\cdot)$ be a bounded monotone decreasing function which goes to zero at infinity
+\item Define the diversity of $P$ as
+\[
+-\mathbb{E}[\kappa(d(Z_1, Z_2))]
+\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{A measure of diversity}
+\begin{itemize}
+\item Let $\kappa(\cdot)$ be a bounded monotone decreasing function which goes to zero at infinity
+\item Define the diversity of $P$ as
+\[
+-\mathbb{E}[\kappa(d(Z_1, Z_2))]
+\]
+\item We did not define the function $\kappa$... but in some sense the choice is unimportant!
+\item Claim: let $h$ be a bandwidth, and let 
+\[P_{\kappa, h} = \text{argmin} \mathbb{E}[k(d(Z_1, Z_2)/h)]\]
+Then let $P_\kappa = \lim_{h \to 0} P_{\kappa, h}$.
+There exist a unique distribution $U$ such that for all $\kappa$ satisfying a \emph{postive definite} condition, $P_\kappa = U$.
+We call $U$ the \emph{uniform distribution}
+\end{itemize}
+\end{frame}
+
+% measuring diversity of training and test set
+
+\section{Maximizing diversity}
+
+\frame{\sectionpage}
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
