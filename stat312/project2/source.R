@@ -1,3 +1,6 @@
+library(MASS)
+
+
 # a generic function
 # checks if d x N matrix of points are in the space
 in_space <- function(omega, x) {
@@ -11,6 +14,13 @@ sample_points <- function(omega, n = 1) {
 }
 
 # function
+table_tuples <- function(v) {
+  tl <- table(v)
+  ul <- as.numeric(names(tl))
+  ans <- lapply(1:length(tl), function(i) c(ul[i], tl[i]))
+  ans
+}
+
 identity_covs <- function(d, k) {
   eye <- diag(rep(1, d))
   ans <- array(rep(eye, k), c(d, d, k))
@@ -26,6 +36,17 @@ isqrtm <- function(m) {
   v <- res$vectors
   return (v %*% diag(d) %*% t(v))
 }
+
+sqrtm <- function(m) {
+  res <- eigen(m)
+  d <- res$values
+  if (min(d) < -1e-5) warning("Negative eigenvalues in isqrtm")
+  d[d < 0] <- 0
+  d[d > 0] <- sqrt(d[d > 0])
+  v <- res$vectors
+  return (v %*% diag(d) %*% t(v))
+}
+
 
 setClass("parameter_space")
 setClass(
@@ -70,13 +91,6 @@ setMethod(
   }
 )
 
-setClass(
-  "gaussian_dist",
-  representation(
-    domain = "parameter_space"
-  )
-)
-
 ## Class mixture_in_ball
 ## centers: d x k
 ## covariances: d x d x k
@@ -90,12 +104,14 @@ setClass(
     weights = "numeric",
     normalizing_constants = "numeric",
     isqrts = "array",
-    k = "numeric", d = "numeric"
+    sqrts = "array",
+    k = "numeric", d = "numeric",
+    rej_prob = "numeric"
   )
 )
 
 setMethod(
-  "initalize", "mixture_in_ball",
+  "initialize", "mixture_in_ball",
   function(.Object, domain, centers, covariances, weights, ...)
   {
     # option parameters
@@ -112,22 +128,28 @@ setMethod(
     stopifnot(d == dim(covariances)[1])
     stopifnot(d == dim(covariances)[2])
     
-    
     # compute isqrts
     isqrts <- array(apply(covariances, 3, isqrtm), c(d, d, k))
+    sqrts <- array(apply(covariances, 3, sqrtm), c(d, d, k))    
     
     # compute normalizing constants
     dets <- apply(covariances, 3, det)
     # non-truncated normalizing constant
     nc0 <- (2 * pi)^(-d/2) / dets
     # compute truncation
-    
-    
+    rej_prob <- numeric(k)
+    for (i in 1:k) {
+      smp <- t(mvrnorm(N_MONTE_CARLO,
+                      centers[, i], covariances[, , i]))
+      rej_prob[i] <- 1 - sum(in_space(domain, smp))/N_MONTE_CARLO
+    }
+    nc = nc0/(1 - rej_prob)
     callNextMethod(
       .Object, domain = domain, centers = centers,
       covariances = covariances, weights = weights,
       normalizing_constants = nc,
-      isqrts = isqrts, k = k, d = d
+      isqrts = isqrts, sqrts = sqrts,
+      k = k, d = d, rej_prob = rej_prob
     )
   }
 )
@@ -137,17 +159,24 @@ setMethod(
   "sample_points",
   signature(omega = "mixture_in_ball", n = "numeric"),
   function(omega, n) {
-    labels <- sample()
+    ans <- matrix(0, omega@d, n)
+    lbls <- sample(omega@k, n, TRUE,
+                  prob = omega@weights)
+    tl <- table_tuples(lbls)
+    for (tup in tl) {
+      flag <- TRUE
+      rp <- omega@rej_prob[tup[1]]
+      estn <- ceiling((tup[2] + 9)/(1 - rp))
+      sq_cov <- omega@sqrts[, , tup[1]]
+      while(flag) {
+        x <- sq_cov %*% matrix(rnorm(estn * omega@d), omega@d, estn)
+        x <- x[, in_space(omega@domain, x)]
+        if (dim(x)[2] > tup[2]) flag <- FALSE
+      }
+      ans[, lbls == tup[1]] <- x[, 1:tup[2]]
+    }
+    ans
   }
 )
 
 
-d <- 2
-b1 <- new("ball", radius = 2, dimension = d)
-k <- 3
-centers <- sample_points(b1, k)
-covs <- identity_covs(d, k)
-wts <- (temp <- runif(k))/sum(temp)
-mb1 <- new("mixture_in_ball", domain = b1,
-           centers = centers, covariances = covs,
-           weights = wts)

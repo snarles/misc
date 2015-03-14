@@ -3,6 +3,33 @@ title: "Random images misclassification rate"
 output: html_document
 ---
 
+## Source code
+
+```{r}
+source("source.R")
+
+d <- 2
+b1 <- new("ball", radius = 2, dimension = d)
+k <- 3
+centers <- sample_points(b1, k)
+covs <- identity_covs(d, k)
+wts <- (temp <- runif(k))/sum(temp)
+mb1 <- new("mixture_in_ball", domain = b1,
+           centers = centers, covariances = covs,
+           weights = wts)
+mb1@rej_prob
+
+mb0 <- new("mixture_in_ball", domain = b1,
+           centers = matrix(0, 2, 1),
+           covariances = 10 * identity_covs(2, 1),
+           weights = 1)
+mb0@rej_prob
+
+sample_points(mb1, 5)
+```
+
+## Model
+
 Model: consider a spherical parameter space with radius $R$, $\Omega = B_R(0) \in \mathbb{R}^d$.
 
 Let $P$ be a distribution with density $p(x)$ supported on $\Omega$.
@@ -19,28 +46,13 @@ Set parameters:
 
 ```{r}
 # PARAMETERS
-# radius of the parameter ball
-omega_radius <- 2
-# dimension of the parameter space
-omega_dim <- 2
-# noise
-sigma <- 0.1
-# number of images
-k <- 10
-# number of total observations
-n <- 10
-# number of training observations
-n_tr <- 5
-# density function p(x)
-p <- function(x) {
-  
-}
+5
 ```
 
 Generate random means:
 
 ```{r}
-mus <- 
+5
 ```
 
 Mean rates for each angle
