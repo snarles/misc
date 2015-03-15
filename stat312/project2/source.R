@@ -301,8 +301,29 @@ setMethod(
       wht_x <- obj@isqrts[, , i] %*% (x - obj@centers[, i])
       dm[i, ] <- apply(wht_x, 2, function(v) sum(v^2))
     }
-    dens_s <- obj@normalizing_constants * exp(-dm)
+    dens_s <- obj@normalizing_constants * exp(-dm/2)
     ans <- as.vector(t(obj@weights) %*% dens_s)
     ans
   }
 )
+
+theoretical_misc_rate <- function(pars) {
+  NA
+}
+
+setMethod(
+  "theoretical_misc_rate",
+  signature(pars = "simulation_params"),
+  function(pars) {
+    N_MONTE_CARLO <- 1e5
+    prior <- pars@prior
+    d <- prior@d
+    radius <- pars@prior@domain@radius
+    vfrac <- det(pars@sigma) * d^(d/2)/radius^d
+    x <- sample_points(prior, N_MONTE_CARLO)
+    de <- density_at(prior, x)
+    ans <- 1 - sum(exp(-pars@k * vfrac * de))/N_MONTE_CARLO
+    ans
+  }
+)
+

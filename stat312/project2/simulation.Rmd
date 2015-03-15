@@ -25,17 +25,16 @@ Then assess the misclassification rate on the remaining $k(n-n_{tr})$ test point
 
 Set distribution $P$:
 
-```{r, fig.width=6, fig.height=5}
-d <- 2L
+```{r}
+d <- 10L
 b1 <- new("ball", radius = 2, dimension = d)
 k <- 10L
 centers <- sample_points(b1, k)
-covs <- 0.1 * identity_covs(d, k)
+covs <- 2 * identity_covs(d, k)
 wts <- (temp <- runif(k))/sum(temp)
 mb1 <- new("mixture_in_ball", domain = b1,
            centers = centers, covariances = covs,
            weights = wts)
-plot(t(sample_points(mb1, 5000L)))
 ```
 
 Specify simulation parameters:
