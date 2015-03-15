@@ -254,9 +254,9 @@ setMethod(
 )
 
 print.sr <- function(x) {
-  cat(paste0("Dimension: ", sr@params@prior@d, "\n"))
-  cat(paste0("N. classes: ", sr@params@k, "\n"))
-  cat(paste0("Misc. rate: ", sr@misc_rate, "\n"))  
+  cat(paste0("Dimension: ", x@params@prior@d, "\n"))
+  cat(paste0("N. classes: ", x@params@k, "\n"))
+  cat(paste0("Misc. rate: ", x@misc_rate, "\n"))  
 }
 
 setMethod(
@@ -307,22 +307,24 @@ setMethod(
   }
 )
 
-theoretical_misc_rate <- function(pars) {
+theoretical_misc_rate <- function(pars, de) {
   NA
 }
 
 setMethod(
   "theoretical_misc_rate",
-  signature(pars = "simulation_params"),
-  function(pars) {
+  signature(pars = "simulation_params", de = "numeric"),
+  function(pars, de) {
     N_MONTE_CARLO <- 1e5
     prior <- pars@prior
     d <- prior@d
     radius <- pars@prior@domain@radius
-    vfrac <- det(pars@sigma) * d^(d/2)/radius^d
-    x <- sample_points(prior, N_MONTE_CARLO)
-    de <- density_at(prior, x)
-    ans <- 1 - sum(exp(-pars@k * vfrac * de))/N_MONTE_CARLO
+    vfrac <- det(pars@sigma) * (sqrt(d) * (1 + 1/pars@n_tr))^d/radius^d
+    if (missing(de)) {
+      x <- sample_points(prior, N_MONTE_CARLO)
+      de <- density_at(prior, x)      
+    }
+    ans <- 1 - sum(exp(-pars@k * vfrac * de))/length(de)
     ans
   }
 )
