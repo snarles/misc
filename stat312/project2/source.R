@@ -1,5 +1,6 @@
 library(MASS)
-
+library(Rcpp)
+sourceCpp('pdist.cpp')
 
 # a generic function
 # checks if d x N matrix of points are in the space
@@ -49,21 +50,23 @@ sqrtm <- function(m) {
 
 
 setClass("parameter_space")
+setClass("distribution")
+
 setClass(
   "ball", 
   representation(
     radius = "numeric",
-    dimension = "numeric",
+    dimension = "integer",
     center = "numeric"),
-  contains = "parameter_space"
+  contains = c("parameter_space", "distribution")
 )
 
 setMethod(
   "initialize", "ball",
-  function(.Object, radius, dimension, ...) {
-    center <- rep(0, dimension)
+  function(.Object, radius, dimension, center, ...) {
+    if (missing(center)) center <- rep(0, dimension)
     callNextMethod(.Object, radius = radius,
-                   dimension = dimension, center = center, ...)
+                   dimension = as.integer(dimension), center = center, ...)
   }
 )
 
@@ -105,9 +108,10 @@ setClass(
     normalizing_constants = "numeric",
     isqrts = "array",
     sqrts = "array",
-    k = "numeric", d = "numeric",
+    k = "integer", d = "integer",
     rej_prob = "numeric"
-  )
+  ),
+  contains = "distribution"
 )
 
 setMethod(
@@ -120,10 +124,10 @@ setMethod(
     # schema validation and set k, d
     stopifnot(length(dim(covariances)) == 3)
     stopifnot(length(dim(centers)) == 2)
-    k <- dim(centers)[2]    
+    k <- as.integer(dim(centers)[2])    
     stopifnot(k == dim(covariances)[3])
     stopifnot(k == length(weights))
-    d <- dim(centers)[1]
+    d <- as.integer(dim(centers)[1])
     stopifnot(d == domain@dimension)
     stopifnot(d == dim(covariances)[1])
     stopifnot(d == dim(covariances)[2])
@@ -170,6 +174,7 @@ setMethod(
       sq_cov <- omega@sqrts[, , tup[1]]
       while(flag) {
         x <- sq_cov %*% matrix(rnorm(estn * omega@d), omega@d, estn)
+        x <- x + omega@centers[, tup[1]]
         x <- x[, in_space(omega@domain, x)]
         if (dim(x)[2] > tup[2]) flag <- FALSE
       }
@@ -179,4 +184,125 @@ setMethod(
   }
 )
 
+setClass(
+  "simulation_params",
+  representation(
+    prior = "distribution",
+    sigma = "matrix",
+    k = "integer",
+    n = "integer",
+    n_tr = "integer"
+  )
+)
 
+setClass(
+  "simulation_detailed_results",
+  representation(
+    params = "simulation_params",
+    misc_rate = "numeric",
+    confusion = "matrix",
+    centers = "matrix",
+    est_centers = "matrix"
+  )
+)
+
+setClass(
+  "simulation_summary_results",
+  representation(
+    params = "simulation_params",
+    ntimes = "integer",
+    misc_rates = "numeric",
+    misc_rate = "numeric"
+  )
+)
+
+
+simulate_once <- function(pars) {
+  NULL
+}
+
+confusion_mat <- function(k, true_labels, est_labels) {
+  mat <- matrix(table(c(1:k, true_labels), c(1:k, est_labels)), k, k)
+  diag(mat) <- diag(mat) - 1
+  return (mat)
+}
+
+setMethod(
+  "initialize", "simulation_detailed_results",
+  function(.Object, pars, ...) {
+    d <- dim(pars@sigma)[1]
+    centers <- sample_points(pars@prior, pars@k)
+    mu_noise <- t(mvrnorm(pars@k, rep(0, d), pars@sigma/pars@n_tr))
+    est_centers <- centers + mu_noise
+    n_te <- pars@n - pars@n_tr
+    true_labels <- rep(1:pars@k, each = n_te)
+    te_centers <- centers[, true_labels]
+    te_noise <- t(mvrnorm(pars@k * n_te, rep(0, d), pars@sigma))
+    te_x <- te_centers + te_noise
+    wht_mat <- isqrtm(pars@sigma)
+    wht_centers <- wht_mat %*% est_centers
+    wht_x <- wht_mat %*% te_x
+    dm <- fastPdist2(t(wht_centers), t(wht_x))
+    est_labels <- apply(dm, 2, function(v) order(v)[1])
+    cm <- confusion_mat(pars@k, true_labels, est_labels)
+    mr <- sum(est_labels != true_labels)/length(true_labels)
+    callNextMethod(.Object,
+                   params = pars, misc_rate = mr,
+                   confusion = cm, centers = centers,
+                   est_centers = est_centers, ...)
+  }
+)
+
+print.sr <- function(x) {
+  cat(paste0("Dimension: ", sr@params@prior@d, "\n"))
+  cat(paste0("N. classes: ", sr@params@k, "\n"))
+  cat(paste0("Misc. rate: ", sr@misc_rate, "\n"))  
+}
+
+setMethod(
+  "print",
+  signature(x = "simulation_detailed_results"),
+  print.sr
+)
+
+setMethod(
+  "print",
+  signature(x = "simulation_summary_results"),
+  print.sr
+)
+
+setMethod(
+  "initialize", "simulation_summary_results",
+  function(.Object, pars, ntimes, ...) {
+    mrs <- numeric(ntimes)
+    for (i in 1:ntimes) {
+      sr <- new("simulation_detailed_results", pars)
+      mrs[i] <- sr@misc_rate
+    }
+    mr <- mean(mrs)
+    callNextMethod(.Object,
+                   params = pars, ntimes = as.integer(ntimes),
+                   misc_rates = mrs, misc_rate = mr, ...)
+  }
+)
+
+density_at <- function(obj, x) {
+  return (rep(NA, dim(x)[2]))
+}
+
+setMethod(
+  "density_at",
+  signature(obj = "mixture_in_ball", x = "matrix"),
+  function(obj, x) {
+    k <- obj@k
+    n <- dim(x)[2]
+    dm <- matrix(0, k, n)
+    for (i in 1:k) {
+      wht_x <- obj@isqrts[, , i] %*% (x - obj@centers[, i])
+      dm[i, ] <- apply(wht_x, 2, function(v) sum(v^2))
+    }
+    dens_s <- obj@normalizing_constants * exp(-dm)
+    ans <- as.vector(t(obj@weights) %*% dens_s)
+    ans
+  }
+)

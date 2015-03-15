@@ -7,25 +7,6 @@ output: html_document
 
 ```{r}
 source("source.R")
-
-d <- 2
-b1 <- new("ball", radius = 2, dimension = d)
-k <- 3
-centers <- sample_points(b1, k)
-covs <- identity_covs(d, k)
-wts <- (temp <- runif(k))/sum(temp)
-mb1 <- new("mixture_in_ball", domain = b1,
-           centers = centers, covariances = covs,
-           weights = wts)
-mb1@rej_prob
-
-mb0 <- new("mixture_in_ball", domain = b1,
-           centers = matrix(0, 2, 1),
-           covariances = 10 * identity_covs(2, 1),
-           weights = 1)
-mb0@rej_prob
-
-sample_points(mb1, 5)
 ```
 
 ## Model
@@ -42,17 +23,42 @@ From $n_{tr}$ observations per mean estimate $\hat{\mu}_i$ for $i = 1,..., k$.
 
 Then assess the misclassification rate on the remaining $k(n-n_{tr})$ test points.
 
-Set parameters:
+Set distribution $P$:
 
-```{r}
-# PARAMETERS
-5
+```{r, fig.width=6, fig.height=5}
+d <- 2L
+b1 <- new("ball", radius = 2, dimension = d)
+k <- 10L
+centers <- sample_points(b1, k)
+covs <- 0.1 * identity_covs(d, k)
+wts <- (temp <- runif(k))/sum(temp)
+mb1 <- new("mixture_in_ball", domain = b1,
+           centers = centers, covariances = covs,
+           weights = wts)
+plot(t(sample_points(mb1, 5000L)))
 ```
 
-Generate random means:
+Specify simulation parameters:
 
 ```{r}
-5
+pars <- new("simulation_params",
+           prior = mb1,
+           sigma = diag(rep(1, d)),
+           k = 10L,
+           n = 13L,
+           n_tr = 10L)
+```
+
+Run simulation:
+```{r}
+sr <- new("simulation_detailed_results", pars)
+print(sr)
+```
+
+Run multiple simulations:
+```{r}
+srs <- new("simulation_summary_results", pars, 10L)
+print(srs)
 ```
 
 Mean rates for each angle
