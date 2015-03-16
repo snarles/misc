@@ -3,6 +3,19 @@
  
 using namespace Rcpp;
  
+//' @title
+//' fastPdist2
+//' @description
+//' Pairwise distance functions
+//' 
+//' @param Ar first matrix
+//' 
+//' @param Br second matrix
+//' 
+//' @details
+//' \code{fastPdist} from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
+//'
+//' @export
 // [[Rcpp::export]]
 NumericMatrix fastPdist2(NumericMatrix Ar, NumericMatrix Br) {
     int m = Ar.nrow(), 
