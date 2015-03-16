@@ -2,6 +2,10 @@
 
 export(fastPdist2)
 export(isqrtm)
+export(new_gaussian)
+export(sample_points)
 export(sqrtm)
+exportClasses(distribution)
+exportClasses(gaussian_dist)
 importFrom(Rcpp,evalCpp)
 useDynLib(zheng001)
