@@ -16,7 +16,9 @@
 \newcommand{\E}{\textbf{E}}
 \newcommand{\diag}{\text{diag}}
 \newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
 \newcommand{\Cov}{\text{Cov}}
+\newcommand{\Vol}{\text{Vol}}
 \pagestyle{fancy}
 
 \title{A principled approach to decoding}
@@ -26,26 +28,23 @@
 \maketitle
 
 \begin{abstract}
-In functional MRI (fMRI) studies, one presents a sequence of $T$
-(possibly repeated) stimuli parameterized by features $x^{(1)},
-\hdots, x^{(T)}$, where each $x^{(i)}$ is a $p$-dimensional vector.
-The time-varying MRI image is processed to yield corresponding
-response profiles $y^{(1)}, \hdots, y^{(T)}$, where each $y^{(i)}$ is
-a vector of $V$ voxel-specific responses.  The goal of these studies
-is to understand the relationship between $x^{(t)}$ and $y^{(t)}$: this goal can
-be subdivided into the subgoal of learning an \emph{encoding model},
-which predicts the response $y$ given the simulus, and the subgoal of
-learning a \emph{decoding model}, which reconstructs the stimulus
-given the response $y$.  One could interpret both models as
-multivariate regression problems, with encoding fitting a model of the
-form $Y = f(X) + \epsilon$ and decoding fitting a model of the form $X
-= g(Y) + \varepsilon$.  However, the regression formulation is not the
-only interpretation of the encoding/decoding problem.  Notably, Kay
-\emph{et al} treat the encoding problem as a linear model, but pose
-the decoding problem as one of \emph{identification}: that is, given
-stimuli-response pairs $(x^{[i_1]}, y^{(1)}), \hdots, (x^{[i_j]},
-y^{(j)})$ where the unobserved $x^{[i]}$ lie in a known set of stimuli
-$S = \{x^{[1]},\hdots, x^{[|S|]}\}$, correctly recover the labels
+The goal of these function MRI studies is to understand the
+relationship between $x^{(t)}$ and $y^{(t)}$, where $x^{(t)}$ is a
+vector of stimuli features and $y^{(t)}$ is a vector of brain activity
+features: this goal can be subdivided into the subgoal of learning an
+\emph{encoding model}, which predicts the response $y$ given the
+simulus, and the subgoal of learning a \emph{decoding model}, which
+reconstructs the stimulus given the response $y$.  One could interpret
+both models as multivariate regression problems, with encoding fitting
+a model of the form $Y = f(X) + \epsilon$ and decoding fitting a model
+of the form $X = g(Y) + \varepsilon$.  However, the regression
+formulation is not the only interpretation of the encoding/decoding
+problem.  Notably, Kay \emph{et al} treat the encoding problem as a
+linear model, but pose the decoding problem as one of
+\emph{identification}: that is, given stimuli-response pairs
+$(x^{[i_1]}, y^{(1)}), \hdots, (x^{[i_j]}, y^{(j)})$ where the
+unobserved $x^{[i]}$ lie in a known set of stimuli $S =
+\{x^{[1]},\hdots, x^{[|S|]}\}$, correctly recover the labels
 $i_1,\hdots, i_j$ given only the responses $y^{(1)}, \hdots, y^{(j)}$.
 Furthermore, Kay \emph{et al} quantify the quality of the decoding
 model by the classification rate for the identification problem when
@@ -66,6 +65,102 @@ performance which can be tractably optimized in training data.
 \end{abstract}
 
 \section{Introduction}
+
+\subsection{Background}
+
+In functional MRI (fMRI) studies, one presents a sequence of $T$
+(possibly repeated) stimuli parameterized by features $x^{(1)},
+\hdots, x^{(T)}$, where each $x^{(i)}$ is a $p$-dimensional vector.
+The time-varying MRI image is processed to yield corresponding
+response profiles $y^{(1)}, \hdots, y^{(T)}$, where each $y^{(i)}$ is
+a vector of $V$ voxel-specific responses.  
+
+\section{Theory}
+
+\subsection{Classification of random images}
+
+We deal first with the \emph{classification} approach to image
+identification.
+
+\noindent\emph{Simplest case}
+
+The simplest model is as follows.  Let $\mu_1,\hdots, \mu_N$ be
+$d$-dimensional mean fMRI responses for images $1,\hdots, n$, drawn
+iid from a normal distribution: $\mu_i \sim N(0, \Sigma_\mu)$, and
+suppose for now that $\mu_i$ are known to the experimenter.  Let
+$j_1,\hdots, j_T$ be random labels drawn uniformly from $\{1,\hdots,
+N\}$, and let $y_t = \mu_{j_t} + \epsilon_t$ where $\epsilon_t \sim
+N(0, \sigma^2 I)$.  Then the classification rule is to estimate
+\[
+\hat{j}_t = \argmin_{j \in \{1, \hdots, N\}} ||y_t - \mu_j||^2
+\]
+
+The classification is correct in the event that $||y_t - \mu_{j_t}||^2
+< ||y_t - \mu_j||^2$ for all $j \neq j_t$, and hence the average correct classification rate is
+\[
+\text{CC} = \frac{1}{T}\sum_{i=1}^T \Pr[||y_t - \mu_i||^2 = \min_j ||y_t - \mu_j||^2 | j_t = i]
+\]
+Due to exchangeability, we need only consider the expression for $t = 1$, and conditional on $j_1 = 1$, hence
+\begin{align*}
+\text{CC} &= \Pr[||y_1 - \mu_1||^2 < \min_{j > 1} ||y_t - \mu_j||^2 | j_1 = 1]
+\\&= \Pr[\forall j  > 1: \mu_j \notin B_{||\epsilon_1||}(y_1)]
+\\&= \Pr[\mu_2 \notin B_{||\epsilon_1||}(y_1)]^{T - 1}
+\\&= \int_{\mathbb{R}^d \times \mathbb{R}^d} \left[1 - \int_{B_{||\epsilon||}(y)} p(\mu) d\mu\right]^{T-1} dP(\epsilon, y)
+\end{align*}
+where $B_r(x)$ is the euclidean ball of radius $r$ centered at $x$ and
+\[
+p(\mu) = \frac{1}{(2\pi|\Sigma_\mu|)^{d/2}} \exp(-\frac{1}{2}\mu^T \Sigma_\mu^{-1} \mu)
+\]
+The preceding integral is over the joint distribution over $\epsilon, y$, where $y = \mu_1 + \epsilon$.  The quantities $\epsilon, y$ effectively decouple if $\sigma^2 I << \Sigma_\mu$, in which case
+\[
+\int_{B_{||\epsilon||}(y)} p(\mu) d\mu \approx \int_{B_{||\epsilon||}(\mu_1)} p(\mu) d\mu \approx p(\mu_1) \Vol(B_{||\epsilon||})
+\]
+Hence letting $\eta  = ||\epsilon||^2$, we get
+\begin{align*}
+\text{CC} &\approx \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} \left[1 - \Vol(B_{\sqrt{\eta}}) p(\mu)\right]^{T-1} d\mu dP(\epsilon)
+\\&= \int_0^\infty \int_{\mathbb{R}^d} \left[1 - \eta^{d/2} \Vol(B_1) p(\mu)\right]^{T-1} p(\eta) d\eta
+\\&= \int_{\mathbb{R}^d} p(\mu) \int_0^\infty  p(\eta) \left[1 - p(\mu) \eta^{d/2} V_d \right]^{T-1} d\eta d\mu
+\end{align*}
+where $\eta$ has a scaled Chi-squared distribution
+\[
+p(\eta) = \frac{1}{2^{d/2}\Gamma(d/2)\sigma^2} \left(\frac{\eta}{\sigma^2}\right)^{k/2 - 1} e^{-\eta/2\sigma^2}
+\]
+and
+\[
+V_D = \Vol(B_1) = \frac{\pi^{d/2}}{\Gamma((d+2)/2)}
+\]
+
+We now seek to approximate the inner integral, denoted as $I(p(\mu))$:
+\[
+I(p) = \int_0^\infty \left[1 - p \eta^{d/2} V_d \right]^{T-1} p(\eta) d\eta
+\]
+When $T$ is large and $\eta$ is small, we can use the exponential
+function to approximate the power, giving
+\[
+I(p) \approx \int_0^\infty \exp(-p(T-1)V_d \eta^{d/2}) p(\eta) d\eta = \E[\exp(-p(T-1) V_d \eta^{d/2})]
+\]
+Making the additional assumption that $d$ is large, we can use the approximation that for nonnegative random variables $Z$,
+\[
+\E[\exp[-cZ^d]] = \E[\exp[(-Z/\sqrt[d]{c})^d]] \approx \Pr\left[\frac{Z}{\sqrt[d]{c}} < 1\right] = \Pr[Z < \sqrt[d]{c}]
+\]
+This gives
+\[
+I(p) \approx \Pr[\eta < \sqrt[d/2]{p (T-1) V_d}] = \Pr\left[\chi^2_d < \frac{\sqrt[d/2]{p (T-1) V_d}}{\sigma^2}\right]
+\]
+All in all, we have
+\[
+CC \approx \int_\mathbb{R^d} p(\mu) \Pr\left[\chi^2_d < \frac{\sqrt[d/2]{p(\mu) (T-1) V_d}}{\sigma^2}\right] d\mu
+\]
+
+
+
+\subsection{Decoding of random images}
+
+\section{Simulations}
+
+\subsection{Validation of formulae}
+
+(This subsection will be omitted in the submitted version.)
 
 \section{References}
 
