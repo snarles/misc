@@ -35,35 +35,18 @@ wts <- (temp <- runif(k))/sum(temp)
 mb1 <- new("mixture_in_ball", domain = b1,
            centers = centers, covariances = covs,
            weights = wts)
-de <- density_at(mb1, sample_points(mb1, 1e5))
+de <- density_at(b1, sample_points(mb1, 1e5))
 ```
 
 Specify simulation parameters:
 
 ```{r}
 pars <- new("simulation_params",
-           prior = mb1,
-           sigma = 0.07 * diag(rep(1, d)),
+           prior = b1,
+           sigma = 0.2 * diag(rep(1, d)),
            k = 1000L,
            n = 2L,
            n_tr = 1L)
-```
-
-Run simulation:
-```{r}
-sr <- new("simulation_detailed_results", pars)
-print(sr)
-```
-
-Run multiple simulations:
-```{r}
-srs <- new("simulation_summary_results", pars, 10L)
-print(srs)
-```
-
-Theoretical rate
-```{r}
-theoretical_misc_rate(pars, de)
 ```
 
 The theoretical rate has very bad worst-case accuracy, but it can be used to find the "change point".
@@ -88,7 +71,7 @@ title("Empirical misclassification rate (black) vs theoretical (red)")
 Varying k:
 
 ```{r, fig.width=6, fig.height=5}
-ks <- 10L * as.integer((1:20)^2)
+ks <- 10L * as.integer((1:10)^2)
 mrs <- numeric(length(ks))
 tmrs <- numeric(length(ks))
 for (i in 1:length(ks)) {

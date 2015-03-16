@@ -254,7 +254,7 @@ setMethod(
 )
 
 print.sr <- function(x) {
-  cat(paste0("Dimension: ", x@params@prior@d, "\n"))
+  cat(paste0("Dimension: ", dimension(x@params@prior), "\n"))
   cat(paste0("N. classes: ", x@params@k, "\n"))
   cat(paste0("Misc. rate: ", x@misc_rate, "\n"))  
 }
@@ -292,6 +292,16 @@ density_at <- function(obj, x) {
 
 setMethod(
   "density_at",
+  signature(obj = "ball", x = "matrix"),
+  function(obj, x) {
+    d <- dimension(obj)
+    vball <- volume(obj)
+    return (rep(1/vball, dim(x)[2]))
+  }
+)
+
+setMethod(
+  "density_at",
   signature(obj = "mixture_in_ball", x = "matrix"),
   function(obj, x) {
     k <- obj@k
@@ -313,19 +323,185 @@ theoretical_misc_rate <- function(pars, de) {
 
 setMethod(
   "theoretical_misc_rate",
-  signature(pars = "simulation_params", de = "numeric"),
-  function(pars, de) {
+  signature(pars = "simulation_params"),
+  function(pars) {
     N_MONTE_CARLO <- 1e5
-    prior <- pars@prior
-    d <- prior@d
-    radius <- pars@prior@domain@radius
-    vfrac <- det(pars@sigma) * (sqrt(d * (1 + 1/pars@n_tr)))^d/radius^d
-    if (missing(de)) {
-      x <- sample_points(prior, N_MONTE_CARLO)
-      de <- density_at(prior, x)      
-    }
-    ans <- 1 - sum(exp(-pars@k * vfrac * de))/length(de)
-    ans
+    x <- sample_points(pars@prior, N_MONTE_CARLO)
+    de <- density_at(pars@prior, x)      
+    theoretical_misc_rate(pars, de)
   }
 )
 
+
+setMethod(
+  "theoretical_misc_rate",
+  signature(pars = "simulation_params", de = "numeric"),
+  function(pars, de) {
+    prior <- pars@prior
+    d <- dimension(prior)
+    #vball <- volume(prior)
+    a_ellipse <- new("ellipsoid", (d * (1 + 1/pars@n_tr)) * pars@sigma)
+    l_ellipse <- quantile_ellipsoid(pars@sigma, 0.1)
+    u_ellipse <- quantile_ellipsoid(pars@signa, 0.9)
+    a_rate <- 1 - sum(exp(-pars@k * de * volume(a_ellipse)))/length(de)
+    l_rate <- 1 - sum(exp(-pars@k * de * volume(l_ellipse)))/length(de)
+    u_rate <- 1 - sum(exp(-pars@k * de * volume(u_ellipse)))/length(de)
+    list(a_rate = a_rate, l_rate = l_rate, u_rate = u_rate)
+  }
+)
+
+dimension <- function(obj) {
+  NA
+}
+
+setMethod("dimension",
+          signature(obj = "ball"),
+          function(obj) obj@dimension)
+
+setMethod("dimension",
+          signature(obj = "mixture_in_ball"),
+          function(obj) obj@d)
+
+radius <- function(obj) NA
+
+setMethod("radius",
+          signature(obj = "ball"),
+          function(obj) obj@radius)
+
+setMethod("radius",
+          signature(obj = "mixture_in_ball"),
+          function(obj) obj@domain@radius)
+
+volume <- function(obj) NA
+
+setMethod("volume",
+          signature(obj = "ball"),
+          function(obj) {
+            d <- dimension(obj)
+            (pi)^(d/2)/gamma((d/2) + 1) * radius(obj)^d
+          })
+
+setMethod("volume",
+          signature(obj = "mixture_in_ball"),
+          function(obj) {
+            volume(obj@domain)
+          })
+
+
+# methods for hypercube
+
+setClass(
+  "cube", 
+  representation(
+    radius = "numeric",
+    dimension = "integer",
+    center = "numeric"),
+  contains = c("parameter_space", "distribution")
+)
+
+setMethod(
+  "initialize", "cube",
+  function(.Object, radius, dimension, center, ...) {
+    if (missing(center)) center <- rep(0, dimension)
+    callNextMethod(.Object, radius = radius,
+                   dimension = as.integer(dimension), center = center, ...)
+  }
+)
+
+setMethod(
+  "dimension",
+  signature(obj = "cube"),
+  function(obj) obj@dimension
+)
+
+setMethod(
+  "radius",
+  signature(obj = "cube"),
+  function(obj) obj@radius
+)
+
+
+setMethod(
+  "sample_points",
+  signature(omega = "cube", n = "numeric"),
+  function(omega, n) {
+    d <- dimension(omega)
+    r <- radius(omega)
+    x <- matrix(runif(d * n), d, n) * 2 * r - r
+    x <- x + omega@center
+    return (x)
+  }
+)
+
+setMethod(
+  "volume",
+  signature(obj = "cube"),
+  function(obj) (2*radius(obj))^dimension(obj)
+)
+
+## ellipsoid
+
+setClass(
+  "ellipsoid", 
+  representation(
+    covariance = "matrix",
+    dimension = "integer",
+    center = "numeric",
+    ax = "matrix",
+    i_ax = "matrix"),
+  contains = c("parameter_space", "distribution")
+)
+
+setMethod(
+  "initialize", "ellipsoid",
+  function(.Object, covariance, ...) {
+    dimension <- as.integer(dim(covariance)[1])
+    center <- rep(0, dimension)
+    ax <- sqrtm(covariance)
+    i_ax <- isqrtm(covariance)
+    callNextMethod(.Object, covariance = covariance,
+                   dimension = dimension, center = center, 
+                   ax = ax, i_ax= i_ax, ...)
+  }
+)
+
+setMethod(
+  "dimension",
+  signature(obj = "ellipsoid"),
+  function(obj) obj@dimension
+)
+
+setMethod(
+  "in_space",
+  signature(omega = "ellipsoid", x = "matrix"),
+  function(omega, x) {
+    (apply(omega@i_ax %*% x, 2, function(v) sum(v^2)) <= 1)
+  }
+)
+
+setMethod(
+  "sample_points",
+  signature(omega = "ellipsoid", n = "numeric"),
+  function(omega, n) {
+    x <- omega@ax %*% sample_points(new("ball", 1, dimension(omega)), n)
+    return (x)
+  }
+)
+
+setMethod(
+  "volume",
+  signature(obj = "ellipsoid"),
+  function(obj) {
+    d <- dimension(obj)
+    b <- new("ball", 1, dimension(obj))
+    volume(b) * det(obj@ax)
+  }
+)
+
+## gaussian to ellipsoid relations
+
+quantile_ellipsoid <- function(covariance, q) {
+  d <- dim(covariance)[1]
+  rad2 <- qchisq(q, d)
+  new("ellipsoid", rad2 * covariance)
+}
