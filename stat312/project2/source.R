@@ -342,7 +342,7 @@ setMethod(
     #vball <- volume(prior)
     a_ellipse <- new("ellipsoid", (d * (1 + 1/pars@n_tr)) * pars@sigma)
     l_ellipse <- quantile_ellipsoid(pars@sigma, 0.1)
-    u_ellipse <- quantile_ellipsoid(pars@signa, 0.9)
+    u_ellipse <- quantile_ellipsoid(pars@sigma, 0.9)
     a_rate <- 1 - sum(exp(-pars@k * de * volume(a_ellipse)))/length(de)
     l_rate <- 1 - sum(exp(-pars@k * de * volume(l_ellipse)))/length(de)
     u_rate <- 1 - sum(exp(-pars@k * de * volume(u_ellipse)))/length(de)
@@ -439,6 +439,15 @@ setMethod(
   function(obj) (2*radius(obj))^dimension(obj)
 )
 
+setMethod(
+  "density_at",
+  signature(obj = "cube", x = "matrix"),
+  function(obj, x) {
+    vball <- volume(obj)
+    return (rep(1/vball, dim(x)[2]))
+  }
+)
+
 ## ellipsoid
 
 setClass(
@@ -505,3 +514,51 @@ quantile_ellipsoid <- function(covariance, q) {
   rad2 <- qchisq(q, d)
   new("ellipsoid", rad2 * covariance)
 }
+
+## product of betas in hypercube
+
+setClass(
+  "product_in_cube",
+  representation(
+    domain = "cube",
+    alphas = "numeric",
+    betas = "numeric"
+  ),
+  contains = "distribution"
+)
+
+setMethod(
+  "dimension",
+  signature(obj = "product_in_cube"),
+  function(obj) obj@domain@dimension
+)
+
+setMethod(
+  "sample_points",
+  signature(omega = "product_in_cube", n = "numeric"),
+  function(omega, n) {
+    d <- dimension(omega)
+    x <- matrix(0, d, n)
+    for (i in 1:d) {
+      x[i, ] <- rbeta(n, omega@alphas[i], omega@betas[i])
+    }
+    x <- (2*x - 1) * omega@domain@radius + omega@domain@center
+    x
+  }
+)
+
+setMethod(
+  "density_at",
+  signature(obj = "product_in_cube", x = "matrix"),
+  function(obj, x) {
+    cb <- obj@domain
+    z <- (x - cb@center)/(2*cb@radius) + .5
+    den <- z
+    for (i in 1:dim(den)[1]) {
+      den[i, ] <- dbeta(z[i, ], shape1 = obj@alphas[i], shape2 = obj@betas[i])
+    }
+    de <- apply(den, 2, prod)/(2*cb@radius)^(cb@dimension)
+    de
+  }
+)
+

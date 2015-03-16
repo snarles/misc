@@ -43,10 +43,27 @@ Specify simulation parameters:
 ```{r}
 pars <- new("simulation_params",
            prior = b1,
-           sigma = 0.2 * diag(rep(1, d)),
-           k = 1000L,
+           sigma = 0.1 * diag(rep(1, d)),
+           k = 2000L,
            n = 2L,
            n_tr = 1L)
+```
+
+Run simulation:
+```{r}
+sr <- new("simulation_detailed_results", pars)
+print(sr)
+```
+
+Run multiple simulations:
+```{r}
+srs <- new("simulation_summary_results", pars, 10L)
+print(srs)
+```
+
+Theoretical rate
+```{r}
+theoretical_misc_rate(pars, de)
 ```
 
 The theoretical rate has very bad worst-case accuracy, but it can be used to find the "change point".
@@ -56,15 +73,20 @@ Varying sigmas:
 ```{r, fig.width=6, fig.height=5}
 sigmas <- exp(-(1:20)/2)
 mrs <- numeric(length(sigmas))
-tmrs <- numeric(length(sigmas))
+tmrs_l <- numeric(length(sigmas))
+tmrs_u <- numeric(length(sigmas))
+
 for (i in 1:length(sigmas)) {
   pars2 <- pars
   pars2@sigma <- sigmas[i] * diag(rep(1, d))
   mrs[i] <- new("simulation_summary_results", pars2, 10L)@misc_rate
-  tmrs[i] <- theoretical_misc_rate(pars2, de)
+  res <- theoretical_misc_rate(pars2, de)
+  tmrs_l[i] <- res$l_rate
+  tmrs_u[i] <- res$u_rate
 }
-plot(-log(sigmas), mrs, type = "o", xlab = "-log sigma", ylab = "misc. rate")
-lines(-log(sigmas), tmrs, col = "red")
+plot(-log(sigmas), mrs, type = "o", xlab = "-log sigma", ylab = "misc. rate", ylim = c(0, 1))
+lines(-log(sigmas), tmrs_l, col = "red")
+lines(-log(sigmas), tmrs_u, col = "red")
 title("Empirical misclassification rate (black) vs theoretical (red)")
 ```
 
@@ -73,14 +95,18 @@ Varying k:
 ```{r, fig.width=6, fig.height=5}
 ks <- 10L * as.integer((1:10)^2)
 mrs <- numeric(length(ks))
-tmrs <- numeric(length(ks))
+tmrs_l <- numeric(length(ks))
+tmrs_u <- numeric(length(ks))
 for (i in 1:length(ks)) {
   pars2 <- pars
   pars2@k <- ks[i]
   mrs[i] <- new("simulation_summary_results", pars2, 10L)@misc_rate
-  tmrs[i] <- theoretical_misc_rate(pars2, de)
+  res <- theoretical_misc_rate(pars2, de)
+  tmrs_l[i] <- res$l_rate
+  tmrs_u[i] <- res$u_rate
 }
 plot(ks, mrs, type = "o", xlab = "k", ylab = "misc. rate", ylim= c(0,1))
-lines(ks, tmrs, col = "red")
+lines(ks, tmrs_l, col = "red")
+lines(ks, tmrs_u, col = "red")
 title("Empirical misclassification rate (black) vs theoretical (red)")
 ```
