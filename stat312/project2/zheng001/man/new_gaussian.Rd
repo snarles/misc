@@ -4,12 +4,18 @@
 \alias{new_gaussian}
 \title{Create an instance of the gaussian dist}
 \usage{
-new_gaussian(covriance)
+new_gaussian(covariance)
 }
 \arguments{
 \item{covariance}{The covariance matrix}
 }
 \description{
 Create an instance of the gaussian dist
+}
+\examples{
+cm <- diag(rep(1, 3))
+gd <- new_gaussian(cm)
+x <- sample_points(gd, 10)
+de <- density_at(gd, x)
 }
 

@@ -1,6 +1,14 @@
 #'@importFrom Rcpp evalCpp
 #'@useDynLib zheng001
 
+#'@title vball
+#'@param d dimension
+#'@param r radius
+#'@export
+vball <- function(d, r = 1) {
+  (pi)^(d/2)/gamma((d/2) + 1) * r^d
+}
+
 #'@title isqrtm
 #'@param m covariance matrix
 #'@export
@@ -41,26 +49,36 @@ setClass(
     covariance = "matrix",
     sqrt_c = "matrix",
     isqrt_c = "matrix",
-    dimension = "integer"
+    dimension = "integer",
+    nc = "numeric"
   ),
   contains = "distribution"
 )
 
-#' Sample Points
-#' 
-#' @export
-#' @docType methods
-#' @rdname sample_points-methods
-setGeneric("sample_points", function(omega, n, ...){
-  standardGeneric("sample_points")
-})
-#' @rdname sample_points-methods
-#' @aliases sample_points,gaussian_dist,numeric-method
-setMethod(
-  "sample_points",
-  signature(omega = "gaussian_dist", n = "numeric"),
-  function(omega, n) {
-    d <- omega@dimension
-    matrix(rnorm(n * d), n, d) %*% omega@sqrt_c
-  }
+#'@title simulation_params-class
+#'@rdname simulation_params-class
+#'@exportClass simulation_params
+setClass(
+  "simulation_params",
+  representation(
+    prior = "distribution",
+    sigma = "numeric",
+    k = "integer"
+  )
 )
+
+#'@title simulation_results-class
+#'@rdname simulation_results-class
+#'@exportClass simulation_results
+setClass(
+  "simulation_results",
+  representation(
+    params = "simulation_params",
+    external_its = "integer",
+    internal_its = "integer",
+    id_rates = "numeric",
+    id_rate = "numeric"
+  )
+)
+
+
