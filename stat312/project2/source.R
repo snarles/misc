@@ -319,7 +319,7 @@ setMethod(
     prior <- pars@prior
     d <- prior@d
     radius <- pars@prior@domain@radius
-    vfrac <- det(pars@sigma) * (sqrt(d) * (1 + 1/pars@n_tr))^d/radius^d
+    vfrac <- det(pars@sigma) * (sqrt(d * (1 + 1/pars@n_tr)))^d/radius^d
     if (missing(de)) {
       x <- sample_points(prior, N_MONTE_CARLO)
       de <- density_at(prior, x)      
