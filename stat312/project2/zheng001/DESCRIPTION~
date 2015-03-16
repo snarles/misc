@@ -6,5 +6,4 @@ Description: Functions for the paper
 Depends: R (>= 3.1.2)
 License: What license is it under?
 LazyData: true
-Imports: Rcpp (>= 0.11.3)
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp
