@@ -141,15 +141,15 @@ I(p) \approx \int_0^\infty \exp(-p(T-1)V_d \eta^{d/2}) p(\eta) d\eta = \E[\exp(-
 \]
 Making the additional assumption that $d$ is large, we can use the approximation that for nonnegative random variables $Z$,
 \[
-\E[\exp[-cZ^d]] = \E[\exp[(-Z/\sqrt[d]{c})^d]] \approx \Pr\left[\frac{Z}{\sqrt[d]{c}} < 1\right] = \Pr[Z < \sqrt[d]{c}]
+\E[\exp[-cZ^d]] = \E[\exp[-(Z\sqrt[d]{c})^d]] \approx \Pr\left[Z \sqrt[d]{c} < 1\right] = \Pr[Z < 1/\sqrt[d]{c}]
 \]
 This gives
 \[
-I(p) \approx \Pr[\eta < \sqrt[d/2]{p (T-1) V_d}] = \Pr\left[\chi^2_d < \frac{\sqrt[d/2]{p (T-1) V_d}}{\sigma^2}\right]
+I(p) \approx \Pr[\eta < 1/\sqrt[d/2]{p (T-1) V_d}] = \Pr\left[\chi^2_d < \frac{1}{\sigma^2 \sqrt[d/2]{p (T-1) V_d}}\right]
 \]
 All in all, we have
 \[
-CC \approx \int_\mathbb{R^d} p(\mu) \Pr\left[\chi^2_d < \frac{\sqrt[d/2]{p(\mu) (T-1) V_d}}{\sigma^2}\right] d\mu
+CC \approx \int_\mathbb{R^d} p(\mu) \Pr\left[\chi^2_d < \frac{1}{\sigma^2 \sqrt[d/2]{p(\mu) (T-1) V_d}}\right] d\mu
 \]
 
 

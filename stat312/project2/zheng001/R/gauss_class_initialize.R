@@ -56,6 +56,7 @@ new_simulation_pars <- function(prior, sigma, k){
 #' A vector of identification rates per outer loop
 #' \code{id_rate}
 #' The average across all trials
+#' @export
 run_simulation <- function(params, external_its, internal_its) {
   d <- params@prior@dimension
   id_rates <- numeric(external_its)
