@@ -69,18 +69,121 @@ performance which can be tractably optimized in training data.
 \subsection{Background}
 
 In functional MRI (fMRI) studies, one presents a sequence of $T$
-(possibly repeated) stimuli parameterized by features $x^{(1)},
-\hdots, x^{(T)}$, where each $x^{(i)}$ is a $p$-dimensional vector.
-The time-varying MRI image is processed to yield corresponding
-response profiles $y^{(1)}, \hdots, y^{(T)}$, where each $y^{(i)}$ is
-a vector of $V$ voxel-specific responses.  
+(possibly repeated) stimuli.  The time-varying MRI image is processed
+to yield corresponding response profiles $y^{(1)}, \hdots, y^{(T)}$,
+where each $y^{(i)}$ is a vector of $V$ voxel-specific responses.
+
+The earliest function MRI studies were designed to understand the
+sensitivities of neurons in the visual cortex to image features such
+as orientation or brightness [Haynes 2005, Kamitani 2005].  In these
+studies, stimuli were artificially designed images such as gratings or
+checkerboard patterns, which are naturally parameterized by
+low-dimensional feature vectors $x^{(1)}, \hdots, x^{(T)}$.
+
+To investigate how the visual system percieves discrete
+\emph{categories} rather than a continuous feature, researchers have
+used images belonging to pre-defined categories.  For example, Haxby
+(2001) investigated how the visual system distinguishes faces and
+objects.  In such a study, the $x^{(t)}$ might be a binary-valued
+feature indicating whether the image is a face or object.
+
+Understanding the visual response to more complex images requires use
+of more diverse image sets and richer image features.  Schoenmakers
+\emph{et al}. (2013) reconstruct the image stimuli by on a
+pixel-by-pixel basis: this amounts to using a feature set where each
+feature corresponds to the intensity of a particular pixel in the
+image.
+
+Kay et all (2008) take a different approach in evaluating their
+decoding model.  Rather than assess its ability to recover the image
+features $x^{(1)}, \hdots, x^{(T)}$ from the fMRI response, Kay
+\emph{et al} assess the performance of their model in
+\emph{identifying} the stimuli from a set of candidates.
+
+\subsection{Statistical perspective}
+
+The decoding models obtained in studies such as Haynes (2005),
+Schoenmakers (2013), can be interpreted under the statistical
+framework of \emph{multivariate regression}.  In contrast, work on
+decoding image categories falls under the framework of
+\emph{classification}.
+
+Meanwhile, the task of \emph{identification} appears to share elements
+of both regression and classification.  Indeed, Kay \emph{et al}
+employ a high-dimensional regression model to predict the voxel
+responses for a candidate image $x$, then pick the candidate whose
+predicted voxel response is closest to the observed response.  Vu
+\emph{et al}, working on with the same data, employ a nonlinear
+regression model to obtain improved identification performance.
+However, we argue that identification falls into neither the
+regression nor classification framework.  As Kay et al. emphasize,
+identification differs from classification due to the fact that images
+outside of the training set can be identified.  Meanwhile, even though
+part of the identification procedure involves predicting image
+features from fMRI features or vice versa, the problem of
+identification cannot be cast as a multivariate regression in either
+direction, since the \emph{loss function} is a misclassification rate
+rather than a measure of prediction error such as mean-squared error.
+More imporantly, the task of identification is agnostic to the choice
+of feature set that is employed, in contrast to regression, where the
+loss function is completely dependent on the choice of response
+features.
+
+Hence, the task of \emph{identification} is especially appropriate in
+the setting of natural images; since unlike the case of artifical
+images which are generated \emph{from} controlled parameters
+$x^{(t)}$, it is unclear how one should ``parameterize'' natural
+images into a set of features $x^{(t)}$.  Kay \emph{et al.} do make
+use of a Gabor wavelet representation of the images to create
+high-dimensional feature vectors, however; because they evaluate their
+decoding model on the basis of its identification performance, the
+interpretation of their results becomes \emph{independent} of the
+particular featurization they employed.
+
+Identification can still be very loosely interpreted in a classical
+statistical framework, as form of \emph{point estimation}.  This
+requires imagining a parametric family of fMRI response distributions
+which are parameterized by \emph{images} (which can be mathematically
+represented by two-dimensional functions).  Identification corresponds
+to the case when the paremeter set is a finite set of isolated points.
+However, one could consider the problem of point estimation when the
+parameter space is a continuous space of two-dimensional functions.
+But then we find the existing tools for describing and analyzing
+statistical models to be inadequate given the geometry of such a
+parameter space.  Yet this interpretation does suggest alternative
+approaches to decoding besides image identification.  After all,
+statisticians are concerned with both \emph{point estimation} and
+\emph{interval estimation}.  Returning to the problem of decoding,
+interval estimation would amount to a method which could produce a set
+of possible images given the fMRI response.  Relevant performance
+characteristics would be the probability of coverage and the ``size''
+of the image set; but this would require at the very least a notion of
+``size'' for a continuously parameterized set of images.
+
+Considering the scientific difficulties of specifying such a parameter
+space of ``all relevant images'' and the statistical difficulties of
+working with such a geometrically complicated parameter space, we see
+that the task of \emph{identification} strikes a pragmatic middle
+ground between the limitations of regression and classification and
+the ideal of classical estimation as applied to the family of fMRI
+responses parameterized by stimuli.
+
+But since identification differs from regression, classification, and
+even still from existing approaches for nonparametric point
+estimation, there is a limit to the applicability of existing theory
+developed for regression, hypothesis testing, classification or point
+estimation to the task of image identification.  There is a need for
+statistical theory tailor-made for the problem of learning decoding
+models which optimize the loss function of identifying random stimuli.
 
 \section{Theory}
 
-\subsection{Classification of random images}
+\subsection{Limits on perfect decoding}
 
-We deal first with the \emph{classification} approach to image
-identification.
+With a \emph{perfect decoder}, the true mean response $\mu^{[i]}$ to
+a given stimulus $x^{[i]}$ is known.  However, errors are still made
+in classification due to the noise in the data.
+\\
 
 \noindent\emph{Simplest case}
 
@@ -144,23 +247,57 @@ Making the additional assumption that $d$ is large, we can use the approximation
 \E[\exp[-cZ^d]] = \E[\exp[-(Z\sqrt[d]{c})^d]] \approx \Pr\left[Z \sqrt[d]{c} < 1\right] = \Pr[Z < 1/\sqrt[d]{c}]
 \]
 This gives
-\[
+\begin{equation}\label{eq:ip}
 I(p) \approx \Pr[\eta < 1/\sqrt[d/2]{p (T-1) V_d}] = \Pr\left[\chi^2_d < \frac{1}{\sigma^2 \sqrt[d/2]{p (T-1) V_d}}\right]
-\]
+\end{equation}
 All in all, we have
-\[
+\begin{equation}\label{eq:cc}
 CC \approx \int_\mathbb{R^d} p(\mu) \Pr\left[\chi^2_d < \frac{1}{\sigma^2 \sqrt[d/2]{p(\mu) (T-1) V_d}}\right] d\mu
-\]
+\end{equation}
 
-
-
-\subsection{Decoding of random images}
+\subsection{Imperfect Decoding}
 
 \section{Simulations}
 
 \subsection{Validation of formulae}
 
 (This subsection will be omitted in the submitted version.)
+
+A combination of \emph{three} asymptotic conditions were used to
+derive our formula \eqref{eq:cc}:
+\begin{enumerate}
+\item The dimensions tend to $\infty$
+\item The number of images tend to $\infty$
+\item The noise level $\sigma$ tends to 0
+\end{enumerate}
+
+Therefore it is important to evaluate the accuracy of the formula in
+settings where the number of dimensions is low, the number of images
+is low, and the noise level is high.
+
+Figure 1 shows a low-dimensional setting, $d = 3$, with $\Sigma_\mu =
+I$.  The approximation consistently overshoots but its overall
+accuracy is acceptable given the range that it covers.
+
+Figure 2 shows an close to ideal setting, $d = 6$.  The dimension is
+high enough that the high-dimensional approximation \eqref{eq:ip} is
+quite accurate; meanwhile, the noise $\sigma = 0.4$ is low enough that
+the density at the mean of a cluster is similar to the density of its
+points, which is the other key assumption used.
+
+Figure 3 depicts a 10-dimensional setting.  It may come as a surprise
+that the approximation degrades with a higher dimension.  But
+this is because increasing the dimension also means that higher $k$
+and lower $\sigma$ are needed for the other approximations to be
+accurate.  Here the problem is that the 10-dimensional standard normal
+density changes drastically in the distance between a point and its
+cluster center.  This fact limits the practical applicability of the
+method, since as seen in Figure 3, even $k = 4000$ is not high enough
+for the formula to be accurate.  Meanwhile, the Kay \emph{et al} paper
+used less than 2000 images.  Therefore additional refinements to the
+formula which correct for the local variation in density around a point
+are needed to consider settings beyond 10 dimensions, as would be
+required for any study involving natural images.
 
 \section{References}
 
@@ -181,5 +318,26 @@ CC \approx \int_\mathbb{R^d} p(\mu) \Pr\left[\chi^2_d < \frac{1}{\sigma^2 \sqrt[
   activity'' \emph{NeuroImage} (2013)
 \end{itemize}
 
-\end{document}
 
+
+\newpage
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.6]{plot1_3.pdf}
+\caption{Dimension 3, $\Sigma_\mu = I$,  $\sigma = 0.2$}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.6]{plot1_6.pdf}
+\caption{Dimension 6, $\Sigma_\mu = I$, $\sigma = 0.4$}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale = 0.6]{plot1_10.pdf}
+\caption{Dimension 10, $\Sigma_\mu = I$, $\sigma = 0.5$}
+\end{figure}
+
+\end{document}

@@ -1,3 +1,5 @@
+
+
 ##############################################################
 #' Initialize the gaussian_dist class
 #'
@@ -46,6 +48,7 @@ new_simulation_pars <- function(prior, sigma, k){
 
 #' Run a simulation
 #' 
+#' @import class
 #' @param params The simulation meta-parameters
 #' @param external_its
 #' The number of outer loops where parameters are randomized
@@ -66,8 +69,9 @@ run_simulation <- function(params, external_its, internal_its) {
     noise <- params@sigma *
                matrix(rnorm(internal_its * d), internal_its, d)
     points <- centers[true_labels, , drop = FALSE] + noise
-    dm <- fastPdist2(centers, points)
-    est_labels <- apply(dm, 2, function(v) order(v)[1])
+    est_labels <- class::knn(centers, points, cl = 1:params@k, k=1)
+    #dm <- fastPdist2(centers, points)
+    #est_labels <- apply(dm, 2, function(v) order(v)[1])
     id_rates[i] <- sum(est_labels == true_labels)/length(true_labels)
   }
   id_rate <- mean(id_rates)
