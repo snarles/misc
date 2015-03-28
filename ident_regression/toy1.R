@@ -27,7 +27,7 @@ te_classes <- knn(t(t(muhat_cands)),
 
 ## plot of points and mean line
 ##  connected to true class
-plot(sel_x, y_star)
+plot(sel_x, y_star, xlab = "x", ylab = "y")
 lines(x_cands, mu_cands)
 for (i in 1:n_points) {
   cc = "grey"
