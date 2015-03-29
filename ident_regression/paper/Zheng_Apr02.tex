@@ -491,10 +491,31 @@ are symmetric about $x = -\frac{\epsilon}{\beta}$.
 
 Thus by symmetry, the derivative of the inner integral $\delta = 0$ vanishes.
 The same argument works for $\epsilon < 0$, hence the misclassification rate is stationary at $\hat{\beta} = \beta$.
-
-
-
 \end{frame}
+
+\begin{frame}
+\frametitle{Toy example I: Estimation}
+\begin{itemize}
+\item Second question: what about estimation?
+\item Take a Bayesian viewpoint: suppose we have a posterior distribution for $\hat{\beta}$, e.g. $\beta \sim N(\hat{\beta}_{MAP}, \sigma^2_\beta)$.
+\item For \emph{least-squares regression}, we would use $\hat{\beta} = \hat{\beta}_{MAP}$, the posterior mean.
+\item For \emph{identification}, we would choose
+\[
+\hat{\beta}_{Bayes} = \argmin_{\hat{\beta}} \int R(\beta; \hat{\beta}) \phi\left(\frac{\beta - \hat{\beta}_{MAP}}{\sigma_\beta}\right) d\beta
+\]
+where $R$ is the expected misclassification rate.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example I: Estimation}
+\begin{center}
+\includegraphics[scale = .3]{rmat.pdf}
+\includegraphics[scale = .3]{toy_est.pdf}
+\end{center}
+The Bayes point estimate for identification is larger than the Bayes point estimate for least-squares prediction.
+\end{frame}
+
 
 \end{document}
 

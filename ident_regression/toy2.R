@@ -177,3 +177,33 @@ theory1(bt - .01, 100)
 theory2(bt)
 theory2(bt + .01)
 theory2(bt - .01)
+
+k_cl <- 3
+
+bts <- (-50:50)/10 + 1e-3
+res <- length(bts)
+rmat <- matrix(0, res, res)
+for (i in 1:res) {
+  for (j in 1:res) {
+    bt <- bts[i]
+    rmat[i,j] <- theory1(bts[j], k_cl)
+  }
+}
+
+pdf("paper/rmat.pdf")
+filled.contour(bts, bts, rmat, xlab = expression(hat(beta)), ylab = expression(beta))
+title(expression(paste("R(", beta, "; ", hat(beta), ")")))
+dev.off()
+
+bt <- 1
+pdf("paper/toy_est.pdf")
+wt <- dnorm((bts - bt))
+lala <- wt %*% rmat/sum(wt)
+plot(bts, lala, type="l", ylab = "Bayes risk", xlab = expression(hat(beta)))
+title("Bayes estimation")
+abline(v = 1, lty = 3, lwd = 2, col = "blue")
+bth = bts[lala == min(lala)]
+abline(v = bth, lty = 2)
+points(bts[order(lala)[1]], min(lala))
+legend(-5, .55, c(expression(hat(beta)[MAP]), expression(hat(beta))), lty = c(3, 2), lwd = c(2, 1), col = c("blue", "black"))
+dev.off()
