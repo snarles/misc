@@ -516,6 +516,79 @@ where $R$ is the expected misclassification rate.
 The Bayes point estimate for identification is larger than the Bayes point estimate for least-squares prediction.
 \end{frame}
 
+\begin{frame}
+\frametitle{More questions}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item
+What happens if the true regression function $f$ is nonlinear,
+but we restrict $\hat{f}$ to be linear?
+\item
+What happens when the number of classes $\ell$ increases?
+What if $\ell$ increases while $\sigma^2_\epsilon$ decreases?
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example II}
+\begin{center}
+\includegraphics[scale = 0.4]{toy2_plot.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example II}
+\begin{center}
+\includegraphics[scale = 0.3]{toy2_l3.pdf}
+\includegraphics[scale = 0.3]{toy2_l20.pdf}
+\end{center}
+Effect of increasing $\ell$.
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example II}
+\begin{center}
+\includegraphics[scale = 0.4]{toy2_plot2.pdf}
+\end{center}
+Effect of increasing $\ell$: global trends will become ignored in
+favor of locally linear trends!
+\end{frame}
+
+\begin{frame}
+\frametitle{Implications}
+\begin{itemize}
+\item
+``The model is always wrong''
+\item
+Statistical methods should be robust to small deviations from the
+model
+\item
+Even when minor nonlinearities exist in the model, identification
+performance fails to reflect global fit
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Solution: Label sets}
+\begin{itemize}
+\item
+One option is to only use small $\ell$.  However, this is not
+satisfactory since with good signal-to-noise ratio, we should be able
+to identify a stimuli from a large set of candidates.
+\item
+Develop a method for producing a \emph{set of labels} for each point
+rather than a single label.  Evaluate the method using a metric such
+as precision-recall.
+\item
+The labeller would assign a proportional number of labels to each
+point as $\ell$ increases, thus maintaining coverage probability.
+Thus, it will no longer become optimal to just ``give up'' on global
+estimation as $\ell$ increases.
+\item
+It would be desirable to find a loss function so that
+the optimal parametric model is fixed as $\ell$ varies.
+\end{itemize}
+\end{frame}
 
 \end{document}
 
