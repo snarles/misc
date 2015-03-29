@@ -264,9 +264,9 @@ Given test stimuli $S_{\text{test}} = \{\text{test:}1,\hdots,
 \text{test:}\ell\}$ with features $\{x_{\text{test:} 1}, \hdots,
 x_{\text{test:} \ell}\}$
 \item
-Task: for $t = 1,\hdots, T_{\text{test}}$, predict
-$\hat{z}_{\text{test:} t} \in S_{\text{train}}$ from $y_{\text{test}:
-  t}$; try to minimize misclassification rate
+Task: for $t = 1,\hdots, T_{\text{test}}$, label $y_{\text{test}: t}$
+by stimulus $\hat{z}_{\text{test:} t} \in S_{\text{train}}$; try to
+minimize misclassification rate
 \end{itemize}
 \end{frame}
 
@@ -286,20 +286,82 @@ $\hat{z}_{\text{test:} t} \in S_{\text{train}}$ from $y_{\text{test}:
 \begin{center}
 \includegraphics[scale = 0.3]{1d_0.pdf}
 \end{center}
-\emph{Model.}
 \begin{itemize}
 \item Features $x$ are one-dimensional real numbers, as are responses
   $y$.  Parameter $\beta$ is also a real number.
 \item Model is linear: $y \sim N(x\beta, \sigma^2_\epsilon)$
-\item
-Suppose we estimated $\hat{\beta}$ from training data.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Toy example I: Test data}
 \begin{center}
-\includegraphics[scale = 0.3]{1d_1.pdf}
+\includegraphics[scale = 0.4]{ti1.pdf}
+\end{center}
+Suppose we estimated $\hat{\beta}$ from training data.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti2.pdf}
+\end{center}
+Generate features $x_{\text{test:} 1}, \hdots, x_{\text{test:} \ell}$ iid $N(0, \sigma^2_x)$.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti3.pdf}
+\end{center}
+Hidden labels $z_{\text{test:} t}$ are iid uniform from $S_{\text{train}}$.\\
+Generate $y_{\text{test:} t} \sim N(\beta x_{z_{\text{test:} t}}, \sigma^2_\epsilon)$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti4.pdf}
+\end{center}
+Classify $\hat{y}_{\text{test:} t}$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti5.pdf}
+\end{center}
+$\hat{\mu}_{\text{test:} i} = \hat{\beta} x_{\text{test:} i}$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti6.pdf}
+\end{center}
+$\hat{z}_{\text{test:} t} = \text{argmin}_{z} \ell_{\hat{\mu}_z}(y_{\text{test:} t})$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti7.pdf}
+\end{center}
+$\hat{z}_{\text{test:} t} = \text{argmin}_{z} (\hat{\mu}_z -
+y_{\text{test:} t})^2$
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti8.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{ti9.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example I}
+\begin{center}
+\includegraphics[scale = 0.2]{ti2.pdf}
+\includegraphics[scale = 0.2]{ti3.pdf}
+\includegraphics[scale = 0.2]{ti8.pdf}
 \end{center}
 \begin{itemize}
 \item
@@ -309,7 +371,7 @@ x_{\text{test:} \ell}$ iid $N(0, \sigma^2_x)$.
 Hidden labels  $z_{\text{test:} t}$ are iid uniform from $S_{\text{train}}$.
 Generate $y_{\text{test:} t} \sim N(\beta x_{z_{\text{test:} t}}, \sigma^2_\epsilon)$
 \item
-Estimate $\hat{z}_{\text{test:} t}$ by maximum likelihood assuming
+Classify $\hat{y}_{\text{test:} t}$ by maximum likelihood assuming
 $\hat{\beta}$ is correct.  Thus:
 \[
 \hat{z}_{\text{test:} t} = \text{argmin}_{z} (\hat{\beta} x_z -
@@ -320,7 +382,6 @@ y_{\text{test:} t})^2
 
 \begin{frame}
 \frametitle{Toy example I: Theory}
-
 \end{frame}
 
 \end{document}
