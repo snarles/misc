@@ -412,6 +412,8 @@ y_* = x_* \beta + \epsilon_*
 \]
 \item
 Denote the features for the incorrect classes as $x_1, \hdots, x_{\ell -1}$.
+\item
+Let $\delta = \hat{\beta} - \beta$.
 \end{itemize}
 \end{frame}
 
@@ -427,14 +429,14 @@ equivalently
 \]
 where $E_i$ is the event
 \[
-|x_* \beta + \epsilon_* - x_i \hat{\beta}| < |x_* (\beta - \hat{\beta}) + \epsilon_*|
+|x_* \beta + \epsilon_* - x_i (\beta + \delta)| < |- \delta x_* + \epsilon_*|
 \]
 with probability
 \[
 \Pr[E_i] = \left|
-\Phi\left(\frac{x_*\hat{\beta}}{\sqrt{\hat{\beta}\sigma_x^2}}\right)
+\Phi\left(\frac{x_*}{\sigma_x}\right)
  - 
-\Phi\left(\frac{x_*(2\beta - \hat{\beta}) + 2\epsilon_*}{\sqrt{\hat{\beta}\sigma_x^2}}\right)
+\Phi\left(\frac{x_*(\beta - \delta) + 2\epsilon_*}{\sigma_x (\beta + \delta)}\right)
 \right|
 \]
 \end{frame}
@@ -450,17 +452,48 @@ Use the following conditioning
 \item
 An exact expression for expected misclassification is therefore\\
 $
-1 - \int_x \int_\epsilon 
+1 - \int_\epsilon \left[\int_x  
 \left(1 - 
 \left|
-\Phi\left(\frac{x\hat{\beta}}{\sqrt{\hat{\beta}\sigma_x^2}}\right)
+\Phi\left(\frac{x}{\sigma_x}\right)
  - 
-\Phi\left(\frac{x(2\beta - \hat{\beta}) + 2\epsilon}{\sqrt{\hat{\beta}\sigma_x^2}}\right)
+\Phi\left(\frac{x(\beta - \delta) + 2\epsilon}{\sigma_x (\beta + \delta)}\right)
 \right|\right)^{\ell - 1}
- d\Phi(\frac{\epsilon}{\sigma_\epsilon})  d\Phi(\frac{x}{\sigma_x})
+ d\Phi(\frac{x}{\sigma_x}) \right]  d\Phi(\frac{\epsilon}{\sigma_\epsilon})
 $
 \item Question 1: Is this minimized at $\hat{\beta} = \beta$?
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+Answer: yes.  (Part of a proof:)
+
+Fix $\epsilon > 0$.
+The derivative of the inner integral wrt $\delta = 0$ is proportional to
+\begin{center}
+$\int_x (1 - \Phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta}) + \Phi(\frac{x}{\sigma_x})) \phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta})(x + \frac{\epsilon}{\beta}) \phi(\frac{x}{\sigma_x}) dx
+$\end{center}
+In turn
+\[
+\phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
+\phi\left(\frac{x}{\sigma_x}\right) \propto 
+\phi\left(\frac{\sqrt{2} (x + \frac{\epsilon}{\beta})}{\sigma_x}\right)
+\]
+which is the density of a normal variate with mean $-\epsilon/\beta$\\
+
+But now note that the other terms
+\[
+\left(1 - \Phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
+ + \Phi\left(\frac{x}{\sigma_x}\right)\right)
+\left(x - \frac{\epsilon}{\beta}\right)
+\]
+are symmetric about $x = -\frac{\epsilon}{\beta}$.
+
+Thus by symmetry, the derivative of the inner integral $\delta = 0$ vanishes.
+The same argument works for $\epsilon < 0$, hence the misclassification rate is stationary at $\hat{\beta} = \beta$.
+
+
+
 \end{frame}
 
 \end{document}

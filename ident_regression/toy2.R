@@ -67,17 +67,108 @@ theory2 <- function(al, res = 30) {
   c(1 - sum(ps * d2), sum(ps1 * d2), sum(ps2 * d2))
 }
 
+theory_x <- function(al, k_cl, x0, res = 30) {
+  g0 <- -res:res
+  z <- g0 / sqrt(res)
+  d2 <- exp(- .5 * z^2 )
+  d2 <- d2/sum(d2)
+  eps <- sqrt(sigma2_eps) * z
+  mus <- bt * x0 + eps
+  sigma2 <- al^2 * sigma2_x
+  thress <- (bt - al) * x0 + eps
+  ps <- p_folded(mus, sigma2, thress)
+  1 - sum(ps^(k_cl-1) * d2)
+}
+
+theory_e <- function(al, k_cl, eps, res = 30) {
+  g0 <- -res:res
+  z <- g0 / sqrt(res)
+  d2 <- exp(- .5 * z^2 )
+  d2 <- d2/sum(d2)
+  xs <- sqrt(sigma2_x) * z
+  mus <- bt * xs + eps
+  sigma2 <- al^2 * sigma2_x
+  thress <- (bt - al) * xs + eps
+  ps <- p_folded(mus, sigma2, thress)
+  1 - sum(ps^(k_cl-1) * d2)
+}
+
+## simplified form
+theory3 <- function(al, k_cl, res = 30) {
+  del <- al - bt
+  g0 <- -res:res
+  z2 <- cbind(rep(g0, 2*res + 1),
+              rep(g0, each = 2*res + 1)) /
+    sqrt(res)
+  d2 <- exp(-.5 * z2[,1]^2 - .5 * z2[,2]^2 )
+  d2 <- d2/sum(d2)
+  xs <- sqrt(sigma2_x) * z2[,1]
+  eps <- sqrt(sigma2_eps) * z2[,2]
+  ps <- 1 - abs(pnorm(xs/sqrt(sigma2_x)) - 
+                  pnorm((xs * (bt - del) + 2 * eps)/(sqrt(sigma2_x) * (bt + del))))
+  1 - sum(ps^(k_cl-1) * d2)
+}
+
+## taylor expansion
+theory4 <- function(al, k_cl, res = 30) {
+  del <- al - bt
+  sigma_x <- sqrt(sigma2_x)
+  g0 <- -res:res
+  z2 <- cbind(rep(g0, 2*res + 1),
+              rep(g0, each = 2*res + 1)) /
+    sqrt(res)
+  d2 <- exp(-.5 * z2[,1]^2 - .5 * z2[,2]^2 )
+  d2 <- d2/sum(d2)
+  xs <- sqrt(sigma2_x) * z2[,1]
+  eps <- sqrt(sigma2_eps) * z2[,2]
+  ps <- 1 - abs(
+                pnorm(xs/sigma_x) - 
+                pnorm((xs/sigma_x) + (2 * eps)/(bt * sigma_x) 
+                      - del * (2 * xs/(sigma_x * bt) + 2 * eps/bt^2))
+                )
+  1 - sum(ps^(k_cl-1) * d2)
+}
 
 
 library(class)
 
-bt <- 100
+bt <- 2
 sigma2_x <- 1
 sigma2_eps <- 1
-#mean(simulate(2, 3, 1000))
+ps <- simulate(2, 3, 10000)
+mean(ps)
+sd(ps)/sqrt(1e5)
+theory1(bt, 3, 400)
+theory3(bt + 1e-2, 3, 400)
+theory3(bt - 1e-2, 3, 400)
+theory4(bt + 1e-2, 3, 400)
+theory4(bt - 1e-2, 3, 400)
+
+
+theory1(2, 2, 400)
+theory1(2 + 1e-1, 2, 400)
+
+k_cl <- 2
+theory_x(bt, k_cl, 1, 400)
+theory_x(bt + 1e-2, k_cl, 1, 400)
+theory_x(bt - 1e-2, k_cl, 1, 400)
+
+eps <- 2
+theory_e(bt, k_cl, eps, 400)
+theory_e(bt + 1e-2, k_cl, eps, 400)
+theory_e(bt - 1e-2, k_cl, eps, 400)
+
+
+theory1(bt, k_cl, 400)
+theory1(bt + 1e-2, k_cl, 400)
+theory1(bt - 1e-2, k_cl, 400)
+
+
+
 k_cl <- 10
-sapply(bt + .001 * 0:10, function(x) {theory1(x, k_cl)})
-sapply(bt - .001 * 0:10, function(x) {theory1(x, k_cl)})
+theory1(bt, k_cl, 400)
+sapply(bt + .01 * 0:3, function(x) {theory1(x, k_cl, 400)})
+sapply(bt - .01 * 0:3, function(x) {theory1(x, k_cl, 400)})
 
 theory1(bt, 100)
 theory1(bt + .01, 100)
