@@ -587,8 +587,74 @@ Squared error & $\ell = 3$ & $\ell = 20$\\ \hline
 \end{center}
 \end{frame}
 
-\section{Computation}
+\section{Methodology}
 \frame{\sectionpage}
+
+\begin{frame}
+\frametitle{Linear identification}
+\emph{Model fitting}
+\begin{itemize}
+\item Inputs: features for training classes $\{x_{\text{train:} i}\}_{i = 1}^k$ and points $y_t$  with labels $z_t$ for $t = 1,\hdots, T$.
+Features $x$ have dimension $p$, responses $y$ have dimension $q$.
+\item Outputs: $p \times q$ coefficient matrix $B$ and $1 \times q$ intercept term $b$ for a linear model
+\[
+y \approx B^T x + b^T
+\]
+and estimated covariance $\hat{\Sigma}_\epsilon$ for noise in $y$.
+\end{itemize}
+\emph{Identification}
+\begin{itemize}
+\item Inputs: test class features $x_{\text{test: }i}$ for $i = 1,\hdots, \ell$.  New point $y_*$.
+\item Output: label $\hat{z}_*$ given by
+\[
+\hat{z}_* = \argmin_{z = \text{test:} 1,\hdots, \text{test:} \ell} d_{\hat{\Sigma}_\epsilon}(B^T x_z + b, y_*)^2
+\]
+where $d_\Sigma(\cdot, \cdot)$ is the Mahalanobis distance.
+\item Evaluation: misclassification comparing $\hat{z}_*$ with true label $z_*$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Model fitting}
+\begin{itemize}
+\item Inputs: features for training classes $\{x_{\text{train:} i}\}_{i = 1}^k$ and points $y_t$  with labels $z_t$ for $t = 1,\hdots, T$.
+\end{itemize}
+\emph{Procedure}
+\begin{enumerate}
+\item Estimate $\hat{\Sigma}_x$ from sample covariance of $\{x_{\text{train:} i}\}_{i = 1}^k$ and $\hat{\mu}_x$ from sample mean.
+Let $\hat{P}_x$ be the distribution of $N(\hat{\mu}_x, \hat{\Sigma}_x)$
+\item Estimate $\hat{\Sigma}_\epsilon$ from pooled sample within-class covariance of $y_t$
+\item Maximize for $B, b$:
+\[
+\sum_{t = 1}^T \left[\int_{\mathbb{R}^p} I\{d(B^T x + b^T, y_t) < d(B^T x_{z_t} + b^T, y_t) \} d\hat{P}_x(x)\right]^{\ell-1}
+\]
+\item Output $B$, $b$, $\hat{\Sigma}_\epsilon$
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Computation}
+\begin{itemize}
+\item
+Maximize for $B, b$:
+\[
+\sum_{t = 1}^T 1-\mathcal{L}((x_{z_t}, y_t); B, b)
+\]
+where
+\[
+\mathcal{L}((x_{z_t}, y_t), B, b) = 1- \left[\int_{\mathbb{R}^p} I\{d(B^T x + b^T, y_t) < d(B^T x_{z_t} + b^T, y_t) \} d\hat{P}_x(x)\right]^{\ell-1}
+\]
+\item
+Use iteratively reweighted least squares.  In iteration $k+1$, update 
+\[
+(B^{(k+1)}, b^{(k+1)}) = \argmin_{B, b} \sum_{t = 1}^T w_t^{(k)}||y_t - B^T x_{z_t} - b^T||^2
+\]
+where
+\[
+w^{(k)} = \frac{\mathcal{L}((x_{z_t}, y_t), B^{(k)}, b^{(k)})}{||y_t - (B^{(k)})^T x_{z_t} -  (b^{(k)})^T||^2}
+\]
+\end{itemize}
+\end{frame}
 
 \section{Issues}
 \frame{\sectionpage}
