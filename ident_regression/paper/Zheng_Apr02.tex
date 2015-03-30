@@ -109,8 +109,6 @@
 
 \section{Introduction}
 
-\frame{\sectionpage}
-
 \begin{frame}
 \frametitle{Functional MRI}
 \begin{center}
@@ -247,6 +245,10 @@ Test Data \emph{(new images!)} \\
 \end{tabular}
 \end{center}
 \end{frame}
+
+\section{Theory}
+
+\frame{\sectionpage}
 
 \begin{frame}
 \frametitle{Statistical formulation I}
@@ -530,14 +532,76 @@ What if $\ell$ increases while $\sigma^2_\epsilon$ decreases?
 \end{frame}
 
 \begin{frame}
-\frametitle{Toy example II}
+\frametitle{Toy example IIa}
+\begin{center}
+\includegraphics[scale = 0.4]{toy3a_plot.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Toy example IIa}
+\begin{center}
+\includegraphics[scale = 0.3]{toy3a_l3.pdf}
+\includegraphics[scale = 0.3]{toy3a_l20.pdf}
+\end{center}
+Effect of increasing $\ell$.
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{toy3a_plot2.pdf}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why is this?}
+\begin{itemize}
+\item We can relate identification to regression with a different loss function
+\item
+Least squares loss
+\[
+\E[(y - \hat{y})^2]
+\]
+\item
+Identification loss
+\[
+\E[1 - \Pr[|y - \hat{y}'| < |y - \hat{y}|]^{\ell - 1}]
+\]
+where $\hat{y}'$ is the predicted value for a randomly drawn $x$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why is this?}
+Identification loss more closely resembles 0-1 loss as $\ell$ increases.
+\begin{center}
+\begin{tabular}{c|c|c}
+Squared error & $\ell = 3$ & $\ell = 20$\\ \hline
+\includegraphics[scale = 0.2]{loss_se.pdf} &
+\includegraphics[scale = 0.2]{loss_3.pdf} &
+\includegraphics[scale = 0.2]{loss_20.pdf} \\ \hline
+\includegraphics[scale = 0.2]{plot_loss_sq.pdf} &
+\includegraphics[scale = 0.2]{plot_loss_3.pdf} &
+\includegraphics[scale = 0.2]{plot_loss_20.pdf} \\ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\section{Computation}
+\frame{\sectionpage}
+
+\section{Issues}
+\frame{\sectionpage}
+
+\begin{frame}
+\frametitle{Toy example IIb}
 \begin{center}
 \includegraphics[scale = 0.4]{toy2_plot.pdf}
 \end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{Toy example II}
+\frametitle{Toy example IIb}
 \begin{center}
 \includegraphics[scale = 0.3]{toy2_l3.pdf}
 \includegraphics[scale = 0.3]{toy2_l20.pdf}
@@ -546,7 +610,6 @@ Effect of increasing $\ell$.
 \end{frame}
 
 \begin{frame}
-\frametitle{Toy example II}
 \begin{center}
 \includegraphics[scale = 0.4]{toy2_plot2.pdf}
 \end{center}
@@ -587,6 +650,23 @@ estimation as $\ell$ increases.
 \item
 It would be desirable to find a loss function so that
 the optimal parametric model is fixed as $\ell$ varies.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{References}
+\begin{itemize}
+\item Kay, KN., Naselaris, T., Prenger, R. J., and Gallant, J. L.
+  ``Identifying natural images from human brain
+  activity''. \emph{Nature} (2008)
+\item Vu, V. Q., Ravikumar, P., Naselaris, T., Kay, K. N., and Yu, B.
+  ``Encoding and decoding V1 fMRI responses to natural images with
+  sparse nonparametric models'', \emph{The Annals of Applied
+    Statistics}. (2011)
+\item Chen, M., Han, J,. Hu, X., Jiang, Xi., Guo, L. and Liu, T.
+  ``Survey of encoding and decoding of visual stimulus via fMRI: an
+  image analysis perspective.'' \emph{Brain Imaging and
+    Behavior}. (2014)
 \end{itemize}
 \end{frame}
 
