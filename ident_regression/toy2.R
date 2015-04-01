@@ -190,6 +190,33 @@ for (i in 1:res) {
   }
 }
 
+
+sigma2_x <- 1
+sigma2_eps <- 1
+bt <- 1e-5
+r0 <- sapply(bts, function(v) theory1(v, k_cl))
+pdf("paper/risk_0.pdf")
+plot(bts, r0, type = "l", ylim = c(0, 1), xlab = expression(hat(beta)), ylab = "R")
+abline(v = bt, lty = 2)
+#title(expression(beta==0))
+dev.off()
+
+bt <- 1
+r0 <- sapply(bts, function(v) theory1(v, k_cl))
+pdf("paper/risk_1.pdf")
+plot(bts, r0, type = "l", ylim = c(0, 1), xlab = expression(hat(beta)), ylab = "R")
+abline(v = bt, lty = 2)
+#title(expression(beta==1))
+dev.off()
+
+bt <- 2
+r0 <- sapply(bts, function(v) theory1(v, k_cl))
+pdf("paper/risk_2.pdf")
+plot(bts, r0, type = "l", ylim = c(0, 1), xlab = expression(hat(beta)), ylab = "R")
+abline(v = bt, lty = 2)
+#title(expression(beta==2))
+dev.off()
+
 pdf("paper/rmat.pdf")
 filled.contour(bts, bts, rmat, xlab = expression(hat(beta)), ylab = expression(beta))
 title(expression(paste("R(", beta, "; ", hat(beta), ")")))

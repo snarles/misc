@@ -323,12 +323,13 @@ misclassification error) of a model to draw scientific conclusions?
 \begin{tabular}{|c|c|c|}
 \hline
  & Misclassification Rate & Prediction error \\ \hline
-No covariates & Classification & Mean estimation \\ \hline
+No covariates & Classification & (nothing to predict) \\ \hline
 Covariates ($x$) & Identification & Regression \\ \hline
 \end{tabular}
 \end{center}
 \begin{itemize}
 \item Reconstruction falls under the framework of regression
+\item With neither labels 
 \item Identification is a new category of supervised learning problem:
 let's develop a theory!
 \end{itemize}
@@ -627,6 +628,23 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 \end{frame}
 
 \begin{frame}
+\frametitle{Question 1: Remarks}
+\begin{itemize}
+\item (We'll skip the second derivative checking, etc.)
+\item The proof still works for $\epsilon$ with any distribution
+\item However, we cannot really relax the condition that $x$ is gaussian, since we need
+\[
+\phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
+\phi\left(\frac{x}{\sigma_x}\right) \propto 
+\phi\left(\frac{\sqrt{2} (x + \frac{\epsilon}{\beta})}{\sigma_x}\right)
+\]
+This can only work if $\phi(x) = \exp(-C x^2)h(|x|)$
+\item The proof probably generalizes to higher dimensions
+\item Conjecture: $\hat{\beta} = \beta$ \emph{only if} $x \sim N(\mu, \Sigma)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Toy example I: Estimation}
 \begin{itemize}
 \item Second question: what about estimation?
@@ -634,20 +652,65 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 \item For \emph{least-squares regression}, we would use $\hat{\beta} = \int \beta p_{posterior}(\beta) d\beta$, the posterior mean.
 \item For \emph{identification}, we would choose
 \[
-\hat{\beta}_{Bayes} = \argmin_{\hat{\beta}} \int R(\beta; \hat{\beta}) p_{posterior}(\beta) d\beta
+\hat{\beta} = \argmin_{\hat{\beta}} \int R(\beta; \hat{\beta}) p_{posterior}(\beta) d\beta
 \]
 where $R$ is the expected misclassification rate.
+\item How will these differ?
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[scale = .4]{toy_est.pdf}
+\end{center}
+Point estimate for identification (black dashed) is larger than posterior mean (blue dotted)
 \end{frame}
 
 \begin{frame}
 \frametitle{Toy example I: Estimation}
 \begin{center}
-\includegraphics[scale = .3]{rmat.pdf}
-\includegraphics[scale = .3]{toy_est.pdf}
+\begin{tabular}{ccc}
+$\beta = 0$ &
+$\beta = 1$ &
+$\beta = 2$ \\
+\includegraphics[scale = .2]{risk_0.pdf} &
+\includegraphics[scale = .2]{risk_1.pdf} & 
+\includegraphics[scale = .2]{risk_2.pdf} 
+\end{tabular}
 \end{center}
-The Bayes point estimate for identification is larger than the Bayes point estimate for least-squares prediction.
+Risk function is more sensitive for large $\beta$.
 \end{frame}
+
+\begin{frame}
+\frametitle{Estimation: questions}
+\begin{itemize}
+\item Is the optimal $\hat{\beta}$ for identification is
+  in general ``larger'' than the optimal $\hat{\beta}$ for
+  regresssion, in a frequentist (e.g. minimax) sense?
+\item Lasso/Ridge penalized regression models are commonly used for
+  identification
+\item Hypothesis: the optimal $\lambda$ for identifying $x$ from $y$
+  will be smaller (hence produce less sparse $\hat{\beta}$) than the
+  optimal $\lambda$ for regression $y \sim x$.
+\end{itemize}
+\end{frame}
+
+\section{Experiments}
+\frame{\sectionpage}
+
+\begin{frame}
+\frametitle{Data}
+\begin{itemize}
+\item Data from Kay \emph{et al.} paper
+\item Training data: 1750 images with 2 responses each (3500 total)
+\item Test data: 120 images with 13 responses each (1560 total)
+\item Responses: 1331 voxels from the most basic visual subsystem, V1
+\item Features: 10921 image features based on Gabor filters
+\end{itemize}
+\end{frame}
+
+\section{Nonlinear toy example}
+\frame{\sectionpage}
 
 \begin{frame}
 \frametitle{More questions}
@@ -718,78 +781,6 @@ Squared error & $\ell = 3$ & $\ell = 20$\\ \hline
 \end{center}
 \end{frame}
 
-\section{Methodology}
-\frame{\sectionpage}
-
-\begin{frame}
-\frametitle{Linear identification}
-\emph{Model fitting}
-\begin{itemize}
-\item Inputs: features for training classes $\{x_{\text{train:} i}\}_{i = 1}^k$ and points $y_t$  with labels $z_t$ for $t = 1,\hdots, T$.
-Features $x$ have dimension $p$, responses $y$ have dimension $q$.
-\item Outputs: $p \times q$ coefficient matrix $B$ and $1 \times q$ intercept term $b$ for a linear model
-\[
-y \approx B^T x + b^T
-\]
-and estimated covariance $\hat{\Sigma}_\epsilon$ for noise in $y$.
-\end{itemize}
-\emph{Identification}
-\begin{itemize}
-\item Inputs: test class features $x_{\text{test: }i}$ for $i = 1,\hdots, \ell$.  New point $y_*$.
-\item Output: label $\hat{z}_*$ given by
-\[
-\hat{z}_* = \argmin_{z = \text{test:} 1,\hdots, \text{test:} \ell} d_{\hat{\Sigma}_\epsilon}(B^T x_z + b, y_*)^2
-\]
-where $d_\Sigma(\cdot, \cdot)$ is the Mahalanobis distance.
-\item Evaluation: misclassification comparing $\hat{z}_*$ with true label $z_*$.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Model fitting}
-\begin{itemize}
-\item Inputs: features for training classes $\{x_{\text{train:} i}\}_{i = 1}^k$ and points $y_t$  with labels $z_t$ for $t = 1,\hdots, T$.
-\end{itemize}
-\emph{Procedure}
-\begin{enumerate}
-\item Estimate $\hat{\Sigma}_x$ from sample covariance of $\{x_{\text{train:} i}\}_{i = 1}^k$ and $\hat{\mu}_x$ from sample mean.
-Let $\hat{P}_x$ be the distribution of $N(\hat{\mu}_x, \hat{\Sigma}_x)$
-\item Estimate $\hat{\Sigma}_\epsilon$ from pooled sample within-class covariance of $y_t$
-\item Maximize for $B, b$:
-\[
-\sum_{t = 1}^T \left[\int_{\mathbb{R}^p} I\{d(B^T x + b^T, y_t) < d(B^T x_{z_t} + b^T, y_t) \} d\hat{P}_x(x)\right]^{\ell-1}
-\]
-\item Output $B$, $b$, $\hat{\Sigma}_\epsilon$
-\end{enumerate}
-\end{frame}
-
-\begin{frame}
-\frametitle{Computation}
-\begin{itemize}
-\item
-Maximize for $B, b$:
-\[
-\sum_{t = 1}^T 1-\mathcal{L}((x_{z_t}, y_t); B, b)
-\]
-where
-\[
-\mathcal{L}((x_{z_t}, y_t), B, b) = 1- \left[\int_{\mathbb{R}^p} I\{d(B^T x + b^T, y_t) < d(B^T x_{z_t} + b^T, y_t) \} d\hat{P}_x(x)\right]^{\ell-1}
-\]
-\item
-Use iteratively reweighted least squares.  In iteration $k+1$, update 
-\[
-(B^{(k+1)}, b^{(k+1)}) = \argmin_{B, b} \sum_{t = 1}^T w_t^{(k)}||y_t - B^T x_{z_t} - b^T||^2
-\]
-where
-\[
-w^{(k)} = \frac{\mathcal{L}((x_{z_t}, y_t), B^{(k)}, b^{(k)})}{||y_t - (B^{(k)})^T x_{z_t} -  (b^{(k)})^T||^2}
-\]
-\end{itemize}
-\end{frame}
-
-\section{Issues}
-\frame{\sectionpage}
-
 \begin{frame}
 \frametitle{Toy example IIb}
 \begin{center}
@@ -829,24 +820,22 @@ performance fails to reflect global fit
 \end{frame}
 
 \begin{frame}
-\frametitle{Solution: Label sets}
+\frametitle{Conclusions}
 \begin{itemize}
-\item
-One option is to only use small $\ell$.  However, this is not
-satisfactory since with good signal-to-noise ratio, we should be able
-to identify a stimuli from a large set of candidates.
-\item
-Develop a method for producing a \emph{set of labels} for each point
-rather than a single label.  Evaluate the method using a metric such
-as precision-recall.
-\item
-The labeller would assign a proportional number of labels to each
-point as $\ell$ increases, thus maintaining coverage probability.
-Thus, it will no longer become optimal to just ``give up'' on global
-estimation as $\ell$ increases.
-\item
-It would be desirable to find a loss function so that
-the optimal parametric model is fixed as $\ell$ varies.
+\item The problem of \emph{decoding}, predicting $x$ from $y$, is of
+  interest to many neuroscientists
+\item Different formulations of the decoding problem: classification,
+  identification, and reconstruction (regression) have different
+  properties and advantages
+\item Statistical theory can help with training the models \emph{and}
+ with interpreting the results
+\end{itemize}
+\emph{In particular...}
+\begin{itemize}
+\item Identification is similar to regression $y \sim x$
+  in a special case, but can benefit from less sparse estimates.
+\item Identification can lead to counterintuitive
+  results when there are nonlinearities and $\ell$ is large
 \end{itemize}
 \end{frame}
 
