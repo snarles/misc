@@ -28,7 +28,7 @@ simulate <- function(al, k_cl, n_trials, seed = 0) {
   set.seed(seed)
   mrs <- numeric(n_trials)
   for (i in 1:n_trials) {
-    xs <- runif(k_cl) - .5
+    xs <- 3 * (runif(k_cl) - .5)
     ys <- ffun(xs) + rnorm(k_cl, 0, sqrt(sigma2_eps))
     yhats <- xs * al
     te_cl <- knn(t(t(yhats)), t(t(ys)), 1:k_cl, k = 1)
@@ -39,14 +39,14 @@ simulate <- function(al, k_cl, n_trials, seed = 0) {
 }
 
 
-bts <- seq(0, 3, 0.1)
+bts <- seq(0.9, 1.1, 0.01)
 bts
 
 #mc2 <- sapply(bts, function(bt) mean(simulate(bt, 2, 1e4)))
-mc3 <- sapply(bts, function(bt) mean(simulate(bt, 3, 1e4)))
+mc3 <- sapply(bts, function(bt) mean(simulate(bt, 3, 1e5)))
 #mc5 <- sapply(bts, function(bt) mean(simulate(bt, 5, 1e4)))
 #mc10 <- sapply(bts, function(bt) mean(simulate(bt, 10, 1e4)))
-mc20 <- sapply(bts, function(bt) mean(simulate(bt, 20, 1e4)))
+mc20 <- sapply(bts, function(bt) mean(simulate(bt, 20, 1e5)))
 mc40 <- sapply(bts, function(bt) mean(simulate(bt, 40, 1e3)))
 #mc80 <- sapply(bts, function(bt) mean(simulate(bt, 80, 1e3)))
 min3 <-bts[mc3 == min(mc3)]
