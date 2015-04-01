@@ -140,16 +140,11 @@ $\begin{pmatrix}0 \\ -2.2 \\ -3.1 \\ 4.5\\ 0\end{pmatrix}$ & \hspace{1in} & $\be
 \begin{itemize}
 \item Encoding: predict $y$ from $x$.
 \item Decoding: reconstruct $x$ from $y$ (mind-reading).
-\begin{itemize}
-\item Classification: label response $y$ by a class from the training data
-\item Identification: label response $y$ by a class \emph{outside} of the training data
-\item Reconstruction: infer $x$ from $y$
-\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Classification}
+\frametitle{A mind-reading game: Classification}
 \begin{center}
 Training Data
 \\
@@ -184,7 +179,7 @@ Test Data \\
 
 
 \begin{frame}
-\frametitle{Classification}
+\frametitle{A mind-reading game: Classification}
 \begin{center}
 Training Data
 \\
@@ -218,7 +213,7 @@ Test Data \\
 \end{frame}
 
 \begin{frame}
-\frametitle{Identification}
+\frametitle{A mind-reading game: Identification}
 \begin{center}
 Training Data
 \\
@@ -251,95 +246,12 @@ Test Data \emph{(new images!)} \\
 \end{center}
 \end{frame}
 
-\begin{frame}
-\frametitle{Reconstruction}
-\begin{center}
-Training Data
-\\
-\begin{tabular}{ccc||ccc}
-\hline
-\includegraphics[scale = .26]{img1.png} & \hspace{0.2in} & \includegraphics[scale = 0.035]{brain1.png} &
-\includegraphics[scale = .26]{img3.png} & \hspace{0.2in} & \includegraphics[scale = 0.035]{brain3.png} \\ \hline
-\includegraphics[scale = .26]{img2.png} & \hspace{0.2in} & \includegraphics[scale = 0.035]{brain2.png} &
-\includegraphics[scale = .26]{img4.png} & \hspace{0.2in} & \includegraphics[scale = 0.035]{brain5.png} \\ \hline
-\end{tabular}\\
-\vspace{0.1in}
-Test Data \emph{(new images!)} \\
-\begin{tabular}{c||c||c|c}
-\hline
-
-Stimulus & Response & Standard basis & Gabor basis\\
-\includegraphics[scale = 0.22]{i11.png} 
-& \includegraphics[scale = 0.035]{brain7.png} 
-& \includegraphics[scale = .22]{i12.png}
-& \includegraphics[scale = .22]{i13.png}\\ \hline
-\includegraphics[scale = 0.22]{i21.png} 
-& \includegraphics[scale = 0.035]{brain8.png} 
-& \includegraphics[scale = .22]{i22.png}
-& \includegraphics[scale = .22]{i23.png}\\ \hline
-\end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Classification vs Identification vs Reconstruction}
-\begin{itemize}
-\item Classification is easy: doesn't require domain-specific model
-\item Identification and reconstruction both require a model relating image features to responses
-\end{itemize}
-\begin{center}
-\emph{Difficulty of Identification vs Reconstruction}
-\begin{tabular}{|c|c|c|}
-\hline
-&  High dimensions & Number of candidate stimuli \\ \hline
-Identification & Neutral & Hard \\ \hline
-Reconstruction & Hard & Easy \\ \hline
-\end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Motivating questions}
-\begin{itemize}
-\item
-Under what conditions would it be possible to get performance on
-reconstruction or identification?
-\item
-How can we develop methods which achieve better performance on these
-tasks?
-\item
-Can we interpret the performance metric (prediction error,
-misclassification error) of a model to draw scientific conclusions?
-(E.g. which features are important, information content of fMRI scan.)
-\end{itemize}
-\end{frame}
-
-
-
-\begin{frame}
-\frametitle{Classification vs Identification vs Reconstruction}
-\begin{center}
-\emph{Supervised learning problems}
-\begin{tabular}{|c|c|c|}
-\hline
- & Misclassification Rate & Prediction error \\ \hline
-No covariates & Classification & Mean estimation \\ \hline
-Covariates ($x$) & Identification & Regression \\ \hline
-\end{tabular}
-\end{center}
-\begin{itemize}
-\item Reconstruction falls under the framework of regression
-\item Identification is a new category of supervised learning problem:
-let's develop a theory!
-\end{itemize}
-\end{frame}
-
 \section{Theory}
 
 \frame{\sectionpage}
 
 \begin{frame}
-\frametitle{The problem of identification}
+\frametitle{Statistical formulation I}
 \emph{Training data.}
 \begin{itemize}
 \item
@@ -348,33 +260,34 @@ Given training classes $S_{\text{train}} = \{\text{train:}1,\hdots,
 $x_{\text{train:}i}$.
 \item
 For $t = 1,\hdots, T_{\text{train}}$, choose class label
-$z_{\text{train:} t} \in S_{\text{train}}$; sample a response
-$y_{\text{train:} t}$ from that class.
+$z_{\text{train:} t} \in S_{\text{train}}$; generate
+\[
+y_{\text{train:} t} = f(x_{z_{\text{train:} t}}) + \epsilon_t
+\]
+where $f$ is an unknown function, and $\epsilon_t$ is i.i.d. from a
+known or unknown distribution.
 \end{itemize}
 \emph{Test data.}
 \begin{itemize}
 \item
-Given test classes $S_{\text{test}} = \{\text{test:}1,\hdots,
+Given test stimuli $S_{\text{test}} = \{\text{test:}1,\hdots,
 \text{test:}\ell\}$ with features $\{x_{\text{test:} 1}, \hdots,
 x_{\text{test:} \ell}\}$
 \item
 Task: for $t = 1,\hdots, T_{\text{test}}$, label $y_{\text{test}: t}$
-by class $\hat{z}_{\text{test:} t} \in S_{\text{train}}$; try to
+by stimulus $\hat{z}_{\text{test:} t} \in S_{\text{train}}$; try to
 minimize misclassification rate
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Additional assumptions}
+\frametitle{Statistical formulation II}
 \begin{itemize}
-\item For a point $y$ from class with features $x$,
-\[
-y = f(x) + \epsilon
-\]
-where the noise $\epsilon$ is drawn from some distribution and $f$ is an unknown function
-\item The features for the training and test classes are sampled iid from the same distribution $P$
-\[x_{\text{train:} i} \sim P\]
-\[x_{\text{train:} i} \sim P\]
+\item $f$ is an unknown function
+\item $P$ is a known or unknown distribution over image features
+\item \emph{Training data.} Draw $x_{\text{train:} i} \sim P$ for $i = 1\,hdots, k$.
+\item \emph{Test data.} Draw $x_{\text{train:} i} \sim P$ for $i = 1\,hdots, \ell$.
+\item Theoretical question: Analyze average misclassification rate when classes are generated this way
 \end{itemize}
 \end{frame}
 
@@ -491,22 +404,7 @@ using the same methods as in least-squares regression?
 \end{frame}
 
 \begin{frame}
-\frametitle{Question 1: Outline}
-We will find an answer to question 1 as follows
-\begin{itemize}
-\item
-Write an explicit expression for the misclassification rate as a function of $\hat{\beta}$
-\item
-Take the derivative of that expression with respect to $\hat{\beta}$ at the true $\beta$
-\item
-Does that derivative equal zero?
-\item
-If so, look at second derivatives, lower bounds, etc.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\emph{Write an explicit expression for the misclassification rate}
+\frametitle{Toy example I: Analysis}
 \begin{itemize}
 \item
 The expected misclassification error is the same if we take $T_{\text{test}} = 1$.
@@ -522,9 +420,7 @@ Let $\delta = \hat{\beta} - \beta$.
 \end{frame}
 
 \begin{frame}
-\emph{Write an explicit expression for the misclassification rate (cont.)}
-\begin{itemize}
-\item Ignore the possibility of ties.
+Ignore the possibility of ties.
 The response $y_*$ is misclassified if and only if
 \[
 \min_{i=1,\hdots, \ell-1} |y_* -  x_i \hat{\beta}| < |y_* - x_*\hat{\beta}|
@@ -533,15 +429,22 @@ equivalently
 \[
 \cup_{i=1,\hdots, \ell-1} E_i
 \]
-where $E_i$ is the event that
+where $E_i$ is the event
 \[
-|y_* -  x_i \hat{\beta}| < |y_* - x_*\hat{\beta}|
+|x_* \beta + \epsilon_* - x_i (\beta + \delta)| < |- \delta x_* + \epsilon_*|
 \]
-\end{itemize}
+with probability
+\[
+\Pr[E_i] = \left|
+\Phi\left(\frac{x_*}{\sigma_x}\right)
+ - 
+\Phi\left(\frac{x_*(\beta - \delta) + 2\epsilon_*}{\sigma_x (\beta + \delta)}\right)
+\right|
+\]
 \end{frame}
 
 \begin{frame}
-\emph{Write an explicit expression for the misclassification rate (cont.)}
+\frametitle{Toy example I: Analysis}
 \begin{itemize}
 \item
 Use the following conditioning
@@ -549,36 +452,6 @@ Use the following conditioning
 \E[\text{misclassification}] = \E[\E[\Pr_{x_1,\hdots,x_\ell}[\cup_i E_i] | x_* = x, \epsilon_* = \epsilon]]
 \]
 \item
-Use the fact that events $E_i$ are independent and have the same probability, thus:
-\[
-\E[\text{misclassification}] = 1- \E[\E[ (1- \Pr[E_1])^{\ell - 1} | x_* = x, \epsilon_* = \epsilon]]
-\]
-\item
-Next: write an expression for $\Pr[E_1]$
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\emph{Write an expression for }$\Pr[E_1]$.
-\begin{itemize}
-\item
-$E_1$ can also be written as the event
-\[
-|x_* \beta + \epsilon_* - x_1 (\beta + \delta)| < |- \delta x_* + \epsilon_*|
-\]
-\item
-Conditioning on $\epsilon_*$ and $x_*$, we have
-\[
-\Pr[E_1] = \left|
-\Phi\left(\frac{x_*}{\sigma_x}\right)
- - 
-\Phi\left(\frac{x_*(\beta - \delta) + 2\epsilon_*}{\sigma_x (\beta + \delta)}\right)
-\right|
-\]
-\end{itemize}
-\end{frame}
-
-\begin{frame}
 An exact expression for expected misclassification is therefore\\
 $
 1 - \int_\epsilon \left[\int_x  
@@ -590,23 +463,19 @@ $
 \right|\right)^{\ell - 1}
  d\Phi(\frac{x}{\sigma_x}) \right]  d\Phi(\frac{\epsilon}{\sigma_\epsilon})
 $
+\item Question 1: Is this minimized at $\hat{\beta} = \beta$?
+\end{itemize}
 \end{frame}
 
 \begin{frame}
-\emph{Take the derivative of the expression with respect to $\delta$}\\
+Answer: yes.  (Part of a proof:)
+
 Fix $\epsilon > 0$.
 The derivative of the inner integral wrt $\delta = 0$ is proportional to
 \begin{center}
 $\int_x (1 - \Phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta}) + \Phi(\frac{x}{\sigma_x})) \phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta})(x + \frac{\epsilon}{\beta}) \phi(\frac{x}{\sigma_x}) dx
 $\end{center}
-\end{frame}
-\begin{frame}
-\emph{Is the derivative zero?}\\
-The derivative of the inner integral wrt $\delta = 0$ is proportional to
-\begin{center}
-$\int_x (1 - \Phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta}) + \Phi(\frac{x}{\sigma_x})) \phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta})(x + \frac{\epsilon}{\beta}) \phi(\frac{x}{\sigma_x}) dx
-$\end{center}
-In turn,
+In turn
 \[
 \phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
 \phi\left(\frac{x}{\sigma_x}\right) \propto 
@@ -630,11 +499,11 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 \frametitle{Toy example I: Estimation}
 \begin{itemize}
 \item Second question: what about estimation?
-\item Take a Bayesian viewpoint: suppose we have a prior distribution for $\beta$
-\item For \emph{least-squares regression}, we would use $\hat{\beta} = \int \beta p_{posterior}(\beta) d\beta$, the posterior mean.
+\item Take a Bayesian viewpoint: suppose we have a posterior distribution for $\hat{\beta}$, e.g. $\beta \sim N(\hat{\beta}_{MAP}, \sigma^2_\beta)$.
+\item For \emph{least-squares regression}, we would use $\hat{\beta} = \hat{\beta}_{MAP}$, the posterior mean.
 \item For \emph{identification}, we would choose
 \[
-\hat{\beta}_{Bayes} = \argmin_{\hat{\beta}} \int R(\beta; \hat{\beta}) p_{posterior}(\beta) d\beta
+\hat{\beta}_{Bayes} = \argmin_{\hat{\beta}} \int R(\beta; \hat{\beta}) \phi\left(\frac{\beta - \hat{\beta}_{MAP}}{\sigma_\beta}\right) d\beta
 \]
 where $R$ is the expected misclassification rate.
 \end{itemize}
@@ -856,8 +725,6 @@ the optimal parametric model is fixed as $\ell$ varies.
 \item Kay, KN., Naselaris, T., Prenger, R. J., and Gallant, J. L.
   ``Identifying natural images from human brain
   activity''. \emph{Nature} (2008)
-\item Naselaris, et al. ``Bayesian reconstruction of natural images
-  from human brain activity''.  \emph{Neuron} (2009)
 \item Vu, V. Q., Ravikumar, P., Naselaris, T., Kay, K. N., and Yu, B.
   ``Encoding and decoding V1 fMRI responses to natural images with
   sparse nonparametric models'', \emph{The Annals of Applied
