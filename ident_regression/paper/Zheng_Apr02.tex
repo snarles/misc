@@ -328,10 +328,9 @@ Covariates ($x$) & Identification & Regression \\ \hline
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item Reconstruction falls under the framework of regression
-\item With neither labels 
-\item Identification is a new category of supervised learning problem:
-let's develop a theory!
+\item Reconstruction is regression $ x \sim y$
+\item Does there already exist statistical theory for identification?
+\item Next: a toy model for identification
 \end{itemize}
 \end{frame}
 
@@ -600,14 +599,11 @@ The derivative of the inner integral wrt $\delta = 0$ is proportional to
 \begin{center}
 $\int_x (1 - \Phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta}) + \Phi(\frac{x}{\sigma_x})) \phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta})(x + \frac{\epsilon}{\beta}) \phi(\frac{x}{\sigma_x}) dx
 $\end{center}
+\emph{Is the derivative zero?}
 \end{frame}
 \begin{frame}
 \emph{Is the derivative zero?}\\
-The derivative of the inner integral wrt $\delta = 0$ is proportional to
-\begin{center}
-$\int_x (1 - \Phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta}) + \Phi(\frac{x}{\sigma_x})) \phi(\frac{x\beta + 2\epsilon}{\sigma_x \beta})(x + \frac{\epsilon}{\beta}) \phi(\frac{x}{\sigma_x}) dx
-$\end{center}
-In turn,
+Note that
 \[
 \phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
 \phi\left(\frac{x}{\sigma_x}\right) \propto 
@@ -621,26 +617,31 @@ But now note that the other terms
  + \Phi\left(\frac{x}{\sigma_x}\right)\right)
 \left(x - \frac{\epsilon}{\beta}\right)
 \]
-are symmetric about $x = -\frac{\epsilon}{\beta}$.
+are antisymmetric about $x = -\frac{\epsilon}{\beta}$.
 
 Thus by symmetry, the derivative of the inner integral $\delta = 0$ vanishes.
-The same argument works for $\epsilon < 0$, hence the misclassification rate is stationary at $\hat{\beta} = \beta$.
+The same argument works for $\epsilon < 0$, hence the misclassification rate is stationary at $\hat{\beta} = \beta$.\\
+
+\emph{(We'll skip the second derivative checking, etc.)}
 \end{frame}
 
 \begin{frame}
 \frametitle{Question 1: Remarks}
 \begin{itemize}
-\item (We'll skip the second derivative checking, etc.)
-\item The proof still works for $\epsilon$ with any distribution
-\item However, we cannot really relax the condition that $x$ is gaussian, since we need
+\item The proof probably generalizes to higher dimensions
+\item $\epsilon$ can have any distribution
+\item The distribution of $x$ is important for the proof: we need
 \[
 \phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
 \phi\left(\frac{x}{\sigma_x}\right) \propto 
 \phi\left(\frac{\sqrt{2} (x + \frac{\epsilon}{\beta})}{\sigma_x}\right)
 \]
-This can only work if $\phi(x) = \exp(-C x^2)h(|x|)$
-\item The proof probably generalizes to higher dimensions
-\item Conjecture: $\hat{\beta} = \beta$ \emph{only if} $x \sim N(\mu, \Sigma)$
+This can only work if $\phi(x) = \exp(-x^2)h(|x|)$
+\item Conjecture: $\hat{\beta} = \beta$ \textbf{only if}
+\[
+\phi(x) = \exp(-x^T \Omega x) h(x)
+\]
+where $h(x) = h(-x)$.
 \end{itemize}
 \end{frame}
 
@@ -668,6 +669,7 @@ Point estimate for identification (black dashed) is larger than posterior mean (
 
 \begin{frame}
 \frametitle{Toy example I: Estimation}
+\emph{Why the upward bias?}
 \begin{center}
 \begin{tabular}{ccc}
 $\beta = 0$ &
@@ -695,21 +697,69 @@ Risk function is more sensitive for large $\beta$.
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Generalizing to higher dimensions}
+\emph{Model fitting}
+\begin{itemize}
+\item $x$ is $p$-dimensional column vector, $y$ is $q$-column vector
+\item Using training data, learn a model
+\[
+y = B^T x + b^T + \epsilon
+\]
+where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
+\item Using residuals from training data, estimate $\hat{\Sigma}_\epsilon$
+\end{itemize}
+\emph{Identification}
+\begin{itemize}
+\item For each test class feature $x_{\text{test}: i}$, compute the
+  predicted mean response
+\[
+\mu_{\text{test}: i} = B^T x_{\text{test:} i} + b^T
+\]
+\item (MLE) Label a new response $y_*$ with test class $z$ that minimizes
+\[
+(\mu_z - y_*)^T \hat{\Sigma}_\epsilon^{-1} (\mu_z - y_*)
+\]
+\end{itemize}
+\end{frame}
+
 \section{Experiments}
 \frame{\sectionpage}
 
 \begin{frame}
 \frametitle{Data}
 \begin{itemize}
-\item Data from Kay \emph{et al.} paper
+\item From Kay \emph{et al.} paper
 \item Training data: 1750 images with 2 responses each (3500 total)
 \item Test data: 120 images with 13 responses each (1560 total)
-\item Responses: 1331 voxels from the most basic visual subsystem, V1
-\item Features: 10921 image features based on Gabor filters
+\item Responses $y$: 1331 voxels from the most basic visual subsystem, V1
+\item Features $x$: 10921 image features based on Gabor filters
 \end{itemize}
 \begin{center}
-\includegraphics[scale = 0.1]{gabor.png}
+\includegraphics[scale = 0.3]{gabor.png}
 \end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Regression vs Identification}
+\noindent\rule[0.5ex]{\linewidth}{0.5pt}
+\emph{Model fitting via lasso}
+\begin{itemize}
+\item Notation: $Y = (y_{\text{train}: 1},\hdots, y_{\text{train}:3500})^T$, $X = (x_{z_{\text{train}: 1}},\hdots, x_{z_{\text{train}:3500}})^T$
+\item Fix $\lambda$.  Fit a separate Lasso regression for each voxel:
+\[
+\text{minimize} \frac{1}{2}||Y_i - \hat{\beta}^{(i)} X + \hat{\beta}_0^{(i)}||^2 + \lambda ||\hat{\beta}||_1
+\]
+\item Let $B = (\hat{\beta}^{(1)},\hdots, \hat{\beta}^{(1331)})$, $b = (\hat{\beta}_0^{(1)},\hdots, \hat{\beta}_0^{(1331)})$
+\end{itemize}
+\emph{Performance on test set}
+\begin{itemize}
+\item Regression: use test labels to predict $\hat{y}$
+\item Identification: for test responses $y$, estimate label using MLE
+\end{itemize}
+\noindent\rule[0.5ex]{\linewidth}{0.5pt}
+\vspace{0.1in}
+Perform this experiment for $\lambda = 0, 0.1, \hdots, 2$
 \end{frame}
 
 \section{Nonlinear toy example}
@@ -821,6 +871,8 @@ Even when minor nonlinearities exist in the model, identification
 performance fails to reflect global fit
 \end{itemize}
 \end{frame}
+
+\section{Conclusions}
 
 \begin{frame}
 \frametitle{Conclusions}

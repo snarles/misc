@@ -2,3 +2,4 @@ Image credits
 
 http://www.clipartbest.com/brain-cartoon
 http://stackoverflow.com/questions/16255068/how-to-show-40-gabor-filter-in-matlab
+http://stackoverflow.com/questions/20608458/gabor-feature-extraction
