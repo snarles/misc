@@ -4,11 +4,22 @@
 
 savelist <- c()
 
+isqrtm <- function(m) {
+  res <- eigen(m)
+  d <- res$values
+  if (min(d) < -1e-5) warning("Negative eigenvalues in isqrtm")
+  d[d < 0] <- 0
+  d[d > 0] <- 1/sqrt(d[d > 0])
+  v <- res$vectors
+  return (v %*% diag(d) %*% t(v))
+}
+
+
 library(Rcpp)
 sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
 
-#ddir <- "/home/snarles/stat312data"
-ddir <- "/home/ubuntu/stat312data"
+ddir <- "/home/snarles/stat312data"
+#ddir <- "/home/ubuntu/stat312data"
 list.files(ddir)
 
 
@@ -116,7 +127,7 @@ dim(dm_train_v1)
 sigma_e <-cov(t(dm_train_v1))
 eye <- mean(diag(sigma_e)) * diag(rep(1, 100))
 sigma_e <- 0.5 * sigma_e + 0.5 * eye
-omega_e <- solve(sigma_e)
+omega_e <- isqrtm(sigma_e)
 
 ####
 ## REGRESSION
@@ -124,16 +135,41 @@ omega_e <- solve(sigma_e)
 
 library(parallel)
 library(glmnet)
-cl <- makeCluster(5)
+#cl <- makeCluster(5)
 
 dim(features_train)
 dim(train_resp)
 
+lambdas <- 0:10/10
+nlambdas <- length(lambdas)
+
 prfunc <- function(i) {
     as.numeric(train_resp[1,])
     res <- glmnet(features_train, as.numeric(train_resp[1, ]))
-    pr <- predict(res, features_valid, s=0:10/10)
+    pr <- predict(res, features_valid, s=lambdas)
     pr
 }
 
-res <- lapply(1:10, prfunc)
+res <- lapply(1:100, prfunc)
+
+pr_error <- numeric(nlambdas)
+misc_error <- numeric(nlambdas)
+for (i in 1:nlambdas) {
+  pvalid <- matrix(0, 120, 100)
+  for (j in 1:100) {
+    pvalid[, j] <- res[[j]][, i]
+  }
+  yhat <- pvalid[valid_index, ]
+  ys <- t(valid_v1)
+  pr_error[i] <- sum((yhat - ys)^2)
+  for (j in 1:1560) {
+    y <- valid_v1[, j]
+    z <- valid_index[j]
+    diff <- t(pvalid) - y # 100 120
+    cdiff <- omega_e %*% diff
+    ds <- apply(cdiff^2, 2, sum)
+    zhat <- order(ds)[1]
+    misc_error[i] <- misc_error[i] + (zhat != z)
+  }
+}
+
