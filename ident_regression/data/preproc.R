@@ -223,8 +223,8 @@ pr_error <- apply(pr_errors, 2, mean)
 lambdas[order(misc_error)[1]]
 lambdas[order(pr_error)[1]]
 
-saveRDS(misc_error, "misc_error.rds")
-saveRDS(pr_error, "pr_error.rds")
+saveRDS(misc_errors, "misc_error.rds")
+saveRDS(pr_errors, "pr_error.rds")
 
 #plot(lambdas, misc_error)
 #plot(lambdas, pr_error)
