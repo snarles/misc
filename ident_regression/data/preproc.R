@@ -180,11 +180,11 @@ plot(lambdas, pr_error)
 ## REGRESSION : USING TRAIN_RESP
 ####
 
-tr_inds <- sample(1750, 1700, FALSE)
+tr_inds <- sample(1750, 1725, FALSE)
 te_inds <- setdiff(1:1750, tr_inds)
 nte <- length(te_inds)
 
-lambdas <- 0:100/30
+lambdas <- 0:1000/40000
 nlambdas <- length(lambdas)
 
 prfunc <- function(i) {
