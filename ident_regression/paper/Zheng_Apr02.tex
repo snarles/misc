@@ -731,7 +731,7 @@ where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
 \begin{itemize}
 \item From Kay \emph{et al.} paper
 \item 1750 images with averaged responses from 2 repeats
-\item Responses $y$: 1331 voxels from the most basic visual subsystem, V1
+\item Responses $y$: 100 selected voxels from the most basic visual subsystem, V1
 \item Features $x$: 10921 image features based on Gabor filters
 \end{itemize}
 \begin{center}
@@ -753,7 +753,7 @@ where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
 \[
 \text{minimize} \frac{1}{2}||Y_i - \hat{\beta}^{(i)} X + \hat{\beta}_0^{(i)}||^2 + \lambda ||\hat{\beta}||_1
 \]
-\item Let $B = (\hat{\beta}^{(1)},\hdots, \hat{\beta}^{(1331)})$, $b = (\hat{\beta}_0^{(1)},\hdots, \hat{\beta}_0^{(1331)})$
+\item Let $B = (\hat{\beta}^{(1)},\hdots, \hat{\beta}^{(100)})$, $b = (\hat{\beta}_0^{(1)},\hdots, \hat{\beta}_0^{(100)})$
 \end{itemize}
 \emph{Performance on test set}
 \begin{itemize}
