@@ -628,7 +628,6 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 \begin{frame}
 \frametitle{Question 1: Remarks}
 \begin{itemize}
-\item The proof probably generalizes to higher dimensions
 \item $\epsilon$ can have any distribution
 \item The distribution of $x$ is important for the proof: we need
 \[
@@ -636,12 +635,13 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 \phi\left(\frac{x}{\sigma_x}\right) \propto 
 \phi\left(\frac{\sqrt{2} (x + \frac{\epsilon}{\beta})}{\sigma_x}\right)
 \]
-This can only work if $\phi(x) = \exp(-x^2)h(|x|)$
+This can only work if $\phi(x) = \exp(-C x^2)h(|x|)$
 \item Conjecture: $\hat{\beta} = \beta$ \textbf{only if}
 \[
-\phi(x) = \exp(-x^T \Omega x) h(x)
+\phi(x) = \exp(-C x^2) h(x)
 \]
 where $h(x) = h(-x)$.
+\item Generalize to higher dimensions?
 \end{itemize}
 \end{frame}
 
@@ -730,8 +730,7 @@ where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
 \frametitle{Data}
 \begin{itemize}
 \item From Kay \emph{et al.} paper
-\item Training data: 1750 images with 2 responses each (3500 total)
-\item Test data: 120 images with 13 responses each (1560 total)
+\item 1750 images with averaged responses from 2 repeats
 \item Responses $y$: 1331 voxels from the most basic visual subsystem, V1
 \item Features $x$: 10921 image features based on Gabor filters
 \end{itemize}
@@ -743,9 +742,13 @@ where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
 \begin{frame}
 \frametitle{Regression vs Identification}
 \noindent\rule[0.5ex]{\linewidth}{0.5pt}
+\emph{Partition}
+\begin{itemize}
+\item Randomly partition into training set (1725) and test set (25)
+\end{itemize}
 \emph{Model fitting via lasso}
 \begin{itemize}
-\item Notation: $Y = (y_{\text{train}: 1},\hdots, y_{\text{train}:3500})^T$, $X = (x_{z_{\text{train}: 1}},\hdots, x_{z_{\text{train}:3500}})^T$
+\item Notation: $Y = (y_{\text{train}: 1},\hdots, y_{\text{train}:1725})^T$, $X = (x_{z_{\text{train}: 1}},\hdots, x_{z_{\text{train}:1725}})^T$
 \item Fix $\lambda$.  Fit a separate Lasso regression for each voxel:
 \[
 \text{minimize} \frac{1}{2}||Y_i - \hat{\beta}^{(i)} X + \hat{\beta}_0^{(i)}||^2 + \lambda ||\hat{\beta}||_1
@@ -760,6 +763,15 @@ where $B$ is a $p \times q$ matrix and $b$ is a $q$-row vector.
 \noindent\rule[0.5ex]{\linewidth}{0.5pt}
 \vspace{0.1in}
 Perform this experiment for $\lambda = 0, 0.1, \hdots, 2$
+\end{frame}
+
+\begin{frame}
+\frametitle{Results}
+\begin{center}
+\includegraphics[scale = 0.35]{exp1_1.pdf}
+\includegraphics[scale = 0.35]{exp1_2.pdf}
+\end{center}
+Results do not support hypothesis... what else is going on?
 \end{frame}
 
 \section{Nonlinear toy example}
