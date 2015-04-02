@@ -252,6 +252,13 @@ Test Data \emph{(new images!)} \\
 \end{frame}
 
 \begin{frame}
+\begin{center}
+\includegraphics[scale = 0.4]{kay00.png}
+\includegraphics[scale = 0.4]{kay01.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
 \frametitle{Reconstruction}
 \begin{center}
 Training Data
@@ -627,21 +634,11 @@ The same argument works for $\epsilon < 0$, hence the misclassification rate is 
 
 \begin{frame}
 \frametitle{Question 1: Remarks}
+Optimal $\hat{\beta} = \beta$
 \begin{itemize}
-\item $\epsilon$ can have any distribution
-\item The distribution of $x$ is important for the proof: we need
-\[
-\phi\left(\frac{x\beta + 2\epsilon}{\sigma_x \beta}\right)
-\phi\left(\frac{x}{\sigma_x}\right) \propto 
-\phi\left(\frac{\sqrt{2} (x + \frac{\epsilon}{\beta})}{\sigma_x}\right)
-\]
-This can only work if $\phi(x) = \exp(-C x^2)h(|x|)$
-\item Conjecture: $\hat{\beta} = \beta$ if and \textbf{only if}
-\[
-\phi(x) = \exp(-C x^2) h(x)
-\]
-where $h(x) = h(-x)$.
-\item Generalize to higher dimensions?
+\item Obvious for $\epsilon \sim N(0, \sigma^2_\epsilon)$ no matter the distribution of $x$... but
+\item $\epsilon$ can have any distribution... if $x$ is normally distributed
+\item Don't know for $\epsilon$ arbitrary and $x$ arbitrary...
 \end{itemize}
 \end{frame}
 
