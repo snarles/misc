@@ -145,7 +145,7 @@ nlambdas <- length(lambdas)
 
 prfunc <- function(i) {
     as.numeric(train_resp[1,])
-    res <- glmnet(features_train, as.numeric(train_resp[1, ]), standardize = FALSE)
+    res <- glmnet(features_train, as.numeric(train_resp[i, ]), standardize = FALSE)
     pr <- predict(res, features_valid, s=lambdas)
     pr
 }
@@ -180,36 +180,34 @@ plot(lambdas, pr_error)
 ## REGRESSION : USING TRAIN_RESP
 ####
 
-tr_inds <- sample(1750, 1000, FALSE)
+tr_inds <- sample(1750, 1700, FALSE)
 te_inds <- setdiff(1:1750, tr_inds)
 nte <- length(te_inds)
 
-lambdas <- 0:10/10
+lambdas <- 0:100/30
 nlambdas <- length(lambdas)
 
 prfunc <- function(i) {
-  as.numeric(train_resp[1,])
-  res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[1, tr_inds]), standardize = FALSE)
+  res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), standardize = FALSE)
   pr <- predict(res, features_train[te_inds, ], s=lambdas)
   pr
 }
 
-res <- lapply(1:100, prfunc)
+res <- mclapply(1:100, prfunc, mc.cores = 3)
+#res <- lapply(1:100, prfunc)
 
 pr_error <- numeric(nlambdas)
 misc_error <- numeric(nlambdas)
+library(class)
 for (i in 1:nlambdas) {
   pvalid <- matrix(0, nte, 100)
   for (j in 1:100) {
     pvalid[, j] <- res[[j]][, i]
   }
   pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
-  for (z in 1:nte) {
-    y <- train_resp[, te_inds[z]]
-    diff <- t(pvalid) - y # nte 120
-    cdiff <- omega_e %*% diff
-    ds <- apply(cdiff^2, 2, sum)
-    zhat <- order(ds)[1]
-    misc_error[i] <- misc_error[i] + (zhat != z)
-  }
+  te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
+  misc_error[i] <- misc_error[i] + sum(te_cl != 1:nte)
 }
+
+plot(lambdas, misc_error)
+plot(lambdas, pr_error)
