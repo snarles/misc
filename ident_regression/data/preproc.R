@@ -180,34 +180,51 @@ plot(lambdas, pr_error)
 ## REGRESSION : USING TRAIN_RESP
 ####
 
-tr_inds <- sample(1750, 1725, FALSE)
-te_inds <- setdiff(1:1750, tr_inds)
-nte <- length(te_inds)
-
 lambdas <- 0:1000/40000
 nlambdas <- length(lambdas)
 
-prfunc <- function(i) {
-  res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), standardize = FALSE)
-  pr <- predict(res, features_train[te_inds, ], s=lambdas)
-  pr
-}
+ntrials <- 20
+misc_errors <- matrix(0, ntrials, nlambdas)
+pr_errors <- matrix(0, ntrials, nlambdas)
 
-res <- mclapply(1:100, prfunc, mc.cores = 3)
-#res <- lapply(1:100, prfunc)
-
-pr_error <- numeric(nlambdas)
-misc_error <- numeric(nlambdas)
 library(class)
-for (i in 1:nlambdas) {
-  pvalid <- matrix(0, nte, 100)
-  for (j in 1:100) {
-    pvalid[, j] <- res[[j]][, i]
-  }
-  pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
-  te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
-  misc_error[i] <- misc_error[i] + sum(te_cl != 1:nte)
+
+for (ii in 1:ntrials) {
+    tr_inds <- sample(1750, 1725, FALSE)
+    te_inds <- setdiff(1:1750, tr_inds)
+    nte <- length(te_inds)
+    prfunc <- function(i) {
+        res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), standardize = FALSE)
+        pr <- predict(res, features_train[te_inds, ], s=lambdas)
+        pr
+    }
+    res <- mclapply(1:100, prfunc, mc.cores = 30)
+                                        #res <- lapply(1:100, prfunc)
+    pr_error <- numeric(nlambdas)
+    misc_error <- numeric(nlambdas)
+    for (i in 1:nlambdas) {
+        pvalid <- matrix(0, nte, 100)
+        for (j in 1:100) {
+            pvalid[, j] <- res[[j]][, i]
+        }
+        pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
+        te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
+        misc_error[i] <- misc_error[i] + sum(te_cl != 1:nte)
+    }
+    misc_errors[ii, ] <- misc_error
+    pr_errors[ii, ] <- pr_error
+    print(ii)
 }
 
-plot(lambdas, misc_error)
-plot(lambdas, pr_error)
+
+misc_error <- apply(misc_errors, 2, mean)
+pr_error <- apply(pr_errors, 2, mean)
+
+lambdas[order(misc_error)[1]]
+lambdas[order(pr_error)[1]]
+
+saveRDS(misc_error, "misc_error.rds")
+saveRDS(pr_error, "pr_error.rds")
+
+#plot(lambdas, misc_error)
+#plot(lambdas, pr_error)
