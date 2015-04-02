@@ -1,9 +1,10 @@
-p <- 2
-q <- 2
-bt <- matrix(c(4,3,2,3), 2, 2)
-library(class)
+p <- 10
+q <- 10
 
-simulate <- function(al, k_cl, n_trials, seed = 0) {
+library(class)
+library(parallel)
+
+simulate <- function(seed) {
   set.seed(seed)
   mrs <- numeric(n_trials)
   for (i in 1:n_trials) {
@@ -14,15 +15,29 @@ simulate <- function(al, k_cl, n_trials, seed = 0) {
     mr <- sum(te_cl != 1:k_cl)/k_cl
     mrs[i] <- mr
   }
-  mrs 
+  mean(mrs) 
 }
 
-del1 <- matrix(c(1, 0, 0, 0), 2, 2)
-del2 <- matrix(c(0, 1, 0, 0), 2, 2)
-del3 <- matrix(c(0, 0, 1, 0), 2, 2)
-del4 <- matrix(c(0, 0, 0, 1), 2, 2)
-n_trials <- 1e4
+proc.time()
+bt <- 5e-2 * matrix(1:100, 10, 10)
+als <- lapply(1:10, function(i) bt + 1e-3 * matrix(rnorm(100), 10, 10))
+als <- c(list(bt), als)
+n_trials <- 1e5
 k_cl <- 30
-mean(simulate(bt, k_cl, n_trials))
-mean(simulate(bt + 0.1 * del1, k_cl, n_trials))
-mean(simulate(bt - 0.1 * del1, k_cl, n_trials))
+res <- matrix(0, length(als), 30)
+for (i in 1:length(als)) {
+    al <- als[[i]]
+    res[i, ] <- unlist(mclapply(1:30, simulate, mc.cores = 30))
+}
+proc.time()
+
+mus <- apply(res, 1, mean)
+mus[1] - min(mus)
+apply(res, 1, sd)/sqrt(30)
+mus[1] - mus
+
+
+
+
+
+

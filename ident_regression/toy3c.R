@@ -39,7 +39,7 @@ simulate <- function(al, k_cl, n_trials, seed = 0) {
 }
 
 
-bts <- seq(0.98, 1.02, 0.01)
+bts <- seq(0.99, 1.01, 0.005)
 bts
 
 library(parallel)
@@ -51,7 +51,8 @@ mc3 <- mclapply(
     mc.cores = 30)
 mc3 <- as.matrix(data.frame(mc3))
 apply(mc3, 1, mean)
-
+mean(mc3[2, ] - mc3[3, ])
+sd(mc3[2, ] - mc3[3, ])/sqrt(30 * 1e5)
 
 
 mc20 <- sapply(bts, function(bt) mean(simulate(bt, 20, 1e6, sed)))
