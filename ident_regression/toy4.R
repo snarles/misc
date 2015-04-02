@@ -18,33 +18,35 @@ simulate <- function(seed) {
   mean(mrs) 
 }
 
+gsd <- 123e3
+set.seed(gsd)
 proc.time()
 bt <- 5e-2 * matrix(1:100, 10, 10)
-als <- lapply(1:10, function(i) bt + 1e-3 * matrix(rnorm(100), 10, 10))
+als <- lapply(1:3, function(i) bt + 1e-4 * matrix(rnorm(100), 10, 10))
 als <- c(list(bt), als)
-n_trials <- 1e5
+n_trials <- 2e5
 k_cl <- 30
 res <- matrix(0, length(als), 30)
 for (i in 1:length(als)) {
     al <- als[[i]]
-    res[i, ] <- unlist(mclapply(1:30, simulate, mc.cores = 30))
+    res[i, ] <- unlist(mclapply(gsd + 1:30, simulate, mc.cores = 30))
 }
 proc.time()
 
-mus <- apply(res, 1, mean)
+gsd2 <- 324e3
 
+mus <- apply(res, 1, mean)
 
 mus[1] - min(mus)
 apply(res, 1, sd)/sqrt(30)
 mus[1] - mus
 
 al <- bt
-c1 <- unlist(mclapply(30 + 1:30, simulate, mc.cores = 30))
-
+c1 <- unlist(mclapply(gsd2 + 1:30, simulate, mc.cores = 30))
 al <- als[[order(mus)[1]]]
-c2 <- unlist(mclapply(30 + 1:30, simulate, mc.cores = 30))
-
-
+c2 <- unlist(mclapply(gsd2 + 1:30, simulate, mc.cores = 30))
+mean(c1 - c2)
+sd(c1 - c2)/sqrt(30)
 
 
 
