@@ -322,6 +322,30 @@ misclassification error) of a model to draw scientific conclusions?
 \end{frame}
 
 
+\begin{frame}
+\frametitle{Classification vs Identification vs Reconstruction}
+\begin{center}
+\emph{Supervised learning problems}
+\begin{tabular}{|c||c|c|c|}
+\hline
+ & Classification & Identification & Regression\\ \hline
+\textbf{Class label} & $z$ & $z$ & $i = 1,\hdots, n$ \\
+Observed in training & Yes & Yes & Yes \\
+Observed in test & No & No & Yes \\ \hline
+\textbf{Class feature} & $x_z$ & $x_z$ & $x_i$ \\
+Observed in training & No & Yes & Yes \\
+Observed in test & No & No & Yes \\ \hline
+\textbf{Response} & $y$ & $y$ & $y$ \\
+Observed in training & Yes & Yes & Yes \\
+Observed in test & Yes & Yes & No \\ \hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Unified interpretation of supervised learning problems
+\item Class $z$ has feature $x_z$, $y \sim f_{x_z}$
+\item Problems differ in terms of observed and unobserved information
+\end{itemize}
+\end{frame}
 
 \begin{frame}
 \frametitle{Classification vs Identification vs Reconstruction}
@@ -340,6 +364,7 @@ Covariates ($x$) & Identification & Regression \\ \hline
 \item Next: a toy model for identification
 \end{itemize}
 \end{frame}
+
 
 \section{Theory}
 
