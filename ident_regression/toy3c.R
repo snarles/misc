@@ -39,14 +39,26 @@ simulate <- function(al, k_cl, n_trials, seed = 0) {
 }
 
 
-bts <- seq(0.98, 1.02, 0.02)
+bts <- seq(0.98, 1.02, 0.01)
 bts
 
-#mc2 <- sapply(bts, function(bt) mean(simulate(bt, 2, 1e4)))
-mc3 <- sapply(bts, function(bt) mean(simulate(bt, 3, 1e6)))
+library(parallel)
+mc3 <- mclapply(
+    1:30,
+    function(sed) {
+        sapply(bts, function(bt) mean(simulate(bt, 3, 1e5, sed)))
+    },
+    mc.cores = 30)
+mc3 <- as.matrix(data.frame(mc3))
+apply(mc3, 1, mean)
+
+
+
+mc20 <- sapply(bts, function(bt) mean(simulate(bt, 20, 1e6, sed)))
+
 #mc5 <- sapply(bts, function(bt) mean(simulate(bt, 5, 1e4)))
 #mc10 <- sapply(bts, function(bt) mean(simulate(bt, 10, 1e4)))
-mc20 <- sapply(bts, function(bt) mean(simulate(bt, 20, 1e6)))
+
 mc40 <- sapply(bts, function(bt) mean(simulate(bt, 40, 1e3)))
 #mc80 <- sapply(bts, function(bt) mean(simulate(bt, 80, 1e3)))
 min3 <-bts[mc3 == min(mc3)]
