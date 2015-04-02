@@ -183,12 +183,13 @@ plot(lambdas, pr_error)
 lambdas <- 0:1000/40000
 nlambdas <- length(lambdas)
 
-ntrials <- 20
+ntrials <- 200
 misc_errors <- matrix(0, ntrials, nlambdas)
 pr_errors <- matrix(0, ntrials, nlambdas)
 
 library(class)
 
+proc.time()
 for (ii in 1:ntrials) {
     tr_inds <- sample(1750, 1725, FALSE)
     te_inds <- setdiff(1:1750, tr_inds)
@@ -215,7 +216,7 @@ for (ii in 1:ntrials) {
     pr_errors[ii, ] <- pr_error
     print(ii)
 }
-
+proc.time()
 
 misc_error <- apply(misc_errors, 2, mean)
 pr_error <- apply(pr_errors, 2, mean)
