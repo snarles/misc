@@ -32,9 +32,17 @@ for (i in 1:length(als)) {
 proc.time()
 
 mus <- apply(res, 1, mean)
+
+
 mus[1] - min(mus)
 apply(res, 1, sd)/sqrt(30)
 mus[1] - mus
+
+al <- bt
+c1 <- unlist(mclapply(30 + 1:30, simulate, mc.cores = 30))
+
+al <- als[[order(mus)[1]]]
+c2 <- unlist(mclapply(30 + 1:30, simulate, mc.cores = 30))
 
 
 
