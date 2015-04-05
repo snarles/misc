@@ -1,0 +1,89 @@
+\documentclass[11pt]{article} 
+
+% transcribed by Charles Zheng
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Vol}{\text{Vol}}
+\pagestyle{fancy}
+
+\title{Differential Geometric Theory of Statistics}
+
+\author{Shun-ichi Amari\thanks{
+Department of Mathematical Engineering and Instrumentation Physics, University of Tokyo, Tokyo, Japan}}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+            Statistics is a science which studies methods of inference, from
+observed data, concerning the probabilistic structure underlying such data.
+The class of all the possible probability distributions is usually too wide to
+consider all its elements as candidates for the true probability distribution
+from which the data were derived.  Statisticians often assume a statistical
+model which is a subset of the set of all the possible probability distribut{ions,}
+      and evaluate procedures of statistical inference assuming that the model
+is faithful, i.e., it includes the true distribution.  It should, howver, be
+remarked that a model is not necessarily faithful but is approximately so.  In
+either case, it should be very important to know the shape of a statistical
+model in the whole set of probability distributions.  This is the geometry of a
+statistical model.  A statistical model often forms a geometrical manifold, so
+that the geometry of manifolds should play an important role.  Considering that
+properties of specific types of probability distributions, for example, of
+Gaussian distributions, of Wiener processes, and so on, have so far been studied
+in detail, it seems rather strange that only a few theories have been proposed
+concerning properties of a family itself of distributions.  Here, by the proper{ties}
+     of a family we mean such geometric relations as mutual distances, flatness
+or curvature of the family, etc.  Obviously it is not a trivial task to define 
+such geometric structures in a natural, useful and invariant manner.
+            Only local properties of a statistical model are responsible for the
+asymptotic theory of statistical inference.  Local properties are represented
+by the geometry of the tangent spaces of the manifold.  The tangent space has a
+natural Riemannian metric given by the Fisher information matrix in the regular
+case.  It represents only a local property of the model, because the tangent
+space is nothing but local linearization of the model manifold.  In order to
+obtain larger-scale properties, one needs to define mutual relations of the two
+different tangent spaces at two neighboring points in the model.  This can be
+done by defining a one-to-one affine correspondence between two tangent spaces,
+which is called an affine connection in differential geometry.  By an affine
+connection, one can consider local properties around each point beyond the
+linear approximation.  The curvature of a model can be obtained by the use of
+this connection.  It is clear that such a differential-geometrical concept pro{vides}
+      a tool convenient for studying higher-order asymptotic properties of
+inference.  However, by connecting local tangent spaces further, one can obtain
+global relations.  Hence, the validity of the differential-geometrical method is
+not limited within the framework of asymptotic theory.
+
+\section{Geometrical Structure of Statistical Models}
+
+\section{Higher-Order Asymptotic Theory of Statistical Inference in Curved Exponential Family}
+
+\section{Information, Sufficiency and Ancillarity Higher Order Theory}
+
+\section{Fibre-Bundle Theory of Statistical Models}
+
+\section{Estimation of Structural Parameter in the Presence of Infinitely Many Nuisance Parameters}
+
+\section{Parametric Models of Stationary Gaussian Time Series}
+
+\section{References}
+
+\end{document}
