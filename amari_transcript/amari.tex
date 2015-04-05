@@ -8,7 +8,7 @@
 \usepackage{array}
 \usepackage{ifthen}
 \usepackage{color}
-\usepackage{fancyhdr}
+%\usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{indentfirst}
 \usepackage{caption}
@@ -23,7 +23,7 @@
 \newcommand{\argmin}{\text{argmin}}
 \newcommand{\Cov}{\text{Cov}}
 \newcommand{\Vol}{\text{Vol}}
-\pagestyle{fancy}
+%\pagestyle{fancy}
 
 \title{Differential Geometric Theory of Statistics}
 
@@ -206,6 +206,69 @@ Fisher information matrix. Two vectors $A$ and $B$ are orthogonal when
 \[
 \langle A, B \rangle = \langle A^i \partial_i, B^j \partial_j \rangle = A^i B^j g_{ij} = 0.
 \]
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale = 0.3]{fig2.pdf}
+\caption{}
+\end{figure}
+
+It is sometimes necessary to compare a vector $A \in
+\mathcal{T}_\theta$ of the tangent space $\mathcal{T}_\theta$ at one
+point $\theta$ with a vector $B \in \mathcal{T}_{\theta'}$ belonging
+to the tangent space $\mathcal{T}_{\theta'}$ at another point
+$\theta'$.  This can be done by comparing the basis vectors
+$\partial_i$ at $\mathcal{T}_\theta$ with the basis vectors
+$\partial_i'$ at $\mathcal{T}_{\theta'}$.  Since $\mathcal{T}_\theta$
+and $\mathcal{T}_{\theta'}$ are two different vector spaces, the two
+vectors $\partial_i$ and $\partial_i'$ are not directly comparable,
+and we need some way of identifying $\mathcal{T}_\theta$ with
+$\mathcal{T}_{\theta'}$ in order to compare the vectors in them.  This
+can be accomplished by introducing an affine connection, which maps a
+tangent space $\mathcal{T}_{\theta + d\theta}$ at $\theta + d\theta$
+to the tangent space $\mathcal{T}_\theta$ at $\theta$.  The mapping
+should reduce to the identity map as $d\theta \to 0$.  Let
+$m(\partial_j')$ be the image of $\partial_j' \in \mathcal{T}_{\theta
+  + d\theta}$ mapped to $\mathcal{T}_\theta$.  It is slightly
+different from $\partial_j \in \mathcal{T}_\theta$.  The vector
+\[
+\nabla_{\partial_i} \partial_j = \lim_{\partial_\theta\to 0} \frac{d}{d\theta^i}\{m(\partial_j') - \partial_j\}
+\]
+represents the rate at which the $j$th basis vector $\partial_j \in
+\mathcal{T}_\theta$ ``intrinsically'' changes as the point $\theta$
+moves from $\theta$ to $\theta + d\theta$ (Fig. 2) in the direction
+$\partial_i$.  We call $\nabla_{\partial_i} \partial_j$ the covariant
+derivative of the basis vector $\partial_j$ in the direction
+$\partial_i$.  Since it is a vector of $\mathcal{T}_\theta$, its
+components are given by
+\begin{equation}
+\Gamma_{ijk} = \langle \nabla_{\partial_i}\partial_j, \partial_k \rangle \tag{2.2}\label{eq:2.2}
+\end{equation}
+and
+\[
+\nabla_{\partial_i}\partial_j = \Gamma_{ij}^k \partial_k
+\]
+where $\Gamma_{ijk} = \Gamma_{ij}^m g_{mk}$.  We call $\Gamma_{ijk}$
+the components of the affine connection.  An affine connection is
+specified by defining $\nabla_{\partial_i} \partial_j$ or
+$\Gamma_{ijk}$.  Let $A(\theta)$ be a vector field, which assigns to
+every point $\theta \in \mathcal{S}$ a vector $A(\theta) = A^i(\theta)
+\partial_i \in \mathcal{T}_\theta$.  The intrinsic change of the
+vector $A(\theta)$ as the position $\theta$ moves is now given by the
+covariant derivative in the direction $\partial_i$ of $A(\theta) =
+A^j(\theta)\partial_j$, defined by
+\[
+\nabla_{\partial_i} A = (\partial_i A^j) \partial_j + A^j
+(\nabla_{\partial_i} \partial_j) = (\partial_i A^j + \Gamma_{ik}^j
+A^k)\partial_j,
+\]
+in which the change in basis vectors as well as that in the components
+$A^i(\theta)$ is taken into account.  The covariant derivative in the
+direction $B = B^i \partial_i$ is given by
+\[
+\nabla_B A = B^i\nabla_{\partial_i} A
+\]
+
 
 \section{Higher-Order Asymptotic Theory of Statistical Inference in Curved Exponential Family}
 
