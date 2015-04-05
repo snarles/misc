@@ -23,6 +23,34 @@ Charles Zheng CME 323 HW 1
 
 \textbf{1.}
 
+Checkpoint on slide 11:
+\begin{verbatim}
+res0: Array[Int] = Array(1, 2, 3, 4, 5, 6, 7, 8, 9)
+\end{verbatim}
+
+Checkpoint on slide 55:
+\begin{verbatim}
+(SparkCamp,4)
+(Spark,3)
+(spark,1)
+(SparkSQL,1)
+(../spark/bin/spark-submit,1)
+\end{verbatim}
+
+Code for slide 60:
+\begin{verbatim}
+val rdd1 = sc.textFile("README.md").filter(_ contains "Spark")
+val rdd2 = sc.textFile("spark/docs/contributing-to-spark.md").filter(_ contains "Spark")
+val wc1 = rdd1.flatMap(l => l.split(" ")).map(w => (w, 1)).reduceByKey(_ + _)
+val wc2 = rdd2.flatMap(l => l.split(" ")).map(w => (w, 1)).reduceByKey(_ + _)
+val joined = wc1.join(wc2)
+\end{verbatim}
+
+Checkpoint on slide 60:
+\begin{verbatim}
+(Spark,(3,2))
+\end{verbatim}
+
 
 
 \end{document}
