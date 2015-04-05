@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="fig1.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.69272729"
+     inkscape:cx="372.04724"
+     inkscape:cy="526.18109"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1535"
+     inkscape:window-height="876"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path3965"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3962"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 41.863516,623.62204 c 0,0 8.661417,-90.94488 72.178474,-238.18897 63.51706,-147.24409 102.49344,-173.22835 102.49344,-173.22835 0,0 230.97112,-40.41994 333.46456,-44.75065 102.49343,-4.33071 176.11548,0 176.11548,0 0,0 -132.8084,329.13385 -138.58268,395.53805 -5.77428,66.4042 -1.44357,85.1706 -1.44357,85.1706 0,0 -150.13123,-92.38845 -291.60104,-75.06561 -141.46981,17.32283 -252.624664,50.52493 -252.624664,50.52493 z"
+       id="path3004"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#000032;stroke-width:1.91442000999999995;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:none;marker-end:none"
+       d="m 311.76823,511.06641 c 0,0 0.4521,-47.34542 37.26977,-134.1741 45.21811,-106.63978 86.96279,-128.64113 86.96279,-128.64113"
+       id="path3774"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#000032;stroke-width:1.74236130999999994;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:none"
+       d="m 209.18876,407.21543 c 0,0 60.31249,-42.26332 162.14188,-37.78821 132.77094,5.8349 173.0239,31.97464 173.0239,31.97464"
+       id="path3776"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 278.60892,301.70603 217.979,-7.21785 -57.74278,148.68766 -216.53543,7.21784 z"
+       id="path4956"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#003200;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-mid:none;marker-end:none;marker-start:none"
+       d="m 378.21522,303.1496 -25.98426,64.96063 59.18635,5.77428"
+       id="path4958"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#000032;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 430.66453,262.02178 4.0565,-14.87382 -14.87382,2.02825"
+       id="path6248"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#000032;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 533.42907,387.77312 10.14124,12.84556 -14.87382,6.76083"
+       id="path6250"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#003200;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 403.62123,366.13848 9.46516,8.78907 -12.16948,6.08475"
+       id="path6252"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#003200;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 366.4367,307.99538 11.4934,-4.73257 4.0565,12.16948"
+       id="path6254"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#320000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 353.59113,368.16672 58.81918,-37.86061 -5.40866,10.14123"
+       id="path6256"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <path
+       style="fill:none;stroke:#320000;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 411.73422,329.63002 -10.81732,0.67609"
+       id="path6258"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97" />
+    <g
+       id="g6280"
+       transform="translate(-176.45753,194.03567)"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         id="content"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         xml:space="preserve"
+         stroke-miterlimit="10.433"
+         font-style="normal"
+         font-variant="normal"
+         font-weight="normal"
+         font-stretch="normal"
+         font-size-adjust="none"
+         letter-spacing="normal"
+         word-spacing="normal"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"><path
+           d="m 461.25,417.11 0.06,0.02 0.07,0.03 0.07,0.04 0.08,0.04 0.08,0.04 0.08,0.05 0.09,0.05 0.09,0.05 0.09,0.06 0.1,0.06 0.1,0.06 0.1,0.07 0.19,0.13 0.2,0.15 0.09,0.07 0.1,0.08 0.09,0.07 0.08,0.08 0.09,0.08 0.07,0.08 0.08,0.07 0.07,0.08 0.06,0.08 0.05,0.07 0.05,0.08 0.04,0.07 0.03,0.07 0.02,0.04 0.01,0.04 0.01,0.03 0,0.03 0.01,0.04 0,0.03 c 0,0.35 -0.31,0.35 -0.61,0.35 -1.69,0 -6.58,-2.14 -6.58,-7.13 0,-3.58 4.05,-7.26 10.13,-7.26 8.1,0 17.53,5.62 17.53,12.4 0,4.74 -4.99,7.02 -9.02,8.81 -3.48,1.6 -5.78,3.64 -5.78,6.49 0,1.05 0.45,2.98 2,4.33 1.48,1.29 4.28,1.45 4.97,1.45 0.56,0 2.64,-0.06 4.8,-1 0.93,-0.45 2.23,-1.05 2.23,-3.19 0,-0.7 -0.05,-0.95 -0.2,-1.5 -0.05,-0.14 -0.1,-0.34 -0.1,-0.5 0,-0.34 0.3,-0.34 0.5,-0.34 0.64,0 1.85,0.5 2.85,1.34 0.64,0.5 1.18,1.14 1.18,3.1 0,2.43 -1.29,3.14 -2.64,3.73 -2.34,1.09 -4.62,1.09 -5.32,1.09 -6.54,0 -14.5,-4.98 -14.5,-10.65 0,-4.19 4.32,-6.19 6.71,-7.24 3.55,-1.59 8.08,-3.87 8.08,-8.06 0,-3.34 -2.44,-7.53 -10.01,-7.53 -5.08,0 -9.18,3.3 -9.18,6.67 0,0.91 0.25,1.8 0.61,2.6 z"
+           id="path6283"
+           inkscape:connector-curvature="0"
+           style="fill:#000000;stroke-width:0" /></g>    </g>
+    <g
+       transform="translate(114.25794,128.45567)"
+       id="g6382"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="g6384"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         xml:space="preserve"
+         stroke-miterlimit="10.433"
+         font-style="normal"
+         font-variant="normal"
+         font-weight="normal"
+         font-stretch="normal"
+         font-size-adjust="none"
+         letter-spacing="normal"
+         word-spacing="normal"><path
+           style="fill:#000000;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="M 479.74,437.14 H 488 c 6.58,0 9.07,3.78 9.07,4.43 0,0.25 -0.19,0.35 -0.44,0.35 -0.56,0 -1.84,-0.5 -3.09,-1.39 -0.41,-0.3 -0.5,-0.3 -1.46,-0.3 h -21.76 c -6.18,0 -13.11,-5.33 -13.11,-9.42 0,-0.3 0,-0.6 0.4,-0.6 1.19,0 4.33,1.65 4.44,2.85 0.05,0.84 0.14,1.78 1.14,3.08 0.5,0.61 0.89,1 3.1,1 h 9.9 c -0.84,-0.55 -1.05,-1.3 -1.14,-1.8 l -5.69,-22.56 c -0.59,-2.44 -1.64,-5.58 -3.07,-8.82 -0.3,-0.6 -0.3,-0.7 -0.3,-0.81 0,-0.29 0.19,-0.34 0.44,-0.34 1,0 3.43,1.34 4.18,2.39 0.3,0.5 2.5,5.58 3.55,9.72 z"
+           id="path6386" /><path
+           style="fill:#000000;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 485.25,394.51 -0.02,-0.09 -0.02,-0.08 -0.02,-0.09 -0.02,-0.07 -0.02,-0.08 -0.02,-0.07 -0.03,-0.07 -0.02,-0.06 -0.02,-0.06 -0.03,-0.05 -0.03,-0.06 -0.02,-0.05 -0.04,-0.04 -0.03,-0.05 -0.04,-0.04 -0.04,-0.03 -0.04,-0.04 -0.05,-0.03 -0.05,-0.03 -0.05,-0.02 -0.06,-0.03 -0.07,-0.02 -0.07,-0.01 -0.07,-0.02 -0.08,-0.02 -0.05,0 -0.04,-0.01 -0.04,0 -0.05,-0.01 -0.05,0 -0.05,0 -0.05,-0.01 -0.06,0 -0.05,0 -0.06,0 -0.06,-0.01 -0.06,0 -0.06,0 -0.06,0 c -0.46,0 -0.94,0 -0.94,-0.73 0,-0.39 0.31,-0.53 0.48,-0.53 0.91,0 2.07,0.14 3,0.14 1.19,0 2.5,-0.14 3.66,-0.14 0.31,0 0.7,0.11 0.7,0.76 0,0.5 -0.5,0.5 -0.9,0.5 -0.78,0 -1.72,0 -1.72,0.41 0,0.19 0.25,1.09 0.39,1.61 0.42,1.84 0.9,3.73 1.28,5.18 0.42,-0.68 1.5,-2.04 3.59,-2.04 v 0.97 c -2.47,0 -3.09,2.68 -3.09,3.03 0,0.14 0.06,0.39 0.09,0.53 l 1.75,7 c 2.02,2.69 3.77,3.2 4.88,3.2 1.36,0 2.55,-1.01 2.55,-3.37 0,-1.44 -0.77,-4.99 -1.82,-7.02 -0.87,-1.7 -2.57,-3.37 -4.36,-3.37 v -0.97 c 4.25,0 8.96,4.7 8.96,9.89 0,4.08 -2.83,5.81 -5.22,5.81 -2.17,0 -4.02,-1.45 -4.95,-2.44 -0.6,1.99 -2.55,2.44 -3.6,2.44 -1.36,0 -2.19,-0.91 -2.75,-1.84 -0.7,-1.19 -1.25,-3.27 -1.25,-3.49 0,-0.45 0.49,-0.45 0.6,-0.45 0.48,0 0.51,0.11 0.76,1.05 0.52,2.03 1.19,3.76 2.55,3.76 0.9,0 1.14,-0.76 1.14,-1.7 0,-0.39 -0.06,-0.84 -0.11,-1.05 z"
+           id="path6388" /></g>    </g>
+    <g
+       transform="matrix(0.6433239,0,0,0.6433239,361.35686,191.26637)"
+       id="g6642"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="g6644"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         xml:space="preserve"
+         stroke-miterlimit="10.433"
+         font-style="normal"
+         font-variant="normal"
+         font-weight="normal"
+         font-stretch="normal"
+         font-size-adjust="none"
+         letter-spacing="normal"
+         word-spacing="normal"><path
+           style="fill:#00004c;stroke:#00004c;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 478.19,431.11 0,0.31 -0.01,0.34 -0.02,0.36 -0.02,0.37 -0.03,0.39 -0.04,0.39 -0.04,0.41 -0.06,0.41 -0.07,0.42 -0.07,0.43 -0.09,0.42 -0.1,0.43 -0.12,0.42 -0.12,0.42 -0.14,0.41 -0.16,0.41 -0.17,0.4 -0.18,0.38 -0.2,0.37 -0.22,0.36 -0.23,0.34 -0.25,0.32 -0.28,0.3 -0.29,0.27 -0.31,0.25 -0.16,0.12 -0.17,0.1 -0.17,0.1 -0.18,0.1 -0.18,0.08 -0.19,0.08 -0.19,0.07 -0.2,0.06 -0.21,0.05 -0.21,0.05 -0.22,0.03 -0.22,0.02 -0.23,0.02 -0.23,0 -0.05,-1.09 c 2.44,0 2.73,-3.19 2.73,-6.03 0,-2.44 -0.39,-4.99 -1.59,-9.92 h -10.41 c 0.85,3.2 1.85,7.18 3.83,10.72 1.36,2.43 3.19,5.23 5.44,5.23 l 0.05,1.09 c -6.92,0 -14.6,-14.04 -14.6,-25.45 0,-4.69 1.44,-10.22 5.99,-10.22 v 1.1 c -1.66,0 -2.71,1.45 -2.71,6.07 0,2.1 0.3,4.99 1.6,9.86 h 10.37 c -0.54,-2.28 -1.59,-6.51 -3.5,-10.11 -1.73,-3.39 -3.62,-5.82 -5.76,-5.82 v -1.1 c 7.01,0 14.59,14.3 14.59,25.46 z"
+           id="path6646" /><path
+           style="fill:#00004c;stroke:#00004c;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 492.03,446.36 0,0.04 0,0.04 0,0.04 0,0.04 0,0.04 0,0.04 0,0.04 0,0.03 -0.01,0.04 0,0.03 0,0.03 0,0.03 0,0.03 -0.01,0.03 0,0.03 0,0.02 -0.01,0.03 0,0.02 -0.01,0.02 0,0.03 -0.02,0.04 -0.01,0.04 -0.02,0.03 -0.02,0.03 -0.02,0.03 -0.02,0.03 -0.03,0.02 -0.03,0.02 -0.03,0.01 -0.04,0.02 -0.04,0.01 -0.05,0.01 -0.02,0.01 -0.02,0 -0.03,0.01 -0.03,0 -0.02,0 -0.03,0.01 -0.03,0 -0.03,0 -0.04,0 -0.03,0 -0.03,0.01 -0.04,0 -0.03,0 -0.04,0 -0.04,0 -0.04,0 -0.04,0 -0.05,0 -0.04,0 -0.05,0 c -2.23,-2.2 -5.39,-2.23 -6.82,-2.23 v -1.25 c 0.84,0 3.14,0 5.04,0.96 v -17.76 c 0,-1.16 0,-1.61 -3.48,-1.61 h -1.31 v -1.25 c 0.62,0.03 4.9,0.14 6.2,0.14 1.08,0 5.47,-0.11 6.23,-0.14 v 1.25 h -1.32 c -3.49,0 -3.49,0.45 -3.49,1.61 z"
+           id="path6648" /></g>    </g>
+    <g
+       id="g6710"
+       transform="matrix(0.65313824,0,0,0.65313824,240.09407,4.5338089)"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         word-spacing="normal"
+         letter-spacing="normal"
+         font-size-adjust="none"
+         font-stretch="normal"
+         font-weight="normal"
+         font-variant="normal"
+         font-style="normal"
+         stroke-miterlimit="10.433"
+         xml:space="preserve"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         id="g6712"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"><path
+           id="path6714"
+           d="m 478.19,431.11 0,0.31 -0.01,0.34 -0.02,0.36 -0.02,0.37 -0.03,0.39 -0.04,0.39 -0.04,0.41 -0.06,0.41 -0.07,0.42 -0.07,0.43 -0.09,0.42 -0.1,0.43 -0.12,0.42 -0.12,0.42 -0.14,0.41 -0.16,0.41 -0.17,0.4 -0.18,0.38 -0.2,0.37 -0.22,0.36 -0.23,0.34 -0.25,0.32 -0.28,0.3 -0.29,0.27 -0.31,0.25 -0.16,0.12 -0.17,0.1 -0.17,0.1 -0.18,0.1 -0.18,0.08 -0.19,0.08 -0.19,0.07 -0.2,0.06 -0.21,0.05 -0.21,0.05 -0.22,0.03 -0.22,0.02 -0.23,0.02 -0.23,0 -0.05,-1.09 c 2.44,0 2.73,-3.19 2.73,-6.03 0,-2.44 -0.39,-4.99 -1.59,-9.92 h -10.41 c 0.85,3.2 1.85,7.18 3.83,10.72 1.36,2.43 3.19,5.23 5.44,5.23 l 0.05,1.09 c -6.92,0 -14.6,-14.04 -14.6,-25.45 0,-4.69 1.44,-10.22 5.99,-10.22 v 1.1 c -1.66,0 -2.71,1.45 -2.71,6.07 0,2.1 0.3,4.99 1.6,9.86 h 10.37 c -0.54,-2.28 -1.59,-6.51 -3.5,-10.11 -1.73,-3.39 -3.62,-5.82 -5.76,-5.82 v -1.1 c 7.01,0 14.59,14.3 14.59,25.46 z"
+           inkscape:connector-curvature="0"
+           style="fill:#00004c;stroke:#00004c;stroke-width:0" /><path
+           id="path6716"
+           d="m 497.95,430.54 h -1.18 c -0.1,-0.76 -0.46,-2.83 -0.91,-3.17 -0.27,-0.2 -2.95,-0.2 -3.44,-0.2 H 486 c 3.66,3.23 4.88,4.2 6.97,5.84 2.58,2.06 4.98,4.22 4.98,7.53 0,4.22 -3.68,6.8 -8.15,6.8 -4.32,0 -7.25,-3.03 -7.25,-6.23 0,-1.79 1.5,-1.96 1.86,-1.96 0.82,0 1.84,0.6 1.84,1.85 0,0.62 -0.25,1.84 -2.06,1.84 1.08,2.47 3.45,3.23 5.09,3.23 3.49,0 5.3,-2.7 5.3,-5.53 0,-3.03 -2.16,-5.43 -3.28,-6.68 l -8.39,-8.3 c -0.36,-0.31 -0.36,-0.39 -0.36,-1.36 h 14.36 z"
+           inkscape:connector-curvature="0"
+           style="fill:#00004c;stroke:#00004c;stroke-width:0" /></g>    </g>
+    <g
+       transform="matrix(0.51781442,0,0,0.51781442,182.66891,139.00266)"
+       id="g6786"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="g6788"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         xml:space="preserve"
+         stroke-miterlimit="10.433"
+         font-style="normal"
+         font-variant="normal"
+         font-weight="normal"
+         font-stretch="normal"
+         font-size-adjust="none"
+         letter-spacing="normal"
+         word-spacing="normal"><path
+           style="fill:#004c00;stroke:#004c00;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 478.58,423.09 -0.05,0.29 -0.06,0.29 -0.07,0.28 -0.08,0.28 -0.09,0.28 -0.09,0.27 -0.11,0.27 -0.12,0.26 -0.12,0.26 -0.14,0.25 -0.14,0.25 -0.15,0.24 -0.17,0.23 -0.17,0.22 -0.18,0.22 -0.2,0.21 -0.2,0.2 -0.21,0.18 -0.23,0.18 -0.23,0.17 -0.24,0.16 -0.26,0.15 -0.26,0.13 -0.28,0.12 -0.28,0.11 -0.3,0.1 -0.3,0.08 -0.32,0.07 -0.32,0.05 -0.34,0.04 -0.35,0.03 -0.36,0 v -1.09 c 5.44,0 5.53,-5.58 5.53,-6.58 0,-3.58 -3.19,-14.79 -10.86,-14.79 h 0 c -5.48,0 -5.48,5.14 -5.48,5.62 0,1.36 1.25,8.33 3.29,11.31 1.99,2.85 4.43,4.44 7.52,4.44 v 1.09 c -3.05,0 -6.28,-0.79 -10.16,-4.68 -4.14,-4.13 -4.48,-8.77 -4.48,-10.32 0,-3.07 2.19,-8.85 9.16,-8.85 11.86,0 17.04,16.73 17.04,23.85 0,7.93 -4.64,12.91 -10.76,12.91 -7.22,0 -9.52,-6.47 -9.52,-7.87 0,-0.69 0.39,-1.74 1.89,-1.74 1.64,0 2.69,1.49 2.69,2.64 0,1.74 -1.55,1.74 -2.34,1.74 2.2,3.68 5.73,3.98 7.18,3.98 3.63,0 7.13,-2.59 7.13,-9.01 0,-1.94 -0.31,-4.49 -1.36,-8.52 z"
+           id="path6790" /><path
+           style="fill:#004c00;stroke:#004c00;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 493.59,420.92 0,0.04 0,0.04 0,0.05 0,0.04 0,0.03 0,0.04 0,0.04 0,0.03 0,0.04 0,0.03 -0.01,0.03 0,0.03 0,0.03 0,0.03 -0.01,0.03 0,0.02 -0.01,0.03 0,0.02 -0.01,0.03 0,0.02 -0.01,0.04 -0.02,0.04 -0.01,0.03 -0.02,0.03 -0.03,0.03 -0.02,0.03 -0.03,0.02 -0.03,0.02 -0.03,0.02 -0.04,0.01 -0.04,0.01 -0.04,0.02 -0.03,0 -0.02,0 -0.03,0.01 -0.02,0 -0.03,0.01 -0.03,0 -0.03,0 -0.03,0 -0.03,0 -0.04,0.01 -0.03,0 -0.04,0 -0.03,0 -0.04,0 -0.04,0 -0.04,0 -0.04,0 -0.04,0 -0.05,0 -0.04,0 c -2.24,-2.2 -5.39,-2.23 -6.83,-2.23 v -1.25 c 0.84,0 3.14,0 5.05,0.97 v -17.77 c 0,-1.16 0,-1.61 -3.49,-1.61 h -1.31 v -1.25 c 0.62,0.03 4.91,0.14 6.2,0.14 1.08,0 5.47,-0.11 6.24,-0.14 v 1.25 h -1.33 c -3.49,0 -3.49,0.45 -3.49,1.61 z"
+           id="path6792" /></g>    </g>
+    <g
+       id="g6870"
+       transform="matrix(0.57215191,0,0,0.57215191,234.63481,201.63019)"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         word-spacing="normal"
+         letter-spacing="normal"
+         font-size-adjust="none"
+         font-stretch="normal"
+         font-weight="normal"
+         font-variant="normal"
+         font-style="normal"
+         stroke-miterlimit="10.433"
+         xml:space="preserve"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         id="g6872"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"><path
+           id="path6874"
+           d="m 478.58,423.09 -0.05,0.29 -0.06,0.29 -0.07,0.28 -0.08,0.28 -0.09,0.28 -0.09,0.27 -0.11,0.27 -0.12,0.26 -0.12,0.26 -0.14,0.25 -0.14,0.25 -0.15,0.24 -0.17,0.23 -0.17,0.22 -0.18,0.22 -0.2,0.21 -0.2,0.2 -0.21,0.18 -0.23,0.18 -0.23,0.17 -0.24,0.16 -0.26,0.15 -0.26,0.13 -0.28,0.12 -0.28,0.11 -0.3,0.1 -0.3,0.08 -0.32,0.07 -0.32,0.05 -0.34,0.04 -0.35,0.03 -0.36,0 v -1.09 c 5.44,0 5.53,-5.58 5.53,-6.58 0,-3.58 -3.19,-14.79 -10.86,-14.79 h 0 c -5.48,0 -5.48,5.14 -5.48,5.62 0,1.36 1.25,8.33 3.29,11.31 1.99,2.85 4.43,4.44 7.52,4.44 v 1.09 c -3.05,0 -6.28,-0.79 -10.16,-4.68 -4.14,-4.13 -4.48,-8.77 -4.48,-10.32 0,-3.07 2.19,-8.85 9.16,-8.85 11.86,0 17.04,16.73 17.04,23.85 0,7.93 -4.64,12.91 -10.76,12.91 -7.22,0 -9.52,-6.47 -9.52,-7.87 0,-0.69 0.39,-1.74 1.89,-1.74 1.64,0 2.69,1.49 2.69,2.64 0,1.74 -1.55,1.74 -2.34,1.74 2.2,3.68 5.73,3.98 7.18,3.98 3.63,0 7.13,-2.59 7.13,-9.01 0,-1.94 -0.31,-4.49 -1.36,-8.52 z"
+           inkscape:connector-curvature="0"
+           style="fill:#004c00;stroke:#004c00;stroke-width:0" /><path
+           id="path6876"
+           d="m 499.52,405.11 h -1.19 c -0.1,-0.77 -0.45,-2.83 -0.91,-3.18 -0.26,-0.2 -2.95,-0.2 -3.44,-0.2 h -6.42 c 3.66,3.23 4.88,4.2 6.97,5.84 2.58,2.07 4.99,4.22 4.99,7.54 0,4.21 -3.69,6.79 -8.16,6.79 -4.31,0 -7.25,-3.03 -7.25,-6.23 0,-1.78 1.5,-1.96 1.86,-1.96 0.83,0 1.84,0.6 1.84,1.85 0,0.62 -0.25,1.84 -2.06,1.84 1.08,2.47 3.45,3.24 5.09,3.24 3.49,0 5.3,-2.71 5.3,-5.53 0,-3.04 -2.16,-5.44 -3.28,-6.69 l -8.39,-8.3 c -0.36,-0.31 -0.36,-0.39 -0.36,-1.36 h 14.36 z"
+           inkscape:connector-curvature="0"
+           style="fill:#004c00;stroke:#004c00;stroke-width:0" /></g>    </g>
+    <g
+       transform="matrix(0.58989567,0,0,0.58989567,242.71873,128.35161)"
+       id="g6962"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="g6964"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         xml:space="preserve"
+         stroke-miterlimit="10.433"
+         font-style="normal"
+         font-variant="normal"
+         font-weight="normal"
+         font-stretch="normal"
+         font-size-adjust="none"
+         letter-spacing="normal"
+         word-spacing="normal"><path
+           style="fill:#4c0000;stroke:#4c0000;stroke-width:0"
+           inkscape:connector-curvature="0"
+           d="m 464.44,411.93 -0.19,-0.3 -0.18,-0.29 -0.19,-0.28 -0.19,-0.26 -0.18,-0.25 -0.19,-0.23 -0.19,-0.22 -0.18,-0.21 -0.19,-0.2 -0.19,-0.18 -0.18,-0.17 -0.19,-0.16 -0.19,-0.15 -0.18,-0.14 -0.19,-0.13 -0.19,-0.12 -0.19,-0.11 -0.19,-0.1 -0.19,-0.09 -0.19,-0.09 -0.19,-0.07 -0.2,-0.07 -0.19,-0.07 -0.2,-0.05 -0.19,-0.05 -0.2,-0.04 -0.2,-0.04 -0.19,-0.03 -0.41,-0.05 -0.4,-0.03 c -0.61,-0.05 -1.05,-0.05 -1.05,-1 0,-0.3 0.25,-0.55 0.64,-0.55 1.34,0 2.89,0.16 4.28,0.16 1.64,0 3.39,-0.16 4.99,-0.16 0.29,0 0.95,0 0.95,0.95 0,0.55 -0.45,0.6 -0.8,0.6 -1.15,0.09 -2.34,0.5 -2.34,1.73 0,0.61 0.3,1.16 0.69,1.84 l 3.79,6.39 h 12.5 l -0.14,1.54 h -11.42 l 9.83,16.45 1.59,-16.45 0.14,-1.54 c 0.11,-1.04 0.8,-7.82 0.8,-8.32 0,-1.5 -2.59,-1.64 -3.58,-1.64 -0.7,0 -1.2,0 -1.2,-1 0,-0.55 0.59,-0.55 0.7,-0.55 2.03,0 4.19,0.16 6.22,0.16 1.25,0 4.39,-0.16 5.64,-0.16 0.3,0 0.89,0 0.89,1 0,0.55 -0.5,0.55 -1.14,0.55 -3.09,0 -3.09,0.34 -3.25,1.79 l -3.03,31.13 c -0.11,1 -0.11,1.2 -0.95,1.2 -0.8,0 -0.99,-0.34 -1.3,-0.84 z"
+           id="path6966" /></g>    </g>
+    <g
+       id="g7058"
+       transform="matrix(0.68199084,0,0,0.68199084,122.00922,147.37584)"
+       inkscape:export-filename="/home/snarles/github/misc/amari_transcript/fig1.png"
+       inkscape:export-xdpi="179.97"
+       inkscape:export-ydpi="179.97">
+      <g
+         word-spacing="normal"
+         letter-spacing="normal"
+         font-size-adjust="none"
+         font-stretch="normal"
+         font-weight="normal"
+         font-variant="normal"
+         font-style="normal"
+         stroke-miterlimit="10.433"
+         xml:space="preserve"
+         transform="matrix(1.0629921,0,0,-1.0629921,-186.02362,789.27165)"
+         id="g7060"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;letter-spacing:normal;word-spacing:normal;text-anchor:start;fill:none;stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10.43299961;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"><path
+           id="path7062"
+           d="m 457.75,400.12 -0.03,-0.15 -0.04,-0.15 -0.03,-0.14 -0.03,-0.13 -0.04,-0.13 -0.03,-0.11 -0.04,-0.12 -0.03,-0.1 -0.04,-0.1 -0.04,-0.09 -0.04,-0.09 -0.05,-0.08 -0.05,-0.07 -0.05,-0.07 -0.06,-0.07 -0.06,-0.06 -0.07,-0.05 -0.07,-0.05 -0.08,-0.04 -0.09,-0.04 -0.09,-0.04 -0.1,-0.03 -0.11,-0.03 -0.12,-0.02 -0.13,-0.02 -0.06,-0.01 -0.07,-0.01 -0.07,-0.01 -0.08,-0.01 -0.07,0 -0.08,-0.01 -0.08,0 -0.09,-0.01 -0.08,0 -0.09,0 -0.1,0 -0.09,0 -0.1,-0.01 -0.1,0 c -0.6,0 -1.14,0 -1.14,-0.93 0,-0.41 0.25,-0.61 0.64,-0.61 1.36,0 2.79,0.15 4.18,0.15 1.64,0 3.35,-0.15 4.94,-0.15 0.25,0 0.89,0 0.89,1 0,0.54 -0.5,0.54 -1.19,0.54 -2.5,0 -2.5,0.36 -2.5,0.8 0,0.61 2.1,8.72 2.46,9.97 0.64,-1.44 2.03,-3.19 4.58,-3.19 l -0.05,1.1 c -3.3,0 -3.94,4.14 -3.94,4.43 0,0.1 0,0.21 0.14,0.8 l 2.46,9.77 c 0.34,1.34 1.68,2.73 2.57,3.48 1.75,1.55 3.21,1.89 4.05,1.89 1.98,0 3.19,-1.73 3.19,-4.69 0,-2.93 -1.64,-8.65 -2.55,-10.56 -1.69,-3.48 -4.08,-5.12 -5.92,-5.12 l 0.05,-1.1 c 5.78,0 12,7.27 12,14.6 0,4.68 -2.83,7.96 -6.63,7.96 -2.48,0 -4.87,-1.78 -6.51,-3.73 -0.5,2.69 -2.65,3.73 -4.49,3.73 -2.3,0 -3.25,-1.93 -3.69,-2.82 -0.9,-1.71 -1.54,-4.69 -1.54,-4.85 0,-0.5 0.5,-0.5 0.59,-0.5 0.5,0 0.55,0.07 0.84,1.16 0.86,3.53 1.85,5.92 3.64,5.92 0.85,0 1.55,-0.39 1.55,-2.28 0,-1.16 -0.15,-1.7 -0.34,-2.55 z"
+           inkscape:connector-curvature="0"
+           style="fill:#000000;stroke-width:0" /></g>    </g>
+  </g>
+</svg>
