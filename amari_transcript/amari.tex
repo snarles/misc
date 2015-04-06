@@ -269,6 +269,51 @@ direction $B = B^i \partial_i$ is given by
 \nabla_B A = B^i\nabla_{\partial_i} A
 \]
 
+We have defined the covariant derivative by the use of the basis
+vectors $\partial_i$ which are associated with the coordinate system
+or the parametrization $\theta$.  However, the covariant derivative
+$\nabla_B A$ is invariant under any pararametrization, giving the same
+result in any coordinate system.  This yields the transformation law
+for the components of the connection $\Gamma_{ijk}$.  When another
+coordinate system (parametrization) $\bar{\theta} =
+\bar{\theta}(\theta)$ is used, the basis vectors change from
+$\{\partial_i\}$ to $\{\bar{\partial}_{\bar{i}}\}$, where
+\[
+\bar{\partial}_{\bar{i}} = B_{\bar{i}}^i \partial_i
+\]
+and $B_{\bar{i}}^i = \frac{\partial \theta^i}{\partial
+  \bar{\theta}^{\bar{i}}}$ is the inverse matrix of the Jacobian
+matrix of the coordinate transformation.  Since the components
+$\bar{\Gamma}_{\bar{i}\bar{j}\bar{k}}$ of the connection are
+written as
+\[
+\bar{\Gamma}_{\bar{i}\bar{j}\bar{k}} 
+= \langle
+\nabla_{\bar{i}} \bar{\partial}_{\bar{j}}, 
+\bar{\partial}_{\bar{k}}
+\rangle,
+\]
+in this new coordinate system, we easily have the transformation law
+\[
+\bar{\Gamma}_{\bar{i}\bar{j}\bar{k}} 
+= B_{\bar{i}}^i B_{\bar{j}}^j B_{\bar{k}}^k \Gamma_{ijk}
++ B_{\bar{i}}^i B_{\bar{k}}^k g_{kj}(\partial_i B_{\bar{j}}^j).
+\]
+
+We introduce the $\alpha$-connection, where $\alpha$ is a real
+parameter, in the statistical manifold $\mathcal{S}$ by the formula
+\begin{equation}
+\Gamma_{ijk}^{(\alpha)} = \E_\theta[
+\{
+\partial_i \partial_j \ell(x,\theta) + 
+\frac{1-\alpha}{2} \partial_i \ell(x, \theta) \partial_j \ell(x, \theta)
+\} \partial_k \ell(x, \theta)
+]\tag{2.3}\label{eq:2.3}
+\end{equation}
+It is easily checked that the connection defined by \eqref{eq:2.3}
+satisfies the transformation law.  In particular, the 1-connection is
+called the exponential connection, and the -1-connection is called the
+mixture connection.
 
 \section{Higher-Order Asymptotic Theory of Statistical Inference in Curved Exponential Family}
 
