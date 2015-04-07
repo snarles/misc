@@ -18,8 +18,10 @@ isqrtm <- function(m) {
 library(Rcpp)
 sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
 
-ddir <- "/home/snarles/stat312data"
-#ddir <- "/home/ubuntu/stat312data"
+
+lf <- list.files("/home")
+if ("snarles" %in% lf) (ddir <- "/home/snarles/stat312data")
+if ("ubuntu" %in% lf) (ddir <- "/home/ubuntu/stat312data")
 list.files(ddir)
 
 
@@ -109,6 +111,8 @@ length(unique(train_index))
 max(train_index)
 max(valid_index)
 
+
+
 ####
 ## COVARIANCE OF ERROR
 ####
@@ -135,45 +139,57 @@ omega_e <- isqrtm(sigma_e)
 
 library(parallel)
 library(glmnet)
-#cl <- makeCluster(5)
 
-dim(features_train)
-dim(train_resp)
-
-lambdas <- 0:10/10
+lambdas <- 0:100/4000
 nlambdas <- length(lambdas)
 
+ntrials <- 200
+misc_errors <- matrix(0, ntrials, nlambdas)
+pr_errors <- matrix(0, ntrials, nlambdas)
+
+library(class)
+
+proc.time()
 prfunc <- function(i) {
-    as.numeric(train_resp[1,])
-    res <- glmnet(features_train, as.numeric(train_resp[i, ]), standardize = FALSE)
-    pr <- predict(res, features_valid, s=lambdas)
-    pr
+    res <- cv.glmnet(features_train, as.numeric(train_resp[i, ]),
+                     standardize = FALSE, lambda = lambdas)
+    pr <- predict(res, features_train, s=lambdas)
+    list(pr = pr, cvm = res$cvm)
 }
+res <- mclapply(1:100, prfunc, mc.cores = 30)
+proc.time()
 
-res <- lapply(1:100, prfunc)
+filt <- lapply(res, length)==0
+filt
+res[filt] <- mclapply(which(filt), prfunc, mc.cores = 30)
+res2 <- mclapply(90:100, prfunc, mc.cores = 30)
+res[90:100] <- res2
 
+prfunc(3)
+
+l <- prfunc(1)
+
+cvm_error <- matrix(0, nlambdas, 100)
 pr_error <- numeric(nlambdas)
 misc_error <- numeric(nlambdas)
-for (i in 1:nlambdas) {
-  pvalid <- matrix(0, 120, 100)
-  for (j in 1:100) {
-    pvalid[, j] <- res[[j]][, i]
-  }
-  yhat <- pvalid[valid_index, ]
-  ys <- t(valid_v1)
-  pr_error[i] <- sum((yhat - ys)^2)
-  for (z in 1:120) {
-    y <- apply(valid_v1[, valid_index == z], 1, mean)
-    diff <- t(pvalid) - y # 100 120
-    cdiff <- omega_e %*% diff
-    ds <- apply(cdiff^2, 2, sum)
-    zhat <- order(ds)[1]
-    misc_error[i] <- misc_error[i] + (zhat != z)
-  }
+for (j in 1:100) {
+    cvm_error[, j] <- res[[j]]$cvm
 }
 
-plot(lambdas, misc_error)
-plot(lambdas, pr_error)
+cvm_o <- apply(cvm_error, 1, mean)
+lambdas[cvm_o == min(cvm_o)]
+apply(cvm_error, 2, function(v) lambdas[v==min(v)])
+
+lbda_i <- order(cvm_o)[1]
+
+for (i in 1:nlambdas) {
+    pvalid <- matrix(0, nte, 100)
+    for (j in 1:100) {
+        pvalid[, j] <- res[[j]]$pr[, i]
+    }
+    pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
+}
+
 
 
 ####
