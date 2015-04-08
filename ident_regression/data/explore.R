@@ -176,8 +176,6 @@ plot(apply(cvm_error, 2, function(v) lambdas[v==min(v)]))
 abline(lambdas[cvm_o == min(cvm_o)], 0)
 lbda_i <- order(cvm_o)[1]
 sel_lambda <- lambdas[lbda_i]
-# lbda_i <- 1
-# get the distance to each data point
 yhats <- matrix(0, 1750, 100)
 for (j in 1:100) {
     yhats[, j] <- res[[j]]$pr[, lbda_i]
@@ -213,6 +211,18 @@ metafunc1 <- function(v) {
     class_dists <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
     list(cd = class_dists, tr_inds = tr_inds)
 }
+dim(yhats)
+ys <- t(train_resp)
+dim(ys)
+w_ys <- ys %*% omega_e
+w_yhats <- yhats %*% omega_e
+class_dists0 <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
+plot(class_dists0)
+
+####
+## REGRESSION: Stability of class distances under resampling
+####
+
 
 proc.time()
 temp <- metafunc1(4)
