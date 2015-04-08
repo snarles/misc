@@ -2,7 +2,7 @@
 ##                DATA PREPROCESSING                       ##
 #############################################################
 
-savelist <- c()
+#savelist <- c()
 
 isqrtm <- function(m) {
   res <- eigen(m)
@@ -14,16 +14,17 @@ isqrtm <- function(m) {
   return (v %*% diag(d) %*% t(v))
 }
 
-
-library(Rcpp)
-sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
-
-
 lf <- list.files("/home")
 if ("snarles" %in% lf) (ddir <- "/home/snarles/stat312data")
 if ("ubuntu" %in% lf) (ddir <- "/home/ubuntu/stat312data")
+if ("rstudio" %in% lf) {
+  (ddir <- "/home/rstudio/stat312data")
+  setwd("/home/rstudio/misc/ident_regression/data/")
+}
 list.files(ddir)
 
+library(Rcpp)
+sourceCpp('pdist.cpp') # code from http://blog.felixriedel.com/2013/05/pairwise-distances-in-r/
 
 ## get indices of V1 from larger matrix
 load(paste0(ddir, "/forCharlesSNR.Rdata"))
@@ -149,14 +150,15 @@ pr_errors <- matrix(0, ntrials, nlambdas)
 
 library(class)
 
-proc.time()
 prfunc <- function(i) {
     res <- cv.glmnet(features_train, as.numeric(train_resp[i, ]),
                      standardize = FALSE, lambda = lambdas)
     pr <- predict(res, features_train, s=lambdas)
     list(pr = pr, cvm = res$cvm)
 }
-res <- mclapply(1:100, prfunc, mc.cores = 30)
+proc.time()
+res <- list()
+res[1:3] <- mclapply(1:3, prfunc, mc.cores = 3)
 proc.time()
 
 filt <- lapply(res, length)==0
