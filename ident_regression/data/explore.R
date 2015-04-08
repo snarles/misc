@@ -231,19 +231,36 @@ plot(temp$cd, class_dists0, pch = ".")
 points(temp$cd[-temp$tr_inds], class_dists0[-temp$tr_inds], pch= '.', col= "red")
 
 mclapply(1:25, runif1, mc.cores = 25)
-res_dists <- mclapply(1:25, metafunc1)
+res_dists <- mclapply(1:25, metafunc1, mc.cores = 25)
 
+class_dists <- matrix(0, 25, 1750)
+for (i in 1:25) class_dists[i, ] <- res_dists[[i]]$cd
+
+barsmat <- function(mat) {
+    mu <- apply(mat, 2, mean)
+    o <- order(mu)
+    mat <- mat[, o]
+    mu <- apply(mat, 2, mean)
+    sd <- apply(mat, 2, sd)
+    plot(1:dim(mat)[2], mu, ylim = c(min(mu-sd), max(mu+sd)))
+    for (i in 1:dim(mat)[2]) {
+        lines(c(i, i), mu[i] + sd[i]*c(-1, 1))
+    }
+}
+
+mat <- class_dists
+plot(apply(class_dists, 1, mean))
+plot(apply(class_dists, 1, mean))
 
 ####
 ## REGRESSION : USING TRAIN_RESP
 ####
 
-lambdas <- 0:1000/40000
-nlambdas <- length(lambdas)
-
 ntrials <- 200
-misc_errors <- matrix(0, ntrials, nlambdas)
+misc_errors <- matrix(0, ntrials, 1750)
+te_mask <- matrix(0, ntrials, 1750)
 pr_errors <- matrix(0, ntrials, nlambdas)
+ii <- 1
 
 library(class)
 
@@ -254,36 +271,22 @@ for (ii in 1:ntrials) {
     nte <- length(te_inds)
     prfunc <- function(i) {
         res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), standardize = FALSE)
-        pr <- predict(res, features_train[te_inds, ], s=lambdas)
+        pr <- predict(res, features_train[te_inds, ], s=sel_lambda)
         pr
     }
-    res <- mclapply(1:100, prfunc, mc.cores = 30)
-                                        #res <- lapply(1:100, prfunc)
-    pr_error <- numeric(nlambdas)
-    misc_error <- numeric(nlambdas)
-    for (i in 1:nlambdas) {
-        pvalid <- matrix(0, nte, 100)
-        for (j in 1:100) {
-            pvalid[, j] <- res[[j]][, i]
-        }
-        pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
-        te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
-        misc_error[i] <- misc_error[i] + sum(te_cl != 1:nte)
-    }
-    misc_errors[ii, ] <- misc_error
-    pr_errors[ii, ] <- pr_error
+    res <- mclapply(1:100, prfunc, mc.cores = 25)
+    pvalid <- as.matrix(data.frame(res))
+    te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
+    misc_error <- (te_cl != 1:nte)
+    misc_errors[ii, te_inds] <- misc_error
+    te_mask[ii, te_inds] <- 1
     print(ii)
 }
 proc.time()
 
-misc_error <- apply(misc_errors, 2, mean)
-pr_error <- apply(pr_errors, 2, mean)
+plot(misc_errors[1, ])
+plot(te_mask[2, ])
 
-lambdas[order(misc_error)[1]]
-lambdas[order(pr_error)[1]]
-
-saveRDS(misc_errors, "misc_error.rds")
-saveRDS(pr_errors, "pr_error.rds")
-
-#plot(lambdas, misc_error)
-#plot(lambdas, pr_error)
+saveRDS(misc_errors, "me.rds")
+saveRDS(te_mask, "te.rds")
+sel_lambda # 0.0185
