@@ -135,7 +135,7 @@ sigma_e <- 0.5 * sigma_e + 0.5 * eye
 omega_e <- isqrtm(sigma_e)
 
 ####
-## REGRESSION
+## REGRESSION: Find the distance between image and ...
 ####
 
 library(parallel)
@@ -158,40 +158,70 @@ prfunc <- function(i) {
 }
 proc.time()
 res <- list()
-res[1:3] <- mclapply(1:3, prfunc, mc.cores = 3)
+res[1:25] <- mclapply(1:25, prfunc, mc.cores = 25)
+res[25 + 1:25] <- mclapply(25 + 1:25, prfunc, mc.cores = 25)
+res[50 + 1:25] <- mclapply(50 + 1:25, prfunc, mc.cores = 25)
+res[75 + 1:25] <- mclapply(75 + 1:25, prfunc, mc.cores = 25)
 proc.time()
 
-filt <- lapply(res, length)==0
-filt
-res[filt] <- mclapply(which(filt), prfunc, mc.cores = 30)
-res2 <- mclapply(90:100, prfunc, mc.cores = 30)
-res[90:100] <- res2
-
-prfunc(3)
-
-l <- prfunc(1)
+sapply(res, length)
 
 cvm_error <- matrix(0, nlambdas, 100)
-pr_error <- numeric(nlambdas)
-misc_error <- numeric(nlambdas)
 for (j in 1:100) {
     cvm_error[, j] <- res[[j]]$cvm
 }
-
 cvm_o <- apply(cvm_error, 1, mean)
-lambdas[cvm_o == min(cvm_o)]
-apply(cvm_error, 2, function(v) lambdas[v==min(v)])
-
+plot(lambdas, cvm_o)
+plot(apply(cvm_error, 2, function(v) lambdas[v==min(v)]))
+abline(lambdas[cvm_o == min(cvm_o)], 0)
 lbda_i <- order(cvm_o)[1]
+sel_lambda <- lambdas[lbda_i]
+# lbda_i <- 1
+# get the distance to each data point
+yhats <- matrix(0, 1750, 100)
+for (j in 1:100) {
+    yhats[, j] <- res[[j]]$pr[, lbda_i]
+}
+dim(yhats)
+ys <- t(train_resp)
+dim(ys)
+w_ys <- ys %*% omega_e
+w_yhats <- yhats %*% omega_e
+class_dists0 <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
+plot(class_dists0)
 
-for (i in 1:nlambdas) {
-    pvalid <- matrix(0, nte, 100)
-    for (j in 1:100) {
-        pvalid[, j] <- res[[j]]$pr[, i]
+####
+## REGRESSION: Stability of class distances under resampling
+####
+
+runif1 <- function(v) {set.seed(v); runif(1)}
+
+metafunc1 <- function(v) {
+    tr_inds <- sample(1750, 1000, FALSE)
+    prfunc <- function(i) {
+        res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]),
+                         standardize = FALSE)
+        pr <- predict(res, features_train, s=sel_lambda)
+        list(pr = pr, cvm = res$cvm)
     }
-    pr_error[i] <- sum((t(pvalid) - train_resp[, te_inds])^2)
+    res <- lapply(1:100, prfunc)
+    yhats <- matrix(0, 1750, 100)
+    for (j in 1:100) {
+        yhats[, j] <- res[[j]]$pr
+    }
+    w_yhats <- yhats %*% omega_e
+    class_dists <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
+    list(cd = class_dists, tr_inds = tr_inds)
 }
 
+proc.time()
+temp <- metafunc1(4)
+proc.time()
+plot(temp$cd, class_dists0, pch = ".")
+points(temp$cd[-temp$tr_inds], class_dists0[-temp$tr_inds], pch= '.', col= "red")
+
+mclapply(1:25, runif1, mc.cores = 25)
+res_dists <- mclapply(1:25, metafunc1)
 
 
 ####
