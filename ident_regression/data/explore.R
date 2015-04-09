@@ -194,7 +194,7 @@ for (j in 1:100) {
 }
 dim(yhats)
 ys <- t(train_resp)
-dim(ys)
+dim(ys) # 1750 100
 w_ys <- ys %*% omega_e
 w_yhats <- yhats %*% omega_e
 class_dists0 <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
@@ -208,6 +208,10 @@ pre_dists <- lm(class_dists0 ~ normz)$fitted
 lm(class_dists0 ~ normz) # 0.8216 0.8616
 plot(normz, class_dists0 - pre_dists)
 misfitz <- class_dists0 - pre_dists
+
+plot(ys[, 1], yhats[, 1])
+i <- 8
+i <- i + 1; scatter.smooth(ys[, i], yhats[, i], col = "red")
 
 ####
 ## REGRESSION: Stability of class distances under resampling
