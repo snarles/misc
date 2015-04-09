@@ -14,6 +14,18 @@ isqrtm <- function(m) {
   return (v %*% diag(d) %*% t(v))
 }
 
+barsmat <- function(mat) {
+  #mu <- apply(mat, 2, mean)
+  #o <- order(mu)
+  #mat <- mat[, o]
+  mu <- apply(mat, 2, mean)
+  sd <- apply(mat, 2, sd)/sqrt(dim(mat)[1])
+  plot(1:dim(mat)[2], mu, ylim = c(min(mu-sd), max(mu+sd)))
+  for (i in 1:dim(mat)[2]) {
+    lines(c(i, i), mu[i] + sd[i]*c(-1, 1))
+  }
+}
+
 lf <- list.files("/home")
 if ("snarles" %in% lf) (ddir <- "/home/snarles/stat312data")
 if ("ubuntu" %in% lf) (ddir <- "/home/ubuntu/stat312data")
@@ -245,17 +257,6 @@ res_dists <- mclapply(1:25, metafunc1, mc.cores = 25)
 class_dists <- matrix(0, 25, 1750)
 for (i in 1:25) class_dists[i, ] <- res_dists[[i]]$cd
 
-barsmat <- function(mat) {
-    mu <- apply(mat, 2, mean)
-    o <- order(mu)
-    mat <- mat[, o]
-    mu <- apply(mat, 2, mean)
-    sd <- apply(mat, 2, sd)
-    plot(1:dim(mat)[2], mu, ylim = c(min(mu-sd), max(mu+sd)))
-    for (i in 1:dim(mat)[2]) {
-        lines(c(i, i), mu[i] + sd[i]*c(-1, 1))
-    }
-}
 
 mat <- class_dists
 plot(apply(class_dists, 1, mean))
@@ -366,9 +367,13 @@ res_filt[75 + 1:25] <- mclapply(75 + 1:25, reg_filt, mc.cores = 25)
 proc.time()
 
 mus <- lapply(res_filt, function(v) apply(v$results, 1, mean))
+mmus <- t(as.matrix(data.frame(mus)))
+mumus <- apply(mmus, 2, mean)
 
-apply(data.frame(mus), 1, mean)
-plot(reg_thres, mus[[1]], ylim = c(0, 1))
+barsmat(mmus)
+
+plot(reg_thres, mumus, type = "o")
+
 for (i in 1:25) {
   lines(reg_thres, mus[[i]], col = rainbow(25)[i])
 }
