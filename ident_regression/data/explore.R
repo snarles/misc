@@ -188,6 +188,15 @@ w_yhats <- yhats %*% omega_e
 class_dists0 <- sqrt(apply((w_ys - w_yhats)^2, 1, sum))
 plot(class_dists0)
 
+dim(w_ys)
+w_ys_c <- t(t(w_ys) - apply(w_ys, 2, mean))
+normz <- sqrt(apply(w_ys_c^2, 1, sum))
+plot(normz, class_dists0)
+pre_dists <- lm(class_dists0 ~ normz)$fitted
+lm(class_dists0 ~ normz) # 0.8216 0.8616
+plot(normz, class_dists0 - pre_dists)
+misfitz <- class_dists0 - pre_dists
+
 ####
 ## REGRESSION: Stability of class distances under resampling
 ####
@@ -290,3 +299,27 @@ plot(te_mask[2, ])
 saveRDS(misc_errors, "me.rds")
 saveRDS(te_mask, "te.rds")
 sel_lambda # 0.0185
+
+####
+## load precomputed results
+####
+
+misc_errors <- readRDS("me.rds")
+te_mask <- readRDS("te.rds")
+
+ntrials <- dim(te_mask)[1]
+flat_me <- c()
+flat_inds <- c()
+
+for (i in 1:ntrials) {
+  indz <- which(te_mask[i, ] == 1)
+  mez <- misc_errors[i, indz]
+  flat_me <- c(flat_me, mez)
+  flat_inds <- c(flat_inds, indz)
+}
+
+plot(misfitz[flat_inds], flat_me)
+library(popbio)
+logi.hist.plot(misfitz[flat_inds],flat_me,boxp=FALSE,type="hist",col="gray",
+               xlab = "regression error", main = "Misclassification")
+
