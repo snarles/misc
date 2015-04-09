@@ -340,13 +340,15 @@ reg_filt <- function(seed) {
   nte <- length(te_inds)
   results <- matrix(0, nthres, nte)
   for (i in 1:nthres) {
+    reg_t <- reg_thres[i]
     ftr_inds <- tr_inds[misfitz[tr_inds] < reg_t]
     prfunc <- function(i) {
       res <- glmnet(features_train[ftr_inds, ], as.numeric(train_resp[i, ftr_inds]), standardize = FALSE)
       pr <- predict(res, features_train[te_inds, ], s=sel_lambda)
       pr
     }
-    res <- mclapply(1:100, prfunc, mc.cores = 25)
+    #res <- mclapply(1:100, prfunc, mc.cores = 25)    
+    res <- lapply(1:100, prfunc)
     pvalid <- as.matrix(data.frame(res))
     te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
     misc_error <- (te_cl != 1:nte)
@@ -355,4 +357,18 @@ reg_filt <- function(seed) {
   list(results = results, te_inds = te_inds)
 }
 
-temp <- 
+res_filt <- list()
+proc.time()
+res_filt[1:25] <- mclapply(1:25, reg_filt, mc.cores = 25)
+res_filt[25 + 1:25] <- mclapply(25 + 1:25, reg_filt, mc.cores = 25)
+res_filt[50 + 1:25] <- mclapply(50 + 1:25, reg_filt, mc.cores = 25)
+res_filt[75 + 1:25] <- mclapply(75 + 1:25, reg_filt, mc.cores = 25)
+proc.time()
+
+mus <- lapply(res_filt, function(v) apply(v$results, 1, mean))
+
+apply(data.frame(mus), 1, mean)
+plot(reg_thres, mus[[1]], ylim = c(0, 1))
+for (i in 1:25) {
+  lines(reg_thres, mus[[i]], col = rainbow(25)[i])
+}
