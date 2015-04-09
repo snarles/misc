@@ -322,4 +322,37 @@ plot(misfitz[flat_inds], flat_me)
 library(popbio)
 logi.hist.plot(misfitz[flat_inds],flat_me,boxp=FALSE,type="hist",col="gray",
                xlab = "regression error", main = "Misclassification")
+logi.hist.plot(normz[flat_inds],flat_me,boxp=FALSE,type="hist",col="gray",
+               xlab = "normz", main = "Misclassification")
+help(logi.hist.plot)
 
+####
+## do regression filtering out the misfits (stimuli)
+####
+
+reg_thres <- seq(0, 3, .5)
+
+reg_filt <- function(seed) {
+  set.seed(seed)
+  nthres <- length(reg_thres)
+  tr_inds <- sample(1750, 1725, FALSE)
+  te_inds <- setdiff(1:1750, tr_inds)
+  nte <- length(te_inds)
+  results <- matrix(0, nthres, nte)
+  for (i in 1:nthres) {
+    ftr_inds <- tr_inds[misfitz[tr_inds] < reg_t]
+    prfunc <- function(i) {
+      res <- glmnet(features_train[ftr_inds, ], as.numeric(train_resp[i, ftr_inds]), standardize = FALSE)
+      pr <- predict(res, features_train[te_inds, ], s=sel_lambda)
+      pr
+    }
+    res <- mclapply(1:100, prfunc, mc.cores = 25)
+    pvalid <- as.matrix(data.frame(res))
+    te_cl <- knn(pvalid %*% omega_e, t(train_resp[, te_inds]) %*% omega_e, 1:nte, k=1)
+    misc_error <- (te_cl != 1:nte)
+    results[i, ] <- misc_error    
+  }
+  list(results = results, te_inds = te_inds)
+}
+
+temp <- 
