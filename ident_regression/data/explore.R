@@ -3,7 +3,7 @@
 #############################################################
 
 #savelist <- c()
-
+alfa <- 0
 isqrtm <- function(m) {
   res <- eigen(m)
   d <- res$values
@@ -164,7 +164,7 @@ library(class)
 
 prfunc <- function(i) {
     res <- cv.glmnet(features_train, as.numeric(train_resp[i, ]),
-                     standardize = FALSE, lambda = lambdas)
+                     standardize = FALSE, lambda = lambdas, alpha = alfa)
     pr <- predict(res, features_train, s=lambdas)
     list(pr = pr, cvm = res$cvm)
 }
@@ -223,7 +223,7 @@ metafunc1 <- function(v) {
     tr_inds <- sample(1750, 1000, FALSE)
     prfunc <- function(i) {
         res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]),
-                         standardize = FALSE)
+                         standardize = FALSE, alpha = alfa)
         pr <- predict(res, features_train, s=sel_lambda)
         list(pr = pr, cvm = res$cvm)
     }
@@ -284,7 +284,8 @@ for (ii in 1:ntrials) {
     te_inds <- setdiff(1:1750, tr_inds)
     nte <- length(te_inds)
     prfunc <- function(i) {
-        res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), standardize = FALSE)
+        res <- glmnet(features_train[tr_inds, ], as.numeric(train_resp[i, tr_inds]), 
+                      standardize = FALSE, alpha = alfa)
         pr <- predict(res, features_train[te_inds, ], s=sel_lambda)
         pr
     }
@@ -348,7 +349,8 @@ reg_filt <- function(seed) {
     reg_t <- reg_thres[i]
     ftr_inds <- tr_inds[misfitz[tr_inds] < reg_t]
     prfunc <- function(i) {
-      res <- glmnet(features_train[ftr_inds, ], as.numeric(train_resp[i, ftr_inds]), standardize = FALSE)
+      res <- glmnet(features_train[ftr_inds, ], as.numeric(train_resp[i, ftr_inds]), 
+                    standardize = FALSE, alpha = alfa)
       pr <- predict(res, features_train[te_inds, ], s=sel_lambda)
       pr
     }
