@@ -9,6 +9,8 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \definecolor{grey}{rgb}{0.5,0.5,0.5}
 
 \begin{document}
@@ -18,10 +20,11 @@
 \newcommand{\argmax}{\text{argmax}}
 \newcommand{\Cov}{\text{Cov}}
 \newcommand{\Var}{\text{Var}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 Charles Zheng CME 323 HW 1
 
-\textbf{1.}
+\noindent\textbf{1.}
 
 Checkpoint on slide 11:
 \begin{verbatim}
@@ -51,6 +54,186 @@ Checkpoint on slide 60:
 (Spark,(3,2))
 \end{verbatim}
 
+\noindent\textbf{2.}
+
+The mapper emits one key-value output pair for every input pair of
+vertices: the output key is the \emph{sorted} vertices and the output
+value indicates the direction of the edge.  The mapper takes directed
+edge $\langle a, b\rangle$: if $a < b$, it emits $\langle (a, b), 1
+\rangle$ and if $a > b$, it emits $\langle (b, a), 2 \rangle$.
+
+The reducer sees all the values $v_1, \hdots, v_n$ for a given key
+$(c, d)$.  If $\{1, 2\} \subseteq \{v_1,\hdots, v_n\}$ then it emits
+$(c, d)$; otherwise it emits nothing.
+
+No combiner is used; combiners are not likely to help in this problem.
+
+\begin{algorithm}[H]
+\caption{Map}
+\begin{algorithmic}
+\Function{Map}{$\langle a,b\rangle$}
+  \If {$a < b$}
+      \State Emit $\langle (a, b), 1 \rangle$
+  \Else
+      \State Emit $\langle (b, a), 2 \rangle$
+  \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Reduce}
+\begin{algorithmic}
+\Function{Reduce}{Key $(c, d)$, Values $\{v_1, \hdots, v_n\}$}
+  \If{$n < 2$}
+    \Return
+  \EndIf
+  \For{$i=2, \hdots, n$}
+    \If{$v_i \neq v_{i-1}$}
+      \State Emit $\langle c, d \rangle$
+      \State \Return
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\noindent\textbf{3.}
+
+The combiner is the same as the reducer.  Let $N$ be the total number of words.
+
+\begin{algorithm}[H]
+\caption{Map}
+\begin{algorithmic}
+\Function{Map}{String $s$}
+  \For{Word $w$ in $s$}
+    \State Emit $\langle w, 1\rangle$
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Reduce/Combine}
+\begin{algorithmic}
+\Function{Reduce}{Key $w$, Values $\{v_1,\hdots, v_n\}$}
+  \State $s \leftarrow 0$
+  \For{$i = 1, \hdots, n$}
+    \State $s \leftarrow s + v_i$
+  \EndFor
+  \State Emit $\langle w, s\rangle$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\emph{Without combiners--}
+The shuffle size is $N$, and the reduce takes $N \pm O(B)$ operations.
+
+\emph{With combiners--}
+After the combine step, there are at most $k$ key-value output pairs,
+since ther are at most $k$ distinct keys.
+The shuffle size is $kB$, and the reduce takes $kB \pm O(B)$ operations.
+
+\newpage
+\noindent\textbf{4.}
+
+Let me briefly state the naive solution, which does not parallelize
+effectively.  Run one map-reduce to count the number of elements $N$.
+Next, map each input pair $\langle i, a_i \rangle$ to $N-i+1$ output
+pairs $\langle i, a_i \rangle, \langle i+1, a_{i+1} \rangle, \hdots,
+\langle N, a_N \rangle$.  Reduce by summing all values for a given
+key.  With combiners, the shuffle size is $N$, and the number of
+reduce operations is $NB$ where $B$ is the number of mappers.  The
+problem with this solution is that each mapper requires $O(N)$ storage
+to hold the output keys--but this is on the same order as the size of
+the entire data.
+
+A better idea is to use divide-and-conquer.  The idea is to divide the
+keyset into $B$ equally-sized partitions: $P_1 = \{1,\hdots, n_1\},
+P_2 = \{n_1 + 1, \hdots, n_2\}, \hdots, P_B = \{n_{B-1} + 1, \hdots
+N\}$.  Accordingly define 
+\[\phi(i) = b \text{ such that } i \in P_b .\]
+Then define the partial sums $p_1,\hdots, p_B$ by 
+\[ p_b = \sum_{i \in P_b} a_i ,\]
+and define quantities
+\[
+u_b = \sum_{c < b} p_b .
+\]
+For $i = 1, \hdots, n$ define the within-partition prefix sums as
+\[
+t_i = \sum_{j \in P_{\phi(i)}: j \leq i} a_j
+\]
+Now observe that
+\[
+s_i = t_i + u_{\phi(i)}
+\]
+Therefore the procedure is as follows
+\begin{enumerate}
+\item (Map/Reduce 1) Count the number of keys $N$
+\item (Map 2) Input: the original key-value pairs. Partition the keys
+  sequentially into $B$ workers
+\item (Reduce 2) Each worker $b = 1,\hdots, B$ computes $p_b$ and sends it to the driver
+\item The driver computes $u_b = \sum_{c < b} p_c$ and sends $u_b$ to
+  each worker $b$ for $b = 1,\hdots, B$.
+\item (Reduce 3) Input: the output of step 2. Each worker $b = 1,\hdots, B$ computes $s_i = u_b + t_i$ and
+  emits $\langle i, s_i \rangle$ for each $i \in P_b$.
+\end{enumerate}
+
+To formalize this procedure in the map/reduce framework we have to
+designate the partition number $b$ as a key throughout steps 2-5.
+In steps 2 and 5, we have $(i, a_i)$ as values.
+Note that step 5 uses the same input as step 3.
+
+\begin{algorithm}[H]
+\caption{Step 2: Map 2}
+\begin{algorithmic}
+\State Parameters $n_1,\hdots, n_{B-1}$ determined in Step 1, and $n_B = N$.
+\Function{Map}{$\langle i, a \rangle$ from original inputs}
+  \For{$b \in 1,\hdots, B$}
+    \If{$n_b > i$}
+      \State Emit $\langle b, (i, a) \rangle$
+      \State \Return
+    \EndIf
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Step 3: Reduce 2}
+\begin{algorithmic}
+\Function{Reduce}{Key $b$, values $(i, a)$ from step 2}
+  \State $p \leftarrow 0$
+  \For{$(i, a)$ in values}
+    \State $p \leftarrow p + a$
+  \EndFor
+  \State Emit $\langle b, p \rangle$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{Step 5: Reduce 3}
+\begin{algorithmic}
+\State Parameters $u_1,\hdots u_B$ computed by driver in step 3. 
+\Function{Reduce}{Key $b$, values $(i, a)$ from step 2}
+  \State Sort values $(i, a)$ by $i$
+  \State $s \leftarrow u_b$
+  \For{Value $(i, a)$ in sorted list}
+    \State $s \leftarrow s + a$
+    \State Emit $\langle i, s \rangle$
+  \EndFor
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+The cost of the computation is dominated by step 2, when the data is
+partitioned: this requires a shuffle size of $N$.  This is followed by
+a reduce in step 3 requiring $O(N/B)$ operations and $O(1)$ space.
+The driver has to complete $O(B)$ operations in step 4.  Finally, each
+worker has to complete $O(N/B)$ operations in step 5, requiring $O(1)$
+memory.  The overall number of Map/Reduce iterations is 3, including
+the initial count.
 
 
 \end{document}
