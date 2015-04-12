@@ -286,9 +286,10 @@ of $O(n)$ sampled vertex pairs which have edges.  Since $O(n) <
 O(n^{1.45 + 0.55q})$ the cost of this statistical test is a non-issue.
 Henceforth we assume $q \geq 1$.
 
-We will define an algorithm with a parameter $p > 0$.  Given any $q
-\geq 1$, we claim that there exists $p > 0$ such that the algorithm
-has complexity $O(n^{1.45 + 0.55q})$.
+Having assumed that $q \geq 1$, we can further assume that $q$ is
+known, since the cost to count the edges is $O(n^2) \leq O(n^{1.45 +
+  0.55q}$.  We will define an algorithm with a parameter $p > 0$
+depending on $q$ as follows.
 
 We define the algorithm as follows.  Order the vertices in descending
 order by degree.  Let $1,\hdots, n_h$ denote all the vertices with
@@ -318,7 +319,7 @@ A_v^T$ is $\sum_{v = n_h + 1}^n d_v^2$.  Applying the lemma we have
 $\sum_{v = n_h + 1}^n d_v^2 \leq 2 m n^p$, so the cost of this step is
 $O(n^{p+q})$.
 
-Now we will prove the claim. Given $q \geq 1$, choose $p = 1.45 - 0.45 q$.
+Now choose $p = 1.45 - 0.45 q$.
 Then the cost of computing $A_1 A_1^T$ is 
 \[
 O(n^{2 + 0.376q-0.376p}) = O(n^{1.45 + 0.55 q})
@@ -332,6 +333,6 @@ off-diagonals of $A^2$.  But this takes $O(n^2)$ operations, which is
 less than $O(n^{1.45 + 0.55q})$ for any $q \geq 1$.
 
 Hence the cost of the whole procedure is $O(n^{1.45 + 0.55q}) =
-O(n^{1.45} m^{0.55})$, as claimed.
+O(n^{1.45} m^{0.55})$.
 
 \end{document}
