@@ -281,9 +281,10 @@ Then
 We first deal with the case $q < 1$.  Then there exists at least one
 node with no edges, hence the graph is not shallow.  For any $\epsilon
 > 0$, it is possible to distinguish the case $q < 1 - \epsilon$ from
-the case $q \geq 1$ with high probability using $O(n)$ sampled edges.
-Since $O(n) < O(n^{1.45 + 0.55q})$ the cost of this statistical test
-is a non-issue.  Henceforth we assume $q \geq 1$.
+the case $q \geq 1$ with high probability by computing the proportion
+of $O(n)$ sampled vertex pairs which have edges.  Since $O(n) <
+O(n^{1.45 + 0.55q})$ the cost of this statistical test is a non-issue.
+Henceforth we assume $q \geq 1$.
 
 We will define an algorithm with a parameter $p > 0$.  Given any $q
 \geq 1$, we claim that there exists $p > 0$ such that the algorithm
