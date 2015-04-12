@@ -258,8 +258,8 @@ Therefore the cost is $O((n/r)^2 r^{2.376})$.
 
 c.
 
-Let $m = n^q$. Then our goal is to provide an algorithm with
-runtime $O(m^{.55} n^{1.45}) = O(n^{1.45 + 0.55q})$.
+Let $m = n^q$, where $q \geq 1$. Our goal is to provide an algorithm
+with runtime $O(m^{.55} n^{1.45}) = O(n^{1.45 + 0.55q})$.
 
 In the proof we will make use of the following Lemma:
 \begin{lem}
@@ -278,62 +278,45 @@ Then
 }
 \end{lem}
 
-We first deal with the case $q < 1$.  Then there exists at least one
-node with no edges, hence the graph is not shallow.  For any $\epsilon
-> 0$, it is possible to distinguish the case $q < 1 - \epsilon$ from
-the case $q \geq 1$ with high probability by computing the proportion
-of $O(n)$ sampled vertex pairs which have edges.  Since $O(n) <
-O(n^{1.45 + 0.55q})$ the cost of this statistical test is a non-issue.
-Henceforth we assume $q \geq 1$.
-
-Having assumed that $q \geq 1$, we can further assume that $q$ is
-known, since the cost to count the edges is $O(n^2) \leq O(n^{1.45 +
-  0.55q})$.  We will define an algorithm with a parameter $p > 0$
-depending on $q$ as follows.
-
-We define the algorithm as follows.  Order the vertices in descending
-order by degree.  Let $1,\hdots, n_h$ denote all the vertices with
-degree larger than $n^p$.  Since the number of edges is twice the sum
-of the degrees, we have $n_h < n^{q-p}$.  Let $A$ be the adjacency
-matrix of the graph, and write $A = [A_1 A_2]$ where $A_1$ is $n
-\times n_h$ and $A_2$ is $n \times (n-n_h)$.  By construction, each
-column of $A_2$ has at most $n^p$ entries.  We will compute
-\[
-A^2 = AA^T = A_1 A_1^T + A_2 A_2^T
-\]
-where $A_v$ is the $v$th column of $A$.
-
-To compute $A_1 A_1^T$, apply the result of part $b$ with $r = n_h <
-n^{q-p}$.  Therefore the cost to compute $A_1 A_1^T$ is
-$O(n^{2 +0.376q-0.376p})$.
-
-To compute $A_2 A_2^T$, note that
+\newpage
+\textbf{Algorithm. }
+\begin{enumerate}
+\item Compute the degree of each vertex, and compute $q$.  Let $p = 1.45 - 0.45 q$.
+\item Order the vertices in descending order by degree. Let $1,\hdots, n_h$
+denote all the vertices with degree larger than $n^p$.
+\item Let $A$ be the adjacency matrix of the graph, and write $A
+= [A_1 A_2]$ where $A_1$ is $n \times n_h$ and $A_2$ is $n \times
+(n-n_h)$.
+\item Compute $A_1 A_1^T$ using the method in part b.
+\item Compute $A_2 A_2^T$ as the sum
 \[A_2 A_2^T = \sum_{v = n_h + 1}^n A_v A_v^T\]
-Now let $S$ denote a $n \times n$ matrix intialized to $0$.  For each
-for each $v = n_h+1,\hdots, n$, $A_v A_v^T$ is a matrix of zeros and
-ones, with exactly $d_v^2$ ones.  Therefore, we can compute $A_2
-A_2^T$ by iterating over all $v = n_h + 1,\hdots, n$ and incrementing
-the $d_v^2$ entries of $S$ which correspond to nonzero entries of $A_v
-A_v^T$.  In this way, the cost of computing $\sum_{v = n_h + 1}^n A_v
-A_v^T$ is $\sum_{v = n_h + 1}^n d_v^2$.  Applying the lemma we have
-$\sum_{v = n_h + 1}^n d_v^2 \leq 2 m n^p$, so the cost of this step is
-$O(n^{p+q})$.
+where $A_v$ is the $v$th column of $A$.  Let $S$ denote a $n \times n$
+matrix intialized to $0$.  For each for each $v = n_h+1,\hdots, n$,
+$A_v A_v^T$ is a matrix of zeros and ones, with exactly $d_v^2$ ones.
+Therefore, compute $A_2 A_2^T$ by iterating over all $v = n_h +
+1,\hdots, n$ and incrementing by 1 the $d_v^2$ entries of $S$ which
+correspond to nonzero entries of $A_v A_v^T$.
+\item Compute $A^2 = A_1 A_1^T + A_2 A_2^T$.  Check the off-diagonals
+  of $A^2$: $G$ is shallow if and only if all of the off-diagonals of
+  $A^2$ are nonzero.
+\end{enumerate}
 
-Now choose $p = 1.45 - 0.45 q$.
-Then the cost of computing $A_1 A_1^T$ is 
-\[
-O(n^{2 + 0.376q-0.376p}) = O(n^{1.45 + 0.55 q})
-\]
-and the cost of computing $A_2 A_2^T$ is
-\[
-O(n^{p + q}) = O(n^{1.45 + 0.55q})
-\]
-Having computed $A_1 A_1^T$ and $A_2 A_2^T$, it remains to check the
-off-diagonals of their sum, $A^2$.  All of this takes $O(n^2)$
-operations, which is less than $O(n^{1.45 + 0.55q})$ for any $q \geq
-1$.
+\textbf{Proof.}  Steps 1-3 and step 6 have costs of at most $O(n^2)$
+which is less than $O(n^{1.45 + 0.55q})$ for any $q \geq 1$.
+Hence it remains to show that both of steps 5 and 5 are $O(n^{1.45 + 0.55q})$.
 
-Hence the cost of the whole procedure is $O(n^{1.45 + 0.55q}) =
-O(n^{1.45} m^{0.55})$.
+In step 4, we multiply a $n \times n_h$ matrix by an $n_h \times n$
+matrix.  Since the number of edges is twice the sum of the degrees, we
+have $n_h < n^{q-p}$.  Then the result in part b implies that the cost
+of step 4 is $O(n^{2 +0.376q-0.376p})$.
+
+
+In step 5, the cost of computing $A_2 A_2^T$ is $\sum_{v = n_h + 1}^n
+d_v^2$.  By construction, $\max_{v  > n_h} d_v \leq n^p$.
+Hence applying the lemma we have $\sum_{v = n_h + 1}^n d_v^2 \leq 2
+m n^p$, so the cost of step 5 is $O(n^{p+q})$.
+
+To complete the proof, see that the costs of steps 4 and 5 are both
+$O(n^{1.45 + 0.55q})$ once we susbstitute $p = 1.45 - 0.45 q$.
 
 \end{document}
