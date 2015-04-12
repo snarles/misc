@@ -328,9 +328,10 @@ and the cost of computing $A_2 A_2^T$ is
 \[
 O(n^{p + q}) = O(n^{1.45 + 0.55q})
 \]
-Having computed $A^2 = A_1 A_1^T + A_2 A_2^T$, it remains to check the
-off-diagonals of $A^2$.  But this takes $O(n^2)$ operations, which is
-less than $O(n^{1.45 + 0.55q})$ for any $q \geq 1$.
+Having computed $A_1 A_1^T$ and $A_2 A_2^T$, it remains to check the
+off-diagonals of their sum, $A^2$.  All of this takes $O(n^2)$
+operations, which is less than $O(n^{1.45 + 0.55q})$ for any $q \geq
+1$.
 
 Hence the cost of the whole procedure is $O(n^{1.45 + 0.55q}) =
 O(n^{1.45} m^{0.55})$.
