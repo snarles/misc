@@ -11,6 +11,8 @@
 \usepackage{mathtools}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{mdframed}
+\newmdtheoremenv{lem}{Lemma}
 \definecolor{grey}{rgb}{0.5,0.5,0.5}
 
 \begin{document}
@@ -254,15 +256,40 @@ compute $C_{i, j}$ is the cost to multiply $A_i^T$ and $B_j$, which is bounded b
 Meanwhile, there are $b^2$ such blocks, where $b^2 = O((n/r)^2)$.
 Therefore the cost is $O((n/r)^2 r^{2.376})$.
 
-c. Let $m = n^q$ where $q \geq 1$.  (We are assuming that each node
-has at least one edge.)  Then our goal is to provide an algorithm with
+c.
+
+Let $m = n^q$. Then our goal is to provide an algorithm with
 runtime $O(m^{.55} n^{1.45}) = O(n^{1.45 + 0.55q})$.
+
+In the proof we will make use of the following Lemma:
+\begin{lem}
+Let $x = (x_1,\hdots, x_n)$, such that $\sum_i x_i  \leq m$, $x \geq 0$
+and $\max_i x_i \leq t$ with $t \geq 1$.
+Then
+\[
+||x||^2 \leq mt
+\]\\
+\emph{ \textbf{Proof}.  Since $x > 0$, we have $\sum_i x_i = \sum_i
+  |x_i| = ||x||_1$ and also $\max_i x_i = \max_i |x_i| =
+  ||x||_\infty$.  Now apply Holder's inequality:
+\[
+||x||^2 \leq ||x||_1 ||x||_\infty = mt
+\]
+}
+\end{lem}
+
+We first deal with the case $q < 1$.  Then there exists at least one
+node with no edges, hence the graph is not shallow.  For any $\epsilon
+> 0$, it is possible to distinguish the case $q < 1 - \epsilon$ from
+the case $q \geq 1$ with high probability using $O(n)$ sampled edges.
+Since $O(n) < O(n^{1.45 + 0.55q})$ the cost of this statistical test
+is a non-issue.  Henceforth we assume $q \geq 1$.
 
 We will define an algorithm with a parameter $p > 0$.  Given any $q
 \geq 1$, we claim that there exists $p > 0$ such that the algorithm
-has a better complexity than $O(n^{1.45 + 0.55q})$.  Note that for any
-$q \geq 1$, $O(n^{1.45 + 0.55q}) \geq O(n^2)$, so checking all pairs
-of vertices is free.
+has complexity $O(n^{1.45 + 0.55q})$.  Note that for any $q \geq 1$,
+$O(n^{1.45 + 0.55q}) \geq O(n^2)$, so checking all pairs of vertices
+is free.
 
 We define the algorithm as follows.  Order the vertices in descending
 order by degree.  Let $1,\hdots, n_h$ denote all the vertices with
@@ -272,7 +299,7 @@ matrix of the graph, and write $A = [A_1 A_2]$ where $A_1$ is $n
 \times n_h$ and $A_2$ is $n \times (n-n_h)$.  By construction, each
 column of $A_2$ has at most $n^p$ entries.  We will compute
 \[
-A^2 = A_1 A_1^T + \sum_{v = n_h + 1}^n A_v A_v^T
+A^2 = AA^T = A_1 A_1^T + A_2 A_2^T
 \]
 where $A_v$ is the $v$th column of $A$.
 
@@ -280,27 +307,32 @@ To compute $A_1 A_1^T$, apply the result of part $b$ with $r = n_h <
 n^{q-p}$.  Therefore the cost to compute $A_1 A_1^T$ is
 $O(n^{2 +0.376q-0.376p})$.
 
-To complete the computation of $A^2$, let $S$ denote a $n \times n$
-matrix intialized to $A_1 A_1^T$.  Note that for each $v =
-n_h+1,\hdots, n$, note that $A_v A_v^T$ is a matrix of zeros and ones,
-with exactly $d_v^2$ ones.  Therefore, iterating over all $v = n_h +
-1,\hdots, n$, we can increment only the $d_v^2$ entries of $S$ which
-correspond to nonzero entries of $A_v A_v^T$.  In this way, the cost
-of computing $\sum_{v = n_h + 1}^n A_v A_v^T$ is
-\[
-\sum_{v = n_h + 1}^n d_v^2 \leq \sum_{v = n_h + 1}^n (n^p)^2 \leq n (n^p)^2 = n^{1 + 2p}
-\]
-or $O(n^{1 + 2p})$.
+To compute $A_2 A_2^T$, note that
+\[A_2 A_2^T = \sum_{v = n_h + 1}^n A_v A_v^T\]
+Now let $S$ denote a $n \times n$ matrix intialized to $0$.  For each
+for each $v = n_h+1,\hdots, n$, $A_v A_v^T$ is a matrix of zeros and
+ones, with exactly $d_v^2$ ones.  Therefore, we can compute $A_2
+A_2^T$ by iterating over all $v = n_h + 1,\hdots, n$ and incrementing
+the $d_v^2$ entries of $S$ which correspond to nonzero entries of $A_v
+A_v^T$.  In this way, the cost of computing $\sum_{v = n_h + 1}^n A_v
+A_v^T$ is $\sum_{v = n_h + 1}^n d_v^2$.  Applying the lemma we have
+$\sum_{v = n_h + 1}^n d_v^2 \leq m n^p$, so the cost of this step is
+$O(n^{p+q})$.
 
-Now we will prove the claim. Given $q \geq 1$, choose $p = $.
+Now we will prove the claim. Given $q \geq 1$, choose $p = 1.45 - 0.45 q$.
 Then the cost of computing $A_1 A_1^T$ is 
 \[
-O(n^{2 + 0.376q-0.376p}) = O()
+O(n^{2 + 0.376q-0.376p}) = O(n^{1.45 + 0.55 q})
 \]
-and the cost of computing $\sum_{v = n_h + 1}^n A_v A_v^T$ is
+and the cost of computing $A_2 A_2^T$ is
 \[
-O(n^{1 + 2p}) = O()
+O(n^{p + q}) = O(n^{1.45 + 0.55q})
 \]
+Having computed $A^2 = A_1 A_1^T + A_2 A_2^T$, it remains to check the
+off-diagonals of $A^2$.  But this takes $O(n^2)$ operations, which is
+less than $O(n^{1.45 + 0.55q})$ for any $q \geq 1$.
 
+Hence the cost of the whole procedure is $O(n^{1.45 + 0.55q}) =
+O(n^{1.45} m^{0.55})$, as claimed.
 
 \end{document}
