@@ -317,7 +317,7 @@ A_2^T$ by iterating over all $v = n_h + 1,\hdots, n$ and incrementing
 the $d_v^2$ entries of $S$ which correspond to nonzero entries of $A_v
 A_v^T$.  In this way, the cost of computing $\sum_{v = n_h + 1}^n A_v
 A_v^T$ is $\sum_{v = n_h + 1}^n d_v^2$.  Applying the lemma we have
-$\sum_{v = n_h + 1}^n d_v^2 \leq m n^p$, so the cost of this step is
+$\sum_{v = n_h + 1}^n d_v^2 \leq 2 m n^p$, so the cost of this step is
 $O(n^{p+q})$.
 
 Now we will prove the claim. Given $q \geq 1$, choose $p = 1.45 - 0.45 q$.
