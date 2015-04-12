@@ -22,7 +22,9 @@
 \newcommand{\Var}{\text{Var}}
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
-Charles Zheng CME 323 HW 1
+\begin{center}
+\noindent Charles Zheng CME 323 HW 1
+\end{center}
 
 \noindent\textbf{1.}
 
@@ -233,7 +235,72 @@ a reduce in step 3 requiring $O(N/B)$ operations and $O(1)$ space.
 The driver has to complete $O(B)$ operations in step 4.  Finally, each
 worker has to complete $O(N/B)$ operations in step 5, requiring $O(1)$
 memory.  The overall number of Map/Reduce iterations is 3, including
-the initial count.
+the initial count.\\
+
+\noindent\textbf{5.}
+
+a. Let $A$ be the adjacency matrix.  Then the $i, j$ entry of $A^2$ is
+nonzero if and only if there is a path of length 2 from vertex $i$ to
+$j$.  Therefore the procedure is to evaluate $A^2$, which costs
+$O(n^{2.376})$ operations, and check the $n(n-1)/2$ off-diagonals,
+which costs $O(n^2)$ operations.
+
+b. Let $b = \lfloor n/ r\rfloor$, and write $A = [A_1,\hdots, A_b]^T$
+where $A_1, \hdots, A_{b-1}$ are $r \times r$ and $A_b$ is $r \times
+(n - (b-1)r)$.  Also write $B = [B_1,\hdots, B_b]$ where $B_1,\hdots,
+B_{b-1}$ are $r \times r$ and $B_b is r \times (n - (b-1)r)$.  Then $C
+= AB$ is composed of blocks $C_{i,j} = A_i^T B_j$.  The cost to
+compute $C_{i, j}$ is the cost to multiply $A_i^T$ and $B_j$, which is bounded by $O(r^{2.376})$.
+Meanwhile, there are $b^2$ such blocks, where $b^2 = O((n/r)^2)$.
+Therefore the cost is $O((n/r)^2 r^{2.376})$.
+
+c. Let $m = n^q$ where $q \geq 1$.  (We are assuming that each node
+has at least one edge.)  Then our goal is to provide an algorithm with
+runtime $O(m^{.55} n^{1.45}) = O(n^{1.45 + 0.55q})$.
+
+We will define an algorithm with a parameter $p > 0$.  Given any $q
+\geq 1$, we claim that there exists $p > 0$ such that the algorithm
+has a better complexity than $O(n^{1.45 + 0.55q})$.  Note that for any
+$q \geq 1$, $O(n^{1.45 + 0.55q}) \geq O(n^2)$, so checking all pairs
+of vertices is free.
+
+We define the algorithm as follows.  Order the vertices in descending
+order by degree.  Let $1,\hdots, n_h$ denote all the vertices with
+degree larger than $n^p$.  Since the number of edges is twice the sum
+of the degrees, we have $n_h < n^{q-p}$.  Let $A$ be the adjacency
+matrix of the graph, and write $A = [A_1 A_2]$ where $A_1$ is $n
+\times n_h$ and $A_2$ is $n \times (n-n_h)$.  By construction, each
+column of $A_2$ has at most $n^p$ entries.  We will compute
+\[
+A^2 = A_1 A_1^T + \sum_{v = n_h + 1}^n A_v A_v^T
+\]
+where $A_v$ is the $v$th column of $A$.
+
+To compute $A_1 A_1^T$, apply the result of part $b$ with $r = n_h <
+n^{q-p}$.  Therefore the cost to compute $A_1 A_1^T$ is
+$O(n^{2 +0.376q-0.376p})$.
+
+To complete the computation of $A^2$, let $S$ denote a $n \times n$
+matrix intialized to $A_1 A_1^T$.  Note that for each $v =
+n_h+1,\hdots, n$, note that $A_v A_v^T$ is a matrix of zeros and ones,
+with exactly $d_v^2$ ones.  Therefore, iterating over all $v = n_h +
+1,\hdots, n$, we can increment only the $d_v^2$ entries of $S$ which
+correspond to nonzero entries of $A_v A_v^T$.  In this way, the cost
+of computing $\sum_{v = n_h + 1}^n A_v A_v^T$ is
+\[
+\sum_{v = n_h + 1}^n d_v^2 \leq \sum_{v = n_h + 1}^n (n^p)^2 \leq n (n^p)^2 = n^{1 + 2p}
+\]
+or $O(n^{1 + 2p})$.
+
+Now we will prove the claim. Given $q \geq 1$, choose $p = $.
+Then the cost of computing $A_1 A_1^T$ is 
+\[
+O(n^{2 + 0.376q-0.376p}) = O()
+\]
+and the cost of computing $\sum_{v = n_h + 1}^n A_v A_v^T$ is
+\[
+O(n^{1 + 2p}) = O()
+\]
 
 
 \end{document}
