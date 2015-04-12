@@ -8,9 +8,27 @@ output:
 Charles Zheng EE 378b HW 2
 ========================================================
 
+# Method:
+
+Define a distance metric as follows:
+$$
+d(x, y) = 1 - \frac{\sum_i x_i y_i I_{x_i \neq NA}I_{y_i \neq NA}}{
+\sqrt{\sum_i x_i^2 I_{x_i \neq NA}}
+\sqrt{\sum_i y_i^2 I_{y_i \neq NA}}
+}
+$$
+
+Let $S$ be the 44 x 44 matrix of pairwise distances.
+Define $A = \exp(-S/(2\sigma^2))$ and define the Laplacian as
+$L = I - D^{-1/2}A D^{-1/2}$.
+Compute the $d$ smallest eigenvectors of the Laplacian and use $k$-means.
+
+# Setup
+
 Loading the data:
 
 ```{r}
+set.seed(0)
 tab <- read.csv("anon.csv", header = FALSE, row.names = 1)
 colnames(tab) <- paste0("V", 1:63)
 dim(tab)
@@ -30,13 +48,7 @@ plotfunc <- function(u) {
 }
 ```
 
-Define a distance metric as follows:
-$$
-d(x, y) = 1 - \frac{\sum_i x_i y_i I_{x_i \neq NA}I_{y_i \neq NA}}{
-\sqrt{\sum_i x_i^2 I_{x_i \neq NA}}
-\sqrt{\sum_i y_i^2 I_{y_i \neq NA}}
-}
-$$
+The distance function:
 ```{r}
 cust_dist <- function(x, y) {
   inds <- which(!is.na(x) & !is.na(y))
@@ -78,6 +90,8 @@ fit <- cmdscale(dm)
 plotfunc(fit)
 ```
 
+# Spectral clustering
+
 ## Form the laplacian
 
 ```{r}
@@ -96,9 +110,54 @@ Function to find Laplacian coordinates.
 laplacian_coords <- function(amat, d = 2) {
   amat01 <- diag(rep(1, dim(amat)[1])) - amat
   res <- eigen(amat01)
-  res$vectors[, 1:d]
+  coords0 <- res$vectors[, 1:d]
+  coords <- t(apply(coords0, 1, function(v) v/sqrt(sum(v^2))))
 }
 coords <- laplacian_coords(amat)
 plotfunc(coords)
 ```
 
+## Get the clusters
+
+```{r}
+print_cluster <- function(res) {
+  k <- max(res$cluster)
+  for (i in 1:k) {
+    cat(paste("=== Cluster", i, " ===\n"))
+    cat(paste(rownames(x)[res$cluster == i], collapse = "\n"))
+    cat("\n\n")
+  }
+}
+
+k <- 3
+res <- kmeans(coords, k)
+print_cluster(res)
+```
+
+## Try different $d$ and $k$
+
+Try different $d$ and $k$ to get the best clusters.
+
+### $d = 2$, $k = 9$
+
+```{r}
+coords <- laplacian_coords(amat, 2)
+res <- kmeans(coords, 9)
+print_cluster(res)
+```
+
+### $d = 3$, $k = 9$
+
+```{r}
+coords <- laplacian_coords(amat, 3)
+res <- kmeans(coords, 9)
+print_cluster(res)
+```
+
+### $d = 4$, $k = 9$
+
+```{r}
+coords <- laplacian_coords(amat, 4)
+res <- kmeans(coords, 9)
+print_cluster(res)
+```
