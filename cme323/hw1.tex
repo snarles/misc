@@ -263,8 +263,8 @@ runtime $O(m^{.55} n^{1.45}) = O(n^{1.45 + 0.55q})$.
 
 In the proof we will make use of the following Lemma:
 \begin{lem}
-Let $x = (x_1,\hdots, x_n)$, such that $\sum_i x_i  \leq m$, $x \geq 0$
-and $\max_i x_i \leq t$ with $t \geq 1$.
+Let $x = (x_1,\hdots, x_n)$, such that $x \geq 0$, $\sum_i x_i  \leq m$, 
+and $\max_i x_i \leq t$.
 Then
 \[
 ||x||^2 \leq mt
@@ -273,7 +273,7 @@ Then
   |x_i| = ||x||_1$ and also $\max_i x_i = \max_i |x_i| =
   ||x||_\infty$.  Now apply Holder's inequality:
 \[
-||x||^2 \leq ||x||_1 ||x||_\infty = mt
+||x||^2 \leq ||x||_1 ||x||_\infty \leq mt
 \]
 }
 \end{lem}
