@@ -101,7 +101,7 @@ opt_bth <- function(mu, sigma2) {
   bth
 }
 
-sigma2 <- 10
+sigma2 <- 0.5
 cand_bts <- (-200:200)/40 + 1e-3
 temp1 <- function(i) {
   opt_bth(cand_bts[i], sigma2)
@@ -112,3 +112,25 @@ plot(cand_bts, res, type = 'l')
 lines(cand_bts, cand_bts, lty = 2)
 title(expression(paste(sigma^2, "=")))
 title(paste("        ", sigma2))
+
+## minimal estimate phenomenon
+
+min(abs(res))
+## sigma2 = 10,  3.3
+##          5,   2.55
+##          0.5, 1.1
+
+max(rmat)
+l1n <- function(v) v/sum(v)
+sds <- c(0.25, .3, .5, 1, 2, 3)
+range(bts)
+#plot(NA, NA, xlim = range(bts), ylim = c(0, 1),
+#     xlab = expression(beta), ylab = "R")
+layout(matrix(1:length(sds), length(sds), 1))
+oldmar <- par("mar")
+par(mar = c(0, 0, 0, 0))
+for (i in 1:length(sds)) {
+  y <- l1n(dnorm(bts, mean = 0, sd = sds[i])) %*% rmat
+  plot(bts, y,
+        type = 'l', col = rainbow(length(sds))[i])  
+}
