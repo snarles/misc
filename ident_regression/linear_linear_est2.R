@@ -28,9 +28,45 @@ cosmat <- function(theta) {
   matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
 }
 
-bt <- diag(c(1, 2))
-bth <- cosmat(0.01) %*% diag(c(1.01, 1.99))
-bth
+# simulate multiple bths
+
+simulate0 <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
+                      seed, n_trials = 1, scov_x = sqrtm(cov_x),
+                      var_bt = 0) {
+  set.seed(seed)
+  n_bthz <- length(bthz)
+  mrs <- matrix(0, n_trials, n_bthz)
+  for (i in 1:n_trials) {
+    bt <- mu_bt + sqrt(var_bt) * matrix(rnorm(4), 2, 2)
+    xs <- scov_x %*% matrix(rnorm(2 * k_cl), 2, k_cl)
+    ys <- t(bt) %*% xs + 
+      sqrt(var_eps) * matrix(rnorm(2 * k_cl), 2, k_cl)
+    for (j in 1:n_bthz) {
+      bth <- bthz[[j]]
+      yhats <- t(bth) %*% xs
+      te_cl <- knn(t(yhats), t(ys), 1:k_cl, k = 1)
+      mr <- sum(te_cl != 1:k_cl)/k_cl
+      mrs[i, j] <- mr
+    }
+  }
+  apply(mrs, 2, mean)
+}
+
+simulate <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
+                      seeds, n_trials = 1,
+                     scov_x = sqrtm(cov_x), var_bt = 0, mc.cores = 1) {
+  #simulate0 <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
+  #                      seed, n_trials = 1, scov_x = sqrtm(cov_x),
+  #                      var_bt = 0) {  
+  tempf <- function(seed) 
+    simulate0(mu_bt, bthz, cov_x, var_eps, k_cl, seed,
+              n_trials, scov_x, var_bt)
+  do.call(rbind, mclapply(seeds, tempf, mc.cores = mc.cores))
+}
+
+
+
+mu_bt <- diag(c(0, 0))
 var_eps <- 1
 cov_x <- diag(rep(1, 2))
 seed <- 1
@@ -39,31 +75,15 @@ k_cl <- 4
 n_trials <- 10
 mc.cores <- 25
 
-simulate0 <- function(bt, bth, cov_x, var_eps, k_cl,
-                      seed, n_trials = 1, scov_x = sqrtm(cov_x)) {
-  set.seed(seed)
-  mrs <- numeric(n_trials)
-  for (i in 1:n_trials) {
-    xs <- scov_x %*% matrix(rnorm(2 * k_cl), 2, k_cl)
-    ys <- t(bt) %*% xs + 
-      sqrt(var_eps) * matrix(rnorm(2 * k_cl), 2, k_cl)
-    yhats <- t(bth) %*% xs
-    te_cl <- knn(t(yhats), t(ys), 1:k_cl, k = 1)
-    mr <- sum(te_cl != 1:k_cl)/k_cl
-    mrs[i] <- mr
-  }
-  mean(mrs)
-}
+var_bt <- 1
+bthz <- list()
+scales <- c(0.25, 0.5, 1, 2)
+for (i in 1:length(scales)) bthz <- c(bthz, list(matrix(scales[i] * c(1, 1, 1, 1), 2, 2)))
+for (i in 1:length(scales)) bthz <- c(bthz, list(matrix(scales[i] * c(1, 1, 1, -1), 2, 2)))
+for (i in 1:length(scales)) bthz <- c(bthz, list(matrix(scales[i] * c(sqrt(2), 0, 0, sqrt(2)), 2, 2)))
 
+bthz
 
-simulate <- function(bt, bth, cov_x, var_eps, k_cl,
-                      seeds, n_trials = 1,
-                     scov_x = sqrtm(cov_x), mc.cores = 1) {
-  tempf <- function(seed) 
-    simulate0(bt, bth, cov_x, var_eps, k_cl, seed, n_trials, scov_x)
-  unlist(mclapply(seeds, tempf, mc.cores = mc.cores))
-}
-
-simulate0(bt, bth, cov_x, var_eps, k_cl, 1, n_trials, scov_x)
-
-simulate(bt, bth, cov_x, var_eps, k_cl, 1:50, n_trials, mc.cores = 25)
+simulate0(mu_bt, bthz, cov_x, var_eps, k_cl, 1, n_trials, scov_x, var_bt)
+res <- simulate(mu_bt, bthz, cov_x, var_eps, k_cl, 1:9, n_trials, mc.cores = 3)
+apply(res, 2, mean)
