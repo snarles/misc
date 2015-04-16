@@ -95,3 +95,19 @@ plot(scales, apply(resB, 2, mean))
 plot(scales, apply(resC, 2, mean))
 cbind(scales, apply(resC, 2, mean))
 
+
+var_bts <- seq(0, 4, 0.1)^2
+ress <- matrix(0, length(var_bts), length(bthzC))
+for (i in 1:length(var_bts)) {
+  resC <- simulate(mu_bt, bthzC, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25,
+                   var_bt = var_bts[[i]])
+  ress[i, ] <- apply(resC, 2, mean)
+}
+
+plot(scales, ress[1, ])
+plot(scales, ress[2, ])
+plot(scales, ress[3, ])
+plot(scales, ress[4, ])
+opts <- apply(ress, 1, function(v) min(scales[v == min(v)]))
+plot(sqrt(var_bts), opts)
+abline(0, 1)

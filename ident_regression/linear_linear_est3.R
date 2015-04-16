@@ -2,7 +2,6 @@
 ## Estimation in the linear/linear case
 ############
 
-p <- 3
 library(class)
 library(parallel)
 
@@ -64,22 +63,22 @@ simulate <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
 }
 
 
-
-mu_bt <- diag(rep(1, 3))
+p <- 7
+mu_bt <- diag(rep(0, p))
 var_eps <- 1
-cov_x <- diag(rep(1, 3))
+cov_x <- diag(rep(1, p))
 seed <- 1
 scov_x <- sqrtm(cov_x)
-k_cl <- 3
-n_trials <- 1e5
+k_cl <- 10
+n_trials <- 1e4
 mc.cores <- 25
 
 var_bt <- 9
 bthzA <- list(); bthzB <- list(); bthzC <- list()
-scales <- seq(0.5, 1.5, 0.05)
+scales <- seq(0, 10, 0.2)
 #for (i in 1:length(scales)) bthzA[[i]] <- matrix(scales[i] * c(1, 1, 1, 1), 2, 2)
 #for (i in 1:length(scales)) bthzB[[i]] <- matrix(scales[i] * c(1, 1, 1, -1), 2, 2)
-for (i in 1:length(scales)) bthzC[[i]] <- scales[i] * diag(rep(1, 3))
+for (i in 1:length(scales)) bthzC[[i]] <- scales[i] * diag(rep(1, p))
 
 bthzC
 
