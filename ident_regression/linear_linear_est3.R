@@ -1,6 +1,8 @@
 ############
 ## Estimation in the linear/linear case
 ############
+
+p <- 3
 library(class)
 library(parallel)
 
@@ -24,9 +26,6 @@ sqrtm <- function(m) {
   return (v %*% diag(d) %*% t(v))
 }
 
-cosmat <- function(theta) {
-  matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
-}
 
 # simulate multiple bths
 
@@ -37,10 +36,10 @@ simulate0 <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
   n_bthz <- length(bthz)
   mrs <- matrix(0, n_trials, n_bthz)
   for (i in 1:n_trials) {
-    bt <- mu_bt + sqrt(var_bt) * matrix(rnorm(4), 2, 2)
-    xs <- scov_x %*% matrix(rnorm(2 * k_cl), 2, k_cl)
+    bt <- mu_bt + sqrt(var_bt) * matrix(rnorm(p^2), p, p)
+    xs <- scov_x %*% matrix(rnorm(p * k_cl), p, k_cl)
     ys <- t(bt) %*% xs + 
-      sqrt(var_eps) * matrix(rnorm(2 * k_cl), 2, k_cl)
+      sqrt(var_eps) * matrix(rnorm(p * k_cl), p, k_cl)
     for (j in 1:n_bthz) {
       bth <- bthz[[j]]
       yhats <- t(bth) %*% xs
@@ -53,7 +52,7 @@ simulate0 <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
 }
 
 simulate <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
-                      seeds, n_trials = 1,
+                     seeds, n_trials = 1,
                      scov_x = sqrtm(cov_x), var_bt = 0, mc.cores = 1) {
   #simulate0 <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
   #                      seed, n_trials = 1, scov_x = sqrtm(cov_x),
@@ -66,32 +65,33 @@ simulate <- function(mu_bt, bthz, cov_x, var_eps, k_cl,
 
 
 
-mu_bt <- 0*diag(c(1, 1))
+mu_bt <- diag(rep(1, 3))
 var_eps <- 1
-cov_x <- diag(c(1, 1))
+cov_x <- diag(rep(1, 3))
 seed <- 1
 scov_x <- sqrtm(cov_x)
 k_cl <- 3
-n_trials <- 1e4
+n_trials <- 1e5
 mc.cores <- 25
 
-var_bt <- 4
+var_bt <- 9
 bthzA <- list(); bthzB <- list(); bthzC <- list()
-scales <- seq(0, 3, 0.1)
-for (i in 1:length(scales)) bthzA[[i]] <- 1/sqrt(2) * matrix(scales[i] * c(1, 1, 1, 1), 2, 2)
-for (i in 1:length(scales)) bthzB[[i]] <- 1/sqrt(2) * matrix(scales[i] * c(1, 1, 1, -1), 2, 2)
-for (i in 1:length(scales)) bthzC[[i]] <- matrix(scales[i] * c(1, 0, 0, 1), 2, 2)
+scales <- seq(0.5, 1.5, 0.05)
+#for (i in 1:length(scales)) bthzA[[i]] <- matrix(scales[i] * c(1, 1, 1, 1), 2, 2)
+#for (i in 1:length(scales)) bthzB[[i]] <- matrix(scales[i] * c(1, 1, 1, -1), 2, 2)
+for (i in 1:length(scales)) bthzC[[i]] <- scales[i] * diag(rep(1, 3))
 
 bthzC
 
 #simulate0(mu_bt, bthz, cov_x, var_eps, k_cl, 1, n_trials, scov_x, var_bt)
 proc.time()
-resA <- simulate(mu_bt, bthzA, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25, var_bt = var_bt)
-resB <- simulate(mu_bt, bthzB, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25, var_bt = var_bt)
+#resA <- simulate(mu_bt, bthzA, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25)
+#resB <- simulate(mu_bt, bthzB, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25)
 resC <- simulate(mu_bt, bthzC, cov_x, var_eps, k_cl, 1:25, n_trials, mc.cores = 25, var_bt = var_bt)
 proc.time()
-plot(scales, apply(resA, 2, mean))
-plot(scales, apply(resB, 2, mean))
+#plot(apply(resA, 2, mean))
+#plot(apply(resB, 2, mean))
 plot(scales, apply(resC, 2, mean))
+
 cbind(scales, apply(resC, 2, mean))
 
