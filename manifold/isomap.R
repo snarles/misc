@@ -16,7 +16,7 @@ noisify <- function(x, sigma = 1) {
 }
 
 
-n <- 2000
+n <- 10
 p <- 2
 u <- matrix(2* runif(n * p) - 1, n, p)
 u_cols <- rgb((u[, 1] + 1) * .4, (u[, 2] + 1) * .4, 0)
@@ -31,3 +31,28 @@ res <- isomap(dist(x), k = 10, ndim = 2)
 y <- scores(res)
 dim(y)
 plot(y[, 1], y[, 2], col = u_cols, pch = '.', cex = 10)
+dm <- as.matrix(dist(x))
+dim(dm)
+
+## build graph
+
+library(RBGL)
+library(graph)
+library(Rgraphviz)
+
+dm2 <- isomapdist(dm, k = 5)
+
+rownames(dm) <- colnames(dm) <- paste0("v", 1:dim(dm)[1])
+dmt <- dm
+diag(dmt) <- NA
+k <- 5
+is.na(dmt) <- apply(dmt, 2, function(x) x > x[order(x, na.last = TRUE)[k]])
+dmt[is.na(dmt)] <- 0
+dmt
+dmg <- as(dmt, "graphNEL")
+plot(dmg)
+dmg
+
+dm3 <- floyd.warshall.all.pairs.sp(dmg)
+as.matrix(dm2)
+dm3
