@@ -1,0 +1,55 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+%\usepackage{mdframed}
+%\newmdtheoremenv{lem}{Lemma}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Var}{\text{Var}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\begin{center}
+\noindent Charles Zheng EE 378b HW 3
+\end{center}
+
+\noindent\textbf{1.}
+a.
+Since the space of unit vectors is compact,
+there exists $x^*$ such that $||M||_2 = ||Mx^*||_2$.
+For the same reason, there exist unit vectors $x^\circ, y^\circ$ such that
+\[
+\langle x^\circ, M y^\circ \rangle = \max_{||x|| = ||y|| = 1} \langle x, My \rangle
+\]
+Letting $y^* = Mx^*/||M||_2$, we have $||y||_2 = 1$.
+Therefore
+\[
+||M||_2 = y^* M x^* \leq \max_{||y||=||x||=1} \langle y, Mx \rangle
+\]
+
+
+\noindent\textbf{2.}
+
+\noindent\textbf{3.}
+
+\noindent\textbf{4.}
+
+\noindent\textbf{5.}
+
+
+\end{document}
