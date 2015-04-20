@@ -36,16 +36,95 @@ For the same reason, there exist unit vectors $x^\circ, y^\circ$ such that
 \[
 \langle x^\circ, M y^\circ \rangle = \max_{||x|| = ||y|| = 1} \langle x, My \rangle
 \]
+
 Letting $y^* = Mx^*/||M||_2$, we have $||y||_2 = 1$.
 Therefore
 \[
 ||M||_2 = y^* M x^* \leq \max_{||y||=||x||=1} \langle y, Mx \rangle
 \]
 
+Also, by Cauchy-Schwarz we have 
+\begin{align*}
+\max_{||x|| = ||y|| = 1} \langle x, My \rangle
+= (x^\circ)^* M y^\circ
+\leq ||x^\circ||_2 ||My^\circ||_2 \leq ||My^\circ||_2 
+\leq \max_{||y||=1} ||My||_2 = ||M||_2
+\end{align*}
+
+Having shown that \[||M||_2 \leq \max_{||x|| = ||y|| = 1} \langle x, My \rangle \leq ||M||_2\]
+we conclude that the definitions are equivalent
+
+b.  Let the SVD of $M$ be written $M = UDV^T$ where $D =
+diag(\sigma_1,\hdots, \sigma_n)$.
+Let $v_1$ be the first column of $V$, then $||v_1||_2 = 1$ and
+\[
+||Mv_1||_2 = ||UDV^T v_1||_2 = ||UD e_1||_2 = ||De_1||_2 = \sigma_1
+\]
+Hence
+\[
+\sigma_1 = ||Mv_1||_2 \leq \max_{||x|| = 1} ||Mx||_2 = ||M||_2
+\]
+
+Meanwhile for any unit vector $x$, defining $y = V^T x$ we have $||y||_2 \leq 1$.
+Then
+\[
+\max_{||x||=1} ||Mx||_2 = \max_{||x|| = 1} ||UDV^T x||_2
+\leq \max_{||x|| = 1} ||DV^T x||_2 \leq \max_{||y|| = 1} ||Dy||_2
+\]
+But defining $a_i = y_i^2$,
+\[
+\max_{||y||=1} ||Dy||_2^2 = \max_{||y||=1} \sum_{i=1}^n \sigma_i^2 y_i^2
+= \max_{\sum a_i = 1, a_i \geq 0} \sum_{i=1}^n \sigma_i^2 a_i
+\]
+is maximized by $a = e_1$, hence $\max_{||y|| = 1} ||Dy||_2 = \sigma_1$.
+
+Having shown that
+\[
+\sigma_1 \leq ||M||_2 \leq \sigma_1
+\]
+we conclude that the two definitions are equivalent.\\
 
 \noindent\textbf{2.}
+a.
+From 1a we have
+\[
+||M^*||_2 = \max_{||x||=||y||=1} \langle x, M^* y \rangle
+= \max_{||x||=||y||=1} \langle y, M x \rangle = ||M||_2
+\]
+
+b.
+We have
+\[
+||AB||_2 = \max_{||x|| = 1} ||ABx||_2 = \max_{y = Bx\text{ for some }||x|| = 1} ||Ay||_2
+\]
+Meanwhile, if $y = Bx$, and $||x||_2 = 1$, we have $||y||_2 \leq ||B||_2$.
+Therefore the set
+$\{y: y = Bx \text{ for some }x\text{ such that }||x||=1\}$
+is contained in the set
+$\{y: ||y||_2 \leq ||B||_2\}$.
+Hence
+\[
+\max_{y = Bx\text{ for some }||x|| = 1} ||Ay||_2 \leq
+\max_{||y|| = ||B||_2} ||Ay||_2 = ||A||_2 ||B||_2
+\]
 
 \noindent\textbf{3.}
+i. 
+\[
+||aM||_2 = \max_{||x||=1} ||aMx||_2 = \max_{||x||=1} |a| ||M_2 x||_2 = |a|\max_{||x||=1} ||M x||_2 = a||M||_2
+\]
+
+ii.
+\[
+||A + B||_2 = \max_{||x|| = 1} ||Ax + Bx||_2 \leq \max_{||x||=1} ||Ax||_2 + ||Bx||_2
+\leq \max_{||x|| = 1} ||Ax||_2 + \max_{||x||=1} ||Bx||_2 = ||A||_2 + ||B||_2
+\]
+
+iii.
+Proof of contrapositive:
+If $M \neq 0$, then some row $M_i$ is nonzero.
+But then $||Me_i||_2 = ||M_i||_2 > 0$, so $||M||_2 > 0$.\\
+
 
 \noindent\textbf{4.}
 
