@@ -31,16 +31,16 @@
 \noindent\textbf{1.}
 a.
 Since the space of unit vectors is compact,
-there exists $x^*$ such that $||M||_2 = ||Mx^*||_2$.
+there exists $x^0$ such that $||M||_2 = ||Mx^0||_2$.
 For the same reason, there exist unit vectors $x^\circ, y^\circ$ such that
 \[
 \langle x^\circ, M y^\circ \rangle = \max_{||x|| = ||y|| = 1} \langle x, My \rangle
 \]
 
-Letting $y^* = Mx^*/||M||_2$, we have $||y||_2 = 1$.
+Letting $y^0 = Mx^0/||M||_2$, we have $||y||_2 = 1$.
 Therefore
 \[
-||M||_2 = y^* M x^* \leq \max_{||y||=||x||=1} \langle y, Mx \rangle
+||M||_2 = (y^0)^* M x^0 \leq \max_{||y||=||x||=1} \langle y, Mx \rangle
 \]
 
 Also, by Cauchy-Schwarz we have 
@@ -122,13 +122,81 @@ ii.
 
 iii.
 Proof of contrapositive:
-If $M \neq 0$, then some row $M_i$ is nonzero.
+If $M \neq 0$, then some column $M_i$ is nonzero.
 But then $||Me_i||_2 = ||M_i||_2 > 0$, so $||M||_2 > 0$.\\
 
 
 \noindent\textbf{4.}
+a.
+Let $m_i$ denote the columns of $M^*$.
+\[
+||M||_2 = ||M^*||_2 = \max_{||x|| = 1} M^* x 
+= \left \| \sum_{i=1}^m x_i m_i \right \|
+\leq \sum_{i=1}^m x_i ||m_i||_2
+\]
+Now let $\mu$ be the vector defined by $\mu_i = ||m_i||_2$.
+By H\"{o}lder's inequality, we have
+\[
+||M||_2 \leq \max_{||x||_2= 1} \langle x, \mu \rangle \leq \max_{||x||_2 = 1} ||x||_1 ||\mu||_\infty
+\]
+But $\max_{||x||_2 = 1} ||x||_1 = \sqrt{m}$ and $||\mu||_\infty = \max_i ||m_i||_2$.
+Hence
+\[
+||M||_2 \leq \sqrt{m} \max_i ||m_i||_2
+\]
+as needed.
+
+We see that the upper bound is tight by taking $M = 1_m 1_n^T$,
+in which case $m_1 = \hdots = m_m = 1_n$ 
+\[||M||_2 = ||M \frac{1}{\sqrt{n}}1_n||_2 = ||\sqrt{n} 1_m||_2 = \sqrt{m}||1_n||_2 = \sqrt{m} \max_i ||m_i||_2
+\]
+
+b.  Using the fact that $||x||_2 \geq \frac{1}{\sqrt{m}}
+||x||_1$ for any vector $x \in \mathbb{R}^m$, we have
+\[
+||M||_2 \geq ||M\frac{1}{\sqrt{n}} 1_n||_2
+= ||\mu||_2 \geq \frac{1}{\sqrt{m}} ||\mu||_1 = \frac{1}{\sqrt{mn}} \sum_{i=1}^m |m_i^* 1_n|
+\]
+where $\mu$ is the $m$-vector with $m_i = \frac{1}{\sqrt{n}} m_i^* 1_n$.
+Hence the upper bound is proved.
+
+To show that the upper bound is tight, take $M = 1_m 1_n^T$, in which case
+\[
+||M||_2 = \sqrt{mn} = \frac{1}{\sqrt{mn}} mn = \frac{1}{\sqrt{mn}}  \sum_{i=1}^m |m_i^* 1_n|
+\]
+
+
+
 
 \noindent\textbf{5.}
+a.
+We have
+\[
+||M||_F = \sqrt{\sum_i \sum_j M_{ij}^2} = \sqrt{\tr M^T M} = \sqrt{\tr M^T M}
+\]
+Without loss of generality assume $n \leq m$.
+Since the eigenvalues of $M^T M$ are $\sigma_1^2,\hdots, \sigma_n^2$,
+we have
+\[
+\tr M^T M = \sum_{i=1}^n \sigma_i^2
+\]
+hence dropping the assumption that $n \leq m$, we have
+\[
+||M||_F = \sqrt{\sum_{i=1}^{\min(n, m)} \sigma_i^2}
+\]
 
+b.
+Only $\sigma_1,\hdots, \sigma_r$ are nonzero, where $r = \text{rank}(M)$.
+Letting $d = (\sigma_1,\hdots, \sigma_r)$, we have
+$||M||_F = ||d||_2$.
+But we know that for all vectors $x \in \mathbb{R}^r$,
+\[
+||x||_\infty \leq ||x||_2 = \sqrt{\sum_{i=1}^r x_i^2} \leq \sqrt{\sum_{i=1}^r ||x||_\infty^2} = \sqrt{r} ||x||_\infty
+\]
+Hence
+\[
+||M||_2 = \sigma_1 = ||d||_\infty \leq ||d||_2 = ||M||_F = ||d||_2 \leq \sqrt{r}||d||_\infty = \sqrt{r} ||M||_2  
+\]
+as needed.
 
 \end{document}
