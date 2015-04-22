@@ -49,18 +49,118 @@ principal components analysis, latent variables
 Ridge regression is a linear method for predicting a real-valued label
 $y \in \mathbb{R}$ from a vector of real-valued features $x \in
 \mathbb{R}^p$.  It is produces a regularized least squares estimate
-for a coefficient vector $\hat{\beta}_\lambda$ and intercept term
-$\hat{c}_\lambda$, where $\lambda$ is a regularization parameter.
-This coefficient vector $\hat{\beta}_\lambda$ is used to predict the
-label $y^*$ for an unlabeled example with features $x^*$ by the rule
+for a coefficient vector $\hat{\beta}_\lambda$ and intercept
+$\hat{c}_\lambda$, where $\lambda$ is a regularization parameter.  This
+coefficient vector $\hat{\beta}_\lambda$ is used to predict the label
+$y_*$ for an unlabeled example with features $x_*$ by the rule
 \[
-y^* = \hat{\beta}_\lambda^T x^* + \hat{c}_\lambda
+\hat{y}_\lambda = \hat{\beta}_\lambda^T x_* + \hat{c}_\lambda
 \]
-Given training data
-with labels $Y = (y_1,\hdots, y_n)$ and features $X = (x_1^T,\hdots,
-x_n^T)$, the ridge regression 
+
+Given training data with labels $Y = (y_1,\hdots, y_n)$ and features
+$X = (x_1^T,\hdots, x_n^T)$, and asssuming the feature matrix $X$ is
+normalized to have columns with zero mean and unit variance,
+the ridge regression coefficient vector is defined as
+\[
+\hat{\beta}_\lambda = (X^T X + \lambda I)^{-1} X^T Y_c
+\]
+and the intercept as
+\[
+\hat{c}_\lambda = \bar{y}
+\]
+where $Y_c = (y_1 - \bar{y},\hdots, y_n - \bar{y})$ and $\bar{y} =
+\frac{1}{n}1^T Y$.
+
+The dependence of the ridge-regression prediction
+$\hat{y}_\lambda$ on the penalty $\lambda$ can be easily seen by
+an application of the singular-value decomposition.
+Suppose for now that $n < p$.
+Write the singular-value decomposition of $X$ as
+\[
+\underbrace{X}_{n \times p} = \underbrace{U}_{n \times p}\underbrace{D}_{p \times p}\underbrace{V^T}_{p \times p}
+\]
+Then it is evident that
+\[
+\hat{\beta}_\lambda = V D^2 (D^2 + \lambda)^{-1} U^T Y
+\]
+and therefore, writing $z_* = V x_*$, and $D = \diag(d_1,\hdots, d_p)$,
+\[
+\hat{y}_\lambda = z_*^T \diag\left(\frac{d_i^2}{d_i^2 + \lambda}\right) U^T Y + \bar{y}
+\]
+We see that increasing $\lambda$ tends to shrink the prediction
+$\hat{y}$ towards $\bar{y}$.  Specifically, ridge regression shrinks
+all of the principal directions $U^T Y$, applying more shrinkage to
+the directions of lowest variance $d_i$ (Hastie 2008).
+
+Shrinking $\hat{y}$ increases squared
+bias (defined as $\E_{X, x_*, y_*}(\E_{Y}[\hat{y}] - y_*)^2$) but also reduces
+variance (defined as $\E_{X, x_*, y_*}[(\hat{y} - \E_{Y}[\hat{y}])^2]$).  The
+optimal $\lambda$ is determined by this bias-variance tradeoff, and in
+practice, can be estimated in a data-depndent way, e.g. by using
+cross-validation.
+
+Due to the importance of choosing $\lambda$, it is usually not
+practical to study the properties of ridge regression for fixed
+$\lambda$.  One way to approach for studying ridge regression is
+to let $f: X, Y \to \mathbb{R} $ be a selection rule for choosing
+$\lambda$ in a data-dependent way, and define the ridge regression
+prediction rule with selection rule $f$ by
+\[
+\hat{y}_f = \hat{\beta}_{f(X, Y)}^T x_* + \hat{c}_{f(X, Y)}
+\]
+Then the risk for the selection rule $f$ is
+\[
+R_f = \E||\hat{y}_f - y_*||^2
+\]
+However, most selection rules $f$ used in practice are difficult to
+analyze.  Therefore, a more tractable approach is to define an \emph{oracle}-guided ridge regression procedure, which uses
+\[
+\lambda_{oracle} = \argmin_{\lambda} \E_{X, Y, x_*, y_*}[||y_* - \hat{y}_\lambda||^2]
+\]
+and hence incurs the risk
+\[
+R_{oracle} = \E||\hat{y}_{\lambda_{oracle}} - y_*||^2
+\]
+While it might appear that $R_{oracle}$ is obviously smaller than
+$R_f$ for any selection rule $f$, since $R_{oracle}$ uses information
+about the unknown join distribution of $(x,y)$, in fact there is no
+existing proof that $R_{oracle}$ is necessarily smaller than $R_f$.
+Nevertheless, it is widely believed that $R_{oracle}$ should be close
+to $R_f$ for selection rules $f$ based on cross-validation.
 
 \subsection{Principal Components Regression}
+
+Principal components regression applies ordinary least-squares linear
+regression to the top $k$ principal components of $X$.  Recalling the
+singular-value decomposition $X = UDV^T$ from the previous section,
+let $V_k$ denote the first $K$ columns of $V$, and let $T_k = XV_k$.
+For a new point $x_*$, let $t_* = V_k^T x_*$ Define the $k$-principal
+components regression coefficient vector
+\[
+\hat{\gamma}_{PCR-k} = (T_k^T T_k)^{-1} T_k^T Y
+\]
+and the prediction rule as
+\[
+\hat{y}_{PCR-k} = t_*^T \hat{\gamma}_{PCR-k}  + \hat{c}_{PCR-k}
+\]
+where if $X$ is centered,
+\[
+\hat{c} = \bar{y}
+\]
+
+It is easy to compare principal components regression with ridge
+regression by writing $\hat{y}_{PCR-k}$ in terms of the SVD of $X$,
+\[
+\hat{y}_{PCR-k} = z_*^T \diag(1_k, 0) U^T Y + \bar{y}
+\]
+where as before $z^* = V x_*$.  While ridge regression shrinks the
+principal directions $U^T Y$ depending on the variance of the
+corresponding principal components, principal components regression
+``kills'' all but the top $k$ principal directions without shrinking
+the remaining $k$.  Hence, in a supervised setting PCR and ridge
+regression have very similar behavior.  However, we will see that
+unlike with ridge regression, PCR has the potential to improve with
+the addition of unlabeled examples.
 
 \section{Theory}
 
@@ -119,6 +219,7 @@ normally employed in ridge regression.
 \section{References}
 
 \begin{itemize}
+\item Hastie, Tibshirani, Friedman.  ``The Elements of Stastistical Learning,'' 2008.
 \item Zhu, X.  ``Semi-supervised learning literature survey.'' 2005.
 \item Niyogi, P.  ``Manifold Regularization and semi-supervised learning:
 Some theoretical analysis.''  2008.
