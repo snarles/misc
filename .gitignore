@@ -16,3 +16,4 @@
 *.html~
 .ipynb_checkpoints/
 .gitignore~
+.Rproj.user
