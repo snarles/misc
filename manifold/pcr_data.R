@@ -1,5 +1,7 @@
 library(magrittr)
 library(dplyr)
+library(glmnet)
+
 lf <- list.files("/home")
 if ("snarles" %in% lf) (ddir <- "/home/snarles/stat312data")
 if ("ubuntu" %in% lf) (ddir <- "/home/ubuntu/stat312data")
@@ -25,10 +27,38 @@ setup_problem <- function(n_train = 100) {
   y_tr <<- filtered_resp[inds_train, ind_pred]
   y_te <<- filtered_resp[-inds_train, ind_pred]
   current_pars <<- list(inds_train = inds_train, ind_pred = ind_pred)
+  x <- rbind(x_tr, x_te)
+  res_n <<- svd(x)
+}
+
+ridge_error <- function() {
+  res_ridge <<- cv.glmnet(x_tr, y_tr, alpha = 0)
+  #plot(res_ridge)
+  y_hat_ridge <<- predict(res_ridge, x_te)
+  (sqe_glmnet <<- sum((y_te - y_hat_ridge)^2))
+}
+
+pcr_error <- function(ks) {
+  pcr_ks <<- ks
+  pcr_errs <<- numeric(length(ks))
+  inds_val <- sample(length(inds_train), 20)
+  for (i in 1:length(ks)) {
+    k <- ks[i]
+    tt_tr1 <- x_tr[-inds_val, ] %*% res_n$v[, 1:k]
+    tt_tr2 <- x_tr[inds_val, ] %*% res_n$v[, 1:k]
+    res <- lm(y_tr[-inds_val] ~ tt_tr1)
+    y_hat_pcr <- res$coefficients[1] + tt_tr2 %*% res$coefficients[-1]
+    pcr_errs[i] <<- sum((y_hat_pcr - y_tr[inds_val])^2)
+  }
+  k_sel <- order(pcr_errs)[1]
+  tt_tr <- x_tr %*% res_n$v[, 1:k_sel]
+  tt_te <- x_te %*% res_n$v[, 1:k_sel]
+  res <- lm(y_tr ~ tt_tr)
+  y_hat_pcr <- res$coefficients[1] + tt_te %*% res$coefficients[-1]
+  (sqe_pcr <- sum((y_hat_pcr - y_te)^2))
 }
 
 setup_problem(100)
 current_pars
-
-dim(x_tr)
-dim(x_te)
+ridge_error()
+pcr_error(1:20)
