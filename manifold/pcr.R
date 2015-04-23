@@ -5,11 +5,12 @@ l <- 200
 p <- 100
 r <- 50
 r_pcr <- 50
-apa <- matrix(rnorm(r * p), r, p)
-temp <- svd(apa)
-seqq <- (1:r)^2 %>% { sqrt(./sum(.)) } %>% `*`(20)
-apa <- temp$u %*% diag(seqq) %*% t(temp$v)
-gma <- rnorm(r)
+gapa <- matrix(rnorm(r * p + r), r, p + 1)
+temp <- svd(gapa)
+seqq <- (1:r)^2 %>% { ./sqrt(sum(.)) } %>% `*`(20)
+gapa <- temp$u %*% diag(seqq) %*% t(temp$v)
+apa <- gapa[, 1:p]
+gma <- gapa[, p+1]
 z <- matrix(rnorm(n * r), n, r)
 sigma_e <- 1
 x <- z %*% apa + sigma_e * matrix(rnorm(n * p), n, p)
