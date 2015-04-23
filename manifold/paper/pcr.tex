@@ -81,9 +81,9 @@ Write the singular-value decomposition of $X$ as
 \]
 Then it is evident that
 \[
-\hat{\beta}_\lambda = V D^2 (D^2 + \lambda)^{-1} U^T Y
+\hat{\beta}_\lambda = V D (D^2 + \lambda)^{-1} U^T Y
 \]
-and therefore, writing $z_* = V x_*$, and $D = \diag(d_1,\hdots, d_p)$,
+and therefore, writing $z_* = D^{-1} V^T x_*$, and $D = \diag(d_1,\hdots, d_p)$,
 \[
 \hat{y}_\lambda = z_*^T \diag\left(\frac{d_i^2}{d_i^2 + \lambda}\right) U^T Y + \bar{y}
 \]
@@ -215,6 +215,40 @@ and $\gamma$ are unit-norm.  Note that as a result, $X$ and $Y$ have
 zero marginal mean and equal marginal variances of $1 +
 \sigma_\epsilon^2$, justifying the omission of the normalization step
 normally employed in ridge regression.
+
+\subsection{Ridge Regression}
+
+Write the following singular value decompositions
+\[
+\underbrace{\alpha}_{r \times p} = \underbrace{\eta}_{r \times p} \underbrace{\tilde{D}}_{p \times p} \underbrace{\tilde{V}^T}_{p \times p}
+\]
+\[
+\underbrace{X}_{r \times p} =\sqrt{n} \underbrace{U}_{n \times p}\underbrace{D}_{p \times p}\underbrace{V^T}_{p \times p}
+\]
+The scaling of $\sqrt{n}$ is so that $D$ is $O(1)$.
+Also rescale the ridge regression penalty so that
+\[
+\hat{\beta}_\lambda = (X^T X + n \lambda I)^{-1} X^T Y
+\]
+Write
+\[
+Z^TZ = n (I + \delta_Z)
+\]
+\[
+\tilde{V}^T V  = I +  \delta_V
+\]
+Then
+\begin{align*}
+\hat{y}_\lambda - y_* =&
+x_*^T (X^T X + n \lambda I)^{-1} X^T Y - y_*\\
+=& n^{-1} (z_*^T \alpha + E_*) V ( D^2 +\lambda I)^{-1} V^T (\alpha^T Z^T Z \gamma + E^T Z\gamma + \alpha^T Z^T \epsilon + E^T \epsilon) - z_*^T \gamma - \epsilon
+\\=& z_*^T (\eta \tilde{D}^2 (D^2 + \lambda)^{-1} \eta^T \gamma - \gamma)
+\\&+ z_*^T(\eta \tilde{D} \delta_v (D^2 + \lambda)^{-1} (I + \delta_V^T) \tilde{D}^T \eta^T (I + \delta_Z) \gamma)
+\\&+ z_*^T(\eta \tilde{D} (I + \delta_V) (D^2 + \lambda)^{-1} \delta_V^T \tilde{D}^T \eta^T (I + \delta_Z) \gamma)
+\\&+ z_*^T(\eta \tilde{D} (I + \delta_V) (D^2 + \lambda)^{-1} (I + \delta_V^T) \tilde{D}^T \eta^T \delta_Z \gamma)
+\\&+ E_* V (D^2 +\lambda I)^{-1} V^T \alpha^T (I + \delta_Z) \gamma
+\\&+ n^{-1} x_*^T V (D^2 +\lambda I)^{-1} V^T (E^T Z\gamma + \alpha^T Z^T \epsilon + E^T \epsilon)  - \epsilon
+\end{align*}
 
 \section{References}
 
