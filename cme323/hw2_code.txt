@@ -1,0 +1,62 @@
+import org.apache.spark.graphx._
+import org.apache.spark.rdd.RDD
+
+val articles: RDD[String] = sc.textFile("vertices.txt", 50)
+val links: RDD[String] = sc.textFile("edges.txt", 50)
+
+val vertices = articles.map { line =>
+  val fields = line.split('\t')
+  (fields(0).toLong, fields(1))
+}
+
+val edges = links.map { line =>
+  val fields = line.split('\t')
+  Edge(fields(0).toLong, fields(1).toLong, 0)
+}
+
+val graph = Graph(vertices, edges, "").cache()
+
+val prGraph = graph.pageRank(0.001).cache()
+
+val titleAndPrGraph = graph.outerJoinVertices(prGraph.vertices) {
+  (v, title, rank) => (rank.getOrElse(0.0), title)
+}
+
+val top10 = titleAndPrGraph.vertices.top(10){
+  Ordering.by((entry: (VertexId, (Double, String))) => entry._2._1)
+}.foreach(t => println(t._2._2 + ": " + t._2._1))
+
+//University of California, Berkeley: 1321.1117543121866
+//Berkeley, California: 664.8841977233967
+//Uc berkeley: 162.50132743398052
+//Berkeley Software Distribution: 90.47860388486285
+//Lawrence Berkeley National Laboratory: 81.9040493964213
+//George Berkeley: 81.85226118458093
+//Busby Berkeley: 47.87199821801988
+//Berkeley Hills: 44.764069795199774
+//Xander Berkeley: 30.3240753472881
+//Berkeley County, South Carolina: 28.9083364837103
+
+val titleAndDegree = graph.outerJoinVertices(graph.inDegrees) {
+  (v, title, rank) => (rank.getOrElse(0), title)
+}
+
+val top10d = titleAndDegree.vertices.top(10){
+  Ordering.by((entry: (VertexId, (Int, String))) => entry._2._1)
+}.foreach(t => println(t._2._2 + ": " + t._2._1))
+
+//
+//University of California, Berkeley: 7387
+//Berkeley, California: 3900
+//Uc berkeley: 989
+//Lawrence Berkeley National Laboratory: 438
+//Berkeley Software Distribution: 407
+//George Berkeley: 403
+//Busby Berkeley: 232
+//Berkeley, CA: 197
+//Berkeley County, West Virginia: 172
+//Xander Berkeley: 166
+
+
+
+

@@ -115,6 +115,18 @@ object MovieLensALS {
       i += 1
     }
 
+    // HW
+    val model8 = ALS.train(training, 8, 20, 1.0)
+    val model5 = ALS.train(training, 8, 20, 1.0)
+    movies.map(_.swap).get("Saving Private Ryan (1998)") // 2028
+    movies.map(_.swap).get("Alien (1979)") // 1214
+    model8.productFeatures.lookup(2028)
+     //Seq[Array[Double]] = WrappedArray(Array(0.6477546219058509, 0.6426229445743988, 0.6461808810337494,
+     // 0.6431596287309431, 0.6384334161962797, 0.6415332046689981, 0.6505237147976703, 0.6504696994359823))
+    model5.productFeatures.lookup(1214)
+     //Seq[Array[Double]] = WrappedArray(Array(0.6373592762840713, 0.6368712379801962, 0.641377009770939,
+     // 0.6368617654243005, 0.6435706137762942, 0.6424977510555535, 0.6381539251150117, 0.6366490114006595))
+
     // clean up
     sc.stop()
   }
