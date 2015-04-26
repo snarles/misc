@@ -166,8 +166,30 @@ modularity(B, clusters) + mod_change(B, clusters, ind, lbl)
 modularity(B, clusters %>% {.[ind] <- lbl; .})
 ```
 
+Try one (big) iteration of greedy algorithm.
+
 ```{r}
-greedo <- function(B, clusters, n_its = 10) {
-  
+greedo <- function(B, clusters, n_its = 1) {
+  n <- dim(B)[1]
+  k <- max(clusters)
+  for (it in 1:n_its) {
+    for (i in 1:n) {
+      bonds <- sapply(1:k, function(j) sum(B[i, clusters == j]))
+      clusters[i] <- order(-bonds)[1]
+    }
+  }
+  clusters
 }
+
+Bclusters2 <- greedo(B, Bclusters, 2)
+modularity(B, Bclusters)
+modularity(B, Bclusters2)
 ```
+
+Try with random intializations.
+```{r}
+K_cluster <- 100
+rand_inits <- lapply(1:10, function(v) {set.seed(v); sample(K_cluster, n, TRUE) })
+updated <- mclapply(rand_inits, function(v) greedo(B, v, 10), mc.cores = 5)
+```
+
