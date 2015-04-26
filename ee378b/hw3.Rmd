@@ -1,4 +1,5 @@
----
+source("http://bioconductor.org/biocLite.R")
+biocLite("graph")---
 title: Charles Zheng EE 378b HW 2
 output:
   html_document:
@@ -75,21 +76,24 @@ isqrtD <- diag(1/sqrt(diag(D)))
 L <- A - D
 N <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
 L_coords <- eigencoords(L, 1)
-plot(mod_search(B, L_coords, search_inds, TRUE, 6))
+plot(search_inds/n, mod_search(B, L_coords, search_inds, TRUE, 6), 
+     xlab = "split size (%)", ylab = "modularity")
 title("Laplacian")
 ```
 
 Normalized laplacian
 ```{r fig.width=7, fig.height=6}
 N_coords <- eigencoords(N, 1)
-plot(mod_search(B, N_coords, search_inds, TRUE, 6))
+plot(search_inds/n, mod_search(B, N_coords, search_inds, TRUE, 6), 
+     xlab = "split size (%)", ylab = "modularity")
 title("Normalized laplacian")
 ```
 
 Modularity matrix
 ```{r fig.width=7, fig.height=6}
 B_coords <- eigencoords(B, 1)
-plot(mod_search(B, B_coords, search_inds, TRUE))
+plot(search_inds/n, mod_search(B, B_coords, search_inds, TRUE), 
+     xlab = "split size (%)", ylab = "modularity")
 title("Modularity matrix")
 ```
 
@@ -136,12 +140,15 @@ itersplit <- function(B, mat, search_K, min_dim = 20, current_inds = 1:dim(B)[1]
   clusters
 }
 
-Bclusters <- itersplit(B, B, 20, diagnostic = FALSE)
-modularity(B, Bclusters)
 Lclusters <- itersplit(B, L, 20, diagnostic = FALSE)
-modularity(B, Lclusters)
+modularity(B, Lclusters)  ## 7415.629
+max(Lclusters) ## 6
 Nclusters <- itersplit(B, N, 20, diagnostic = FALSE)
-modularity(B, Nclusters)
+modularity(B, Nclusters)## 1413.263
+max(Nclusters) ## 47
+Bclusters <- itersplit(B, B, 20, diagnostic = FALSE)
+modularity(B, Bclusters)  ## 17205.1
+max(Bclusters) ## 75
 ```
 
 # Greedy stuff.
