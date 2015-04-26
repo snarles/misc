@@ -13,6 +13,8 @@ Charles Zheng EE 378b HW 3
 Loading the data:
 
 ```{r}
+library(parallel)
+library(rARPACK)
 library(magrittr)
 library(graph)
 list.files("ee378b")
@@ -20,20 +22,11 @@ temp <- as.matrix(read.table("ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
 apply(temp, 2, min)
 apply(temp, 2, max)
 A <- ftM2adjM(temp)
-dim(A) # 5242 5242
 diag(A) <- 0
+temp <- apply(A, 1, sum) > 0
+A <- A[temp, temp]
+dim(A) # 5241 5241
 D <- diag(apply(A, 1, sum))
-#onezz <- matrix(1, 5242, 5242)
-coords1 <- eigencoords(A - D, 1)
-B <- modularity_mat(A)
-n <- dim(A)[1]
-seq1 <- rbinom(n, 1, .5)
-modularity(B, seq1)
-summary(coords1)
-modularity(B, coords1 > 0)
-search_inds <- floor(seq(n/200, n, n/100))
-search_inds
-mods <- mod_search(B, coords1, search_inds, TRUE)
 ```
 
 Define the following functions:
@@ -55,16 +48,15 @@ modularity <- function(B, clusters) {
 
 mod_search <- function(B, vec, inds, all_values = FALSE) {
   svec <- sort(vec)
-  mods <- numeric(length(inds))
-  for (i in 1:length(inds)) {
-    mods[i] <- modularity(B, vec > svec[inds[i]])
-  }
+  ff <- function(ind) modularity(B, vec > svec[ind])
+  #mods <- unlist(mclapply(inds, ff, mc.cores = 6))
+  mods <- sapply(inds, ff)
   if (all_values) return(mods)
   vec > (svec[mods == min(mods)])
 }
 
 eigencoords <- function(m, k = 2) {
-  res <- eigen(m)
+  res <- eigs(m, k)
   if (k == 1) return(res$vectors[, 1])
   apply(res$vectors[, 1:k], 1, function(v) v/sqrt(sum(v^2)))
 }
@@ -73,8 +65,75 @@ eigencoords <- function(m, k = 2) {
 Compare how well laplacian, normalized laplacian, and modularity matrix perform for two-cluster case.
 
 ```{r fig.width=7, fig.height=6}
+B <- modularity_mat(A)
+n <- dim(A)[1]
+search_inds <- floor(seq(n/200, n, n/100))
 isqrtD <- diag(1/sqrt(diag(D)))
 L <- A - D
 L_norm <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
-mod_search(B, coords1, search_inds, TRUE)
+L_coords <- eigencoords(L, 1)
+plot(mod_search(B, L_coords, search_inds, TRUE))
+title("Laplacian")
+```
+
+Normalized laplacian
+```{r fig.width=7, fig.height=6}
+Ln_coords <- eigencoords(L_norm, 1)
+plot(mod_search(B, Ln_coords, search_inds, TRUE))
+title("Normalized laplacian")
+```
+
+Modularity matrix
+```{r fig.width=7, fig.height=6}
+B_coords <- eigencoords(B, 1)
+plot(mod_search(B, B_coords, search_inds, TRUE))
+title("Modularity matrix")
+```
+
+# Iterative Proceure
+
+```{r}
+mat <- B
+min_dim <- 10
+current_inds <- 1:20
+search_K <- 5
+
+catn <- function(...) { cat(...); cat('\n') }
+
+itersplit <- function(B, mat, search_K, min_dim = 20, current_inds = 1:dim(B)[1],
+                      diagnostic = FALSE, pref = "") {
+  if (length(current_inds) < 2 * min_dim) {
+    if (diagnostic) catn(paste0(pref, ": final size :", length(current_inds)))    
+    return(list(current_inds))
+  }
+  if (diagnostic) catn(paste0(pref, ": NEW :", length(current_inds)))
+  smat <- mat[current_inds, current_inds]
+  sB <- B[current_inds, current_inds]
+  coords <- eigencoords(smat, 1)
+  sn <- length(current_inds)
+  search_inds <- floor(seq(min_dim, sn - min_dim, sn/search_K))
+  mods <- mod_search(sB, coords, search_inds, TRUE)
+  if (diagnostic) catn(paste0(pref, paste(mods, collapse = " ")))
+  mod0 <- sum(sB)
+  if (max(mods) < mod0) {
+    if (diagnostic) catn(paste0(pref, ": Sum too small"))
+    return (list(current_inds))
+  } else {
+    if (diagnostic) catn(paste0(pref, ": Mod improvement ", mod0, " to ", max(mods)))
+    svec <- sort(coords)
+    split <- coords > svec[search_inds[mods == max(mods)]][1]
+    ans1 <- itersplit(B, mat, search_K, min_dim, current_inds[split], diagnostic, paste0(pref, "-"))      
+    ans2 <- itersplit(B, mat, search_K, min_dim, current_inds[!split], diagnostic, paste0(pref, "*"))
+    ans <- c(ans1, ans2)
+    if (pref != "") return (ans)
+  }
+  # only in root
+  clusters <- 1:dim(B)[1]
+  for (i in 1:length(ans)) clusters[ans[[i]]] <- i
+  clusters
+}
+
+res <- itersplit(B, B, 20, diagnostic = TRUE)
+res <- itersplit(B, L, 10, diagnostic = TRUE)
+
 ```
