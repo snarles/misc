@@ -17,7 +17,7 @@ library(rARPACK)
 library(magrittr)
 library(graph)
 list.files("ee378b")
-temp <- as.matrix(read.table("~/misc/ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
+temp <- as.matrix(read.table("ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
 apply(temp, 2, min)
 apply(temp, 2, max)
 A <- ftM2adjM(temp)
@@ -186,7 +186,87 @@ greedo <- function(B, clusters, n_its = 1) {
   clusters
 }
 
-Bclusters2 <- greedo(B, Bclusters, 2)
+library(Rcpp)
+
+cppFunction(
+'NumericVector aggr(NumericVector x, NumericVector y, int k) {
+  int n = x.size();
+  NumericVector out(k);
+
+  for (int i = 0; i < n; i++) {
+    int ind = y[i];
+    out[ind] += x[i];
+  }
+  return out;
+}
+'
+)
+
+aggr(c(2.0, -2.1, 3.1, 4.2), c(2, 2, 1, 0), 3)
+
+cppFunction(
+'int aggrInd(NumericVector x, NumericVector y, int k) {
+  int n = x.size();
+  NumericVector temp(k);
+
+  for (int i = 0; i < n; i++) {
+    temp[y[i]] += x[i];
+  }
+
+  int out = 0;
+  double mm = temp[0];
+
+  for (int l = 0; l < k; l++) {
+    if (temp[l] > mm) {
+      out = l;
+      mm = temp[l];
+    }
+  }
+  return out;
+}
+'
+)
+
+aggrInd(c(2.0, 3.0, 3.1, 4.2), c(2, 2, 1, 0), 3)
+
+
+cppFunction(
+'NumericVector greedoC(NumericMatrix x, NumericVector y, int k) {
+  int nrow = x.nrow();
+  NumericVector temp(k);
+
+  for (int i = 0; i < nrow; i++) {
+    for (int l = 0; l < k; l++) {
+      temp[l] = 0;
+    }
+    for (int j = 0; j < nrow; j++) {
+      temp(y[j]) += x(i, j);
+    }
+    temp(y[i]) -= x(i,i);
+    double mm = temp[0];
+    int ind = 0;
+    for (int l = 0; l < k; l++) {
+      if (temp[l] > mm) {
+        mm = temp[l];
+        ind = l;
+      }
+    }
+    y[i] = ind;
+  }
+  return y;
+}'
+)
+
+proc.time()
+Bclusters2 <- greedo(B, Bclusters, 1)
+proc.time()
+
+Bclusters2 <- greedoC(B, Bclusters - 1, max(Bclusters))
+
+
+rowSumsC(B)
+
+
 modularity(B, Bclusters)
 modularity(B, Bclusters2)
 ```
