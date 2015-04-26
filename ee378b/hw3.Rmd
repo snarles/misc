@@ -70,5 +70,11 @@ eigencoords <- function(m, k = 2) {
 }
 ```
 
-```{r}
+Compare how well laplacian, normalized laplacian, and modularity matrix perform for two-cluster case.
+
+```{r fig.width=7, fig.height=6}
+isqrtD <- diag(1/sqrt(diag(D)))
+L <- A - D
+L_norm <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
+mod_search(B, coords1, search_inds, TRUE)
 ```
