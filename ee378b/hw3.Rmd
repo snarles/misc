@@ -16,8 +16,9 @@ library(parallel)
 library(rARPACK)
 library(magrittr)
 library(graph)
+library(Rcpp)
 list.files("ee378b")
-temp <- as.matrix(read.table("ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
+temp <- as.matrix(read.table("~/misc/ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
 apply(temp, 2, min)
 apply(temp, 2, max)
 A <- ftM2adjM(temp)
@@ -70,9 +71,9 @@ Compare how well laplacian, normalized laplacian, and modularity matrix perform 
 B <- modularity_mat(A)
 n <- dim(A)[1]
 search_inds <- floor(seq(n/200, n, n/100))
-isqrtD <- diag(1/sqrt(diag(D)))
+isqrt_d <- 1/sqrt(diag(D))
 L <- A - D
-N <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
+N <- A %>% { . * isqrt_d } %>% { t(.) * isqrt_d } - diag(rep(1, n))
 L_coords <- eigencoords(L, 1)
 plot(search_inds/n, mod_search(B, L_coords, search_inds, TRUE, 6), 
      xlab = "split size (%)", ylab = "modularity")
@@ -174,61 +175,7 @@ modularity(B, clusters %>% {.[ind] <- lbl; .})
 Try one (big) iteration of greedy algorithm.
 
 ```{r}
-greedo <- function(B, clusters, n_its = 1) {
-  n <- dim(B)[1]
-  k <- max(clusters)
-  for (it in 1:n_its) {
-    for (i in 1:n) {
-      bonds <- sapply(1:k, function(j) sum(B[i, clusters == j]))
-      clusters[i] <- order(-bonds)[1]
-    }
-  }
-  clusters
-}
-
 library(Rcpp)
-
-cppFunction(
-'NumericVector aggr(NumericVector x, NumericVector y, int k) {
-  int n = x.size();
-  NumericVector out(k);
-
-  for (int i = 0; i < n; i++) {
-    int ind = y[i];
-    out[ind] += x[i];
-  }
-  return out;
-}
-'
-)
-
-aggr(c(2.0, -2.1, 3.1, 4.2), c(2, 2, 1, 0), 3)
-
-cppFunction(
-'int aggrInd(NumericVector x, NumericVector y, int k) {
-  int n = x.size();
-  NumericVector temp(k);
-
-  for (int i = 0; i < n; i++) {
-    temp[y[i]] += x[i];
-  }
-
-  int out = 0;
-  double mm = temp[0];
-
-  for (int l = 0; l < k; l++) {
-    if (temp[l] > mm) {
-      out = l;
-      mm = temp[l];
-    }
-  }
-  return out;
-}
-'
-)
-
-aggrInd(c(2.0, 3.0, 3.1, 4.2), c(2, 2, 1, 0), 3)
-
 
 cppFunction(
 'NumericVector greedoC(NumericMatrix x, NumericVector y, int k) {
@@ -257,24 +204,49 @@ cppFunction(
 }'
 )
 
-proc.time()
-Bclusters2 <- greedo(B, Bclusters, 1)
-proc.time()
+greedo <- function(B, clusters, n_its = 1) {
+  n <- dim(B)[1]
+  k <- max(clusters)
+  oldclusters <- clusters
+  it <- 0
+  flag <- TRUE
+  while (flag) {
+    clusters <- greedoC(B, clusters - 1, k) + 1
+    it <- it + 1
+    if (it > n_its) flag <- FALSE
+    if (identical(clusters, oldclusters)) flag <- FALSE
+    oldclusters <- clusters
+  }
+  clusters
+}
 
-Bclusters2 <- greedoC(B, Bclusters - 1, max(Bclusters))
-
-
-rowSumsC(B)
-
-
-modularity(B, Bclusters)
-modularity(B, Bclusters2)
 ```
 
 Try with random intializations.
-```{r}
-#K_cluster <- 100
-#rand_inits <- lapply(1:10, function(v) {set.seed(v); sample(K_cluster, n, TRUE) })
-#updated <- mclapply(rand_inits, function(v) greedo(B, v, 10), mc.cores = 5)
+```{r fig.width=7, fig.height=6}
+scores <- matrix(0, 3, 10)
+K_cluster <- 100
+rand_inits <- lapply(1:10, function(v) {set.seed(v); sample(K_cluster, n, TRUE) })
+updated <- mclapply(rand_inits, function(v) greedo(B, v, 10), mc.cores = 5)
+scores[1, ] <- sapply(updated, function(v) modularity(B, v))
+updated <- mclapply(updated, function(v) greedo(B, v, 10), mc.cores = 5)
+scores[2, ] <- sapply(updated, function(v) modularity(B, v))
+updated <- mclapply(updated, function(v) greedo(B, v, 20), mc.cores = 5)
+scores[3, ] <- sapply(updated, function(v) modularity(B, v))
+
+plot(c(10, 20, 40)[row(scores)], scores, xlab = "iterations", ylab = "modularity")
+title("Modularity vs iterations")
+max(scores) ## 22578.21
 ```
 
+Initialize using previous.
+```{r}
+Lclusters2 <- greedo(B, Lclusters, 30)
+modularity(B, Lclusters2)  ## 19038.78
+
+Nclusters2 <- greedo(B, Nclusters, 30)
+modularity(B, Nclusters2)  ## 20749.83
+
+Bclusters2 <- greedo(B, Bclusters, 30)
+modularity(B, Bclusters2) ## 23328.13
+```
