@@ -1,0 +1,74 @@
+---
+title: Charles Zheng EE 378b HW 2
+output:
+  html_document:
+    mathjax: default
+---
+
+Charles Zheng EE 378b HW 3
+========================================================
+
+# Setup
+
+Loading the data:
+
+```{r}
+library(magrittr)
+library(graph)
+list.files("ee378b")
+temp <- as.matrix(read.table("ee378b/CA-GrQc.txt", sep = "\t", skip = 4))
+apply(temp, 2, min)
+apply(temp, 2, max)
+A <- ftM2adjM(temp)
+dim(A) # 5242 5242
+diag(A) <- 0
+D <- diag(apply(A, 1, sum))
+#onezz <- matrix(1, 5242, 5242)
+coords1 <- eigencoords(A - D, 1)
+B <- modularity_mat(A)
+n <- dim(A)[1]
+seq1 <- rbinom(n, 1, .5)
+modularity(B, seq1)
+summary(coords1)
+modularity(B, coords1 > 0)
+search_inds <- floor(seq(n/200, n, n/100))
+search_inds
+mods <- mod_search(B, coords1, search_inds, TRUE)
+```
+
+Define the following functions:
+```{r}
+modularity_mat <- function(A) {
+  d <- apply(A, 1, sum)
+  m2 <- sum(d)
+  A - 1/m2 * d %*% t(d)
+}
+
+modularity <- function(B, clusters) {
+  k <- length(unique(clusters))
+  mod <- 0
+  for (i in unique(clusters)) {
+    mod<- mod + sum(B[clusters == i, clusters == i])
+  }
+  mod
+}
+
+mod_search <- function(B, vec, inds, all_values = FALSE) {
+  svec <- sort(vec)
+  mods <- numeric(length(inds))
+  for (i in 1:length(inds)) {
+    mods[i] <- modularity(B, vec > svec[inds[i]])
+  }
+  if (all_values) return(mods)
+  vec > (svec[mods == min(mods)])
+}
+
+eigencoords <- function(m, k = 2) {
+  res <- eigen(m)
+  if (k == 1) return(res$vectors[, 1])
+  apply(res$vectors[, 1:k], 1, function(v) v/sqrt(sum(v^2)))
+}
+```
+
+```{r}
+```
