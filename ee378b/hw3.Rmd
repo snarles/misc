@@ -46,11 +46,14 @@ modularity <- function(B, clusters) {
   mod
 }
 
-mod_search <- function(B, vec, inds, all_values = FALSE) {
+mod_search <- function(B, vec, inds, all_values = FALSE, mc = 0) {
   svec <- sort(vec)
   ff <- function(ind) modularity(B, vec > svec[ind])
-  #mods <- unlist(mclapply(inds, ff, mc.cores = 6))
-  mods <- sapply(inds, ff)
+  if (mc > 0) {
+    mods <- unlist(mclapply(inds, ff, mc.cores = mc))
+  } else {
+    mods <- sapply(inds, ff)  
+  }
   if (all_values) return(mods)
   vec > (svec[mods == min(mods)])
 }
@@ -70,16 +73,16 @@ n <- dim(A)[1]
 search_inds <- floor(seq(n/200, n, n/100))
 isqrtD <- diag(1/sqrt(diag(D)))
 L <- A - D
-L_norm <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
+N <- isqrtD %*% A %*% isqrtD - diag(rep(1, n))
 L_coords <- eigencoords(L, 1)
-plot(mod_search(B, L_coords, search_inds, TRUE))
+plot(mod_search(B, L_coords, search_inds, TRUE, 6))
 title("Laplacian")
 ```
 
 Normalized laplacian
 ```{r fig.width=7, fig.height=6}
-Ln_coords <- eigencoords(L_norm, 1)
-plot(mod_search(B, Ln_coords, search_inds, TRUE))
+N_coords <- eigencoords(N, 1)
+plot(mod_search(B, N_coords, search_inds, TRUE, 6))
 title("Normalized laplacian")
 ```
 
@@ -113,7 +116,7 @@ itersplit <- function(B, mat, search_K, min_dim = 20, current_inds = 1:dim(B)[1]
   sn <- length(current_inds)
   search_inds <- floor(seq(min_dim, sn - min_dim, sn/search_K))
   mods <- mod_search(sB, coords, search_inds, TRUE)
-  if (diagnostic) catn(paste0(pref, paste(mods, collapse = " ")))
+  #if (diagnostic) catn(paste0(pref, paste(mods, collapse = " ")))
   mod0 <- sum(sB)
   if (max(mods) < mod0) {
     if (diagnostic) catn(paste0(pref, ": Sum too small"))
@@ -133,7 +136,38 @@ itersplit <- function(B, mat, search_K, min_dim = 20, current_inds = 1:dim(B)[1]
   clusters
 }
 
-res <- itersplit(B, B, 20, diagnostic = TRUE)
-res <- itersplit(B, L, 10, diagnostic = TRUE)
+Bclusters <- itersplit(B, B, 20, diagnostic = FALSE)
+modularity(B, Bclusters)
+Lclusters <- itersplit(B, L, 20, diagnostic = FALSE)
+modularity(B, Lclusters)
+Nclusters <- itersplit(B, N, 20, diagnostic = FALSE)
+modularity(B, Nclusters)
+```
 
+# Greedy stuff.
+
+Quickly (?) compute change in modularity
+
+```{r}
+# computes change in modularity from switching ind to label
+mod_change <- function(B, clusters, ind, lbl) {
+  others <- rep(TRUE, dim(B)[1]) %>% {.[ind] <- FALSE; .}
+  new_neighbors <- others & (clusters == lbl)
+  old_neighbors <- others & (clusters == clusters[ind])
+  2 * (sum(B[ind, new_neighbors]) - sum(B[ind, old_neighbors]))
+}
+
+# test the method
+clusters <- Bclusters
+ind <- 2
+lbl <- 2
+modularity(B, clusters)
+modularity(B, clusters) + mod_change(B, clusters, ind, lbl)
+modularity(B, clusters %>% {.[ind] <- lbl; .})
+```
+
+```{r}
+greedo <- function(B, clusters, n_its = 10) {
+  
+}
 ```
