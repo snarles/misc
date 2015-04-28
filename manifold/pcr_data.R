@@ -9,16 +9,34 @@ if ("rstudio" %in% lf) (ddir <- "/home/rstudio/stat312data")
 list.files(ddir)
 
 ## questionnaire data
-qdata <- as.matrix(read.csv(paste0(ddir, "/data.csv"), header = TRUE, sep = '\t')[, 1:163]) %>% scale()
-filtered_resp <- qdata
+rawdata <- read.csv(paste0(ddir, "/data.csv"), header = TRUE, sep = '\t')
+qdata <- rawdata[, 1:163] %>% as.matrix() %>% scale()
+odata <- rawdata[, 164:169]
+image(cor(qdata), zlim = c(0, 1), col = gray(0:10/10))
+
+res <- kmeans(t(qdata), 20)
+
+temp <- read.csv(paste0(ddir, '/codebook.csv'), sep = '\t', header = FALSE, stringsAsFactors = FALSE)
+codebook <- character(); codebook[temp[,1]] <- temp[, 2]
+
+## view cluster results
+
+cc <- cor(qdata)
+
+library(corrplot)
+
+i <- 0
+i <- i + 1
+filt <- res$cluster == i
+codebook[colnames(qdata)[filt]]
+corrplot(cc[filt, filt], main = paste(i))
 
 ## fMRI data
-train_resp <- read.csv(paste0(ddir, "/train_resp_all.csv"), header = FALSE) %>%
-  t()%>% scale()
-good_vox <- (apply(train_resp, 2, function(v) sum(is.na(v))) == 0)
-sum(good_vox)
-filtered_resp <- train_resp[, good_vox]
-dim(filtered_resp) #1750 22733
+#train_resp <- paste0(ddir, "/train_resp_all.csv") %>% read.csv(header = FALSE) %>%
+#  t()%>% scale()
+#good_vox <- (apply(train_resp, 2, function(v) sum(is.na(v))) == 0)
+#sum(good_vox)
+#filtered_resp <- train_resp[, good_vox]
 
 all_cache <- list()
 n_train <- 100
