@@ -1,9 +1,0 @@
-Package: nuclear
-Title: Solve Nuclear-Norm Regularized Problems
-Version: 0.0.0.9000
-Authors@R: 'Charles Zheng <snarles@stanford.edu> [aut, cre]'
-Description: Hazan, Elad. "Sparse approximate solutions to semidefinite programs" (2008). Jaggi, Martin and Sulovsk, M. "A simple algorithm for nuclear norm regularized problems" (2010)
-Depends: R (>= 3.1.2)
-License: GPL (>= 2)
-LazyData: true
-Imports: rARPACK
