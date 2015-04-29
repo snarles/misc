@@ -1,9 +1,9 @@
 Package: metalearning
-Title: What the Package Does (one line, title case)
+Title: Joint modeling of related datasets
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Authors@R: person("Charles", "Zheng", , "snarles@stanford.edu", role = c("aut", "cre"))
+Description: Fits a family of models to a family of datasets with shared covariates.
 Depends: R (>= 3.1.3)
-License: What license is it under?
+License: GPL-2
 LazyData: true
-Imports: protoclust
+Imports: rARPACK, Rcpp
