@@ -1,0 +1,86 @@
+---
+title: "Robustness of Knockoffs in Realistic Settings"
+author: "Charles Zheng"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+The knockoff filter (Barber and Candes 2014) is a method for controlling false discovery rate for
+linear regression coefficients.
+
+## False discovery rate
+
+The Type I error criteria used in Barber and Candes (2014) is the false discovery rate.
+The criteria is defined as
+
+$$
+FDR = E[V/\max(1,R)]
+$$
+
+where $V$ is the number of false rejections (negatives rejected) and $R$ is the total number of rejections.
+Therefore we should see in practice that applying the knockoff filter with FDR threshold $q$,
+over many datasets $(X^{(1)}, Y^{(1)}), ... , (X^{(m)}, Y^{(m)})$, the counts of false rejections $V^{(i)}$ and total rejections $R^{(i)}$ should satisfy
+$$
+q > \frac{1}{m}\sum_{i=1}^m \frac{V^{(i)}}{\max(1, R^{(i)})}
+$$
+or 
+$$
+q \approx \frac{1}{m}\sum_{i=1}^m \frac{V^{(i)}}{\max(1, R^{(i)})}
+$$
+
+## Validation
+
+The knockoff filter was derived under a number of assumptions which are unlikely to hold in real data, namely:
+
+- Linearity of the expectation of the respose in relation to the covariates
+- Gaussianity of the noise
+- Homoscedasticity and independence of the noise
+
+Therefore, it is important to know how the Type I error of the procedure is affected in realistic settings
+where these assumptions are violated.
+
+A major obstacle to validating any inference procedure in real data is that the "true" regression coefficients are unknown.  Therefore, it is difficult to tell when actual Type I errors are made.  In light of this difficulty, we resort to creating artificial variables and including them in the inference procedure as known negatives
+
+## Styles
+
+The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+
+    output: 
+      rmarkdown::html_vignette:
+        css: mystyles.css
+
+## Figures
+
+The figure sizes have been customised so that you can easily put two images side-by-side. 
+
+```{r, fig.show='hold'}
+plot(1:10)
+plot(10:1)
+```
+
+You can enable figure captions by `fig_caption: yes` in YAML:
+
+    output:
+      rmarkdown::html_vignette:
+        fig_caption: yes
+
+Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+
+## More Examples
+
+You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(mtcars, 10))
+```
+
+Also a quote using `>`:
+
+> "He who gives up [code] safety for [code] speed deserves neither."
+([via](https://twitter.com/hadleywickham/status/504368538874703872))
