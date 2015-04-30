@@ -1,0 +1,109 @@
+---
+title: "Robustness of Knockoffs in Realistic Settings"
+author: "Charles Zheng"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+The knockoff filter (Barber and Candes 2014) is a method for controlling false discovery rate for
+linear regression coefficients.
+
+## False discovery rate
+
+The Type I error criteria used in Barber and Candes (2014) is the false discovery rate.
+The criteria is defined as
+
+$$
+FDR = E[V/\max(1,R)]
+$$
+
+where $V$ is the number of false rejections (negatives rejected) and $R$ is the total number of rejections.
+Therefore we should see in practice that applying the knockoff filter with FDR threshold $q$,
+over many datasets $(X^{(1)}, Y^{(1)}), ... , (X^{(m)}, Y^{(m)})$, the counts of false rejections $V^{(i)}$ and total rejections $R^{(i)}$ should satisfy
+$$
+q > \frac{1}{m}\sum_{i=1}^m \frac{V^{(i)}}{\max(1, R^{(i)})}
+$$
+or 
+$$
+q \approx \frac{1}{m}\sum_{i=1}^m \frac{V^{(i)}}{\max(1, R^{(i)})}
+$$
+
+## Validation
+
+The knockoff filter was derived under a number of assumptions which are unlikely to hold in real data, namely:
+
+- Linearity of the expectation of the respose in relation to the covariates
+- Gaussianity of the noise
+- Homoscedasticity and independence of the noise
+
+Therefore, it is important to know how the Type I error of the procedure is affected in realistic settings
+where these assumptions are violated.
+
+A major obstacle to validating any inference procedure in real data is that the "true" regression coefficients are unknown.  Therefore, it is difficult to tell when actual Type I errors are made.  In light of this difficulty, we resort to creating artificial variables and including them in the inference procedure as known negatives
+
+## Prostate Data
+
+We separate the covariates and response
+
+```{r}
+library(reginference)
+data(prostate)
+x <- prostate[, 1:8]
+y <- prostate[, 9]
+```
+
+We create artificial covariates.
+NOTE: The knockoff procedure itself also creates artificial knockoff 'covariates'.
+The variables created in this step are NOT to be confused with the knockoffs created by the knockoff procedure itself.
+These variables are known negatives which are used to externally validate the knockoff procedure.
+
+```{r}
+x_false <- noised_projections(x, sigma = 0.1, q = 20)
+x_aug <- cbind(x, x_false)
+```
+
+Now apply the knockoff procedure with FDR $q = 0.2$:
+```{r}
+sel <- knockoff::knockoff.filter(x_aug, y, fdr = 0.2)$selected
+```
+
+Compute the fdp
+```{r}
+sum(names(sel) %in% colnames(x_false))/max(1, length(sel))
+```
+
+## Experiments
+
+The following function performs the experiment with given FDR-thresholds, number of artificial variates, and noise level of aritificial variates, and returns the average FDP over repeated trials.
+
+```{r}
+knockoff_experiment <- function(x, y, fdr, sigma, n_artificial, ntrials) {
+  nq <- length(fdr)
+  results <- matrix(0, ntrials, nq)
+  for (i in 1:ntrials) {
+    x_false <- noised_projections(x, sigma = sigma, n_artificial)
+    x_aug <- cbind(x, x_false)
+    for (j in 1:nq) {
+      sel <- knockoff::knockoff.filter(x_aug, y, fdr = fdr[j])$selected
+      results[i, j] <- sum(names(sel) %in% colnames(x_false))/max(1, length(sel))      
+    }
+  }
+  results
+}
+```
+
+Plot the nominal FDR versus the ground truth FDR (based on artificial variates).
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr)
+abline(0, 1)
+```

@@ -1,0 +1,9 @@
+Package: metalearning
+Title: Joint modeling of related datasets
+Version: 0.0.0.9000
+Authors@R: person("Charles", "Zheng", , "snarles@stanford.edu", role = c("aut", "cre"))
+Description: Fits a family of models to a family of datasets with shared covariates.
+Depends: R (>= 3.1.3)
+License: GPL-2
+LazyData: true
+Imports: rARPACK, Rcpp
