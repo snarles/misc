@@ -78,7 +78,7 @@ Compute the fdp
 sum(names(sel) %in% colnames(x_false))/max(1, length(sel))
 ```
 
-## Experiments
+### Experiments
 
 The following function performs the experiment with given FDR-thresholds, number of artificial variates, and noise level of aritificial variates, and returns the average FDP over repeated trials.
 
@@ -107,3 +107,67 @@ ave_fdr <- apply(res, 2, mean)
 plot(fdr, ave_fdr)
 abline(0, 1)
 ```
+
+## Galaxy Data
+
+```{r}
+data(galaxy)
+x <- galaxy[, 1:4]
+y <- galaxy[, 5]
+```
+
+The knockoff filter fails to control FDR for the galaxy data.
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+```
+
+Could the culprit be nonlinearity? Plot the fitted values of y versus y.
+
+```{r, fig.show='hold'}
+library(magrittr)
+res <- lm(y ~ as.matrix(x))
+plot(y, res$fitted)
+summary(res)
+```
+
+Check the individual scatterplots
+
+```{r, fig.show='hold'}
+layout(matrix(1:4, 2, 2))
+galaxy %$% plot(radial.position, velocity)
+galaxy %$% plot(north.south, velocity)
+galaxy %$% plot(east.west, velocity)
+galaxy %$% plot(angle, velocity)
+layout(1)
+```
+
+There is an interaction between radial position and east-west.
+```{r, eval = FALSE}
+library(rgl)
+galaxy %$% plot3d(radial.position, east.west, velocity)
+```
+
+## Ozone data
+
+```{r}
+data(ozone)
+names(ozone)
+y <- ozone[, 1]
+x <- ozone[, 2:9]
+```
+
+Plot the nominal FDR versus the ground truth FDR (based on artificial variates).
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+```
+
