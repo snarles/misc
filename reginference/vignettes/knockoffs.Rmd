@@ -78,7 +78,7 @@ Compute the fdp
 sum(names(sel) %in% colnames(x_false))/max(1, length(sel))
 ```
 
-## Experiments
+### Experiments
 
 The following function performs the experiment with given FDR-thresholds, number of artificial variates, and noise level of aritificial variates, and returns the average FDP over repeated trials.
 
@@ -106,4 +106,115 @@ res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
 ave_fdr <- apply(res, 2, mean)
 plot(fdr, ave_fdr)
 abline(0, 1)
+```
+
+## Galaxy Data
+
+```{r}
+data(galaxy)
+x <- galaxy[, 1:4]
+y <- galaxy[, 5]
+```
+
+The knockoff filter fails to control FDR for the galaxy data.
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+```
+
+Could the culprit be nonlinearity? Plot the fitted values of y versus y.
+
+```{r, fig.show='hold'}
+library(magrittr)
+res <- lm(y ~ as.matrix(x))
+plot(y, res$fitted)
+summary(res)
+```
+
+Check the individual scatterplots
+
+```{r, fig.show='hold'}
+layout(matrix(1:4, 2, 2))
+galaxy %$% plot(radial.position, velocity)
+galaxy %$% plot(north.south, velocity)
+galaxy %$% plot(east.west, velocity)
+galaxy %$% plot(angle, velocity)
+layout(1)
+```
+
+There is an interaction between radial position and east-west.
+```{r, eval = FALSE}
+library(rgl)
+galaxy %$% plot3d(radial.position, east.west, velocity)
+```
+
+## Ozone data
+
+```{r}
+data(ozone)
+names(ozone)
+y <- ozone[, 1]
+x <- ozone[, 2:9]
+```
+
+Plot the nominal FDR versus the ground truth FDR (based on artificial variates).
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+```
+
+## More data
+
+```{r}
+library(alr4)
+library(alr3)
+data(UN2)
+View(UN2)
+y <- UN2[, 2]
+x <- UN2[, -2]
+```
+
+```{r, fig.show='hold'}
+fdr <- (1:10)/20
+res <- knockoff_experiment(x, y, fdr, 0.1, 10, 200)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+title("UN data FDR")
+#plot(y, x[, 1])
+#plot(y, x[, 2])
+#res <- lm(y ~ as.matrix(x))
+#plot(y, res$fitted)
+#library(rgl)
+plot3d(x[, 1], x[, 2], y)
+#plot(x[, 1], x[, 2])
+#identify(x[, 1], x[, 2])
+```
+
+```{r, fig.show='hold'}
+y <- UN2[-101, 2]
+x <- UN2[-101, -2]
+res <- knockoff_experiment(x, y, fdr, 0.1, 10, 200)
+ave_fdr <- apply(res, 2, mean)
+plot(fdr, ave_fdr, ylim = c(0, 1))
+abline(0, 1)
+title("UN without outlier")
+```
+
+```{r}
+res <- loess(logFertility ~ logPPgdp + Purban, data = UN2)
+help(loess)
+range(UN2$logPPgdp)
+range(UN2$Purban)
+zg <- grid_design(UN2, c(1, 3))
+yg <- predict(res, zg)
+plot3d(zg[, 1], zg[, 3], yg)
 ```
