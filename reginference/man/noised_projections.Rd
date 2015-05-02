@@ -4,7 +4,7 @@
 \alias{noised_projections}
 \title{Create artificial, known negative variables}
 \usage{
-noised_projections(x, sigma = 0.1, q = dim(x)[2], name = "Neg",
+noised_projections(x, sigma = 0.1, q = dim(x)[2], name = NULL,
   adjoin = FALSE)
 }
 \arguments{

@@ -1,0 +1,90 @@
+---
+title: "Simulating (Almost) Linear Models"
+author: "Charles Zheng"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+Linear model:
+
+$$
+y = x_A '\beta + \epsilon
+$$
+where $x_A$ are active variables,
+
+$$
+x_I = x_A' \Gamma + E
+$$
+
+where $x_B$ are inactive variables.
+
+
+Almost-linear model:
+
+$$
+y = x_A' \beta_A +\delta f(x_A) + \epsilon
+$$
+
+while as before,
+
+$$
+x_I = x_A' \Gamma + E
+$$
+
+where $f(x_A)$ is a nonlinear perturbation satisfying $\text{E}[f(x_A) x_A] = 0$
+
+In both the linear and almost-linear model, if we define
+$$
+\beta = \text{E}[x x']^{-1} \text{E}[x y']
+$$
+then
+$$\beta_I = 0$$
+and
+$$\beta_A = \beta_A$$
+
+### Examples of nonlinear functions
+
+Nadaraya-Watson surface:
+
+Let $u_1, .., u_k$ be control points in the space of active variables $\mathcal{X}_A$,
+let $\alpha_1,...,\alpha_k$ be real-valued amplitudes and
+let $w_1,..., w_k$ be weights, and $\phi(x)$ the standard multivariate normal density
+Then define
+$$
+\tilde{f}(x) = \frac{\sum_{i=1}^k w_i \alpha_i \phi(x - u_i)}{\sum_{i=1}^k w_i \phi(x - u_i)}
+$$
+and
+$$
+f(x) = \tilde{f}(x) - \text{E}[\tilde{f}(x) (x - \text{E} x)]' x
+$$
+
+### Code
+
+The following assumes that $x \sim N(0, I)$.
+
+```{r}
+library(reginference)
+
+randn <- function(n, p = n) {
+  matrix(rnorm(n * p), n, p)
+}
+
+x <- randn(100, 3)
+u <- randn(3, 3)
+w <- rep(1, 3)
+y <- rnorm(3)
+
+nw_surface <- function(x, u, v, w, handle = TRUE, normalize = TRUE) {
+  dm <- fastPdist2(x, u)
+  
+}
+random_nw_surface <- function(x, p, k, handle = TRUE, normalize = TRUE) {
+  
+}
+```
