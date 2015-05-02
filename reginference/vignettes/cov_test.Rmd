@@ -1,0 +1,48 @@
+---
+title: "Robustness of Covariance Test"
+author: "Charles Zheng"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Introduction
+
+## UN data
+
+```{r}
+library(reginference)
+library(alr3)
+library(covTest)
+data(UN2)
+dim(UN2) # 193 3
+y <- UN2[, 2]
+x <- UN2[, -2]
+x_false <- noised_projections(x, sigma = 0.1, q = 10)
+x_aug <- cbind(x, x_false)
+resLARS <- lars(as.matrix(x_aug), y)
+res <- covTest(resLARS, as.matrix(x_aug), y)
+inds_thres <- which(res$results[, 3] < 0.05)[1]
+names(x_aug)[abs(res$results[, 1])][1:inds_thres]
+#plot(rep(1:dim(x_aug)[2], 2), c(res$up, res$low)); abline(0, 0)
+names(x_aug)[rej]
+```
+## Prostate Data
+
+```{r}
+data(prostate)
+x <- prostate[, 1:8]
+y <- prostate[, 9]
+summary(lm(y ~ as.matrix(x)))
+dim(x) # 97 8
+x_false <- noised_projections(x, sigma = 0.1, q = 2)
+x_aug <- cbind(x, x_false)
+resLARS <- lars(as.matrix(x_aug), y)
+res <- covTest(resLARS, as.matrix(x_aug), y)
+(inds_thres <- which(res$results[, 3] < 0.05)[1])
+names(x_aug)[abs(res$results[, 1])][1:inds_thres]
+```
+
