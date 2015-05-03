@@ -68,85 +68,97 @@ $$
 \gamma = \text{E}[x x']^{-1} \text{E}[\tilde{f}(x) x]
 $$
 
-### Code
+### Code Demo
 
-The following assumes that $x \sim N(0, I)$.
+Generate random 2-dimensional design points
 
 ```{r}
 library(reginference)
-
-randn <- function(n, p = n) {
-  matrix(rnorm(n * p), n, p)
-}
-
-randu <- function(n, p = n, center = FALSE) {  
-  ans <- matrix(runif(n * p), n, p)
-  if (center) ans <- 2 * (ans - .5)
-  ans
-}
-
-
-nw_surface <- function(x, u, a, w, handle = TRUE, normalize = TRUE) {
-  x <- as.matrix(x)
-  if (!normalize) {
-    f <- function(x) {
-      if (is.null(dim(x))) x <- t(x)
-      x <- as.matrix(x)
-      dm <- fastPdist2(x, u)
-      dm2 <- exp(-(dm^2)/2)
-      dm3 <- t(t(dm2) * w)
-      rs <- rowSums(dm3)
-      dm4 <- dm3/rs
-      as.vector(dm4 %*% a)
-    }
-    if (handle) {
-      return (f)
-
-    } else {
-      return (f(x))
-    }
-  }
-  f0 <- nw_surface(x, u, a, w, TRUE, FALSE)
-  y0 <- f0(x)
-  n <- dim(x)[1]
-  res <- lm(y0 ~ x)
-  gm <- res$coefficients[-1]
-  yadj <- y0 - res$fitted + res$coefficients[1]
-  cc <- mean(yadj)
-  nm <- sqrt(sum((yadj - cc)^2)/n)
-  f <- function(x) {
-    (f0(x) - as.vector(x %*% gm) - cc)/nm
-  }
-  if (handle) return (f)
-  ynew <- (yadj - cc)/nm
-  ynew
-}
-
-random_nw_surface <- function(x, k, handle = TRUE, normalize = TRUE) {
-  x <- as.matrix(x)
-  n <- dim(x)[1]
-  u <- x[sample(n, k), ]
-  w <- rep(1, k)
-  a <- rnorm(k)
-  nw_surface(x, u, a, w, handle, normalize)
-}
-
-
 x <- randn(100, 2)
 u <- randn(3, 2)
 w <- rep(1, 3)
 a <- rnorm(3)
 f <- nw_surface(x, u, a, w)
+```
+
+Check that the function has the desired properties
+
+```{r}
 y <- f(x)
 lm(y ~ x)
+```
+
+Visualize
+
+```{r, eval = FALSE}
 x2 <- randu(1000, 2, TRUE)
 y2 <- f(x2)
 library(rgl)
 plot3d(cbind(x2, y2))
-f2 <- random_nw_surface(x, 10)
-lm(f2(x) ~ x)
-mean(f2(x))
-library(magrittr)
-(z <- cbind(x2, random_nw_surface(x2, 20, FALSE))) %>% plot3d()
+```
 
+## Inference
+
+### Linear case
+
+Generate design matrix, true beta, and nonlinear perturbation
+
+```{r}
+library(reginference)
+p <- 2
+n <- 1000
+sigma_y <- 0.1
+bt <- rnorm(p)
+x <- randn(n, p, colnames = TRUE)
+y <- x %*% bt + sigma_y * rnorm(n)
+```
+
+Generate derived variables
+```{r}
+x_aug <- noised_projections(x, sigma = 0.1, q = 100, adjoin = TRUE)
+colnames(x_aug)[1:20]
+```
+Marginal screening
+```{r}
+colnames(x_aug)[order(abs(cor(x_aug, y)), decreasing = TRUE)][1:10]
+```
+
+Classical regression
+```{r}
+res_c <- lm(y ~ x_aug)
+pvals <- summary(res_c)$coefficients[, 4][-1]
+colnames(x_aug)[order(pvals)][1:10]
+```
+
+Knockoff Filter
+```{r}
+library(knockoff)
+res_k <- knockoff.filter(x, y)
+res_k$selected
+```
+
+### Nonlinear case
+
+```{r}
+pt <- random_nw_surface(x, 100, h = 2, handle = FALSE)
+delta <- 1
+yn <- y + delta * pt
+```
+
+Marginal screening
+```{r}
+colnames(x_aug)[order(abs(cor(x_aug, yn)), decreasing = TRUE)][1:10]
+```
+
+Classical regression
+```{r}
+res_c <- lm(yn ~ x_aug)
+pvals <- summary(res_c)$coefficients[, 4][-1]
+colnames(x_aug)[order(pvals)][1:10]
+```
+
+Knockoff Filter
+```{r}
+res_k <- knockoff.filter(x, yn)
+res_k$selected
 ```

@@ -91,49 +91,87 @@ f(x) = \tilde{f}(x) - \gamma'x
 \gamma = \text{E}[x x']^{-1} \text{E}[\tilde{f}(x) x]
 \]</span></p>
 </div>
-<div id="code" class="section level3">
-<h3>Code</h3>
-<p>The following assumes that <span class="math">\(x \sim N(0, I)\)</span>.</p>
+<div id="code-demo" class="section level3">
+<h3>Code Demo</h3>
+<p>Generate random 2-dimensional design points</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reginference)
-
-randn &lt;-<span class="st"> </span>function(n, <span class="dt">p =</span> n) {
-  <span class="kw">matrix</span>(<span class="kw">rnorm</span>(n *<span class="st"> </span>p), n, p)
-}
-
-x &lt;-<span class="st"> </span><span class="kw">randn</span>(<span class="dv">100</span>, <span class="dv">3</span>)
-u &lt;-<span class="st"> </span><span class="kw">randn</span>(<span class="dv">3</span>, <span class="dv">3</span>)
+x &lt;-<span class="st"> </span><span class="kw">randn</span>(<span class="dv">100</span>, <span class="dv">2</span>)
+u &lt;-<span class="st"> </span><span class="kw">randn</span>(<span class="dv">3</span>, <span class="dv">2</span>)
 w &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">3</span>)
-y &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">3</span>)
-
-nw_surface &lt;-<span class="st"> </span>function(x, u, a, w, <span class="dt">handle =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">TRUE</span>) {
-  if (!normalize) {
-    f &lt;-<span class="st"> </span>function(x) {
-      if (<span class="kw">is.null</span>(<span class="kw">dim</span>(x))) x &lt;-<span class="st"> </span><span class="kw">t</span>(x)
-      dm &lt;-<span class="st"> </span><span class="kw">fastPdist2</span>(x, u)
-      dm2 &lt;-<span class="st"> </span><span class="kw">exp</span>(-(dm^<span class="dv">2</span>)/<span class="dv">2</span>)
-      dm3 &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">t</span>(dm2) *<span class="st"> </span>w)
-      rs &lt;-<span class="st"> </span><span class="kw">rowsum</span>(dm3)
-      dm4 &lt;-<span class="st"> </span>dm3/rs
-      dm4 %*%<span class="st"> </span>a
-    }
-    if (handle) {
-      <span class="kw">return</span> (f)
-
-    } else {
-      <span class="kw">return</span> (<span class="kw">f</span>(x))
-    }
-  }
-  f0 &lt;-<span class="st"> </span><span class="kw">nw_surface</span>(x, u, a, w, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>)
-  y0 &lt;-<span class="st"> </span><span class="kw">f0</span>(x)
-  xc &lt;-<span class="st"> </span><span class="kw">scale</span>(x, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">scale =</span> <span class="ot">FALSE</span>)
-  n &lt;-<span class="st"> </span><span class="kw">dim</span>(x)[<span class="dv">1</span>]
-  efx &lt;-<span class="st"> </span><span class="kw">colSums</span>(f0 *<span class="st"> </span>xc)/n
-  
-}
-
-random_nw_surface &lt;-<span class="st"> </span>function(x, p, k, <span class="dt">handle =</span> <span class="ot">TRUE</span>, <span class="dt">normalize =</span> <span class="ot">TRUE</span>) {
-  
-}</code></pre>
+a &lt;-<span class="st"> </span><span class="kw">rnorm</span>(<span class="dv">3</span>)
+f &lt;-<span class="st"> </span><span class="kw">nw_surface</span>(x, u, a, w)</code></pre>
+<p>Check that the function has the desired properties</p>
+<pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> </span><span class="kw">f</span>(x)
+<span class="kw">lm</span>(y ~<span class="st"> </span>x)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ x)
+## 
+## Coefficients:
+## (Intercept)           x1           x2  
+##  -1.297e-15   -6.181e-18   -6.049e-16</code></pre>
+<p>Visualize</p>
+<pre class="sourceCode r"><code class="sourceCode r">x2 &lt;-<span class="st"> </span><span class="kw">randu</span>(<span class="dv">1000</span>, <span class="dv">2</span>, <span class="ot">TRUE</span>)
+y2 &lt;-<span class="st"> </span><span class="kw">f</span>(x2)
+<span class="kw">library</span>(rgl)
+<span class="kw">plot3d</span>(<span class="kw">cbind</span>(x2, y2))</code></pre>
+</div>
+</div>
+<div id="inference" class="section level2">
+<h2>Inference</h2>
+<div id="linear-case" class="section level3">
+<h3>Linear case</h3>
+<p>Generate design matrix, true beta, and nonlinear perturbation</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reginference)
+p &lt;-<span class="st"> </span><span class="dv">2</span>
+n &lt;-<span class="st"> </span><span class="dv">1000</span>
+sigma_y &lt;-<span class="st"> </span><span class="fl">0.1</span>
+bt &lt;-<span class="st"> </span><span class="kw">rnorm</span>(p)
+x &lt;-<span class="st"> </span><span class="kw">randn</span>(n, p, <span class="dt">colnames =</span> <span class="ot">TRUE</span>)
+y &lt;-<span class="st"> </span>x %*%<span class="st"> </span>bt +<span class="st"> </span>sigma_y *<span class="st"> </span><span class="kw">rnorm</span>(n)</code></pre>
+<p>Generate derived variables</p>
+<pre class="sourceCode r"><code class="sourceCode r">x_aug &lt;-<span class="st"> </span><span class="kw">noised_projections</span>(x, <span class="dt">sigma =</span> <span class="fl">0.1</span>, <span class="dt">q =</span> <span class="dv">100</span>, <span class="dt">adjoin =</span> <span class="ot">TRUE</span>)
+<span class="kw">colnames</span>(x_aug)[<span class="dv">1</span>:<span class="dv">20</span>]</code></pre>
+<pre><code>##  [1] &quot;V1&quot;    &quot;V2&quot;    &quot;Neg1&quot;  &quot;Neg2&quot;  &quot;Neg3&quot;  &quot;Neg4&quot;  &quot;Neg5&quot;  &quot;Neg6&quot; 
+##  [9] &quot;Neg7&quot;  &quot;Neg8&quot;  &quot;Neg9&quot;  &quot;Neg10&quot; &quot;Neg11&quot; &quot;Neg12&quot; &quot;Neg13&quot; &quot;Neg14&quot;
+## [17] &quot;Neg15&quot; &quot;Neg16&quot; &quot;Neg17&quot; &quot;Neg18&quot;</code></pre>
+<p>Marginal screening</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(x_aug)[<span class="kw">order</span>(<span class="kw">abs</span>(<span class="kw">cor</span>(x_aug, y)), <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)][<span class="dv">1</span>:<span class="dv">10</span>]</code></pre>
+<pre><code>##  [1] &quot;V1&quot;    &quot;V2&quot;    &quot;Neg41&quot; &quot;Neg39&quot; &quot;Neg62&quot; &quot;Neg8&quot;  &quot;Neg27&quot; &quot;Neg20&quot;
+##  [9] &quot;Neg98&quot; &quot;Neg59&quot;</code></pre>
+<p>Classical regression</p>
+<pre class="sourceCode r"><code class="sourceCode r">res_c &lt;-<span class="st"> </span><span class="kw">lm</span>(y ~<span class="st"> </span>x_aug)
+pvals &lt;-<span class="st"> </span><span class="kw">summary</span>(res_c)$coefficients[, <span class="dv">4</span>][-<span class="dv">1</span>]
+<span class="kw">colnames</span>(x_aug)[<span class="kw">order</span>(pvals)][<span class="dv">1</span>:<span class="dv">10</span>]</code></pre>
+<pre><code>##  [1] &quot;V1&quot;    &quot;V2&quot;    &quot;Neg98&quot; &quot;Neg85&quot; &quot;Neg63&quot; &quot;Neg40&quot; &quot;Neg22&quot; &quot;Neg6&quot; 
+##  [9] &quot;Neg54&quot; &quot;Neg41&quot;</code></pre>
+<p>Knockoff Filter</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knockoff)
+res_k &lt;-<span class="st"> </span><span class="kw">knockoff.filter</span>(x, y)
+res_k$selected</code></pre>
+<pre><code>## V1 V2 
+##  1  2</code></pre>
+</div>
+<div id="nonlinear-case" class="section level3">
+<h3>Nonlinear case</h3>
+<pre class="sourceCode r"><code class="sourceCode r">pt &lt;-<span class="st"> </span><span class="kw">random_nw_surface</span>(x, <span class="dv">100</span>, <span class="dt">h =</span> <span class="dv">2</span>, <span class="dt">handle =</span> <span class="ot">FALSE</span>)
+delta &lt;-<span class="st"> </span><span class="dv">1</span>
+yn &lt;-<span class="st"> </span>y +<span class="st"> </span>delta *<span class="st"> </span>pt</code></pre>
+<p>Marginal screening</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colnames</span>(x_aug)[<span class="kw">order</span>(<span class="kw">abs</span>(<span class="kw">cor</span>(x_aug, yn)), <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)][<span class="dv">1</span>:<span class="dv">10</span>]</code></pre>
+<pre><code>##  [1] &quot;V1&quot;    &quot;V2&quot;    &quot;Neg41&quot; &quot;Neg8&quot;  &quot;Neg81&quot; &quot;Neg20&quot; &quot;Neg27&quot; &quot;Neg29&quot;
+##  [9] &quot;Neg59&quot; &quot;Neg98&quot;</code></pre>
+<p>Classical regression</p>
+<pre class="sourceCode r"><code class="sourceCode r">res_c &lt;-<span class="st"> </span><span class="kw">lm</span>(yn ~<span class="st"> </span>x_aug)
+pvals &lt;-<span class="st"> </span><span class="kw">summary</span>(res_c)$coefficients[, <span class="dv">4</span>][-<span class="dv">1</span>]
+<span class="kw">colnames</span>(x_aug)[<span class="kw">order</span>(pvals)][<span class="dv">1</span>:<span class="dv">10</span>]</code></pre>
+<pre><code>##  [1] &quot;V1&quot;    &quot;V2&quot;    &quot;Neg25&quot; &quot;Neg48&quot; &quot;Neg16&quot; &quot;Neg60&quot; &quot;Neg71&quot; &quot;Neg96&quot;
+##  [9] &quot;Neg67&quot; &quot;Neg26&quot;</code></pre>
+<p>Knockoff Filter</p>
+<pre class="sourceCode r"><code class="sourceCode r">res_k &lt;-<span class="st"> </span><span class="kw">knockoff.filter</span>(x, yn)
+res_k$selected</code></pre>
+<pre><code>## V1 V2 
+##  1  2</code></pre>
 </div>
 </div>
 

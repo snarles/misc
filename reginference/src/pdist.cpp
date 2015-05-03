@@ -31,5 +31,5 @@ NumericMatrix fastPdist2(NumericMatrix Ar, NumericMatrix Br) {
     C.each_col() += An;
     C.each_row() += Bn.t();
  
-    return wrap(sqrt(C)); 
+    return wrap(sqrt(abs(C))); 
 }
