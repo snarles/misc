@@ -105,12 +105,15 @@ Generate design matrix, true beta, and nonlinear perturbation
 
 ```{r}
 library(reginference)
-p <- 2
+library(magrittr)
+p <- 10
 n <- 1000
-sigma_y <- 0.1
+sigma_y <- 3
 bt <- rnorm(p)
 x <- randn(n, p, colnames = TRUE)
-y <- x %*% bt + sigma_y * rnorm(n)
+y0 <- x %*% bt
+noise <- sigma_y * rnorm(n)
+y <- y0 + noise
 ```
 
 Generate derived variables
@@ -139,10 +142,38 @@ res_k$selected
 
 ### Nonlinear case
 
+```{r, fig.show = 'hold', fig.width=5, fig.height=6}
+pt <- random_nw_surface(x, 2, h = 10, handle = FALSE)
+delta <- 2
+yn <- y0 + delta * pt + (sigma_y - delta) * noise
+plot(y0, y0 + delta * pt, pch = '.')
+```
+
+Marginal screening
 ```{r}
-pt <- random_nw_surface(x, 100, h = 2, handle = FALSE)
+colnames(x_aug)[order(abs(cor(x_aug, yn)), decreasing = TRUE)][1:10]
+```
+
+Classical regression
+```{r}
+res_c <- lm(yn ~ x_aug)
+pvals <- summary(res_c)$coefficients[, 4][-1]
+colnames(x_aug)[order(pvals)][1:10]
+```
+
+Knockoff Filter
+```{r}
+res_k <- knockoff.filter(x, yn)
+res_k$selected
+```
+
+### Logistic transform case
+
+```{r, fig.show = 'hold', fig.width=5, fig.height=6}
+lf <- function(x, delta) { 2/delta * (exp(x * delta) - 1)/(1 + exp(x * delta)) }
 delta <- 1
-yn <- y + delta * pt
+yn <- lf(y0, delta) %>% t %>% t + noise
+plot(y0, lf(y0, delta))
 ```
 
 Marginal screening
