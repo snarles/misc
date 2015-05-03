@@ -167,72 +167,11 @@ Plot the nominal FDR versus the ground truth FDR (based on artificial variates).
 ```{r, fig.show='hold'}
 fdr <- (1:10)/20
 res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+res <- knockoff_experiment(x, logistic_truncation(y, ), fdr, 0.1, 30, 20)
+logis
 ave_fdr <- apply(res, 2, mean)
 plot(fdr, ave_fdr, ylim = c(0, 1))
 abline(0, 1)
 ```
 
-## More data
-
-```{r}
-library(alr4)
-library(alr3)
-data(UN2)
-View(UN2)
-y <- UN2[, 2]
-x <- scale(UN2[, -2])
-```
-
-```{r, fig.show='hold'}
-fdr <- (1:10)/20
-res <- knockoff_experiment(x, y, fdr, 0.1, 10, 200)
-ave_fdr <- apply(res, 2, mean)
-plot(fdr, ave_fdr, ylim = c(0, 1))
-abline(0, 1)
-title("UN data FDR")
-plot3d(x[, 1], x[, 2], y)
-```
-
-Visualize curve
-
-```{r}
-res <- loess(logFertility ~ logPPgdp + Purban, data = UN2)
-help(loess)
-range(UN2$logPPgdp)
-range(UN2$Purban)
-zg <- grid_design(UN2, c(1, 3))
-yg <- predict(res, zg)
-plot3d(zg[, 1], zg[, 3], yg)
-```
-
-Confirm that FDR works for fitted data
-```{r, fig.show='hold'}
-n <- dim(x)[1]
-x <- scale(as.matrix(x))
-res_lin <- lm(y ~ x)
-summary(res_lin)
-summary(lm(y ~ x_aug))
-x_false <- noised_projections(x, sigma = 0.1, q = 20)
-x_aug <- cbind(x, x_false)
-summary(lm(res_lin$fitted.values ~ x_aug))
-y_lin <- res_lin$fitted.values + rnorm(n)
-res_k <- knockoff.filter(x_aug, y_lin)
-res_k$selected
-ko <- scale(res_k$knockoff)
-dim(x_aug)
-image(rbind(t(ko) %*% x_aug, x_aug %>% { t(.) %*% .}))
-diag(t(ko) %*% x_aug)
-diag(x_aug %>% { t(.) %*% .})
-plot(t(ko) %*% x_aug, x_aug %>% { t(.) %*% .})
-
-
-plot3d(cbind(x, res_lin$fitted.values))
-res <- knockoff_experiment(x, y_lin, fdr, 0.1, 10, 20)
-ave_fdr <- apply(res, 2, mean)
-plot(fdr, ave_fdr, ylim = c(0, 1))
-abline(0, 1)
-title("Linear UN")
-```
-
-Test if the culprit is nonlinearity: generate a new set
 

@@ -97,3 +97,17 @@ random_nw_surface <- function(x, k, h = 1, handle = TRUE, normalize = TRUE) {
   a <- rnorm(k)
   nw_surface(x, u, a, w, h, handle, normalize)
 }
+
+#' Logistic truncation
+#'
+#' Truncates values to [Kmin, Kmax] smoothly
+#'@param x Values to be truncated
+#'@param k Truncation threshold
+#'@export
+logistic_truncation <- function(x, kmin, kmax) {
+  k <- (kmax - kmin)/4
+  shift <- (kmax + kmin)/2
+  xx <- x - shift
+  ans <- 2 * k * (exp(xx/k) - 1)/(1 + exp(xx/k))
+  ans + shift
+}

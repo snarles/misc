@@ -2,6 +2,7 @@
 
 export(fastPdist2)
 export(grid_design)
+export(logistic_truncation)
 export(noised_projections)
 export(nw_surface)
 export(randn)

@@ -5,7 +5,7 @@ Authors@R: 'Charles Zheng <snarles@stanford.edu> [aut, cre]'
 Description: We propose the following test to validate recent inference procedures: take a real dataset, and construct artificial non-linear transformed and noisy variants of the variables.  Then check the inferences made on those artificial varables.
 Depends: R (>= 3.1.2)
 License: GPL (>= 2)
-LazyData: true
+LazyData: false
 Suggests: knitr, magrittr, rgl, alr4
 VignetteBuilder: knitr
 Imports: knockoff, AlgDesign, covTest, Rcpp (>= 0.11.3)
