@@ -41,7 +41,7 @@ where $f(x_A)$ is a nonlinear perturbation satisfying $\text{E}[f(x_A) x_A] = 0$
 
 In both the linear and almost-linear model, if we define
 $$
-\beta = \text{E}[x x']^{-1} \text{E}[x y']
+\beta = \text{E}[x x']^{-1} \text{E}[y x]
 $$
 then
 $$\beta_I = 0$$
@@ -61,7 +61,11 @@ $$
 $$
 and
 $$
-f(x) = \tilde{f}(x) - \text{E}[\tilde{f}(x) (x - \text{E} x)]' x
+f(x) = \tilde{f}(x) - \gamma'x 
+$$
+where $\gamma$ is defined by
+$$
+\gamma = \text{E}[x x']^{-1} \text{E}[\tilde{f}(x) x]
 $$
 
 ### Code
@@ -75,16 +79,74 @@ randn <- function(n, p = n) {
   matrix(rnorm(n * p), n, p)
 }
 
-x <- randn(100, 3)
-u <- randn(3, 3)
-w <- rep(1, 3)
-y <- rnorm(3)
+randu <- function(n, p = n, center = FALSE) {  
+  ans <- matrix(runif(n * p), n, p)
+  if (center) ans <- 2 * (ans - .5)
+  ans
+}
 
-nw_surface <- function(x, u, v, w, handle = TRUE, normalize = TRUE) {
-  dm <- fastPdist2(x, u)
-  
+
+nw_surface <- function(x, u, a, w, handle = TRUE, normalize = TRUE) {
+  x <- as.matrix(x)
+  if (!normalize) {
+    f <- function(x) {
+      if (is.null(dim(x))) x <- t(x)
+      x <- as.matrix(x)
+      dm <- fastPdist2(x, u)
+      dm2 <- exp(-(dm^2)/2)
+      dm3 <- t(t(dm2) * w)
+      rs <- rowSums(dm3)
+      dm4 <- dm3/rs
+      as.vector(dm4 %*% a)
+    }
+    if (handle) {
+      return (f)
+
+    } else {
+      return (f(x))
+    }
+  }
+  f0 <- nw_surface(x, u, a, w, TRUE, FALSE)
+  y0 <- f0(x)
+  n <- dim(x)[1]
+  res <- lm(y0 ~ x)
+  gm <- res$coefficients[-1]
+  yadj <- y0 - res$fitted + res$coefficients[1]
+  cc <- mean(yadj)
+  nm <- sqrt(sum((yadj - cc)^2)/n)
+  f <- function(x) {
+    (f0(x) - as.vector(x %*% gm) - cc)/nm
+  }
+  if (handle) return (f)
+  ynew <- (yadj - cc)/nm
+  ynew
 }
-random_nw_surface <- function(x, p, k, handle = TRUE, normalize = TRUE) {
-  
+
+random_nw_surface <- function(x, k, handle = TRUE, normalize = TRUE) {
+  x <- as.matrix(x)
+  n <- dim(x)[1]
+  u <- x[sample(n, k), ]
+  w <- rep(1, k)
+  a <- rnorm(k)
+  nw_surface(x, u, a, w, handle, normalize)
 }
+
+
+x <- randn(100, 2)
+u <- randn(3, 2)
+w <- rep(1, 3)
+a <- rnorm(3)
+f <- nw_surface(x, u, a, w)
+y <- f(x)
+lm(y ~ x)
+x2 <- randu(1000, 2, TRUE)
+y2 <- f(x2)
+library(rgl)
+plot3d(cbind(x2, y2))
+f2 <- random_nw_surface(x, 10)
+lm(f2(x) ~ x)
+mean(f2(x))
+library(magrittr)
+(z <- cbind(x2, random_nw_surface(x2, 20, FALSE))) %>% plot3d()
+
 ```
