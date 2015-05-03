@@ -70,7 +70,9 @@ x_aug <- cbind(x, x_false)
 
 Now apply the knockoff procedure with FDR $q = 0.2$:
 ```{r}
-sel <- knockoff::knockoff.filter(x_aug, y, fdr = 0.2)$selected
+range(y)
+sel <- knockoff::knockoff.filter(x_aug, y^3 , fdr = 0.2)$selected
+sel
 ```
 
 Compute the fdp
@@ -103,7 +105,7 @@ Plot the nominal FDR versus the ground truth FDR (based on artificial variates).
 
 ```{r, fig.show='hold'}
 fdr <- (1:10)/20
-res <- knockoff_experiment(x, y, fdr, 0.1, 30, 20)
+res <- knockoff_experiment(x, y^3, fdr, 0.1, 30, 20)
 ave_fdr <- apply(res, 2, mean)
 plot(fdr, ave_fdr)
 abline(0, 1)
