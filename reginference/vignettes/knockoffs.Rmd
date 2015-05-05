@@ -71,7 +71,11 @@ x_aug <- cbind(x, x_false)
 Now apply the knockoff procedure with FDR $q = 0.2$:
 ```{r}
 range(y)
-sel <- knockoff::knockoff.filter(x_aug, y^3 , fdr = 0.2)$selected
+res <- knockoff::knockoff.filter(x_aug, y , fdr = 0.2)
+stats <- res$statistic
+names(stats) <- colnames(x_aug)
+stats <- stats[order(-stats)]
+sel <- res$selected
 sel
 ```
 
@@ -85,7 +89,22 @@ sum(names(sel) %in% colnames(x_false))/max(1, length(sel))
 The following function performs the experiment with given FDR-thresholds, number of artificial variates, and noise level of aritificial variates, and returns the average FDP over repeated trials.
 
 ```{r}
-knockoff_experiment <- function(x, y, fdr, sigma, n_artificial, ntrials) {
+knockoff_experiment1 <- function(x, y, fdr, sigma, n_artificial, ntrials) {
+  nq <- length(fdr)
+  results <- matrix(0, ntrials, nq)
+  for (i in 1:ntrials) {
+    x_false <- noised_projections(x, sigma = sigma, n_artificial)
+    x_aug <- cbind(x, x_false)
+    for (j in 1:nq) {
+      sel <- knockoff::knockoff.filter(x_aug, y, fdr = fdr[j],
+                                       threshold = "knockoff")$selected
+      results[i, j] <- sum(names(sel) %in% colnames(x_false))/(1/fdr[j] +  length(sel))      
+    }
+  }
+  results
+}
+
+knockoff_experiment2 <- function(x, y, fdr, sigma, n_artificial, ntrials) {
   nq <- length(fdr)
   results <- matrix(0, ntrials, nq)
   for (i in 1:ntrials) {
