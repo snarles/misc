@@ -5,23 +5,34 @@ output:
     mathjax: default
 ---
 
-Charles Zheng EE 378b HW 2
+Charles Zheng EE 378b HW 5
 ========================================================
 
-# Method:
+# 1
 
-Define a distance metric as follows:
-$$
-d(x, y) = 1 - \frac{\sum_i x_i y_i I_{x_i \neq NA}I_{y_i \neq NA}}{
-\sqrt{\sum_i x_i^2 I_{x_i \neq NA}}
-\sqrt{\sum_i y_i^2 I_{y_i \neq NA}}
-}
-$$
+Load the data
+```{r}
+setwd('~/github/misc/ee378b')
+cities <- read.table('cities.txt', sep = '\t', skip = 2)
+colnames(cities) <- c('city', 'latdeg', 'latmin', 'longdeg', 'longmin')
+lats <- cities$latdeg + cities$latmin/60
+longs <- cities$longdeg + cities$longmin/60
+```
 
-Let $S$ be the 44 x 44 matrix of pairwise distances.
-Define $A = \exp(-S/(2\sigma^2))$ and define the Laplacian as
-$L = I - D^{-1/2}A D^{-1/2}$.
-Compute the $d$ smallest eigenvectors of the Laplacian and use $k$-means.
+Convert to 3d coordinates
+
+```{r}
+z <- sin(pi * lats/180)
+y <- cos(pi * lats/180) * sin(pi * longs/180)
+x <- cos(pi * lats/180) * cos(pi * longs/180)
+pos <- cbind(x, y, z)
+```
+
+Compute inner products and convert to arc distance
+```{r}
+ips <- pos %*% t(pos)
+```
+
 
 # Setup
 
