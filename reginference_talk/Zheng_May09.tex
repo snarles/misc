@@ -172,11 +172,14 @@ Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
 \frametitle{Knockoff filter}
 \begin{itemize}
 \item (2014) Barber and Cand\'{e}s
-\item \emph{Finite sample} $Y \sim N(X\beta, \sigma^2 I)$, $n \leq p$
-\item Extension to $p > n$ forthcoming...
+\item \emph{Finite sample} $Y \sim N(X\beta, \sigma^2 I)$, $n \leq p$, control FDR
+\item Extension to $p > n$, FWER control, etc. forthcoming...
 \end{itemize}
 \begin{center}
-\includegraphics[scale = 0.25]{knockoff.png}
+\begin{tabular}{cc}
+\includegraphics[scale = 0.25]{knockoff.png} &
+\includegraphics[scale = 0.5, trim=0in -1in 0.5in 0in, clip]{knockoff2.png}
+\end{tabular}
 \end{center}
 \end{frame}
 
@@ -265,9 +268,121 @@ where $\Gamma$ is a fixed matrix and $e \perp x, y$.
 \begin{frame}
 \frametitle{Using SNCs to evaluate procedures}
 \begin{itemize}
-\item Take low-dimensional real data mixed with SNCs (synthetic negative controls): can we identify the real data while controlling Type I error (measured by rejections of SNCs)?
-\item Advantage: easy to find data for your particular application.
+\item Take low-dimensional real data mixed with SNCs (synthetic negative controls), apply inference procedure
+\item \emph{Proxy for Type I error:} Rejected SNCs
+\item \emph{Proxy for Power:} Rejected original variables
 \item If your original data is high-dimensional, apply variable selection to make it low dimensional before conducting this experiment
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial (in R)}
+1. Take the prostate data
+\begin{verbatim}
+> data(prostate)
+> x <- prostate[, 1:8]
+> y <- prostate[, 9]
+> colnames(x)
+[1] "lcavol"  "lweight" "age"     "lbph"    "svi"
+    "lcp"     "gleason" "pgg45"  
+> dim(x)
+[1] 97 8
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial}
+2. Construct 20 synthetic negative controls
+\begin{verbatim}
+> GAMMA <- matrix(rnorm(8 * 20), 8, 20)
+> E <- matrix(rnorm(97 * 20), 97, 20)
+> sncs <- as.matrix(x) %*% GAMMA + 2 * E
+> sncs <- data.frame(sncs)
+> colnames(sncs)
+ [1] "X1"  "X2"  "X3"  "X4"  "X5"  "X6" ...
+[19] "X19" "X20"
+\end{verbatim}
+3. Create combined design matrix
+\begin{verbatim}
+> x2 <- cbind(x, sncs)
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial}
+3. Try marginal screening
+\begin{verbatim}
+> cors <- cor(x2, y)
+> cors[order(-abs(cors)), , drop = F]
+              [,1]
+lcavol   0.7344603
+svi      0.5662182
+lcp      0.5488132
+X6      -0.4591506
+X16      0.4482263
+lweight  0.4333194
+X4      -0.4326898
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial}
+4. Try covariance test
+\begin{verbatim}
+> library(covTest)
+> covTest(lars(as.matrix(x2), y), as.matrix(x2), y)
+$results
+ Predictor_Number Drop_in_covariance P-value
+                1            69.0292  0.0000
+                5             1.5390  0.2219
+                2             6.8094  0.0020
+               11             0.8559  0.4294
+\end{verbatim}
+(Numbers 1, 5, 2 are original, 11 is a SNC)
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial}
+5. Try debiased lasso (code at http://web.stanford.edu/~montanar/sslasso/)
+\begin{verbatim}
+> res <- SSLasso(as.matrix(x2), y)
+[1] "10% done"
+...
+[1] "90% done"
+> rej <- (res$up < 0) | (res$low > 0)
+> names(x2)[rej]
+[1] "lcavol"  "lweight" "svi"    
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{A step-by-step tutorial}
+6. Try knockoffs
+\begin{verbatim}
+> library(knockoff)
+> knockoff.filter(x2, y)
+Call:
+knockoff.filter(X = x2, y = y)
+
+Selected variables:
+lweight      X7 
+      2      15 
+\end{verbatim}
+\end{frame}
+
+\begin{frame}
+\frametitle{More experiments}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Data & $n$ & $p_1$ & Linear? & Gaussian? & Constant $\sigma^2$?\\ \hline
+Galaxy & 323 & 4 & No & OK & No \\ \hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item We add $n-p_1$ synthetic negative controls
+\item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E) = Var(X\Gamma)$
+\item Multiple trials averaging over the randomness of generating SNCs
 \end{itemize}
 \end{frame}
 

@@ -37,16 +37,24 @@ step = seq(nrow(coef1)) - 1)
 xname <- switch(xvar, norm = "|beta|/max|beta|", df = "Df", 
                 arc.length = "Arc Length", step = "Step")
 kk <- 10
+help(png)
+png('knockoff.png', width = 800, height = 600)
 matplot(res$lambda[1:kk], coef1[1:kk, ], xlab = expression(lambda), type = "o", pch = ".", 
-        ylab = "", col = c(rep("blue", 8), rep("red", 8)), lty = 1, cex = 3, cex.lab = 2)
-text(5.55, 1.96, "lcavol", col = "blue")
-text(5.00, 1.18, "K_lcavol", col = "red")
-text(2.78, 1.09, "svi", col = "blue")
-text(2.27, 0.78, "lweight", col = "blue")
-text(1.47, -0.15, "pgg45", col = "blue")
-text(0.57, 0.89, "K_lbph", col = "red")
-text(0.54, -0.63, "K_age", col = "red")
-help(matplot)
-
+        ylab = "", col = c(rep("blue", 8), rep("red", 8)), lty = 1, cex = 5, cex.lab = 3,
+        cex.axis = 2, lwd = 2)
+text(5.55, 1.96, "lcavol", col = "blue", cex = 2)
+text(5.00, 1.18, "K_lcavol", col = "red", cex = 2)
+text(2.78, 1.09, "svi", col = "blue", cex = 2)
+text(2.27, 0.78, "lweight", col = "blue", cex = 2)
+text(1.47, -0.15, "pgg45", col = "blue", cex = 2)
+text(0.57, 0.89, "K_lbph", col = "red", cex = 2)
+text(0.54, -0.63, "K_age", col = "red", cex = 2)
+dev.off()
 
 locator(1)
+
+
+res_k <- knockoff.filter(x, y)
+stats <- res_k$statistic
+names(stats) <- colnames(x)
+t(t(stats[order(-stats)]))
