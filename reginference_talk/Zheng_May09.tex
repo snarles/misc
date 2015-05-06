@@ -110,48 +110,76 @@
 \section{Introduction}
 
 \begin{frame}
-\frametitle{Theory and Practice}
-\begin{center}
-\begin{tabular}{c|c}
-\underline{Theory} & \underline{Practice}\\
-$Y \sim N(\beta' X, \sigma^2 I)$ & $Y, X_1,\hdots, X_p$ \emph{unknown} relationship
-\end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Theory and Practice}
-\begin{center}
-\begin{tabular}{c|c}
-\underline{Theory} & \underline{Practice}\\
-$Y \sim N(\beta' X, \sigma^2 I)$ & $Y, X_1,\hdots, X_p$ \emph{unknown} relationship\\
-$X_i = \begin{cases}
-\text{non-null} & \beta_i \neq 0\\ 
-\text{null} & \beta_i = 0
-\end{cases}$ &
-$X_i = \begin{cases}
-\text{interesting}\\ 
-\text{uninteresting}\\
-\text{???}
-\end{cases}$
-\end{tabular}
-\end{center}
+\frametitle{Problem and motivation}
+\begin{itemize}
+\item $x \in \mathbb{R}^p, y \in \mathbb{R}$ have a joint distribution $P$ where $y|x \sim N(x^T \beta, \sigma^2)$
+\item Observe $X = (x_1, \hdots, x_n)^T$, $Y = (y_1,\hdots, y_n)$ iid
+\item Problem: test $H_i: \beta_0 = i$ for $i = 1,\hdots, p$
+\item Motivation: $x$ are SNPs (mutations), $y$ is phenotype
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Methods}
-\textcolor{white}{But what's actually used in practice?}
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
- & Control & $p \leq n$ &  $p > n$\\ \hline
-Classical inference (Pearson 1930) & Marginal & Yes & \\ \hline
-Covariance test (Lockhart et al. 2014) &  ? & Yes & Yes\\ \hline
-Debiased lasso (Javanmard et al. 2014) & Marginal & & Yes\\ \hline
-Knockoffs (Barber et al. 2014) & FDR & Yes & ? \\ \hline
+ & Control & $p > n$\\ \hline
+Classical inference (Pearson 1930) & Marginal & No \\ \hline
+Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\ \hline
+Debiased lasso (Javanmard et al. 2014) & Marginal & Yes\\ \hline
+Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
  & & & \\ \hline
 \end{tabular}
 \end{center}
 \end{frame}
+
+\begin{frame}
+\frametitle{The LASSO path}
+\[
+\hat{\beta}_\lambda = \text{argmin}_\beta \frac{1}{2}||X\beta - Y||^2 + \lambda ||\beta||_1
+\]
+\begin{center}
+\includegraphics[scale = 0.25]{lasso_path.png}
+\end{center}
+\emph{(Image credit: ??)}
+\end{frame}
+
+\begin{frame}
+\frametitle{Covariance test}
+\begin{itemize}
+\item (2014) Lockhart, Taylor, Tibshirani (x 2)
+\item Standard assumptions $Y \sim N(X\beta, \sigma^2 I)$ + large $p$ asymptotics
+\item \emph{See also} non-asymptotic exact test (Lee, Sun x 2, Taylor 2015)
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.25]{covtest.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Debiased regularized M-estimators}
+\begin{itemize}
+\item (2014) Javanmard and Montanari
+\item Standard assumptions + sparsity condition on $\beta$ + large $n$ and $p$ asymptotics
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.25]{javanmard.png}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Knockoff filter}
+\begin{itemize}
+\item (2014) Barber and Cand\'{e}s
+\item \emph{Finite sample} $Y \sim N(X\beta, \sigma^2 I)$, $n \leq p$
+\item Extension to $p > n$ forthcoming...
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.25]{knockoff.png}
+\end{center}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Methods}
@@ -170,16 +198,8 @@ Knockoffs (Barber et al. 2014) & FDR & Yes & ? \\ \hline
 
 \begin{frame}
 \frametitle{Regression vs Marginal Screening}
-\begin{itemize}
-\item<1-> Why not just test $H_i: \Cov(X_i, Y) \neq 0$?
-\item<1-> \emph{Even if} $Y = X\beta + \epsilon$, most non-null $X_i$ are probably also correlated
-\item<2> In ``big data'' \emph{many} $X_i$ are correlated to $Y$, but \emph{redundant}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Regression vs Marginal Screening}
-Genome-wide association study
+Testing $H_i: \beta_i = 0$ is better than testing $H_i: \Cov(X_i, Y) = 0$
+when you are looking for $X_i$ \emph{directly} linked to $Y$
 \begin{center}
 \begin{tabular}{cc}
 \multirow{5}{*}{\includegraphics[scale = 0.3]{pgm.png}} & \\
@@ -193,28 +213,15 @@ Genome-wide association study
 \end{frame}
 
 \begin{frame}
-\frametitle{From theory to practice}
-\emph{Theory}
-\begin{itemize}
-\item<1-> Theory of inference in linear model
-\item<3-> Theory of robust inference
-\item<4-> Simulation studies
-\item<5-> Validation on real data + \textbf{synthetic negative controls}
-\item<2-> Validation of given procedure in real data with ground truth
-\end{itemize}
-\emph{Practice}
-\end{frame}
-
-\begin{frame}
 \frametitle{Practical Validation}
 \begin{itemize}
-\item Difficult to validate inference procedures, because we would need to know the `\emph{true}' $\beta$
-\item What is the `true' $\beta$ when the linear model is incorrect? We take
+\item These procedures are derived under strong assumptions (and slightly different model, fixed $X$), \emph{how well do they work in real data}?
+\item We could validate inference procedures in real data if only we knew the `\emph{true}' $\beta$, defined as
 \[
 \beta = \E[x x^T]^{-1} \E[yx]
 \]
-(the `superpopulation' model)
-\item We don't know the ground truth in real data... what's the next best thing?
+\item Possibility: take a dataset with large $n$ \emph{and} large $p$ (so we can estimate $\beta$ easily using OLS) and test procedure on a subset $n_0 << n$ of the data
+\item Or...
 \end{itemize}
 \end{frame}
 
@@ -256,40 +263,42 @@ where $\Gamma$ is a fixed matrix and $e \perp x, y$.
 \end{frame}
 
 \begin{frame}
-\frametitle{Using SNCs to investigate robustness}
+\frametitle{Using SNCs to evaluate procedures}
 \begin{itemize}
-\item<1-> All methods considered depend on strong assumptions (e.g. linearity, Gaussian iid errors, sparsity)
-\item<1-> How well do these methods work on real data where assumptions are most likely violated?
-\item<2-> Take low-dimensional real data mixed with SNCs (synthetic negative controls): can we identify the real data while controlling Type I error (measured by rejections of SNCs)?
+\item Take low-dimensional real data mixed with SNCs (synthetic negative controls): can we identify the real data while controlling Type I error (measured by rejections of SNCs)?
+\item Advantage: easy to find data for your particular application.
+\item If your original data is high-dimensional, apply variable selection to make it low dimensional before conducting this experiment
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{What can we conclude?}
+\frametitle{How could this be useful?}
 \begin{itemize}
-\item Experiments using SNCs shows that we can do well on the
-  \emph{hypothesis testing problem} in realistic settings, where
-  assumptions are violated
-\item However, these experiments cannot tell us if we are solving the right problem!
-\item Is the \emph{hypothesis testing problem} even relevant
-  for the application? The only way to tell is validation on real,
-  high-dimensional data with application-specific ground truth.
+\item Poor performance on benchmarks would tell us where our methods need improvement
+\begin{itemize}
+\item Failure to control Type I error on benchmarks indicates a need for methods derived under weaker assumptions
+\item Overly conservative Type I error control indicates a need for methods which are more adaptive to `easy' cases
+\end{itemize}
+\item Possible to run a Kaggle-style competition for \emph{inference} rather than prediction
+\item Recognizing that different procedures can have differing strengths creates room for a diversity of approaches
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Do we still need to validate on real data?}
+\begin{itemize}
+\item SNCs can be used to get an idea of worst-case performance on the \emph{hypothesis testing problem} in realistic settings
+\item However, how can we tell if the regression framework itself is appropriatefor the real-world problem we are trying to solve?
+\item Validation on real data with \emph{scientific} ground truth is still needed
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Closing thoughts}
 \begin{quotation}
-``Statistics is a science in my opinion... for if its methods fail the
-  test of experience -- not the test of logic -- they are discarded.''
-\end{quotation}
-\begin{quotation}
-`` Both the statistician and the client must learn to confront the
-  uncertainties of the world more explicitly, ... never to avoid
-  responsibility for an ever-present understanding that all
-  assumptions underlying data analysis are always approximations.
-  Above all, they must base their thinking on a recognition that their
-  assumptions will always require review and reappraisal...  ''
+`` Both the client and the statistician... must base their thinking on
+  a recognition that their assumptions will always require review and
+  reappraisal...  ''
 \end{quotation}
 \hfill -- John Tukey
 \end{frame}
