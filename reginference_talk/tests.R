@@ -112,7 +112,11 @@ plot(res_pf$fitted.values, pf_y)
 res <- loess(pf_y ~ res_pf$fitted.values)
 plot(res$x, res$fitted)
 
-
+pf16 <- data.frame(pf_x, age = pf_y)
+pf16 <- pf16[, c(signif, T)]
+colnames(pf16)
+pf16 <- pf16[sample(n, 2000), ]
+use_data(pf16)
 
 ## HIV data
 drug_class = 'PI' # Possible drug types are 'PI', 'NRTI', and 'NNRTI'.
@@ -189,6 +193,13 @@ res_HIV$glmnet.fit
 yh <- predict(res_HIV, HIV_x)
 hist(HIV_y - yh)
 plot(yh, HIV_y)
+colnames(HIV_x)
+colnames(HIV_y)
+colnames(Y)
+
+HIV <- data.frame(NFV = HIV_y, HIV_x)
+colnames(HIV)
+
 
 ## fMRI data
 length(train_resp[1, ])
@@ -207,3 +218,7 @@ fMRI_x <- feature_train[, bt[-1] != 0]
 dim(fMRI_x)
 res_fmri <- lm(fMRI_y ~ as.matrix(fMRI_x))
 plot(res_fmri$fitted.values, fMRI_y)
+fMRI <- data.frame(fMRI_x, fMRI_y)
+colnames(fMRI_x) <- paste0("gabor", 1:dim(fMRI_x)[2])
+colnames(fMRI)
+use_data(fMRI)
