@@ -122,13 +122,13 @@
 \begin{frame}
 \frametitle{Methods}
 \begin{center}
-\begin{tabular}{c|c|c|c|c}
+\begin{tabular}{|c|c|c|} \hline
  & Control & $p > n$\\ \hline
 Classical inference (Pearson 1930) & Marginal & No \\ \hline
 Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\ \hline
 Debiased lasso (Javanmard et al. 2014) & Marginal & Yes\\ \hline
 Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
- & & & \\ \hline
+ & &  \\ \hline
 \end{tabular}
 \end{center}
 \end{frame}
@@ -188,13 +188,13 @@ Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
 \frametitle{Methods}
 But what's actually used in practice?
 \begin{center}
-\begin{tabular}{c|c|c|c|c}
- & Control & $p \leq n$ &  $p > n$\\ \hline
-Classical inference (Pearson 1930) & Marginal & Yes & \\ \hline
-Covariance test (Lockhart et al. 2014) &  ? & Yes & Yes\\ \hline
-Debiased lasso (Javanmard et al. 2014) & Marginal & & Yes\\ \hline
-Knockoffs (Barber et al. 2014) & FDR & Yes & ? \\ \hline
-\textbf{Marginal screening} & ? & Yes & Yes \\ \hline
+\begin{tabular}{|c|c|c|} \hline
+ & Control & $p > n$\\ \hline
+Classical inference (Pearson 1930) & Marginal & No \\ \hline
+Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\ \hline
+Debiased lasso (Javanmard et al. 2014) & Marginal & Yes\\ \hline
+Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
+\textbf{Marginal screening} & ??? & Yes \\ \hline
 \end{tabular}
 \end{center}
 \end{frame}
@@ -310,7 +310,7 @@ where $\Gamma$ is a fixed matrix and $e \perp x, y$.
 
 \begin{frame}[fragile]
 \frametitle{A step-by-step tutorial}
-3. Try marginal screening
+4. Try marginal screening
 \begin{verbatim}
 > cors <- cor(x2, y)
 > cors[order(-abs(cors)), , drop = F]
@@ -327,7 +327,7 @@ X4      -0.4326898
 
 \begin{frame}[fragile]
 \frametitle{A step-by-step tutorial}
-4. Try covariance test
+5. Try covariance test
 \begin{verbatim}
 > library(covTest)
 > covTest(lars(as.matrix(x2), y), as.matrix(x2), y)
@@ -343,7 +343,7 @@ $results
 
 \begin{frame}[fragile]
 \frametitle{A step-by-step tutorial}
-5. Try debiased lasso (code at http://web.stanford.edu/~montanar/sslasso/)
+6. Try debiased lasso (code at http://web.stanford.edu/~montanar/sslasso/)
 \begin{verbatim}
 > res <- SSLasso(as.matrix(x2), y)
 [1] "10% done"
@@ -357,7 +357,7 @@ $results
 
 \begin{frame}[fragile]
 \frametitle{A step-by-step tutorial}
-6. Try knockoffs
+7. Try knockoffs
 \begin{verbatim}
 > library(knockoff)
 > knockoff.filter(x2, y)
@@ -371,16 +371,19 @@ lweight      X7
 \end{frame}
 
 \begin{frame}
-\frametitle{More experiments}
+\frametitle{Experiments, part 1}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 Data & $n$ & $p_1$ & Linear? & Gaussian? & Constant $\sigma^2$?\\ \hline
+Personality & 49k & 163 & No & No & No\\ \hline
+fMRI & 1750 & 44 & No & OK & No \\ \hline
+HIV & 842 & 207 & No & Yes? & OK? \\ \hline
 Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item We add $n-p_1$ synthetic negative controls
+\item We add $n/2 - p_1$ synthetic negative controls
 \item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E) = Var(X\Gamma)$
 \item Multiple trials averaging over the randomness of generating SNCs
 \end{itemize}
