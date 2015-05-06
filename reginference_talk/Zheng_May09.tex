@@ -216,15 +216,81 @@ when you are looking for $X_i$ \emph{directly} linked to $Y$
 \end{frame}
 
 \begin{frame}
-\frametitle{Practical Validation}
+\frametitle{Statistical Validation}
 \begin{itemize}
-\item These procedures are derived under strong assumptions (and slightly different model, fixed $X$), \emph{how well do they work in real data}?
-\item We could validate inference procedures in real data if only we knew the `\emph{true}' $\beta$, defined as
+\item<1-> These procedures are derived under strong assumptions (lienarity, gasusianity, homoscedasticty)
+\item<1-> How well do they work in real data where these assumptions are violated?
+\item<1-> We could validate inference procedures in real data if only we knew the `\emph{true}' $\beta$, defined as
 \[
 \beta = \E[x x^T]^{-1} \E[yx]
 \]
-\item Possibility: take a dataset with large $n$ \emph{and} large $p$ (so we can estimate $\beta$ easily using OLS) and test procedure on a subset $n_0 << n$ of the data
-\item Or...
+\item<2-> Possibility: take a dataset with large $p$ and
+  \emph{humongous} $n$, so we can get an extremely precise estimate of
+  $\beta$ using OLS. Then test the high-dimensional inference
+  procedures on subsamples of size $n_0 \leq p < n$ of the data
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: personality data}
+\begin{itemize}
+\item Data with $p = 163$ survey questions from an online personality test, $n = 49086$ (after processing)
+\item Predict self-reported age of respondent, $y$, from their responses
+\item Is $n$ large enough for us to confidently say which $\beta_i = 0$ (for use as ground truth?)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: personality data}
+Coefficient estimates $\pm$ 3 sd
+\begin{center}
+\includegraphics[scale = 0.2]{pf16_coefs.png}
+\end{center}
+Consider declaring all variables whose intervals cross 0 to be null.
+Then $p_1 = 105$ (out of 163)
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: personality data}
+\begin{itemize}
+\item If $n$ were large enough, then for the selected model $S$ we
+  should have $\hat{y} = \sum_{i=1}^p X\hat{\beta}_i$ close to
+  $\hat{y}_S = \sum_{i \in S} X_i \hat{\beta}_i$
+\item But...
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.2]{pf16_modelcheck.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: personality data}
+\begin{itemize}
+\item Here $n$ is not large enough for $p = 163$
+\item If we reduce the dimensionality to 15 by subsampling columns, it looks more convincing that we selected the correct 10 variables
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.2]{pf16_modelcheck2.png}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Dillemma}
+\begin{itemize}
+\item It is by no means \emph{impossible} to get large enough data to estimate high-dimensional $\beta$, with say, $p > 100$
+\item But if were \emph{easy} to get such large $n$ data... we wouldn't need these new inference techniques in the first place!
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why not use simulations?}
+\begin{itemize}
+\item<1> Simulations can be used to test robustness of the procedure
+\item<1> In simulations, we can add all the nonlinearities, nongaussianity, etc. that we want
+\item<2-> Advantage: In simulations, we not only know $\beta$, but exactly how the data is generated
+\item<2-> Advantage: We can vary simulation parameters and get a lot of insight about the procedure being tested
+\item<3> \textbf{Disadvantage:} Are these simulations relevant?  How can we tell the simulated models are realistic?
 \end{itemize}
 \end{frame}
 
@@ -235,20 +301,43 @@ I give you real data \emph{mixed in} with noise variables
 \includegraphics[scale = 0.35]{anc.png}
 \end{center}
 \begin{itemize}
-\item Can you identify the original columns from the noise columns?
-\item I can test your procedure this way, because I know the ground truth!
+\item<1-> Can you identify the original columns from the noise columns?
+\item<2-> I can test your procedure this way, because I know the ground truth!
+\item<3-> \textbf{Caveat}: this test is unrealistically `easy' (due to lack of correlations)
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Synthetic Negative Controls}
+\begin{center}
+\includegraphics[scale = 0.35]{anc.png}
+\end{center}
 \begin{itemize}
-\item<1-> Given random vector $x \in \mathbb{R}^p$, \emph{define} $\tilde{x} \in \mathbb{R}^{p+q}$ by
+\item Synthetic negative controls (SNCs) are artificial columns \emph{which are correlated} to $X$,
+yet still have zero (population) regression coefficients
+\item Suppose I give you real data + SNCs, then you apply high-dimensional inference.
+If you reject any SNCs, we know these are errors!
+\item This gives us some measure of performance on ``real'' data (maybe?)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Synthetic Negative Controls}
+\begin{itemize}
+\item<1-> Given random vector $x \in \mathbb{R}^p$, let $e$ be noise in $\mathbb{R}^p$ independent of $x$.
+\item<1-> Let $\Gamma$ be a fixed $p \times q$ matrix. \emph{Define} synthetic negative controls $z \in \mathbb{R}^{q}$ by
 by
 \[
-\tilde{x} = \begin{pmatrix}I \\ \Gamma\end{pmatrix} x + e
+z = x'\Gamma + e
 \]
-where $\Gamma$ is a fixed matrix and $e \perp x, y$.
+and let $\tilde{x} = (x, z)$, so that 
+\[
+\tilde{x}_1 = x_1,\hdots, \tilde{x}_p = x_p
+\]
+\[
+\tilde{x}_{p+1} = z_1,\hdots, \tilde{x}_{p+q} = z_q
+\]
 \item<2-> Let
 \[
 \beta = \E[xx^T]^{-1}\E[yx], \ \ \tilde{\beta} = \E[\tilde{x}\tilde{x}^T]^{-1} \E[y\tilde{x}]
@@ -260,8 +349,27 @@ where $\Gamma$ is a fixed matrix and $e \perp x, y$.
 \[
 \forall i \in \{p+1,\hdots, p+q\}: \tilde{\beta}_i = 0
 \]
-\item<4->
-\emph{Special case.} $X_{p+1},\hdots, X_{p+q}$ are pure noise: this is when $\Gamma = 0$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Why is this...?}
+\begin{itemize}
+\item<1> Recall that $\hat{\beta}_i$ is the \emph{univariate regression} coefficient of $Y$
+  on $X_{i|-i}$, where $X_{i|-i}$ is the \emph{residual of} $X_i$ after $X_i$ is regressed on the other columns..
+\item<1-> Population version: $\beta_i = 0$ if the projection of $X_i$ on the null space of the other covariates is uncorrelated with $Y$
+\item<2-3> For $i= 1, \hdots, q$, we have 
+\[
+\tilde{X}_{p+i} = x' \Gamma_i + E_i
+\]
+where here $\tilde{X}_{p+1}$ denotes the random variable (not the column of the design matrix)
+\item<3-4> The orthogonal projection $P^\perp_X$ of $\tilde{X}_{p+1}$ is
+\[
+P^\perp_X \tilde{X} = P^\perp_X X \Gamma_i + P^\perp_X E_i = 0 + E_i
+\]
+since $P^\perp_X X = 0$; meanwhile since $E_i \perp X$, $P^\perp_X E_i = E_i$.
+\item<4-5> Since $E_i \perp y$, we have $\text{Cor}(P^\perp_X \tilde{X}_{p+i} , y) = 0$, hence $\tilde{\beta}_{p+i} = 0$
+\item<5-> And since $\tilde{\beta}_j = 0$ for all the added variables $j = p+1,\hdots p+q$, it follows that $\tilde{\beta}_i$ is unchanged for $i = 1,\hdots, p$.
 \end{itemize}
 \end{frame}
 
@@ -271,7 +379,6 @@ where $\Gamma$ is a fixed matrix and $e \perp x, y$.
 \item Take low-dimensional real data mixed with SNCs (synthetic negative controls), apply inference procedure
 \item \emph{Proxy for Type I error:} Rejected SNCs
 \item \emph{Proxy for Power:} Rejected original variables
-\item If your original data is high-dimensional, apply variable selection to make it low dimensional before conducting this experiment
 \end{itemize}
 \end{frame}
 
@@ -371,6 +478,16 @@ lweight      X7
 \end{frame}
 
 \begin{frame}
+\frametitle{Disclaimer!}
+\begin{itemize}
+\item I am \emph{not} proposing SNCs as a methodology for \emph{inference}
+\item There is a danger of inferring \emph{that Type I error has been controlled} from lack of rejection of SNCs.
+There are no formal guarantees of this!
+\item One should interpret results from experiments with SNCs in the same way one interprets simulation results with purely synthetic data
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Experiments, part 1}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -390,24 +507,40 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{frame}
 
 \begin{frame}
-\frametitle{How could this be useful?}
+\frametitle{What are we learning?}
 \begin{itemize}
-\item Poor performance on benchmarks would tell us where our methods need improvement
-\begin{itemize}
-\item Failure to control Type I error on benchmarks indicates a need for methods derived under weaker assumptions
-\item Overly conservative Type I error control indicates a need for methods which are more adaptive to `easy' cases
-\end{itemize}
-\item Possible to run a Kaggle-style competition for \emph{inference} rather than prediction
-\item Recognizing that different procedures can have differing strengths creates room for a diversity of approaches
+\item<1-> \emph{Claim:} Performance on data with \emph{known active variables} + SNCs are informative of how inference procedures generally perform in similar data with \emph{unknown active variables}
+\item<2-> Example (GWAS): There is a new disease (say, liver cancer) where we have little prior info.  I have data for a `similar' disease, (say, stomach cancer) for which I have \emph{partial information} about the relevant causes. In particular, I know \emph{the most important} the genes involved stomach cancer
+\item<2-> Testing your procedure directly on the stomach cancer data is uninformative: if you reject a gene which is not \emph{a priori} known to cause stomach cancer... it could still be a new discovery! 
+\item<3-> Rather than test your inference procedure on the full stomach cancer data, test it on the subset of the \emph{known genes} plus SNCs
+\item<3-> Tricky part: choosing the size of the noise for the SNCs.  To be safe, try several noise levels.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Do we still need to validate on real data?}
+\frametitle{How could this be useful?}
 \begin{itemize}
-\item SNCs can be used to get an idea of worst-case performance on the \emph{hypothesis testing problem} in realistic settings
-\item However, how can we tell if the regression framework itself is appropriatefor the real-world problem we are trying to solve?
-\item Validation on real data with \emph{scientific} ground truth is still needed
+\item<1-> There are no formal guarantees... so what could we gain from using SNC experiments?
+\item<2-> We can complement \emph{theoretical guarantees} with \emph{application-specific benchmarks}
+\item<3-> Poor performance on benchmarks would tell us where our methods need improvement
+\begin{itemize}
+\item Failure to control Type I error on benchmarks indicates a need for methods derived under weaker assumptions
+\item Overly conservative Type I error control indicates a need for methods which are more adaptive to `easy' cases
+\end{itemize}
+\item<4-> Possible to run a Kaggle-style competition for \emph{inference} rather than prediction
+\item<5-> Recognizing that different procedures can have differing strengths creates room for a diversity of approaches
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Do SNCs reduce the need for scientific validation?}
+\begin{itemize}
+\item<1-> The gold standard of validation: obtaining \emph{scientific confirmation} of the \emph{scientific hypotheses} suggested by the inference procedure
+\item<1-> The answer is no: scientific validation is as important as ever.
+\item<2-> SNCs can be used to get an idea of our performance on the \emph{regression hypothesis testing problem} in realistic settings
+\item<2-> However, how can we tell if the \emph{regression hypothesis testing problem} is right framework for the real-world problem we are trying to solve?
+There may be better statistical frameworks, like graphical models, which are a better fit to the problem.
+\item<3> Ultimately, we need the practitioner to measure the value of the results we obtain from the inference procedure.
 \end{itemize}
 \end{frame}
 
@@ -422,6 +555,11 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{frame}
 
 \begin{frame}
+\frametitle{Acknowledgements}
+Thanks to Will Fithian for useful discussions.
+\end{frame}
+
+\begin{frame}
 \frametitle{References}
 \begin{itemize}
 \item Barber, R., and Candes, E. (2014). Controlling the False Discovery Rate via Knockoffs. arXiv Preprint arXiv:1404.5609, 1–27. Retrieved from http://arxiv.org/abs/1404.5609
@@ -431,10 +569,6 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Acknowledgements}
-Thanks to Will Fithian for useful discussions.
-\end{frame}
 
 \end{document}
 
