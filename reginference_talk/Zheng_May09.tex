@@ -493,8 +493,8 @@ There are no formal guarantees of this!
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
 Data & $n$ & $p_1$ & Linear? & Gaussian? & Constant $\sigma^2$?\\ \hline
-Personality & 49k & 163 & No & No & No\\ \hline
-fMRI & 1750 & 44 & No & OK & No \\ \hline
+Personality & 3000 & 163 & No & No & No\\ \hline
+fMRI & 1750 & 53 & No & OK & No \\ \hline
 HIV & 842 & 207 & No & Yes? & OK? \\ \hline
 Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{tabular}
@@ -502,7 +502,7 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \begin{itemize}
 \item We add $n/2 - p_1$ synthetic negative controls
 \item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E)$ is chosen to yield `interesting' results
-\item Multiple trials averaging over the randomness of generating SNCs
+\item Personality data is subsampled
 \end{itemize}
 \end{frame}
 
@@ -630,15 +630,16 @@ Legend: o = OLS, \textcolor{green}{c} = covariance test,
 
 
 \begin{frame}
-\frametitle{What are we learning?}
+\frametitle{Commentary}
 \begin{itemize}
-\item<1-> \emph{Claim:} Performance on data with \emph{known active variables} + SNCs are informative of how inference procedures generally perform in similar data with \emph{unknown active variables}
-\item<2-> Example (GWAS): There is a new disease (say, liver cancer) where we have little prior info.  I have data for a `similar' disease, (say, stomach cancer) for which I have \emph{partial information} about the relevant causes. In particular, I know \emph{the most important} the genes involved stomach cancer
-\item<2-> Testing your procedure directly on the stomach cancer data is uninformative: if you reject a gene which is not \emph{a priori} known to cause stomach cancer... it could still be a new discovery! 
-\item<3-> Rather than test your inference procedure on the full stomach cancer data, test it on the subset of the \emph{known genes} plus SNCs
-\item<3-> Tricky part: choosing the size of the noise for the SNCs.  To be safe, try several noise levels.
+\item We should not conclude too much from four experiments with rather arbitrary generation parameters...
+\item Both OLS and debiased lasso have balanced Type I error
+\item Hard to interpret covariance test, but it clearly doesn't control FWER here
+\item Knockoffs do very well on the HIV data!  (not surprising?)
+\item Marginal screening remains annoyingly effective...
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{How could this be useful?}
@@ -658,12 +659,12 @@ Legend: o = OLS, \textcolor{green}{c} = covariance test,
 \begin{frame}
 \frametitle{Do SNCs reduce the need for scientific validation?}
 \begin{itemize}
-\item<1-> The gold standard of validation: obtaining \emph{scientific confirmation} of the \emph{scientific hypotheses} suggested by the inference procedure
-\item<1-> The answer is no: scientific validation is as important as ever.
-\item<2-> SNCs can be used to get an idea of our performance on the \emph{regression hypothesis testing problem} in realistic settings
-\item<2-> However, how can we tell if the \emph{regression hypothesis testing problem} is right framework for the real-world problem we are trying to solve?
-There may be better statistical frameworks, like graphical models, which are a better fit to the problem.
-\item<3> Ultimately, we need the practitioner to measure the value of the results we obtain from the inference procedure.
+\item<1-> Short answer: no
+\item<1-> Long answer: SNCs make sense if the true $\beta$ is sparse.
+  If true $\beta$ is not sparse, hypothesis testing for regression doesn't make sense, and we need to reformulate the problem.
+\item<2> Ultimately, we need the practitioner to measure the value of
+  the results we obtain from the inference procedure.
+That is the only way to check that we have the right formulation of the problem.
 \end{itemize}
 \end{frame}
 
@@ -713,3 +714,13 @@ and
 Let
 
 
+\begin{frame}
+\frametitle{What are we learning?}
+\begin{itemize}
+\item<1-> \emph{Claim:} Performance on data with \emph{known active variables} + SNCs are informative of how inference procedures generally perform in similar data with \emph{unknown active variables}
+\item<2-> Example (GWAS): There is a new disease (say, liver cancer) where we have little prior info.  I have data for a `similar' disease, (say, stomach cancer) for which I have \emph{partial information} about the relevant causes. In particular, I know \emph{the most important} the genes involved stomach cancer
+\item<2-> Testing your procedure directly on the stomach cancer data is uninformative: if you reject a gene which is not \emph{a priori} known to cause stomach cancer... it could still be a new discovery! 
+\item<3-> Rather than test your inference procedure on the full stomach cancer data, test it on the subset of the \emph{known genes} plus SNCs
+\item<3-> Tricky part: choosing the size of the noise for the SNCs.  To be safe, try several noise levels.
+\end{itemize}
+\end{frame}
