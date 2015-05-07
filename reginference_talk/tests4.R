@@ -1,21 +1,12 @@
 
-## marginal results
 
-png('mar_pf16.png')
-matplot(res_mar(x_pf16, y_pf16)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
-dev.off()
 
-png('mar_fMRI.png')
-matplot(res_mar(x_fMRI, y_fMRI)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
-dev.off()
+## OLS
 
-png('mar_HIV.png')
-matplot(res_mar(x_HIV, y_HIV)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
-dev.off()
-
-png('mar_gal.png')
-matplot(res_mar(x_gal, y_gal)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
-dev.off()
+res_o_pf16 <- OLS_results(x_pf16, y_pf16)
+res_o_fMRI <- OLS_results(x_fMRI, y_fMRI)
+res_o_HIV <- OLS_results(x_HIV, y_HIV)
+res_o_gal <- OLS_results(x_gal, y_gal)
 
 
 ## covTest

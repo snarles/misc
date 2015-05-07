@@ -4,6 +4,22 @@ alphas <- 1:100/100
 x <- x_gal
 y <- y_gal
 
+OLS_results <- function(x, y) {
+  negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
+  res <- lm(y ~ as.matrix(x))
+  res2 <- summary(res)$coefficients[-1, ]
+  cf <- res2[, 1]
+  sd <- res2[, 2]
+  pv <- res2[, 4]
+  for (i in 1:100) {
+    rej <- which(pv < i/100)
+    nrejs[i] <- length(rej)
+    nsncs[i] <- sum(negs[rej])
+  }
+  ngood <- nrejs - nsncs
+  cbind(1:100/100, nsncs, ngood)  
+}
+
 cov_test_results <- function(x, y) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- lars(as.matrix(x), y)
