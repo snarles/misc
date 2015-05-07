@@ -10,18 +10,28 @@ data(fMRI)
 data(galaxy)
 data(pf16)
 
+sigma_hat <- function(x, y) sd(lm(y ~ as.matrix(x))$residuals)
+
+
 set.seed(0)
 x_pf16 <- noised_projections(pf16[, 1:105], q = 895, sigma = 0.02, adjoin = TRUE)
 y_pf16 <- pf16[, 106]
+shat_pf16 <- sigma_hat(pf16[, 1:105], pf16[, 106])
+
 set.seed(0)
 x_fMRI <- noised_projections(fMRI[, 1:53], q = 822, sigma = 0.027, adjoin = TRUE)
 y_fMRI <- fMRI[, 54]
+shat_fMRI <- sigma_hat(fMRI[, 1:53], fMRI[, 54])
+
 set.seed(0)
 x_HIV <- noised_projections(HIV[, -1], q = 214, sigma = 0.01, adjoin = TRUE)
 y_HIV <- HIV[, 1]
+shat_HIV <- sigma_hat(HIV[, -1], HIV[, 1])
+
 set.seed(0)
 x_gal <- noised_projections(galaxy[, 1:4], q = 157, sigma = 0.1, adjoin = TRUE)
 y_gal <- galaxy[, 5]
+shat_gal <- sigma_hat(galaxy[, 1:4], galaxy[, 5])
 
 
 ## Montanari stuff

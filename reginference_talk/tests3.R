@@ -4,6 +4,7 @@ alphas <- 1:100/100
 x <- x_gal
 y <- y_gal
 
+
 OLS_results <- function(x, y) {
   nrejs <- numeric(100)
   nsncs <- numeric(100)
@@ -23,10 +24,10 @@ OLS_results <- function(x, y) {
 }
 
 
-cov_test_results <- function(x, y) {
+cov_test_results <- function(x, y, ...) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- lars(as.matrix(x), y)
-  res2 <- covTest(res, as.matrix(x), y, maxp = 50)
+  res2 <- covTest(res, as.matrix(x), y, ...)
   res3 <- res2$results
   res4 <- res3[complete.cases(res3), ]
   pvs <- res4[, 3]
@@ -105,7 +106,16 @@ knockoff_results <- function(x, y) {
     nsncs[i] <- sum(negs[selected])
   }
   ngood <- nrejs - nsncs
-  cbind(1:100/100, nsncs, ngood)  
+  k0 <- cbind(1:100/100, nsncs, ngood)
+  for (i in 1:100) {
+    t <- knockoff.threshold(W, i/100, "knockoff+")
+    selected <- which(W >= t)
+    nrejs[i] <- length(selected)
+    nsncs[i] <- sum(negs[selected])
+  }
+  ngood <- nrejs - nsncs
+  kp <- cbind(1:100/100, nsncs, ngood)
+  list(k0 = k0, kp = kp)
 }
 
 res_mar <- function(x, y) {

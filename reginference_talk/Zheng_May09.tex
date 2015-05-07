@@ -590,6 +590,20 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 
 \begin{frame}
 \frametitle{Knockoffs}
+Using Knockoff+ threshhold
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_kp_type1.png}
+\includegraphics[scale = 0.3]{res_kp_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Knockoffs}
 \emph{Note:} $FDR^* = \E[FP/(FP + TP + 1/\alpha)]$
 
 \begin{center}
@@ -672,6 +686,64 @@ Legend: o = OLS, \textcolor{green}{c} = covariance test,
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Low sample size}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Data & $n$ & $p$ & $p_1$ & Linear? & Gaussian? & Constant $\sigma^2$?\\ \hline
+Personality & 100 & 1500 & 163 & No & No & No\\ \hline
+fMRI & 100 & 875 & 53 & No & OK & No \\ \hline
+HIV & 100 & 421 & 207 & No & Yes? & OK? \\ \hline
+Galaxy & 100 & 161 & 4 & No & OK & No \\ \hline
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Reduce the sample size to 100
+\item Same number of negative controls, but larger added noise (easier)
+\item Covariance test requires estimate $\hat{\sigma}$: ``cheat'' by using OLS estimate from \emph{original} data
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Debiased Lasso}
+
+\begin{center}
+\includegraphics[scale = 0.3]{ress_s_type1.png}
+\includegraphics[scale = 0.3]{ress_s_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Covariance Test}
+\emph{Forward Stop:} reject first $\hat{k}$, where $-\frac{1}{\hat{k}}\sum_{i=1}^{\hat{k}} \log(1-p_i) \leq \alpha$
+
+\begin{center}
+\includegraphics[scale = 0.3]{ress_c_fs_type1.png}
+\includegraphics[scale = 0.3]{ress_c_fs_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Covariance Test}
+\emph{Strong Stop:} reject first $\hat{k}$, where $\frac{m}{\hat{k}}e^{\sum_{j=\hat{k}}^{p} \log(p_j)/j} \leq \alpha$
+
+\begin{center}
+\includegraphics[scale = 0.3]{ress_c_ss_type1.png}
+\includegraphics[scale = 0.3]{ress_c_ss_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
 
 \begin{frame}
 \frametitle{How could this be useful?}
