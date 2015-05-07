@@ -11,10 +11,10 @@ res_o_gal <- OLS_results(x_gal, y_gal)
 
 ## covTest
 
-res_c_pf16 <- cov_test_results(x_pf16, y_pf16)
-res_c_fMRI <- cov_test_results(x_fMRI, y_fMRI)
-res_c_HIV <- cov_test_results(x_HIV, y_HIV)
-res_c_gal <- cov_test_results(x_gal, y_gal)
+res_cs_pf16 <- cov_test_results(x_pf16, y_pf16)
+res_cs_fMRI <- cov_test_results(x_fMRI, y_fMRI)
+res_cs_HIV <- cov_test_results(x_HIV, y_HIV)
+res_cs_gal <- cov_test_results(x_gal, y_gal)
 
 ## sslasso
 

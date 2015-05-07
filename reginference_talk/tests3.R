@@ -22,6 +22,7 @@ OLS_results <- function(x, y) {
   cbind(1:100/100, nsncs, ngood)  
 }
 
+
 cov_test_results <- function(x, y) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- lars(as.matrix(x), y)
@@ -30,9 +31,14 @@ cov_test_results <- function(x, y) {
   res4 <- res3[complete.cases(res3), ]
   pvs <- res4[, 3]
   vars <- abs(res4[, 1])
+  fps <- cumsum(negs[vars])
+  tps <- 1:length(vars) - fps
   nrejs <- numeric(100)
   nsncs <- numeric(100)
   dim(res3)
+  
+  # naive approach
+  
   length(unique(res3[, 1]))
   rej <- c()
   cur_alph <- 1
@@ -47,8 +53,28 @@ cov_test_results <- function(x, y) {
   nsncs[100] <- sum(negs)
   nrejs[100] <- min(dim(x))
   ngood <- nrejs - nsncs
-  cbind(1:100/100, nsncs, ngood)  
+  naive <- cbind(1:100/100, nsncs, ngood)
+  
+  # forward stop
+  m <- length(pvs)
+  fss <- 0 * pvs
+  for (k in 1:m) {
+    fss[k] <- -1/k * sum(log(1-pvs[1:k])) 
+  }
+  fsk <- sapply(1:100/100, function(a) max(which(fss < a)))
+  fs <- cbind(1:100/100, fps[fsk], tps[fsk])
+  
+  # strong stop  
+  sss <- 0 * pvs
+  for (k in 1:length(pvs)) {
+    sss[k] <- exp(sum(log(pvs[k:m])/(k:m))) * m/k
+  }
+  ssk <- sapply(1:100/100, function(a) max(which(sss < a)))
+  ss <- cbind(1:100/100, fps[ssk], tps[ssk])
+  
+  list(naive = naive, fs = fs, ss = ss)
 }
+
 
 sslasso_results <- function(x, y) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")

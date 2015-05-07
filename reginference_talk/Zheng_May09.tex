@@ -125,7 +125,8 @@
 \begin{tabular}{|c|c|c|} \hline
  & Control & $p > n$\\ \hline
 Classical inference (Pearson 1930) & Marginal & No \\ \hline
-Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\ \hline
+Covariance test (Lockhart et al. 2014) &  ?? & Yes \\ 
+... + FDR control (G'Sell et al. 2013) &  FDR & Yes \\ \hline
 Debiased lasso (Javanmard et al. 2014) & Marginal & Yes\\ \hline
 Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
  & &  \\ \hline
@@ -191,7 +192,8 @@ But what's actually used in practice?
 \begin{tabular}{|c|c|c|} \hline
  & Control & $p > n$\\ \hline
 Classical inference (Pearson 1930) & Marginal & No \\ \hline
-Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\ \hline
+Covariance test (Lockhart et al. 2014) &  FWER? & Yes \\
+... + FDR control (G'Sell et al. 2013) &  FDR & Yes \\ \hline
 Debiased lasso (Javanmard et al. 2014) & Marginal & Yes\\ \hline
 Knockoffs (Barber et al. 2014) & FDR & ? \\ \hline
 \textbf{Marginal screening} & ??? & Yes \\ \hline
@@ -549,11 +551,37 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 
 \begin{frame}
 \frametitle{Covariance Test}
-\emph{Procedure:} continue rejecting until $p > \alpha$, then accept all other variables
+\emph{Naive procedure:} continue rejecting until $p > \alpha$, then accept all other variables
 
 \begin{center}
 \includegraphics[scale = 0.3]{res_c_type1.png}
 \includegraphics[scale = 0.3]{res_c_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Covariance Test}
+\emph{Forward Stop:} reject first $\hat{k}$, where $-\frac{1}{\hat{k}}\sum_{i=1}^{\hat{k}} \log(1-p_i) \leq \alpha$
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_c_fs_type1.png}
+\includegraphics[scale = 0.3]{res_c_fs_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Covariance Test}
+\emph{Strong Stop:} reject first $\hat{k}$, where $\frac{m}{\hat{k}}e^{\sum_{j=\hat{k}}^{p} \log(p_j)/j} \leq \alpha$
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_c_ss_type1.png}
+\includegraphics[scale = 0.3]{res_c_ss_power.png}
 \end{center}
 
 Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
@@ -634,8 +662,12 @@ Legend: o = OLS, \textcolor{green}{c} = covariance test,
 \begin{itemize}
 \item We should not conclude too much from four experiments with rather arbitrary generation parameters...
 \item Both OLS and debiased lasso have balanced Type I error
-\item Hard to interpret covariance test, but it clearly doesn't control FWER here
-\item Knockoffs do very well on the HIV data!  (not surprising?)
+\item Knockoffs vs covariance test:
+\begin{itemize}
+\item Knockoffs may control FDR more robustly than Covariance test (especially at small $\alpha$)
+\item Knockoffs and covariance are similar in power overall but have different case-by-case behavior
+\end{itemize}
+\item Knockoffs tend to be conservative, but have good variable ranking in some cases (Personality, fMRI)
 \item Marginal screening remains annoyingly effective...
 \end{itemize}
 \end{frame}

@@ -32,6 +32,11 @@ dev.off()
 
 ## COvTest Type I
 
+res_c_pf16 <- res_cs_pf16$naive
+res_c_fMRI <- res_cs_fMRI$naive
+res_c_HIV <- res_cs_HIV$naive
+res_c_gal <- res_cs_gal$naive
+
 png('res_c_type1.png')
 plot(NA, NA, ylim = c(0, 2.1), xlim = c(0, 0.1), ylab = expression(FP), xlab = expression(alpha))
 abline(0, 1, col = "red", lwd = 2)
@@ -39,6 +44,28 @@ lines(1:10/100, res_c_pf16[1:10, 2], type = "o", ylab = "", col = cols[1], pch =
 lines(1:10/100, res_c_fMRI[1:10, 2], type = "o", ylab = "", col = cols[2], pch = "F")
 lines(1:10/100, res_c_HIV[1:10, 2], type = "o", ylab = "", col = cols[3], pch = "H")
 lines(1:10/100, res_c_gal[1:10, 2], type = "o", ylab = "", col = cols[4], pch = "G")
+dev.off()
+
+fdr_e <- function(res) {
+  res[, 2]/pmax(1, res[, 2] + res[, 3])
+}
+
+png('res_c_fs_type1.png')
+plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = expression(FDR), xlab = expression(alpha))
+abline(0, 1, col = "red", lwd = 2)
+lines(1:50/50, fdr_e(res_cs_pf16$fs)[2 * 1:50], type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, fdr_e(res_cs_fMRI$fs)[2 * 1:50], type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, fdr_e(res_cs_HIV$fs)[2 * 1:50], type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, fdr_e(res_cs_gal$fs)[2 * 1:50], type = "o", ylab = "", col = cols[4], pch = "G")
+dev.off()
+
+png('res_c_ss_type1.png')
+plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = expression(FDR), xlab = expression(alpha))
+abline(0, 1, col = "red", lwd = 2)
+lines(1:50/50, fdr_e(res_cs_pf16$ss)[2 * 1:50], type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, fdr_e(res_cs_fMRI$ss)[2 * 1:50], type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, fdr_e(res_cs_HIV$ss)[2 * 1:50], type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, fdr_e(res_cs_gal$ss)[2 * 1:50], type = "o", ylab = "", col = cols[4], pch = "G")
 dev.off()
 
 
@@ -85,6 +112,24 @@ lines(1:10/100, res_c_fMRI[1:10, 3]/good_fMRI, type = "o", ylab = "", col = cols
 lines(1:10/100, res_c_HIV[1:10, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
 lines(1:10/100, res_c_gal[1:10, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
 dev.off()
+
+png('res_c_fs_power.png')
+plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = "Rel. Power", xlab = expression(alpha))
+lines(1:50/50, res_cs_pf16$fs[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, res_cs_fMRI$fs[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, res_cs_HIV$fs[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, res_cs_gal$fs[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
+dev.off()
+
+
+png('res_c_ss_power.png')
+plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = "Rel. Power", xlab = expression(alpha))
+lines(1:50/50, res_cs_pf16$ss[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, res_cs_fMRI$ss[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, res_cs_HIV$ss[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, res_cs_gal$ss[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
+dev.off()
+
 
 ## SS
 png('res_s_power.png')
