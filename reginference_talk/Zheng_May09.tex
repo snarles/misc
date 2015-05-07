@@ -699,7 +699,7 @@ Galaxy & 100 & 161 & 4 & No & OK & No \\ \hline
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item Reduce the sample size to 100
+\item Reduce the sample size to 100, so that $p >> n$
 \item Same number of negative controls, but larger added noise (easier)
 \item Covariance test requires estimate $\hat{\sigma}$: ``cheat'' by using OLS estimate from \emph{original} data
 \end{itemize}
@@ -743,6 +743,14 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 
 Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 \textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Commentary}
+\begin{itemize}
+\item Debiased lasso and Covariance test + forward stop continue to control Type I error while finding true positives
+\item Covariance test + strong stop appears too conservative
+\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -791,6 +799,9 @@ Thanks to Will Fithian for useful discussions.
 \frametitle{References}
 \begin{itemize}
 \item Barber, R., and Candes, E. (2014). Controlling the False Discovery Rate via Knockoffs. arXiv Preprint arXiv:1404.5609, 1–27. Retrieved from http://arxiv.org/abs/1404.5609
+\item G’Sell, Max Grazier. Wager, Stefan
+Chouldechova, Alexandra.
+Tibshirani, Robert. “Sequential Selection Procedures and False Discovery Rate Control.” (2013): 31. Web. 7 May 2015.
 \item Javanmard, A., and Montanari, A. (2014). Confidence intervals and hypothesis testing for high-dimensional regression. The Journal of Machine Learning Research, 15, 2869–2909. Retrieved from http://dl.acm.org/citation.cfm?id=2697057
 \item Lockhart, R., Taylor, J., Tibshirani, R. J., and Tibshirani, R. (2014). a Significance Test for the Lasso. Annals of Statistics, 42(2), 413–468. doi:10.1214/13-AOS1175
 \end{itemize}
