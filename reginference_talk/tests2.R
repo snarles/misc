@@ -11,12 +11,15 @@ data(galaxy)
 data(pf16)
 
 set.seed(0)
-x_pf16 <- noised_projections(pf16[, 1:105], q = 895, sigma = 1, adjoin = TRUE)
+x_pf16 <- noised_projections(pf16[, 1:105], q = 895, sigma = 0.02, adjoin = TRUE)
 y_pf16 <- pf16[, 106]
-x_fMRI <- noised_projections(fMRI[, 1:53], q = 822, sigma = 1, adjoin = TRUE)
+set.seed(0)
+x_fMRI <- noised_projections(fMRI[, 1:53], q = 822, sigma = 0.027, adjoin = TRUE)
 y_fMRI <- fMRI[, 54]
-x_HIV <- noised_projections(HIV[, -1], q = 214, sigma = 0.1, adjoin = TRUE)
+set.seed(0)
+x_HIV <- noised_projections(HIV[, -1], q = 214, sigma = 0.01, adjoin = TRUE)
 y_HIV <- HIV[, 1]
+set.seed(0)
 x_gal <- noised_projections(galaxy[, 1:4], q = 157, sigma = 0.1, adjoin = TRUE)
 y_gal <- galaxy[, 5]
 

@@ -4,10 +4,10 @@ alphas <- 1:100/100
 x <- x_gal
 y <- y_gal
 
-cov_test_results <_ function(x, y) {
+cov_test_results <- function(x, y) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- lars(as.matrix(x), y)
-  res2 <- covTest(res, as.matrix(x), y)
+  res2 <- covTest(res, as.matrix(x), y, maxp = 50)
   res3 <- res2$results
   res4 <- res3[complete.cases(res3), ]
   pvs <- res4[, 3]
@@ -26,6 +26,8 @@ cov_test_results <_ function(x, y) {
       cur_alph <- next_alph
     }
   }
+  nsncs[100] <- sum(negs)
+  nrejs[100] <- min(dim(x))
   ngood <- nrejs - nsncs
   cbind(1:100/100, nsncs, ngood)  
 }
@@ -33,11 +35,17 @@ cov_test_results <_ function(x, y) {
 sslasso_results <- function(x, y) {
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- SSLasso(as.matrix(x), y, verbose = FALSE)
+  nrejs <- numeric(100)
+  nsncs <- numeric(100)
   names(res)
   sd <- (res$up.lim - res$unb.coef)/qnorm(.975)
   for (i in 1:100) {
-    
+    rej <- which(abs(res$unb.coef) > sd * qnorm(1 - (i/200)))
+    nrejs[i] <- length(rej)
+    nsncs[i] <- sum(negs[rej])
   }
+  ngood <- nrejs - nsncs
+  cbind(1:100/100, nsncs, ngood)  
 }
 
 knockoff_results <- function(x, y) {
@@ -52,9 +60,20 @@ knockoff_results <- function(x, y) {
     nrejs[i] <- length(selected)
     nsncs[i] <- sum(negs[selected])
   }
+  ngood <- nrejs - nsncs
   cbind(1:100/100, nsncs, ngood)  
 }
 
+res_mar <- function(x, y) {
+  negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
+  cors <- cor(x, y)
+  rej <- order(-abs(cors))
+  sncs <- negs[rej]
+  nsncs <- cumsum(sncs)
+  ngood <- 1:dim(x)[2] - nsncs
+  cbind(nsncs, ngood)
+}
 
 
-dim(res2$results)
+## plot codes
+
