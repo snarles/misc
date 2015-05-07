@@ -1,19 +1,19 @@
 ## marginal results
 
 png('mar_pf16.png')
-matplot(res_mar(x_pf16, y_pf16)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
+matplot(res_mar(x_pf16, y_pf16)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "", lwd = 3)
 dev.off()
 
 png('mar_fMRI.png')
-matplot(res_mar(x_fMRI, y_fMRI)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
+matplot(res_mar(x_fMRI, y_fMRI)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "", lwd = 3)
 dev.off()
 
 png('mar_HIV.png')
-matplot(res_mar(x_HIV, y_HIV)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
+matplot(res_mar(x_HIV, y_HIV)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "", lwd = 3)
 dev.off()
 
 png('mar_gal.png')
-matplot(res_mar(x_gal, y_gal)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "")
+matplot(res_mar(x_gal, y_gal)[1:20, 2:1], type = "o", pch = c("1", "0"), ylab = "", lwd = 3)
 dev.off()
 
 
