@@ -488,7 +488,7 @@ There are no formal guarantees of this!
 \end{frame}
 
 \begin{frame}
-\frametitle{Experiments, part 1}
+\frametitle{More Experiments!}
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|c|}
 \hline
@@ -501,10 +501,133 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \end{center}
 \begin{itemize}
 \item We add $n/2 - p_1$ synthetic negative controls
-\item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E) = Var(X\Gamma)$
+\item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E)$ is chosen to yield `interesting' results
 \item Multiple trials averaging over the randomness of generating SNCs
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Marginal Screening}
+
+\begin{center}
+\begin{tabular}{cc}
+Personality & fMRI \\
+\includegraphics[scale=0.15]{mar_pf16.png} & \includegraphics[scale=0.15]{mar_fMRI.png}\\
+HIV & Galaxy\\
+\includegraphics[scale=0.15]{mar_HIV.png} & \includegraphics[scale=0.15]{mar_gal.png}\\
+\end{tabular}
+
+Legend: \textcolor{red}{0} = False positives, 1 = True positives
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ordinary Least Squares}
+``Rel. power" =  TP/(max number of TPs  at $\alpha = 0.5$ for any method)
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_o_type1.png}
+\includegraphics[scale = 0.3]{res_o_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Debiased Lasso}
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_s_type1.png}
+\includegraphics[scale = 0.3]{res_s_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Covariance Test}
+\emph{Procedure:} continue rejecting until $p > \alpha$, then accept all other variables
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_c_type1.png}
+\includegraphics[scale = 0.3]{res_c_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Knockoffs}
+\emph{Note:} $FDR^* = \E[FP/(FP + TP + 1/\alpha)]$
+
+\begin{center}
+\includegraphics[scale = 0.3]{res_k_type1.png}
+\includegraphics[scale = 0.3]{res_k_power.png}
+\end{center}
+
+Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
+\textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Variable Ranking Criteria}
+\begin{itemize}
+\item Forget about Type I error for a second... 
+\item Use procedures to \emph{rank} variables by p-value
+\item Easy to compare procedures with different Type I criteria and also non-inference variable selection
+\item (Optional) score by Area Under Curve (AUC), etc.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Variable Ranking: Personality}
+\begin{center}
+\includegraphics[scale = 0.35]{pf16_tvf.png}
+\end{center}
+
+Legend: o = OLS, \textcolor{green}{c} = covariance test,
+\textcolor{blue}{k} = knockoff, \textcolor{red}{s} = debiased lasso,
+(line) = marginal screening, \textcolor{green}{(line)} = lasso path
+\end{frame}
+
+\begin{frame}
+\frametitle{Variable Ranking: fMRI}
+\begin{center}
+\includegraphics[scale = 0.35]{fMRI_tvf.png}
+\end{center}
+
+Legend: o = OLS, \textcolor{green}{c} = covariance test,
+\textcolor{blue}{k} = knockoff, \textcolor{red}{s} = debiased lasso,
+(line) = marginal screening, \textcolor{green}{(line)} = lasso path
+\end{frame}
+
+\begin{frame}
+\frametitle{Variable Ranking: HIV}
+\begin{center}
+\includegraphics[scale = 0.35]{HIV_tvf.png}
+\end{center}
+
+Legend: o = OLS, \textcolor{green}{c} = covariance test,
+\textcolor{blue}{k} = knockoff, \textcolor{red}{s} = debiased lasso,
+(line) = marginal screening, \textcolor{green}{(line)} = lasso path
+\end{frame}
+
+\begin{frame}
+\frametitle{Variable Ranking: Galaxy}
+\begin{center}
+\includegraphics[scale = 0.35]{gal_tvf.png}
+\end{center}
+
+Legend: o = OLS, \textcolor{green}{c} = covariance test,
+\textcolor{blue}{k} = knockoff, \textcolor{red}{s} = debiased lasso,
+(line) = marginal screening, \textcolor{green}{(line)} = lasso path
+\end{frame}
+
 
 \begin{frame}
 \frametitle{What are we learning?}

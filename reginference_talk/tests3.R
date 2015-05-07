@@ -5,6 +5,8 @@ x <- x_gal
 y <- y_gal
 
 OLS_results <- function(x, y) {
+  nrejs <- numeric(100)
+  nsncs <- numeric(100)
   negs <- sapply(names(x), function(v) substr(v, 0, 3) == "Neg")
   res <- lm(y ~ as.matrix(x))
   res2 <- summary(res)$coefficients[-1, ]
@@ -90,6 +92,13 @@ res_mar <- function(x, y) {
   cbind(nsncs, ngood)
 }
 
+
+res_lars <- function(obj) {
+  res2 <- unique(names(unlist(obj$actions)))
+  negs <- sapply(res2, function(v) substr(v, 0, 3) == "Neg")
+  nsncs <- cumsum(negs)  
+  cbind(nsncs, 1:length(res2) - nsncs)
+}
 
 ## plot codes
 

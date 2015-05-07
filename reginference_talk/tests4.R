@@ -41,3 +41,9 @@ good_fMRI <- max(c(res_c_fMRI[50, 3], res_s_fMRI[50, 3], res_k_fMRI[50, 3]))
 good_HIV <- max(c(res_c_HIV[50, 3], res_s_HIV[50, 3], res_k_HIV[50, 3]))
 good_gal <- max(c(res_c_gal[50, 3], res_s_gal[50, 3], res_k_gal[50, 3]))
 
+
+lars_pf16 <- lars(as.matrix(x_pf16), y_pf16)
+lars_fMRI <- lars(as.matrix(x_fMRI), y_fMRI)
+lars_HIV <- lars(as.matrix(x_HIV), y_HIV)
+lars_gal <- lars(as.matrix(x_gal), y_gal)
+
