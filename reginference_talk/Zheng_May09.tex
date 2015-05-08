@@ -114,7 +114,7 @@
 \begin{itemize}
 \item $x \in \mathbb{R}^p, y \in \mathbb{R}$ have a joint distribution $P$ where $y|x \sim N(x^T \beta, \sigma^2)$
 \item Observe $X = (x_1, \hdots, x_n)^T$, $Y = (y_1,\hdots, y_n)$ iid
-\item Problem: test $H_i: \beta_0 = i$ for $i = 1,\hdots, p$
+\item Problem: test $H_i: \beta_i = 0$ for $i = 1,\hdots, p$
 \item Motivation: $x$ are SNPs (mutations), $y$ is phenotype
 \end{itemize}
 \end{frame}
@@ -178,20 +178,12 @@ All three methods share an association with LASSO:
 \item (2014) Lockhart, Taylor, Tibshirani (x 2)
 \item Standard assumptions $Y \sim N(X\beta, \sigma^2 I)$ + large $p$ asymptotics
 \item \emph{See also} non-asymptotic exact test (Lee, Sun x 2, Taylor 2015)
-\item What kind of Type I error does it control?
+\item FDR control: G'Sell, Wager, Chouldechova, Tibshirani (2013)
+\item What is the meaning of these $p$-values?
 \end{itemize}
 \begin{center}
 \includegraphics[scale = 0.25]{covtest.png}
 \end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{FDR control for covariance test}
-\begin{itemize}
-\item G'Sell, Wager, Chouldechova, Tibshirani (2013)
-\item Two methods to control FDR for convariance test... but under a \emph{different} definition of Type I error
-\item Type I error is defined according to the \emph{incremental null} (next slide)
-\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -811,7 +803,7 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 
 \begin{frame}
 \frametitle{Acknowledgements}
-Thanks to Will Fithian and Stefan Wager for useful discussions.
+Thanks to Will Fithian, Stefan Wager, and Shuo Xie for useful discussions.
 \end{frame}
 
 \begin{frame}
