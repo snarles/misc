@@ -239,52 +239,17 @@ Covariance test (Lockhart et al. 2014) &  ?? & Yes \\
 
 \begin{frame}
 \frametitle{Example: personality data}
-\begin{itemize}
-\item Data with $p = 163$ survey questions from an online personality test, $n = 49086$ (after processing)
-\item Predict self-reported age of respondent, $y$, from their responses
-\item Is $n$ large enough for us to confidently say which $\beta_i = 0$ (for use as ground truth?)
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Example: personality data}
-Coefficient estimates $\pm$ 3 sd
+Data with $p = 163$ survey questions from an online personality test, $n = 49086$ (after processing)
 \begin{center}
 \includegraphics[scale = 0.2]{pf16_coefs.png}
 \end{center}
-Consider declaring all variables whose intervals cross 0 to be null.
-Then $p_1 = 105$ (out of 163)
+These coefficient estimates are still too uncertain!
 \end{frame}
-
-\begin{frame}
-\frametitle{Example: personality data}
-\begin{itemize}
-\item If $n$ were large enough, then for the selected model $S$ we
-  should have $\hat{y} = \sum_{i=1}^p X\hat{\beta}_i$ close to
-  $\hat{y}_S = \sum_{i \in S} X_i \hat{\beta}_i$
-\item But...
-\end{itemize}
-\begin{center}
-\includegraphics[scale = 0.2]{pf16_modelcheck.png}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Example: personality data}
-\begin{itemize}
-\item Here $n$ is not large enough for $p = 163$
-\item If we reduce the dimensionality to 15 by subsampling columns, it looks more convincing that we selected the correct 10 variables
-\end{itemize}
-\begin{center}
-\includegraphics[scale = 0.2]{pf16_modelcheck2.png}
-\end{center}
-\end{frame}
-
 
 \begin{frame}
 \frametitle{Dillemma}
 \begin{itemize}
-\item It is by no means \emph{impossible} to get large enough data to estimate high-dimensional $\beta$, with say, $p > 100$
+\item It is surely not \emph{impossible} to get large enough data to estimate high-dimensional $\beta$, with say, $p > 100$
 \item But if were \emph{easy} to get such large $n$ data... we wouldn't need these new inference techniques in the first place!
 \end{itemize}
 \end{frame}
