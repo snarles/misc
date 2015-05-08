@@ -115,21 +115,13 @@ dev.off()
 ## OLS
 png('res_o_power.png')
 plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = "Rel. Power", xlab = expression(alpha))
-lines(1:50/50, res_s_pf16[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
-lines(1:50/50, res_s_fMRI[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
-lines(1:50/50, res_s_HIV[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
-lines(1:50/50, res_s_gal[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
+lines(1:50/50, res_o_pf16[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, res_o_fMRI[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, res_o_HIV[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, res_o_gal[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
 dev.off()
 
 ## Cov
-png('res_c_power.png')
-plot(NA, NA, ylim = c(0, 1), xlim = c(0, 0.1), ylab = "Rel. Power", xlab = expression(alpha))
-lines(1:10/100, res_c_pf16[1:10, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
-lines(1:10/100, res_c_fMRI[1:10, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
-lines(1:10/100, res_c_HIV[1:10, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
-lines(1:10/100, res_c_gal[1:10, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
-dev.off()
-
 png('res_c_fs_power.png')
 plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = "Rel. Power", xlab = expression(alpha))
 lines(1:50/50, res_cs_pf16$fs[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
@@ -157,14 +149,13 @@ lines(1:50/50, res_s_HIV[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = col
 lines(1:50/50, res_s_gal[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
 dev.off()
 
-
 ## Knockoff
 png('res_k_power.png')
 plot(NA, NA, ylim = c(0, 1), xlim = c(0, 1), ylab = "Rel. Power", xlab = expression(alpha))
-lines(1:50/50, res_k_pf16[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
-lines(1:50/50, res_k_fMRI[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
-lines(1:50/50, res_k_HIV[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
-lines(1:50/50, res_k_gal[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
+lines(1:50/50, res_ks_pf16$k0[2 * 1:50, 3]/good_pf16, type = "o", ylab = "", col = cols[1], pch = "P")
+lines(1:50/50, res_ks_fMRI$k0[2 * 1:50, 3]/good_fMRI, type = "o", ylab = "", col = cols[2], pch = "F")
+lines(1:50/50, res_ks_HIV$k0[2 * 1:50, 3]/good_HIV, type = "o", ylab = "", col = cols[3], pch = "H")
+lines(1:50/50, res_ks_gal$k0[2 * 1:50, 3]/good_gal, type = "o", ylab = "", col = cols[4], pch = "G")
 dev.off()
 
 png('res_kp_power.png')

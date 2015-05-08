@@ -86,10 +86,10 @@ save(file = paste0("test4_", seed, ".RData"),
               "ress_s_pf16", "ress_s_fMRI", "ress_s_HIV", "ress_s_gal",
               "ress_cs_pf16", "ress_cs_fMRI", "ress_cs_HIV", "ress_cs_gal"))
 
-good_pf16 <- max(c(res_c_pf16[50, 3], res_s_pf16[50, 3], res_k_pf16[50, 3]))
-good_fMRI <- max(c(res_c_fMRI[50, 3], res_s_fMRI[50, 3], res_k_fMRI[50, 3]))
-good_HIV <- max(c(res_c_HIV[50, 3], res_s_HIV[50, 3], res_k_HIV[50, 3]))
-good_gal <- max(c(res_c_gal[50, 3], res_s_gal[50, 3], res_k_gal[50, 3]))
+good_pf16 <- max(c(res_cs_pf16$naive[50, 3], res_s_pf16[50, 3], res_ks_pf16$k0[50, 3]))
+good_fMRI <- max(c(res_cs_fMRI$naive[50, 3], res_s_fMRI[50, 3], res_ks_fMRI$k0[50, 3]))
+good_HIV <- max(c(res_cs_HIV$naive[50, 3], res_s_HIV[50, 3], res_ks_HIV$k0[50, 3]))
+good_gal <- max(c(res_cs_gal$naive[50, 3], res_s_gal[50, 3], res_ks_gal$k0[50, 3]))
 
 
 lars_pf16 <- lars(as.matrix(x_pf16), y_pf16)
