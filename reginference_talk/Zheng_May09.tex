@@ -320,7 +320,7 @@ I give you real data \emph{mixed in} with noise variables
 yet still have zero (population) regression coefficients
 \item Suppose I give you real data + SNCs, then you apply high-dimensional inference.
 If you reject any SNCs, we know these are errors!
-\item This gives us some measure of performance on ``real'' data (maybe?)
+\item \textbf{The hope:} this will give us an idea of how well these procedures would work in real, high-dimensional data
 \end{itemize}
 \begin{center}
 \includegraphics[scale = 0.35]{anc.png}
@@ -509,6 +509,9 @@ Galaxy & 323 & 4 & No & OK & No \\ \hline
 \item We add $n/2 - p_1$ synthetic negative controls
 \item $X$ is scaled, $\Gamma$ is a gaussian matrix, $Var(E)$ is chosen to yield `interesting' results
 \item Personality data is subsampled
+\item The 53 variables for fMRI were \emph{selected} from a larger set
+  of 10,000 variables (Gabor filters)... \emph{should we be
+    concerned?}
 \end{itemize}
 \end{frame}
 
@@ -665,37 +668,23 @@ Legend: o = OLS, \textcolor{green}{c} = covariance test,
 
 
 \begin{frame}
-\frametitle{Commentary}
+\frametitle{Initial reaction...}
 \begin{itemize}
-\item We should not conclude too much from four experiments with rather arbitrary generation parameters...
 \item Debiased lasso similiar to OLS but more conservative, less powerful
 \item Knockoffs vs covariance test:
 \begin{itemize}
 \item Knockoffs may control FDR more robustly than Covariance test (especially at small $\alpha$)
 \item Knockoffs and covariance are similar in power overall but have different case-by-case behavior
 \end{itemize}
-\item Knockoffs tend to be conservative, but have good variable ranking in some cases (Personality, fMRI)
-\item Marginal screening remains annoyingly effective...
+\item Variable ranking:
+\begin{itemize}
+\item Marginal screening does very well in "fMRI'' even though it is not designed for regression, why is this?
+\item In HIV data, knockoffs and regression do much better than marginal screening
 \end{itemize}
+\end{itemize}
+There are good explanations for some of these phenomena!
 \end{frame}
 
-\begin{frame}
-\frametitle{Another look at covTest}
- \begin{columns}[c]
-    \column{.5\textwidth}
-     \emph{Strong stop type I error}
-
-     \includegraphics[scale = 0.4]{res_c_ss_type1_comment.png}
-    \column{.5\textwidth}
-     \begin{itemize}
-       \item<1> Why did this negative control get rejected in the fMRI data at such a low $\alpha$?
-       \item<2> According to the \emph{incremental null}, the negative control was not a mistake... it is the best single predictor by far!
-       \item<2> The particular negative control took an \emph{average} of the original columns 
-       \item<3> It is true that $\beta_i = 0$ for the rejected variable... but should we really disregard such strong "proxy'' variables?
-     \end{itemize}
- \end{columns}
-(thanks to Stefan!)
-\end{frame}
 
 \begin{frame}
 \frametitle{Low sample size}
@@ -756,38 +745,116 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 \textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
 \end{frame}
 
+
+
 \begin{frame}
 \frametitle{Commentary}
 \begin{itemize}
 \item Debiased lasso and Covariance test + forward stop continue to control Type I error while finding true positives
 \item Covariance test + strong stop appears too conservative
+\item \emph{Next:} explanations for the results in the first set of experiments..
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Are these experiments actually that realistic!?}
+\frametitle{When can we beat marginal screening?}
+Legend: \textcolor{blue}{k} = knockoff, (line) = marginal screening, \textcolor{green}{(line)} = lasso path
+
+\begin{center}
+\begin{tabular}{cc}
+fMRI & HIV\\
+\includegraphics[scale = 0.25]{fMRI_tvf.png} & 
+\includegraphics[scale = 0.25]{HIV_tvf.png}
+\end{tabular}
+\end{center}
 \begin{itemize}
-\item<1-2> Here we are implicitly assuming that real data always consists of a few ``active variables'' and many null variables
-\item<1-2> If that's true, it seems reasonable to model the distribution of the inactive variables conditional on knowing a superset of the active variables
-\item<2> But how do we know that $\beta$ is really sparse?
-\item<2> Even more importantly, how do we know that inferring coefficients of the
-  \emph{full model} $\beta$ are a meaningful objective?  E.g. should we consider the
-  covariance test to have made a mistake in the fMRI data?
-\item<3-> How can we decide between the \emph{full model null}, the
-  \emph{incremental null}, or an entirely different framework
-  altogether?
-\item<3-> \emph{Feedback from the practitioner} is the only way we can
-  tell if we have the right formulation for any particular application
+\item Marginal screening does well in fMRI data, but badly in HIV data.
+\item Explanation is due to the dimensionality and \emph{nature of the signal} in the original data!
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Questions to consider}
+\frametitle{When can we beat marginal screening?}
+\emph{fMRI data}
+
 \begin{itemize}
-\item Why is OLS more powerful than lasso in some of these experiments even when $\beta$ is sparse? Look at covariance conditions in the theory of LASSO...
-\item Why do knockoffs or lasso beat marginal screening/OLS in the HIV data? Was it due to how we generated the SNCs or is due to something special about the data itself?
-\item Suppose we wanted to validate selective inference or the incremental null.  How can we do this with synthetic negative controls (other than pure noise?)
+\item It is theorized that neurons in V1 can be descibed as \emph{Gabor filters} which respond to a single image feature
+\item The response $y$ is the activity in a voxel from the V1 visual system, the variables in the fMRI are \emph{candidate} Gabor filters
+\item The 53 predictors were selected (using LASSO) from a larger set of 10000 such filters
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.3, trim=0in 1.23in 0in 1.2in, clip]{gabor.png}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{When can we beat marginal screening?}
+\emph{fMRI data}
+\begin{itemize}
+\item The theorized ``Gabor filter'' for $y$ does not exactly match
+  any of the 10,000 candidate filters, but is best described as a
+  \emph{mixture} of some of those filters.
+\item Result: the 53 predictors selected were all heavily correlated to each other as well as the response.
+The optimal prediction is an weighted average of those predictors.
+\item Result: it is easy for marginal screening to find the original variables based on correlation!
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.3]{mixture.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{When can we beat marginal screening?}
+\emph{HIV data}
+\begin{itemize}
+\item Drug resistance of various HIV strains
+\item $y$ = drug resistance, $X$ = genotypes of the strains (various mutations)
+\item Predictors were selected based on unsupervised criterion (minimum number of occurences)
+\item Most of the active features are only weakly correlated with the
+  response, but combined they have much more predictive power than any
+  one feature
+\end{itemize}
+\begin{center}
+\includegraphics[scale = 0.2, trim = 0in 0in 2.8in 0in, clip]{pgm.png}
+\end{center}
+Marginal screening cannot detect this kind of ``hidden'' structure!
+\end{frame}
+
+\begin{frame}
+\frametitle{Another look at covTest}
+ \begin{columns}[c]
+    \column{.5\textwidth}
+     \emph{Strong stop type I error}
+
+     \includegraphics[scale = 0.4]{res_c_ss_type1_comment.png}
+    \column{.5\textwidth}
+     \begin{itemize}
+       \item<1> Why did this negative control get rejected in the fMRI data at such a low $\alpha$?
+       \item<1> The particular negative control happened to have \emph{mostly positive} coefficients... 
+       \item<2> According to the \emph{incremental null}, the negative control was not a mistake... it is the best single predictor by far!
+       \item<3> It is true that $\beta_i = 0$ for the rejected variable... but should we really disregard such strong "proxy'' variables?
+     \end{itemize}
+ \end{columns}
+(thanks to Stefan!)
+\end{frame}
+
+\begin{frame}
+\frametitle{Food for thought}
+\begin{itemize}
+\item<1-> So far these experiments suggest that the methods studied
+  \emph{are} robust to real-world conditions (but we should look at more datasets...!)
+\item<2-> Experiments with synthethic negative controls can reveal
+  some property of the signal in the original data: is it an average
+  of individually strong predictors (fMRI data), or does it contain a
+  less obvious high-dimensional structure (HIV data)?
+\item<3-> Is it really fair to only consider one definition of error
+  (the full model null)?  How can we decide which definition of Type I
+  error is most appropriate?
+\item<4-> The difficulties we encounter in interpreting the results of
+  these experiments remind us how \emph{feedback from the
+    practitioner} remains indispensable for evaluating procedures.
 \end{itemize}
 \end{frame}
 
