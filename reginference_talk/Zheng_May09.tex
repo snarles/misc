@@ -808,6 +808,15 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 \end{frame}
 
 \begin{frame}
+\frametitle{Questions to consider}
+\begin{itemize}
+\item Why is OLS more powerful than lasso in some of these experiments even when $\beta$ is sparse? Look at covariance conditions in the theory of LASSO...
+\item Why do knockoffs or lasso beat marginal screening/OLS in the HIV data? Was it due to how we generated the SNCs or is due to something special about the data itself?
+\item Suppose we wanted to validate selective inference or the incremental null.  How can we do this with synthetic negative controls (other than pure noise?)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Closing thoughts}
 \begin{quotation}
 `` Both the client and the statistician... must base their thinking on
