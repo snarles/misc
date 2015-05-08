@@ -202,13 +202,12 @@ All three methods share an association with LASSO:
 \item<5> In this talk, we define type I errors according to \emph{full model
   null}... 
 \item<3> \textbf{Selective inference}.  Condition on a randomly selected subset $E$, test hypotheses $H_i: \beta^E_i = 0$ for all $i \in E$
-\item<4> \textbf{Incremental null}.  (Informal explanation).  I consider adding variables one at a time; I make
-  a mistake whenever I add a variable to the model which
-  \emph{doesn't} improve the fit of the model (and is redundant).
-If I reject multiple variables, the false rejections are the variables \emph{which were already redundant} at the
-  time I added them.  However, if a variable is initially useful and
-  only becomes redundant as more variables are added, it is not
-  considered a mistake.
+\item<4> \textbf{Incremental null}.  (Informal explanation).
+\begin{itemize}
+\item Test variables as they are added to the model
+\item I make a mistake whenever I add a variable which \emph{doesn't} improve the fit of the model
+\item If a variable I added previously \emph{becomes} redundant later, it doesn't count against me
+\end{itemize}
 \end{itemize}
 \end{frame}
 
