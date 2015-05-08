@@ -190,6 +190,7 @@ All three methods share an association with LASSO:
 \begin{itemize}
 \item G'Sell, Wager, Chouldechova, Tibshirani (2013)
 \item Two methods to control FDR for convariance test... but under a \emph{different} definition of Type I error
+\item Type I error is defined according to the \emph{incremental null} (next slide)
 \end{itemize}
 \end{frame}
 
@@ -198,15 +199,13 @@ All three methods share an association with LASSO:
 \begin{itemize}
 \item<1-5> For a subset $E$ of the variables, define $\beta^E = (X_E^T X_E)^{-1} X_E^T X\beta$
 \item<2-> \textbf{The full model null}.  Test multiple hypotheses $H_i: \beta_i = 0$
-\item<6> In this talk, we define type I errors according to \emph{full model
+\item<5> In this talk, we define type I errors according to \emph{full model
   null}... 
 \item<3> \textbf{Selective inference}.  Condition on a randomly selected subset $E$, test hypotheses $H_i: \beta^E_i = 0$ for all $i \in E$
-\item<4-5> \textbf{Incremental null}.  (Informal explanation).  I make
+\item<4> \textbf{Incremental null}.  (Informal explanation).  I consider adding variables one at a time; I make
   a mistake whenever I add a variable to the model which
-  \emph{doesn't} improve the fit of the model.
-\item<5> FDR control for covariance test controls for the
-  \emph{incremental null}.  That is, out of the variables I reject, I
-  control the number of variables \emph{which were redundant} at the
+  \emph{doesn't} improve the fit of the model (and is redundant).
+If I reject multiple variables, the false rejections are the variables \emph{which were already redundant} at the
   time I added them.  However, if a variable is initially useful and
   only becomes redundant as more variables are added, it is not
   considered a mistake.
@@ -230,21 +229,6 @@ Covariance test (Lockhart et al. 2014) &  ?? & Yes \\
 \end{center}
 \end{frame}
 
-\begin{frame}
-\frametitle{Regression vs Marginal Screening}
-Testing $H_i: \beta_i = 0$ is better than testing $H_i: \Cov(X_i, Y) = 0$
-when you are looking for $X_i$ \emph{directly} linked to $Y$
-\begin{center}
-\begin{tabular}{cc}
-\multirow{5}{*}{\includegraphics[scale = 0.3]{pgm.png}} & \\
-& $\beta_i = 0$\\
-& \vspace{0.2in}\\
-& $\beta_i \neq 0$\\
-& \vspace{0.2in}\\
-\end{tabular}
-\end{center}
-(Adapted from \emph{Mourad 2012})
-\end{frame}
 
 \begin{frame}
 \frametitle{Statistical Validation}
@@ -791,7 +775,7 @@ Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 
 
 \begin{frame}
-\frametitle{Can we really trust these experiments!?}
+\frametitle{Are these experiments actually that realistic!?}
 \begin{itemize}
 \item<1-> Here we are implicitly assuming that real data always consists of a few ``active variables'' and many null variables
 \item<1-> If that's true, it seems reasonable to model the distribution of the inactive variables conditional on knowing a superset of the active variables
@@ -903,4 +887,20 @@ Let
 
 Legend: \textcolor{blue}{P} = Personality, \textcolor{green}{F} = fMRI,
 \textcolor{red}{H} = HIV, \textcolor{violet}{G} = Galaxy
+\end{frame}
+
+\begin{frame}
+\frametitle{Regression vs Marginal Screening}
+Testing $H_i: \beta_i = 0$ is better than testing $H_i: \Cov(X_i, Y) = 0$
+when you are looking for $X_i$ \emph{directly} linked to $Y$
+\begin{center}
+\begin{tabular}{cc}
+\multirow{5}{*}{\includegraphics[scale = 0.3]{pgm.png}} & \\
+& $\beta_i = 0$\\
+& \vspace{0.2in}\\
+& $\beta_i \neq 0$\\
+& \vspace{0.2in}\\
+\end{tabular}
+\end{center}
+(Adapted from \emph{Mourad 2012})
 \end{frame}
