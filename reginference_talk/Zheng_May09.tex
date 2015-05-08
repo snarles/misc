@@ -224,8 +224,7 @@ Covariance test (Lockhart et al. 2014) &  ?? & Yes \\
 \begin{frame}
 \frametitle{Statistical Validation}
 \begin{itemize}
-\item<1-> These procedures are derived under strong assumptions (linearity, gasusianity, homoscedasticty)
-\item<1-> How well do they work in real data where these assumptions are violated?
+\item<1-> How well do these procedures work in real data where these assumptions (linearity, gaussianity, homoscedasticty) are violated?
 \item<1-> We could validate inference procedures in real data if only we knew the `\emph{true}' $\beta$, (re)defined as
 \[
 \beta = \E[x x^T]^{-1} \E[yx]
@@ -296,9 +295,8 @@ If you reject any SNCs, we know these are errors!
 \begin{frame}
 \frametitle{Synthetic Negative Controls}
 \begin{itemize}
-\item<1-> Given random vector $x \in \mathbb{R}^p$, let $e$ be noise in $\mathbb{R}^p$ independent of $x$.
+\item<1-> Given random vector $x \in \mathbb{R}^p$, let $e$ be noise in $\mathbb{R}^q$ independent of $x$.
 \item<1-> Let $\Gamma$ be a fixed $p \times q$ matrix. \emph{Define} synthetic negative controls $z \in \mathbb{R}^{q}$ by
-by
 \[
 z = x'\Gamma + e
 \]
