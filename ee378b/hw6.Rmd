@@ -9,6 +9,11 @@ Charles Zheng EE 378b HW 6
 
 # Setup
 
+```{r setup}
+library(knitr)
+opts_knit$set(root.dir=normalizePath('../'))
+```
+
 Loading the data:
 
 ```{r, fig.width = 4.3, fig.height = 5}
@@ -16,7 +21,8 @@ library(Rcpp)
 library(pracma)
 library(magrittr)
 library(RcppArmadillo)
-load("~/mldata/images.RData")
+getwd()
+load("ee378b/images.RData")
 imgs[1, ] %>% matrix(64, 64) %>% t %>% fliplr %>% image(col = gray(0:20/20), axes = FALSE)
 ```
 
@@ -32,27 +38,6 @@ diag(dm) <- 0
 Functions
 
 ```{r}
-cppFunction('
-NumericMatrix minplus(NumericMatrix Ar, NumericMatrix Br) {
-  int n = Ar.nrow();
-  int l = Ar.ncol();
-  int m = Br.ncol();
-  NumericMatrix ans(n, m);
-  for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-      for (int k = 0; k < l; k++) {
-        double x = Ar(i, k) + Br(k, j);
-        if (x < ans(i, j) || k == 0) {
-          ans(i, j) = x;
-        }
-      }
-    }
-  }
-  return ans;
-}
-'
-)
-
 cppFunction('
 NumericMatrix floydWarshall(NumericMatrix Ar) {
   int n = Ar.nrow();
@@ -78,26 +63,13 @@ knn_dist_matrix <- function(a, k) {
   }
   a
 }
-
-apsp <- function(a) {
-  n <- dim(a)[1]
-  for (i in 1:floor(log(n)/log(2) + 1)) {
-    a <- minplus(a, a)
-  }
-  a
-}
 ```
 
 Form the k-nearest neighbors distance matrix and check that it is connected.
 
 ```{r}
 dm2 <- knn_dist_matrix(dm, k = 10)
-proc.time()
 dm3 <- floydWarshall(dm2)
-proc.time()
-dm3 <- apsp(dm2)
-proc.time()
-dm3[1, ]
 sum(dm3 == Inf)
 ```
 
