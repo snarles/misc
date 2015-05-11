@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 title: Charles Zheng EE 378b HW 6
 output:
   html_document:
