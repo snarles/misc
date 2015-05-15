@@ -60,9 +60,56 @@ central node $n_1/2$ any other node is $n_1/2$.  Hence it
 takes about $k^* + n_1/4k^* = n_1 (\sqrt{3/2} + \sqrt{1/6})$
 iterations.
 
-c.
+c.  Initialize each node with two different unique random IDs.  In the
+first phase (first $k$ iterations), use the first ID to implement the
+original algorithm. After the $k$th iteration, propagate the both
+pairs of IDs, along with a distance counter initialized to 1.  In this
+phase, nodes ignore all messages where the first ID does not match the
+max ID from the first phase.  If a message with the correct first ID
+has a higher second ID than the previous highest, the node will
+transmit a copy of that message to all its neighbords in the next
+round, while also incrementing the distance counter in the message by
+1.  This continues for $k$ iterations. In the third phase, any node
+whose max ID matches their original ID links to the max ID from the
+second phase if and only if the distance counter for that message is
+greater than $\alpha k$.  In the fourth phase, the algorithm continues
+as it did in the first phase.
 
-d.
+d.  Call all of the nodes whose original IDs are still stored on some
+node in the on the $k$th iteration as `centroids`.  The distance
+between neighboring centroids is between $k+1$ and $2k + 1$.  We can
+conclude further that the distribution is uniform since e.g. the
+neighoring centroid on the left of any centroid is the node with the
+max ID within that window of nodes between $k+1$ and $2k+1$ to the
+left of the centroid, and all of those nodes within the window have
+IDs which are independent of the centroid.  Therefore the distance
+between centroids is on average $3k/2$.  As a result, the average
+number of such centroids is $2n/3k$.  The distribution of distances
+from the centroid to nodes with matching max IDs is a mixture of
+uniform distributions.  Hence the probability of making a link is
+roughly proportional to $k(1-\alpha)$.  If we sum $k, k-1, \hdots, 1$,
+we get $k(k-1)/2$.  Hence the probability of making a link is
+$2(1-\alpha)/(k-1)$.  The speedup of making such links is the time
+saved per link, which is $\alpha k$, times the number of such links
+made, which is the probability of making a link times the number of
+centroids, $4n(1-\alpha)/(3(k-1))$.  Hence the benefit of making such
+links is $4n(1-\alpha)\alpha k/(3(k-1))$ iterations.  However, there
+is also a cost associated with adding $4n(1-\alpha)/(3(k-1))$ edges to
+the graph, so we have to compare the cost of one iteration of message
+passing to the cost of adding edges.  The number of messages passed in
+each iteration is roughly two times the number of unique IDs
+remaining, and hence is initially $2n/3k$ and decreases exponentially
+from there.  Overall this means that the cost of adding edges is
+comparable to 2 or more iterations.  But with $n$ and $k$ growing, the
+savings in iterations overpowers the cost of adding edges.  Therefore,
+neglecting the cost of adding edges, the optimal $\alpha = 1/2$.  The
+optimal $k$ is trickier to calculate since we had to assume growing
+$k$ to justify ignoring the cost of adding edges.  On the other hand,
+the equation resulting from that assumption favors small $k$.  In
+reality it would be advantageous to choose $k$ just large enough to
+control the number of added edges, and then repeat the procedure of
+adding edges periodically, until it became too costly to justify
+repeating the procedure in part c.\\
 
 
 \noindent\textbf{2.}
@@ -101,11 +148,27 @@ Hence we get
 \[
 k \leq \frac{R^2}{\delta^2}
 \]
-This means that the number of mistakes is bounded by $\frac{R^2}{\delta^2}$, since otherwise we would arrive at a contradiction.
+This means that the number of mistakes is bounded by $\frac{R^2}{\delta^2}$, since otherwise we would arrive at a contradiction.\\
 
 
 \noindent\textbf{3.}
+With probability $\min(1, \gamma/\min(||c_j||^2, ||c_k||^2))$, emit $(j, k) \to a_{ik}a_{jk}$.
 
+a.
+\begin{align*}
+\text{shuffle} &\leq \sum_{i=1}^n \sum_{j = i+1}^n \gamma \frac{\# (c_i, c_j)}{\min(\# c_i, \# c_j)}\\
+& \leq \sum_{i=1}^n \sum_{j = i+1}^n \gamma \# (c_i, c_j) \left(\frac{1}{\# c_i} + \frac{1}{\# c_j}\right)
+\end{align*}
+and the rest of Reza's proof goes through as before.
+
+b.
+If combiners are used, shuffle size is
+\[
+\min(Bm^2, nL\gamma)
+\]
+since the output is bounded in size by $m^2$ per mapper.  But if the
+output is so sparse that the post-combine sparsity is still less than
+$m^2$, the original DIMSUM result still applies.
 
 \noindent\textbf{4.}
 a. The communication cost of the shuffle is $O(n\log n)$ and the communication cost of the reduce is $O(k)$.
