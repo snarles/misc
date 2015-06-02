@@ -20,7 +20,7 @@ Slow algorithm
 
 ```{r}
 f <- function(x) {
-  exp(-x^2)
+  exp(-( 5 * x)^2) * (x > 0)
 }
 
 slow_fourier <- function(f, w, len = 10, res = 10, div = 1, shift = 0) {
@@ -34,21 +34,73 @@ slow_fourier(f, 2.2, 10, 20)
 slow_fourier(f, 2.2, 20, 20)
 slow_fourier(f, 2.2, 50, 20, 8)
 slow_fourier(f, 2.2, 50, 20, 8, .5)
-slow_fourier(f, 2.199115, 50, 30, 8, .5)
-
+slow_fourier(f, 1.1, 50, 30, 8, .5)
+slow_fourier(f, -1.1, 50, 30, 8, .5)
 ```
 
 FFT algorithm
 ```{r}
+fft_and_ws <- function(f, res = 100) {
+  xs <- ((1:res) - 1)/sqrt(res)
+  z <- fft(f(xs))/sqrt(res)
+  ws <- ((1:res) - 1)/sqrt(res) * 2 * pi
+  list(zpos = z, ws = ws)
+}
+
+res <- fft_and_ws(f)
+plot(res$ws, Re(res$z), type = "l")
+res$z[25]
+slow_fourier(f, res$ws[25])
+```
+
+
+FFT algorithm with shift
+```{r}
+f <- function(x) {
+  exp(-x^2)
+}
+
+shifted_fft_and_ws <- function(f, res = 100, shift = sqrt(res)/2) {
+  f2 <- function(x) f(x - shift)
+  f3 <- function(x) -f(x - shift)
+  res1 <- fft_and_ws(f2, res)
+  res2 <- fft_and_ws(f3, res)
+  zs <- c(rev(-res2$z[-1]), res1$z)
+  ws <- c(rev(-res2$ws[-1]), res1$ws)
+  # discard large frequencies
+  filt <- abs(ws) < max(ws)/2
+  zs <- zs[filt]
+  ws <- ws[filt]
+  list(zs = zs, ws = ws)
+}
+
+res <- shifted_fft_and_ws(f, res = 25)
+plot(res$ws, Re(res$zs), type = "l")
+res <- shifted_fft_and_ws(f, res = 100)
+lines(res$ws, Re(res$zs), type = "l", col = "red")
+
+ws <- res$ws
+plot(ws, sapply(ws, function(w) Re(slow_fourier(f, w))), type = "l")
+```
+
+
+```{r}
 fourier <- function(f, w0, res = 1000000, shift = 0, div = 1) {
   xs <- ((1:res) - 1)/sqrt(res)
-  w <- floor(w0 * sqrt(res)/(2 * pi)/div)
-  z <- fft(f(xs/div - shift)) * exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  w <- floor(abs(w0) * sqrt(res)/(2 * pi)/div)
+  z <- sign(w0) * fft(sign(w0) * f(xs/div - shift)) *
+    exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  #zneg <- fft(f(xs/div - shift), inverse = TRUE) *
+  #  exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  #if (w0 < 0) {
+  #  return(zneg[w]/sqrt(res)/div)
+  #}
   z[w]/sqrt(res)/div
 }
 
 fourier(f, 1.1)
-fourier(f, 1.1, 2000000, shift= 10, div = 1)
+fourier(f, 2.2, 2000000, shift= 10, div = 1)
+fourier(f, -1.1, 2000000, shift= 10, div = 1)
 fourier(f, 1.1, 2000000, shift= 20, div = 2)
 
 ```
@@ -59,13 +111,39 @@ fourier <- function(f, w0, res = 1000000, len = 10) {
   div <- sqrt(res)/len
   shift <- 1/2 * len
   xs <- ((1:res) - 1)/sqrt(res)
-  w <- floor(w0 * sqrt(res)/(2 * pi)/div)
-  z <- fft(f(xs/div - shift)) * exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  w <- floor(abs(w0) * sqrt(res)/(2 * pi)/div)
+  z <- sign(w0) * fft(sign(w0) * f(xs/div - shift)) *
+    exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
   z[w]/sqrt(res)/div
 }
 
 fourier(f, 1.1, len = 30)
+fourier(f, -1.1, len = 30)
 fourier(f, 1.1, len = 20)
 fourier(f, 1.1, len = 100)
+
 ```
 
+
+FFT also ws
+```{r}
+fourier <- function(f, res = 1000000, len = 10) {
+  div <- sqrt(res)/len
+  shift <- 1/2 * len
+  xs <- ((1:res) - 1)/sqrt(res)
+  z <- fft(f(xs/div - shift)) *
+    exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  zneg <- -fft(-f(xs/div - shift)) *
+    exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  ws <- ((1:res) - 1)/sqrt(res) * 2 * pi / div
+  zpos <- z/sqrt(res)/div
+  zneg <- zneg/sqrt(res)/div
+  list(zpos = zpos, zneg = zneg, ws = ws)
+}
+
+res <- fourier(f, len = 30)
+plot(res$zpos)
+res$zpos[10000]
+res$ws[10000]
+slow_fourier(f, res$ws[10000], len = 20, shift= 0, div = 2)
+```
