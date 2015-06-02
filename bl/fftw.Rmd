@@ -1,0 +1,24 @@
+Testing Fourier Stuff
+========================================================
+
+##Installing FFTW
+```
+http://mazamascience.com/WorkingWithData/?p=1439
+wget http://www.fftw.org/fftw-3.3.3.tar.gz
+tar -xzf fftw-3.3.3.tar.gz
+cd fftw-3.3.3
+./configure --enable-shared
+make
+sudo make install
+```
+
+```{r}
+library(fftw)
+```
+
+You can also embed plots, for example:
+
+```{r fig.width=7, fig.height=6}
+plot(cars)
+```
+
