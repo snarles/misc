@@ -198,7 +198,7 @@ sudo make install
 <p>Slow algorithm</p>
 
 <pre><code class="r">f &lt;- function(x) {
-  exp(-x^2) * (x &gt; 0)
+  exp(-x^2)
 }
 
 slow_fourier &lt;- function(f, w, len = 10, res = 10, div = 1, shift = 0) {
@@ -209,43 +209,43 @@ slow_fourier &lt;- function(f, w, len = 10, res = 10, div = 1, shift = 0) {
 slow_fourier(f, 2.2, 10, 10)
 </code></pre>
 
-<pre><code>## [1] 0.2142705-0.52437i
+<pre><code>## [1] 0.5285409+0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.2, 10, 10, 2)
 </code></pre>
 
-<pre><code>## [1] 0.2392705-0.5257481i
+<pre><code>## [1] 0.5285409-0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.2, 10, 20)
 </code></pre>
 
-<pre><code>## [1] 0.2392705-0.5257481i
+<pre><code>## [1] 0.5285409-0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.2, 20, 20)
 </code></pre>
 
-<pre><code>## [1] 0.2392705-0.5257481i
+<pre><code>## [1] 0.5285409-0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.2, 50, 20, 8)
 </code></pre>
 
-<pre><code>## [1] 0.2611455-0.5261995i
+<pre><code>## [1] 0.5285409-0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.2, 50, 20, 8, .5)
 </code></pre>
 
-<pre><code>## [1] 0.2611455-0.5261995i
+<pre><code>## [1] 0.5285409+0i
 </code></pre>
 
 <pre><code class="r">slow_fourier(f, 2.199115, 50, 30, 8, .5)
 </code></pre>
 
-<pre><code>## [1] 0.2624445-0.5262732i
+<pre><code>## [1] 0.5290556+0i
 </code></pre>
 
 <p>FFT algorithm</p>
@@ -260,31 +260,48 @@ slow_fourier(f, 2.2, 10, 10)
 fourier(f, 1.1)
 </code></pre>
 
-<pre><code>## [1] 0.6568134-0.4497168i
+<pre><code>## [1] 0.6578134-0.4497168i
 </code></pre>
 
-<pre><code class="r">fourier(f, 1.1, 2000000)
+<pre><code class="r">fourier(f, 1.1, 2000000, shift= 10, div = 1)
 </code></pre>
 
-<pre><code>## [1] 0.6570766-0.4496343i
+<pre><code>## [1] 1.31486-0i
 </code></pre>
 
-<pre><code class="r">fourier(f, 1.1, 2000000, div = 1)
+<pre><code class="r">fourier(f, 1.1, 2000000, shift= 20, div = 2)
 </code></pre>
 
-<pre><code>## [1] 0.6570766-0.4496343i
+<pre><code>## [1] 1.321235-0i
 </code></pre>
 
-<pre><code class="r">fourier(f, 1.1, 2000000, shift= 1, div = 1)
+<p>FFT with defaults</p>
+
+<pre><code class="r">fourier &lt;- function(f, w0, res = 1000000, len = 10) {
+  div &lt;- sqrt(res)/len
+  shift &lt;- 1/2 * len
+  xs &lt;- ((1:res) - 1)/sqrt(res)
+  w &lt;- floor(w0 * sqrt(res)/(2 * pi)/div)
+  z &lt;- fft(f(xs/div - shift)) * exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  z[w]/sqrt(res)/div
+}
+
+fourier(f, 1.1, len = 30)
 </code></pre>
 
-<pre><code>## [1] 0.6572276-0.4496343i
+<pre><code>## [1] 1.487215+0i
 </code></pre>
 
-<pre><code class="r">fourier(f, 1.1, 2000000, shift= 2, div = 2)
+<pre><code class="r">fourier(f, 1.1, len = 20)
 </code></pre>
 
-<pre><code>## [1] 0.6607425-0.4473604i
+<pre><code>## [1] 1.605875+0i
+</code></pre>
+
+<pre><code class="r">fourier(f, 1.1, len = 100)
+</code></pre>
+
+<pre><code>## [1] 1.376719-0i
 </code></pre>
 
 </body>

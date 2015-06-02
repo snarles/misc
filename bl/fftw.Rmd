@@ -20,7 +20,7 @@ Slow algorithm
 
 ```{r}
 f <- function(x) {
-  exp(-x^2) * (x > 0)
+  exp(-x^2)
 }
 
 slow_fourier <- function(f, w, len = 10, res = 10, div = 1, shift = 0) {
@@ -48,10 +48,24 @@ fourier <- function(f, w0, res = 1000000, shift = 0, div = 1) {
 }
 
 fourier(f, 1.1)
-fourier(f, 1.1, 2000000)
-fourier(f, 1.1, 2000000, div = 1)
-fourier(f, 1.1, 2000000, shift= 1, div = 1)
-fourier(f, 1.1, 2000000, shift= 2, div = 2)
+fourier(f, 1.1, 2000000, shift= 10, div = 1)
+fourier(f, 1.1, 2000000, shift= 20, div = 2)
 
+```
+
+FFT with defaults
+```{r}
+fourier <- function(f, w0, res = 1000000, len = 10) {
+  div <- sqrt(res)/len
+  shift <- 1/2 * len
+  xs <- ((1:res) - 1)/sqrt(res)
+  w <- floor(w0 * sqrt(res)/(2 * pi)/div)
+  z <- fft(f(xs/div - shift)) * exp(2i*pi*div*shift*((1:res) -1)/sqrt(res))
+  z[w]/sqrt(res)/div
+}
+
+fourier(f, 1.1, len = 30)
+fourier(f, 1.1, len = 20)
+fourier(f, 1.1, len = 100)
 ```
 
