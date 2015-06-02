@@ -40,17 +40,23 @@ slow_fourier(f, -1.1, 50, 30, 8, .5)
 
 FFT algorithm
 ```{r}
-fft_and_ws <- function(f, res = 100) {
-  xs <- ((1:res) - 1)/sqrt(res)
-  z <- fft(f(xs))/sqrt(res)
-  ws <- ((1:res) - 1)/sqrt(res) * 2 * pi
+g <- function(x) exp(-( 5 * x)^2) * (x > 0)
+
+fft_and_ws <- function(f, res = 100, alpha = 1) {
+  xs <- alpha * ((1:res) - 1)/sqrt(res)
+  z <- fft(f(xs))/sqrt(res) * alpha
+  ws <- ((1:res) - 1)/sqrt(res) * 2 * pi/alpha
   list(zpos = z, ws = ws)
 }
 
-res <- fft_and_ws(f)
-plot(res$ws, Re(res$z), type = "l")
-res$z[25]
-slow_fourier(f, res$ws[25])
+res <- fft_and_ws(g, alpha = 1, res = 200)
+plot(res$ws, Re(res$zpos), type = "l")
+res <- fft_and_ws(g, alpha = 0.7, res = 200)
+lines(res$ws, Re(res$zpos), type = "l", col = "red")
+res <- fft_and_ws(g, alpha = 0.5, res = 200)
+lines(res$ws, Re(res$zpos), type = "l", col = "red")
+lines(res$ws, sapply(res$ws, function(w) Re(slow_fourier(g, w, res = 20, len = 30))),
+      col = "red")
 ```
 
 
