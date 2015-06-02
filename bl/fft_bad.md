@@ -1,5 +1,7 @@
-Limitations of FFT
+FFT vs Integration
 ========================================================
+
+# Positive case
 
 Just a function taking values for $x > 0$.
 We want to obtain its Fourier transform
@@ -72,3 +74,76 @@ lines(res$w, Re(res$Fw), col = "red")
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
+Use a different scaling.
+
+
+```r
+fft_fourier <- function(f, n = 10, alpha = 1) {
+  xs <- ((1:n) - 1)/sqrt(n) * alpha
+  ws <- 2 * pi * ((1:n) - 1)/sqrt(n) / alpha
+  list(Fw = fft(f(xs))/sqrt(n) * alpha, w = ws)
+}
+plot(ws, Re(F_slow), type = "l",
+     ylab = expression(F(omega)), xlab = expression(omega))
+res <- fft_fourier(g, 4, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+res <- fft_fourier(g, 25, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+res <- fft_fourier(g, 100, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+res <- fft_fourier(g, 400, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+res <- fft_fourier(g, 1600, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+# Negative frequencies
+
+
+Define
+$$
+F[f](\omega) = \int_{-\infty}^\infty f(x) \exp(-i\omega x) dx
+$$
+
+Then
+
+$$
+F[f](-\omega) = \bar{F[\bar{f}](\omega)}
+$$
+
+If the function $g$ is real: same real part, negative Im part.
+
+
+```r
+ws <- -(0:40/20 * 2 * pi)
+F_slow <- sapply(ws, function(w) slow_fourier(g, w))
+plot(ws, Re(F_slow), type = "l",
+     ylab = expression(F(omega)), xlab = expression(omega))
+res <- fft_fourier(g, 400, 0.5)
+lines(-res$w, Re(res$Fw), col = "red")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
+```r
+plot(ws, Im(F_slow), type = "l",
+     ylab = expression(F(omega)), xlab = expression(omega))
+lines(-res$w, -Im(res$Fw), col = "red")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-2.png) 
+
+# Both positive and negative
+
+Define
+$$
+F_+[f(x)](\omega) = \int_0^\infty f(x) \exp(-i\omega x) dx
+$$
+
+Then
+$$
+F[f(x)](\omega) = F_+[f(x)](\omega) + F_+[f(-x)](-\omega)
+$$
