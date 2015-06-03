@@ -50,11 +50,21 @@ expo_poly <- function(abc, res = 1000, K = 10, plot = FALSE) {
     exp(y)/nc
   }
 }
-abc <- c(-1, 0, 5); res <- 1000; K <- 100
+abc <- c(-1, 1, 5); res <- 1000; K <- 100
 ff <- expo_poly(c(-1, 0, 5), plot = TRUE)
 xs <- seq(-10, 10, 0.1)
 plot(xs, ff(xs), type = "l")
 sum(ff(xs))
+```
 
+Fourier transform
+```{r}
+res <- fft_fourier2(ff, n = 1000, alpha = 1)
+plot(res$w, res$Fw, type = "l", xlim = c(0, 20))
+res <- fft_fourier2(ff, n = 200, alpha = 1)
+lines(res$w, res$Fw, type = "l", col = rainbow(100)[runif(1) * 100])
+res <- fft_fourier2(ff, n = 1000, alpha = 2)
+lines(res$w, res$Fw, type = "l", col = rainbow(100)[runif(1) * 100])
+abline(0, 0)
 ```
 
