@@ -24,26 +24,37 @@ fft_fourier2 <- function(f, n = 10, alpha = 1) {
 Start with some random pdfs
 
 ```{r}
-expo_poly <- function(abc, res = 1000, K = 100) {
-  # find interval where ax^4 + bx^3 + cx < -100
-  ll <- 1
-  aabc <- abs(abc)
-  for (i in 1:5) {
-    ll <- aabc[2]/aabc[1] + aabc[2]/(aabc[1] * ll) + K/(aabc[1] * ll^3)
+quadform <- function(abc) {
+  disc <- abc[2]^2 - 4 * abc[1] * abc[3]
+  if (disc < 0) {
+    return(c(NA, NA))
   }
+  (-abc[2] + c(-1, 1) * sqrt(disc))/(2 * abc[1])
+}
+
+expo_poly <- function(abc, res = 1000, K = 10, plot = FALSE) {
+  # find interval where ax^4 + bx^3 + cx < -100  
+  zeros <- quadform(abc)
+  zeros[is.na(zeros)] <- 0
+  ll <- max(c(abs(zeros), 0)) + K
   xs <- seq(-ll, ll, ll/res)
   ys <- ((abc[1] * xs + abc[2]) * xs + abc[3]) * xs^2
-  #plot(xs, ys, type = "l")
-  #plot(xs, exp(ys), type = "l")
+  if (plot) {
+    plot(xs, ys, type = "l")
+    plot(xs, exp(ys), type = "l")
+  }
   (const <- max(ys))
   nc <- sum(exp(ys - const)) / res * ll
   function(x) {
-    y <- ((abc[1] * xs + abc[2]) * xs + abc[3]) * xs^2 - const
+    y <- ((abc[1] * x + abc[2]) * x + abc[3]) * x^2 - const
     exp(y)/nc
   }
 }
-
-
+abc <- c(-1, 0, 5); res <- 1000; K <- 100
+ff <- expo_poly(c(-1, 0, 5), plot = TRUE)
+xs <- seq(-10, 10, 0.1)
+plot(xs, ff(xs), type = "l")
+sum(ff(xs))
 
 ```
 
