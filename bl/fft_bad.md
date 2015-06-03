@@ -147,3 +147,36 @@ Then
 $$
 F[f(x)](\omega) = F_+[f(x)](\omega) + F_+[f(-x)](-\omega)
 $$
+
+
+```r
+g <- function(x) exp(-x^2)
+xs <- -500:500/100
+plot(xs, g(xs), type = "l")
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+
+```r
+slow_fourier <- function(f, w, len = 10, res = 100) {
+  xs <- (-len * res):(len * res)/res
+  sum(f(xs) * exp(-1i * w * xs))/res
+}
+ws <- 0:40/20 * 2 * pi
+F_slow <- sapply(ws, function(w) slow_fourier(g, w))
+plot(ws, Re(F_slow), type = "l",
+     ylab = expression(F(omega)), xlab = expression(omega))
+fft_fourier2 <- function(f, n = 10, alpha = 1) {
+  res <- fft_fourier(f, n, alpha)
+  f2 <- function(x) { f(-x) }
+  res2 <- fft_fourier(f2, n, alpha)
+  Fw <- res$Fw + Conj(res2$Fw)
+  ws <- res$w
+  list(Fw = Fw, w = ws)
+}
+res <- fft_fourier2(g, 400, 0.5)
+lines(res$w, Re(res$Fw), col = "red")
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-2.png) 
+
