@@ -1,0 +1,49 @@
+Band-limited pdfs
+========================================================
+
+Source code
+
+```{r}
+fft_fourier <- function(f, n = 10, alpha = 1) {
+  xs <- ((1:n) - 1)/sqrt(n) * alpha
+  ws <- 2 * pi * ((1:n) - 1)/sqrt(n) / alpha
+  list(Fw = fft(f(xs))/sqrt(n) * alpha, w = ws)
+}
+fft_fourier2 <- function(f, n = 10, alpha = 1) {
+  res <- fft_fourier(f, n, alpha)
+  f2 <- function(x) { f(-x) }
+  res2 <- fft_fourier(f2, n, alpha)
+  Fw <- res$Fw + Conj(res2$Fw)
+  ws <- res$w
+  list(Fw = Fw, w = ws)
+}
+```
+
+## Some random pdfs and make them BL
+
+Start with some random pdfs
+
+```{r}
+expo_poly <- function(abc, res = 1000, K = 100) {
+  # find interval where ax^4 + bx^3 + cx < -100
+  ll <- 1
+  aabc <- abs(abc)
+  for (i in 1:5) {
+    ll <- aabc[2]/aabc[1] + aabc[2]/(aabc[1] * ll) + K/(aabc[1] * ll^3)
+  }
+  xs <- seq(-ll, ll, ll/res)
+  ys <- ((abc[1] * xs + abc[2]) * xs + abc[3]) * xs^2
+  #plot(xs, ys, type = "l")
+  #plot(xs, exp(ys), type = "l")
+  (const <- max(ys))
+  nc <- sum(exp(ys - const)) / res * ll
+  function(x) {
+    y <- ((abc[1] * xs + abc[2]) * xs + abc[3]) * xs^2 - const
+    exp(y)/nc
+  }
+}
+
+
+
+```
+
