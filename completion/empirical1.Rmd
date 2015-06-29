@@ -1,36 +1,97 @@
 Matrix completion as semi-supervised regression
 ========================================================
 
-Some empirical results
-
+Prediction using glmnet and softImpute
 ```{r}
-help(library)
 library(magrittr, quietly=TRUE, warn.conflicts=FALSE)
 library(pracma, quietly=TRUE, warn.conflicts=FALSE)
-library(glmnet, quietly=TRUE, warn.conflicts=FALSE)
-tab <- readRDS('data/16pf.rds')
+library(Matrix, quietly=TRUE, warn.conflicts=FALSE, verbose=FALSE)
+library(glmnet, quietly=TRUE, warn.conflicts=FALSE, verbose=FALSE)
+library(softImpute, quietly=TRUE, warn.conflicts=FALSE)
+```
+```{r}
+glm_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
+                    glmnet_pars = list(), rule = "lambda.1se") {
+  glmnet_pars <- modifyList(list(alpha = 0), glmnet_pars)
+  y <- data[tr_inds, y_var]
+  X <- as.matrix(data[tr_inds, x_vars])
+  X_te <- as.matrix(data[te_inds, x_vars])
+  y_te <- data[te_inds, y_var]
+  glmnet_pars$y <- y
+  glmnet_pars$x <- X
+  fit <- do.call(cv.glmnet, glmnet_pars)
+  pre <- predict(fit, X_te, s = fit[[rule]])
+  cv_mse <- Norm(pre - y_te)^2/length(te_inds)
+  list(fit = fit, pre = pre, cv_mse = cv_mse)
+}
+
+si_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
+                    si_pars = list(), yscale = 1) {
+  si_pars <- modifyList(list(type = "svd", rank.max = 10), si_pars)
+  if (is.numeric(x_vars)) x_vars <- colnames(data)[x_vars]
+  if (is.numeric(y_var)) y_var <- colnames(data)[y_var]
+  vars <- c(y_var, x_vars)
+  X_tr <- data[c(tr_inds, te_inds), vars]
+  # apply scaling
+  mus <- colMeans(X_tr)
+  sds <- apply(X_tr, 2, sd)
+  sds[1] <- sds[1]/yscale
+  tr_inds2 <- 1:length(tr_inds)
+  te_inds2 <- max(tr_inds2) + 1:length(te_inds)
+  X_te <- X_tr
+  X_tr[te_inds2, 1] <- NA
+  y_te <- X_te[te_inds2, 1]
+  X_sc <- t(t(X_tr - mus)/sds)
+  si_pars$x <- X_sc
+  fit <- do.call(softImpute, si_pars)
+  X_pr <- t(sds * (t(complete(X_sc, fit)) + mus))
+  pre <- X_pr[te_inds2, 1]
+  cv_mse <- Norm(y_te - pre)^2/length(te_inds)
+  list(fit = fit, pre = pre, cv_mse = cv_mse)
+}
 ```
 
+# Some empirical results
+
+Load 16 PF data
 
 ```{r}
-tab <- tab[tab$age < 100, ]
+if(length(grep("completion", getwd())) > 0) {setwd("..")}
+tab <- readRDS('data/16pf.rds')
+tab <- tab[tab$age < 100 & !is.na(tab$age), ]
 (n <- dim(tab)[1])
 rperm <- sample(n, n)
 tr_inds <- rperm[1:1000]
 te_inds <- rperm[1000 + (1:1000)]
-y_var <- "age"
-x_vars <- 1:163
+y_var <- 1
+x_vars <- 2:163
 ```
 
 
-Prediction using glmnet
+Glmnet prediction
 ```{r}
-glm_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
-                    glmnet_pars = list(alpha = 1)) {
-  y <- data[tr_inds, y_var]
-  X <- data[tr_inds, x_vars]
-  glmnet_pars$y <- y
-  glmnet_pars$X <- X
-  fit <- do.call(cv.glmnet, glmnet_pars)
-}
+# Ridge
+glmnet1 <- glm_fit(tab, y_var, x_vars, tr_inds, te_inds)
+(glmnet1$cv_mse)
+# Lasso
+glmnet2 <- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 1))
+(glmnet2$cv_mse)
+# EL 0.5
+glmnet3 <- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 0.5))
+(glmnet3$cv_mse)
 ```
+
+Matrix completion
+```{r}
+sifit1 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds)
+(sifit1$cv_mse)
+sifit2 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, yscale = 100)
+(sifit2$cv_mse)
+sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 1000)
+(sifit3$cv_mse)
+sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 5), 1)
+(sifit3$cv_mse)
+```
+
+
+
