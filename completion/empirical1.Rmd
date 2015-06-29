@@ -61,8 +61,10 @@ tab <- readRDS('data/16pf.rds')
 tab <- tab[tab$age < 100 & !is.na(tab$age), ]
 (n <- dim(tab)[1])
 rperm <- sample(n, n)
-tr_inds <- rperm[1:1000]
-te_inds <- rperm[1000 + (1:1000)]
+n_tr <- 50
+n_te <- 4000
+tr_inds <- rperm[1:n_tr]
+te_inds <- rperm[n_tr + (1:n_te)]
 y_var <- 1
 x_vars <- 2:163
 ```
@@ -92,6 +94,5 @@ sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 1000)
 sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 5), 1)
 (sifit3$cv_mse)
 ```
-
 
 

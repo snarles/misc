@@ -253,8 +253,10 @@ tab &lt;- tab[tab$age &lt; 100 &amp; !is.na(tab$age), ]
 </code></pre>
 
 <pre><code class="r">rperm &lt;- sample(n, n)
-tr_inds &lt;- rperm[1:1000]
-te_inds &lt;- rperm[1000 + (1:1000)]
+n_tr &lt;- 50
+n_te &lt;- 4000
+tr_inds &lt;- rperm[1:n_tr]
+te_inds &lt;- rperm[n_tr + (1:n_te)]
 y_var &lt;- 1
 x_vars &lt;- 2:163
 </code></pre>
@@ -266,7 +268,7 @@ glmnet1 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds)
 (glmnet1$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.6540407
+<pre><code>## [1] 1.19999
 </code></pre>
 
 <pre><code class="r"># Lasso
@@ -274,7 +276,7 @@ glmnet2 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 1))
 (glmnet2$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.6680812
+<pre><code>## [1] 0.9820008
 </code></pre>
 
 <pre><code class="r"># EL 0.5
@@ -282,7 +284,7 @@ glmnet3 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 0.5))
 (glmnet3$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.6594043
+<pre><code>## [1] 0.9451847
 </code></pre>
 
 <p>Matrix completion</p>
@@ -291,28 +293,28 @@ glmnet3 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 0.5))
 (sifit1$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 1.750405
+<pre><code>## [1] 1.505746
 </code></pre>
 
 <pre><code class="r">sifit2 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, yscale = 100)
 (sifit2$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 14.15032
+<pre><code>## [1] 14.1123
 </code></pre>
 
 <pre><code class="r">sifit3 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 1000)
 (sifit3$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 14.41809
+<pre><code>## [1] 14.37806
 </code></pre>
 
 <pre><code class="r">sifit3 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 5), 1)
 (sifit3$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 1.788054
+<pre><code>## [1] 1.502348
 </code></pre>
 
 </body>
