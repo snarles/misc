@@ -1,0 +1,36 @@
+Matrix completion as semi-supervised regression
+========================================================
+
+Some empirical results
+
+```{r}
+help(library)
+library(magrittr, quietly=TRUE, warn.conflicts=FALSE)
+library(pracma, quietly=TRUE, warn.conflicts=FALSE)
+library(glmnet, quietly=TRUE, warn.conflicts=FALSE)
+tab <- readRDS('data/16pf.rds')
+```
+
+
+```{r}
+tab <- tab[tab$age < 100, ]
+(n <- dim(tab)[1])
+rperm <- sample(n, n)
+tr_inds <- rperm[1:1000]
+te_inds <- rperm[1000 + (1:1000)]
+y_var <- "age"
+x_vars <- 1:163
+```
+
+
+Prediction using glmnet
+```{r}
+glm_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
+                    glmnet_pars = list(alpha = 1)) {
+  y <- data[tr_inds, y_var]
+  X <- data[tr_inds, x_vars]
+  glmnet_pars$y <- y
+  glmnet_pars$X <- X
+  fit <- do.call(cv.glmnet, glmnet_pars)
+}
+```
