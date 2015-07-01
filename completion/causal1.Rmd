@@ -11,6 +11,34 @@ library(glmnet, quietly=TRUE, warn.conflicts=FALSE, verbose=FALSE)
 library(softImpute, quietly=TRUE, warn.conflicts=FALSE)
 ```
 
+ALS
+```{r}
+als <- function(dat, r, lx = 0, ly = lx,
+                x = randn(dim(dat)[1], r),
+                y = randn(dim(dat)[2], r),
+                nits = 10) {
+  n <- dim(dat)[1]; p <- dim(dat)[2]
+  for (it in 1:nits) {
+    # update x
+    for (i in 1:n) {
+      filt <- !is.na(dat[i, ])
+      regmat <- y[filt, , drop = FALSE]
+      x[i, ] <- 
+        solve(t(regmat) %*% regmat + ly * eye(r), t(regmat) %*% dat[i, filt])
+    }
+    # update y
+    for (i in 1:p) {
+      filt <- !is.na(dat[, i])
+      regmat <- x[filt, , drop = FALSE]
+      y[i, ] <- 
+        solve(t(regmat) %*% regmat + lx * eye(r), t(regmat) %*% dat[filt, i])    
+    }  
+  }
+  comp <- x %*% t(y)
+  comp
+}
+```
+
 # Potential outcomes model
 
 The model is as follows.  $x_i$ are covariates of the $i$th subject, $d_i$ is a binary variable indicating treatment or control.  This is observational data, so $d_i$ depends on $x_i$.  We model
@@ -23,27 +51,34 @@ Generate a low-rank matrix $(Y^0 Y^1 X)$.  Then determine $D$, the treatment ass
 ```{r}
 n <- 10000
 p <- 20
-k <- 1
-sigma <- 0.1
-full<- randn(n, k) %*% randn(k, p) + sigma * randn(n, p)
-full[, 3] <- 1 # intercept term
-full[, 2] <- full[, 2] + rnorm(1) # treatment effect
-colnames(full) <- c("y0", "y1", "int", paste0("X", 1:(p-3)))
+k <- 3
+sigma <- 1e-3
+utrue <- randn(n, k)
+vtrue <- randn(p, k)
+# treatment effect
+true_effect <- rnorm(1)
+utrue[, k] <- 1
+vtrue[, k] <- true_effect * c(0, 1, rep(0, p-2))
+full<- utrue %*% t(vtrue) + sigma * randn(n, p)
+colnames(full) <- c("y0", "y1", paste0("X", 1:(p-2)))
 bt <- rnorm(p - 2) # variable determining treatment
-probs <- full[, -(1:2)] %*% bt %>% {exp(.) / (1 + exp(.))}
+temp <- full[, -(1:2)] %*% bt
+# increase variation in treatment probabilities
+temp <- 3 * temp/sd(temp)
+probs <- temp  %>% {exp(.) / (1 + exp(.))}
 treat <- rbinom(n=n, size=1, prob=probs)
 obs <- full
 obs[treat == 1, 1] <- NA
 obs[treat == 0, 2] <- NA
 y0 <- full[, 1]
 y1 <- full[, 2]
-X <- cbind(treat, full[, -c(1:3)])
+X <- cbind(treat, full[, -c(1:2)])
 y_obs <- ifelse(treat == 0, y0, y1)
 ```
 
-True average treatment effect $\E[Y^1 - Y^0]$
+Unbiased estimate of treatment effect $\E[Y^1 - Y^0]$
 ```{r}
-(true_effect <- mean(y1) - mean(y0))
+(unbiased_effect <- mean(y1) - mean(y0))
 ```
 
 Naive regression
@@ -65,9 +100,19 @@ yh1 <- coef(res1) %>% {.[1] + cases0[, -1] %*% .[-1]}
 
 Matrix completion
 ```{r}
-obs2 <- obs[, -3] # remove intercept column
-fit <- softImpute(obs2, rank.max=k, type="als")
-pre <- complete(obs2, fit)
+fit <- softImpute(obs, rank.max=k, type="als", lambda = 1e-3)
+pre <- complete(obs, fit)
 (mc_effect <- mean(pre[, 2] - pre[, 1]))
 ```
 
+ALS
+```{r}
+pre_als <- als(obs, r=k, lx=1e-3)
+(als_effect <- mean(pre_als[, 2] - pre_als[, 1]))
+```
+
+ALS with truth
+```{r}
+pre_als <- als(obs, r=k, lx=1e-3, x=utrue, y=vtrue)
+(als_effect <- mean(pre_als[, 2] - pre_als[, 1]))
+```
