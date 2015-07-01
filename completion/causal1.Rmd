@@ -11,21 +11,25 @@ library(glmnet, quietly=TRUE, warn.conflicts=FALSE, verbose=FALSE)
 library(softImpute, quietly=TRUE, warn.conflicts=FALSE)
 ```
 
-ALS
+ALS custom written for potential outcomes
 ```{r}
-als <- function(dat, r, lx = 0, ly = lx,
-                x = randn(dim(dat)[1], r),
-                y = randn(dim(dat)[2], r),
-                nits = 10) {
-  n <- dim(dat)[1]; p <- dim(dat)[2]
+als <- function(obs, r, lx = 0, ly = lx, nits = 10) {
+  n <- dim(obs)[1]; p <- dim(obs)[2]
+  treat <- ifelse(is.na(obs[, 1]), 1, 0)
+  obs2 <- obs
+  obs2[is.na(obs2)] <- mean(obs[, 1:2], na.rm=TRUE)
+  res0 <- svd(obs2)
+  x <- res0$u[, 1:r, drop = FALSE]
+  y <- res0$v[, 1:r, drop = FALSE]
   for (it in 1:nits) {
     # update x
-    for (i in 1:n) {
-      filt <- !is.na(dat[i, ])
-      regmat <- y[filt, , drop = FALSE]
-      x[i, ] <- 
-        solve(t(regmat) %*% regmat + ly * eye(r), t(regmat) %*% dat[i, filt])
-    }
+    regx <- y[-2, , drop = FALSE]
+    regy <- t(obs[treat == 0, -2])
+    x[treat==0, ] <- solve(t(regx) %*% regx + ly * eye(r), t(regx) %*% regy)
+    regx <- y[-1, , drop = FALSE]
+    regy <- t(obs[treat == 1, -1])
+    x[treat==1, ] <- solve(t(regx) %*% regx + ly * eye(r), t(regx) %*% regy)
+    
     # update y
     for (i in 1:p) {
       filt <- !is.na(dat[, i])
