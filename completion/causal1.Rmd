@@ -13,33 +13,47 @@ library(softImpute, quietly=TRUE, warn.conflicts=FALSE)
 
 ALS custom written for potential outcomes
 ```{r}
-als <- function(obs, r, lx = 0, ly = lx, nits = 10) {
+f2 <- function(x) sum(x^2)
+u <- utrue; v <- vtrue
+als <- function(obs, r, l.u = 0, l.v = l.u, nits = 10,
+                u = NULL, v = NULL, inter = FALSE) {
   n <- dim(obs)[1]; p <- dim(obs)[2]
   treat <- ifelse(is.na(obs[, 1]), 1, 0)
   obs2 <- obs
   obs2[is.na(obs2)] <- mean(obs[, 1:2], na.rm=TRUE)
-  res0 <- svd(obs2)
-  x <- res0$u[, 1:r, drop = FALSE]
-  y <- res0$v[, 1:r, drop = FALSE]
-  for (it in 1:nits) {
-    # update x
-    regx <- y[-2, , drop = FALSE]
-    regy <- t(obs[treat == 0, -2])
-    x[treat==0, ] <- solve(t(regx) %*% regx + ly * eye(r), t(regx) %*% regy)
-    regx <- y[-1, , drop = FALSE]
-    regy <- t(obs[treat == 1, -1])
-    x[treat==1, ] <- solve(t(regx) %*% regx + ly * eye(r), t(regx) %*% regy)
-    
-    # update y
-    for (i in 1:p) {
-      filt <- !is.na(dat[, i])
-      regmat <- x[filt, , drop = FALSE]
-      y[i, ] <- 
-        solve(t(regmat) %*% regmat + lx * eye(r), t(regmat) %*% dat[filt, i])    
-    }  
+  if (is.null(u)) {
+    res0 <- svd(obs2)
+    u <- res0$u[, 1:r, drop = FALSE]
+    v <- res0$v[, 1:r, drop = FALSE]    
   }
-  comp <- x %*% t(y)
-  comp
+  for (it in 1:nits) {
+    #comp <- x %*% t(y)
+    #f2(comp[!is.na(obs)] - full[!is.na(obs)])
+    # update U
+    regx <- v[-2, , drop = FALSE]
+    regy <- t(obs[treat == 0, -2])
+    u[treat==0, ] <- t(solve(t(regx) %*% regx + l.u * eye(r), t(regx) %*% regy))
+    regx <- v[-1, , drop = FALSE]
+    regy <- t(obs[treat == 1, -1])
+    u[treat==1, ] <- t(solve(t(regx) %*% regx + l.u * eye(r), t(regx) %*% regy))
+    # update V
+    regx <- u[treat==0, , drop = FALSE]
+    regy <- obs[treat==0, 1, drop = FALSE]
+    v[1, ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
+    regx <- u[treat==1, , drop = FALSE]
+    regy <- obs[treat==1, 2, drop = FALSE]
+    v[2, ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
+    regx <- u
+    regy <- obs[, -(1:2), drop = FALSE]
+    v[-(1:2), ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
+  }
+  fitted <- u %*% t(v)
+  if (inter) {
+   imputed <- obs
+   imputed[is.na(obs)] <- fitted[is.na(obs)]
+   return(list(u = u, v = v, fitted = fitted, imputed = imputed)) 
+  }
+  fitted
 }
 ```
 
@@ -53,8 +67,8 @@ The model is as follows.  $x_i$ are covariates of the $i$th subject, $d_i$ is a 
 Generate a low-rank matrix $(Y^0 Y^1 X)$.  Then determine $D$, the treatment assignment, as a function of $X$, by the above equation.  $Y^0$ is observed for all cases where $D = 0$ and $Y^1$ is observed for all cases $D = 1$.
 
 ```{r}
-n <- 10000
-p <- 20
+n <- 200
+p <- 10
 k <- 3
 sigma <- 1e-3
 utrue <- randn(n, k)
@@ -111,12 +125,20 @@ pre <- complete(obs, fit)
 
 ALS
 ```{r}
-pre_als <- als(obs, r=k, lx=1e-3)
+pre_als <- als(obs, r=k, l.u=1e-3)
 (als_effect <- mean(pre_als[, 2] - pre_als[, 1]))
 ```
 
 ALS with truth
 ```{r}
-pre_als <- als(obs, r=k, lx=1e-3, x=utrue, y=vtrue)
-(als_effect <- mean(pre_als[, 2] - pre_als[, 1]))
+cheat_als <- als(obs, r=k, l.u=1e-5, u=utrue, v=vtrue)
+(cheat_effect <- mean(cheat_als[, 2] - cheat_als[, 1]))
+```
+
+Results
+```{r}
+c(true_effect = true_effect, unbiased_effect = unbiased_effect,
+  naive_effect = naive_effect, alt_effect = alt_effect,
+  mc_effect = mc_effect, als_effect = als_effect,
+  cheat_effect = cheat_effect)
 ```
