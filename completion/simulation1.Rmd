@@ -27,7 +27,8 @@ glm_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
 }
 
 si_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
-                    si_pars = list(), yscale = 1) {
+                    si_pars = list(), yscale = 1,
+                   standardize = TRUE) {
   si_pars <- modifyList(list(type = "svd", rank.max = 10), si_pars)
   #if (is.numeric(x_vars)) x_vars <- colnames(data)[x_vars]
   #if (is.numeric(y_var)) y_var <- colnames(data)[y_var]
@@ -36,16 +37,26 @@ si_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
   # apply scaling
   tr_inds2 <- 1:length(tr_inds)
   te_inds2 <- max(tr_inds2) + 1:length(te_inds)
-  mus <- colMeans(X_tr[tr_inds2, ])
-  sds <- apply(X_tr[tr_inds2, ], 2, sd)
-  sds[1] <- sds[1]/yscale
+  if (standardize) {
+    mus <- colMeans(X_tr[tr_inds2, ])
+    sds <- apply(X_tr[tr_inds2, ], 2, sd)
+    sds[1] <- sds[1]/yscale    
+  }
   X_te <- X_tr
   X_tr[te_inds2, 1] <- NA
   y_te <- X_te[te_inds2, 1]
-  X_sc <- t(t(X_tr - mus)/sds)
+  if (standardize) {
+    X_sc <- t(t(X_tr - mus)/sds)
+  } else {
+    X_sc <- X_tr
+  }  
   si_pars$x <- X_sc
   fit <- do.call(softImpute, si_pars)
-  X_pr <- t(sds * (t(complete(X_sc, fit)) + mus))
+  if (standardize) {
+    X_pr <- t(sds * (t(complete(X_sc, fit)) + mus))
+  } else {
+    X_pr <- complete(X_sc, fit)
+  }
   pre <- X_pr[te_inds2, 1]
   cv_mse <- Norm(y_te - pre)^2/length(te_inds)
   list(fit = fit, pre = pre, cv_mse = cv_mse)
@@ -54,7 +65,7 @@ si_fit <- function(data, y_var, x_vars, tr_inds, te_inds,
 
 # Some simulation results
 
-Load 16 PF data
+Generate a low-rank matrix
 
 ```{r}
 n <- 5000
@@ -87,14 +98,16 @@ glmnet3 <- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 0.5))
 
 Matrix completion
 ```{r}
-sifit1 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds)
+sifit1 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, standardize = FALSE)
 (sifit1$cv_mse)
-sifit2 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, yscale = 100)
+sifit2 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, standardize = TRUE)
 (sifit2$cv_mse)
-sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 1000)
+sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 
+                 yscale = 1000)
 (sifit3$cv_mse)
-sifit3 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(type = "als", rank.max = k), 1)
-(sifit3$cv_mse)
+sifit4 <- si_fit(tab, y_var, x_vars, tr_inds, te_inds,
+                 list(type = "als", rank.max = k), 1)
+(sifit4$cv_mse)
 ```
 
 

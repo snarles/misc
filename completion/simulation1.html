@@ -215,7 +215,8 @@ library(glmnet, quietly=TRUE, warn.conflicts=FALSE, verbose=FALSE)
 }
 
 si_fit &lt;- function(data, y_var, x_vars, tr_inds, te_inds,
-                    si_pars = list(), yscale = 1) {
+                    si_pars = list(), yscale = 1,
+                   standardize = TRUE) {
   si_pars &lt;- modifyList(list(type = &quot;svd&quot;, rank.max = 10), si_pars)
   #if (is.numeric(x_vars)) x_vars &lt;- colnames(data)[x_vars]
   #if (is.numeric(y_var)) y_var &lt;- colnames(data)[y_var]
@@ -224,16 +225,26 @@ si_fit &lt;- function(data, y_var, x_vars, tr_inds, te_inds,
   # apply scaling
   tr_inds2 &lt;- 1:length(tr_inds)
   te_inds2 &lt;- max(tr_inds2) + 1:length(te_inds)
-  mus &lt;- colMeans(X_tr[tr_inds2, ])
-  sds &lt;- apply(X_tr[tr_inds2, ], 2, sd)
-  sds[1] &lt;- sds[1]/yscale
+  if (standardize) {
+    mus &lt;- colMeans(X_tr[tr_inds2, ])
+    sds &lt;- apply(X_tr[tr_inds2, ], 2, sd)
+    sds[1] &lt;- sds[1]/yscale    
+  }
   X_te &lt;- X_tr
   X_tr[te_inds2, 1] &lt;- NA
   y_te &lt;- X_te[te_inds2, 1]
-  X_sc &lt;- t(t(X_tr - mus)/sds)
+  if (standardize) {
+    X_sc &lt;- t(t(X_tr - mus)/sds)
+  } else {
+    X_sc &lt;- X_tr
+  }  
   si_pars$x &lt;- X_sc
   fit &lt;- do.call(softImpute, si_pars)
-  X_pr &lt;- t(sds * (t(complete(X_sc, fit)) + mus))
+  if (standardize) {
+    X_pr &lt;- t(sds * (t(complete(X_sc, fit)) + mus))
+  } else {
+    X_pr &lt;- complete(X_sc, fit)
+  }
   pre &lt;- X_pr[te_inds2, 1]
   cv_mse &lt;- Norm(y_te - pre)^2/length(te_inds)
   list(fit = fit, pre = pre, cv_mse = cv_mse)
@@ -242,7 +253,7 @@ si_fit &lt;- function(data, y_var, x_vars, tr_inds, te_inds,
 
 <h1>Some simulation results</h1>
 
-<p>Load 16 PF data</p>
+<p>Generate a low-rank matrix</p>
 
 <pre><code class="r">n &lt;- 5000
 p &lt;- 200
@@ -265,7 +276,7 @@ glmnet1 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds)
 (glmnet1$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.01535823
+<pre><code>## [1] 0.01964882
 </code></pre>
 
 <pre><code class="r"># Lasso
@@ -273,7 +284,7 @@ glmnet2 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 1))
 (glmnet2$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.01363625
+<pre><code>## [1] 0.01708116
 </code></pre>
 
 <pre><code class="r"># EL 0.5
@@ -281,37 +292,39 @@ glmnet3 &lt;- glm_fit(tab, y_var, x_vars, tr_inds, te_inds, list(alpha = 0.5))
 (glmnet3$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.01369667
+<pre><code>## [1] 0.01394793
 </code></pre>
 
 <p>Matrix completion</p>
 
-<pre><code class="r">sifit1 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds)
+<pre><code class="r">sifit1 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, standardize = FALSE)
 (sifit1$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.1623356
+<pre><code>## [1] 0.402142
 </code></pre>
 
-<pre><code class="r">sifit2 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, yscale = 100)
+<pre><code class="r">sifit2 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, standardize = TRUE)
 (sifit2$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.187981
+<pre><code>## [1] 0.1014722
 </code></pre>
 
-<pre><code class="r">sifit3 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 1000)
+<pre><code class="r">sifit3 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(rank.max = 3), 
+                 yscale = 1000)
 (sifit3$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.187988
+<pre><code>## [1] 0.4105277
 </code></pre>
 
-<pre><code class="r">sifit3 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds, list(type = &quot;als&quot;, rank.max = k), 1)
-(sifit3$cv_mse)
+<pre><code class="r">sifit4 &lt;- si_fit(tab, y_var, x_vars, tr_inds, te_inds,
+                 list(type = &quot;als&quot;, rank.max = k), 1)
+(sifit4$cv_mse)
 </code></pre>
 
-<pre><code>## [1] 0.01396286
+<pre><code>## [1] 0.01140783
 </code></pre>
 
 </body>
