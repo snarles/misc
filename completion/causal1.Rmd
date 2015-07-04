@@ -1,5 +1,13 @@
-Matrix completion as semi-supervised regression
+Matrix completion for causal inference
 ========================================================
+
+Model
+$$
+Z = UV^T + 1 c^T + E
+$$
+where $U$, $V$ are skinny matrices, $c$ is a constant bias term, and $E$ is noise.
+
+The first two columns of $Z$ are $Y^{(0)}$ and $Y^{(1)}$; the goal in causal inference is to infer the treatment effect $\mathbb{E}(Y^{(1)} - Y^{(0)})$.
 
 Prediction using glmnet and softImpute
 ```{r}
@@ -14,9 +22,9 @@ library(softImpute, quietly=TRUE, warn.conflicts=FALSE)
 ALS custom written for potential outcomes
 ```{r}
 f2 <- function(x) sum(x^2)
-u <- utrue; v <- vtrue
+#u <- utrue; v <- vtrue
 als <- function(obs, r, l.u = 0, l.v = l.u, nits = 10,
-                u = NULL, v = NULL, inter = FALSE) {
+                u = NULL, v = NULL, cc = NULL, inter = FALSE) {
   n <- dim(obs)[1]; p <- dim(obs)[2]
   treat <- ifelse(is.na(obs[, 1]), 1, 0)
   obs2 <- obs
@@ -25,84 +33,140 @@ als <- function(obs, r, l.u = 0, l.v = l.u, nits = 10,
     res0 <- svd(obs2)
     u <- res0$u[, 1:r, drop = FALSE]
     v <- res0$v[, 1:r, drop = FALSE]    
+    cc <- rnorm(p)
   }
   for (it in 1:nits) {
     #comp <- x %*% t(y)
     #f2(comp[!is.na(obs)] - full[!is.na(obs)])
+    ## update cc
+    resid <- obs - u %*% t(v)
+    cc <- apply(resid, 2, function(v) mean(v, na.rm = TRUE))
     # update U
+    resid <- obs - ones(n, 1) %*% t(cc)
     regx <- v[-2, , drop = FALSE]
-    regy <- t(obs[treat == 0, -2])
+    regy <- t(resid[treat == 0, -2])
     u[treat==0, ] <- t(solve(t(regx) %*% regx + l.u * eye(r), t(regx) %*% regy))
     regx <- v[-1, , drop = FALSE]
-    regy <- t(obs[treat == 1, -1])
+    regy <- t(resid[treat == 1, -1])
     u[treat==1, ] <- t(solve(t(regx) %*% regx + l.u * eye(r), t(regx) %*% regy))
     # update V
     regx <- u[treat==0, , drop = FALSE]
-    regy <- obs[treat==0, 1, drop = FALSE]
+    regy <- resid[treat==0, 1, drop = FALSE]
     v[1, ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
     regx <- u[treat==1, , drop = FALSE]
-    regy <- obs[treat==1, 2, drop = FALSE]
+    regy <- resid[treat==1, 2, drop = FALSE]
     v[2, ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
     regx <- u
-    regy <- obs[, -(1:2), drop = FALSE]
+    regy <- resid[, -(1:2), drop = FALSE]
     v[-(1:2), ] <- t(solve(t(regx) %*% regx + l.v * eye(r), t(regx) %*% regy))
   }
-  fitted <- u %*% t(v)
+  fitted <- u %*% t(v) + ones(n, 1) %*% t(cc)
   if (inter) {
    imputed <- obs
    imputed[is.na(obs)] <- fitted[is.na(obs)]
-   return(list(u = u, v = v, fitted = fitted, imputed = imputed)) 
+   return(list(u = u, v = v, cc = cc, fitted = fitted, imputed = imputed)) 
   }
   fitted
 }
 ```
 
+Nuclear norm matrix completion with column bias
+```{r}
+st <- function(z, l) sign(z) * pmax(abs(z) - l, 0)
+
+nn_objective_f <- function(Z, N, cc, lambda, ...) {
+  n <- dim(Z)[1]
+  M <- N + ones(n, 1) %*% cc
+  f2(Z[!is.na(Z)] - M[!is.na(Z)]) + lambda * sum(svd(N,0,0)$d)
+}
+
+nn_init_params <- function(Z, lambda = 0.1, rho = 0.1) {
+  n <- dim(Z)[1]; p <- dim(Z)[2]
+  z <- zeros(n, p)
+  list(Z = Z, M = z, N = z, cc = zeros(1, p), W = z,
+       lambda = lambda, rho = rho)  
+}
+
+nn_iterate <- function(Z, M, N, cc, W, lambda = 0.1, rho = 1) {
+  n <- dim(Z)[1]; p <- dim(Z)[2]
+  mp <- (!is.na(Z)) + 0
+  Zo <- Z
+  Zo[is.na(Z)] <- 0
+  ## M iterate
+  temp <- N + ones(n, 1) %*% cc + W
+  M <- ((mp * Zo) + (rho/2) * temp)/(mp + (rho/2))
+  ## N iterate
+  temp <- M - ones(n, 1) %*% cc - W
+  res <- svd(temp)
+  N <- res$u %*% (st(res$d, 2 * lambda/rho) *  t(res$v))
+  ## c iterate
+  temp <- -N + M - W
+  cc <- t(colMeans(temp))
+  ## W iterate
+  W <- W + (N - M + ones(n, 1) %*% cc)
+  list(Z = Z, M = M, N = N, cc = cc, W = W, lambda = lambda, rho = rho)
+}
+
+nn_optim <- function(Z, n_its = 10, lambda = 0.1, rho = 1) {
+  pars <- nn_init_params(Z, lambda, rho)
+  ofs <- numeric(n_its)
+  for (i in 1:n_its) {
+    pars <- do.call(nn_iterate, pars)
+    ofs[i] <- do.call(nn_objective_f, pars)
+  }
+  M <- with(pars, N + ones(dim(N)[1], 1) %*% cc)
+  Z[is.na(Z)] <- M[is.na(Z)]
+  c(pars, list(ofs = ofs, fitted = M, imputed = Z))
+}
+```
+
 # Potential outcomes model
 
-The model is as follows.  $x_i$ are covariates of the $i$th subject, $d_i$ is a binary variable indicating treatment or control.  This is observational data, so $d_i$ depends on $x_i$.  We model
+The model is as follows.  $x_i$ are covariates of the $i$th subject, $d_i$ is a binary variable indicating treatment or control. We have a self-selection model
 \[
-\text{Pr}[D_i = 1] = \frac{e^{x_i^T \beta}}{1 + e^{x_i^T \beta}}
+\text{Pr}[D_i = 1] = \frac{e^{\beta (y^1_i - y^0_i)}}{1 + e^{\beta (y^1_i - y^0_i)}}
 \]
 
-Generate a low-rank matrix $(Y^0 Y^1 X)$.  Then determine $D$, the treatment assignment, as a function of $X$, by the above equation.  $Y^0$ is observed for all cases where $D = 0$ and $Y^1$ is observed for all cases $D = 1$.
+Generate a low-rank matrix $(Y^0 Y^1 X)$.  Then determine $D$, the treatment assignment, by the above equation.  $Y^0$ is observed for all cases where $D = 0$ and $Y^1$ is observed for all cases $D = 1$.
 
 ```{r}
-n <- 200
-p <- 10
+n <- 500
+p <- 220
 k <- 3
-sigma <- 1e-3
+sigma <- 10
 utrue <- randn(n, k)
 vtrue <- randn(p, k)
+ctrue <- rnorm(p)
 # treatment effect
-true_effect <- rnorm(1)
-utrue[, k] <- 1
-vtrue[, k] <- true_effect * c(0, 1, rep(0, p-2))
-full<- utrue %*% t(vtrue) + sigma * randn(n, p)
+full<- utrue %*% t(vtrue) + ones(n, 1) %*% ctrue + sigma * randn(n, p)
 colnames(full) <- c("y0", "y1", paste0("X", 1:(p-2)))
-bt <- rnorm(p - 2) # variable determining treatment
-temp <- full[, -(1:2)] %*% bt
-# increase variation in treatment probabilities
-temp <- 3 * temp/sd(temp)
+# self-selective treatment effect
+y0 <- full[, 1]
+y1 <- full[, 2]
+temp <- (y1 - y0) %>% {(. - mean(.))/ sd(.)}
 probs <- temp  %>% {exp(.) / (1 + exp(.))}
 treat <- rbinom(n=n, size=1, prob=probs)
 obs <- full
 obs[treat == 1, 1] <- NA
 obs[treat == 0, 2] <- NA
-y0 <- full[, 1]
-y1 <- full[, 2]
 X <- cbind(treat, full[, -c(1:2)])
 y_obs <- ifelse(treat == 0, y0, y1)
 ```
 
-Unbiased estimate of treatment effect $\E[Y^1 - Y^0]$
+Unbiased estimate of treatment effect $\mathbb{E}[Y^1 - Y^0]$
 ```{r}
 (unbiased_effect <- mean(y1) - mean(y0))
 ```
 
-Naive regression
+Naive estimate of treatment effect
+```{r}
+(naive_effect <- mean(y_obs[treat==1]) - mean(y_obs[treat==0]))
+```
+
+Regression estimate
 ```{r}
 res <- lm(y_obs ~ X)
-(naive_effect <- coef(res)[2])
+(reg_effect <- coef(res)[2])
 ```
 
 Alternating regression
@@ -118,9 +182,11 @@ yh1 <- coef(res1) %>% {.[1] + cases0[, -1] %*% .[-1]}
 
 Matrix completion
 ```{r}
-fit <- softImpute(obs, rank.max=k, type="als", lambda = 1e-3)
-pre <- complete(obs, fit)
-(mc_effect <- mean(pre[, 2] - pre[, 1]))
+#fit <- softImpute(obs, rank.max=k, type="als", lambda = 1e-3)
+#pre <- complete(obs, fit)
+res_nn <- nn_optim(obs, lambda = 5)
+pre_nn <- res_nn$imputed
+(mc_effect <- mean(pre_nn[, 2] - pre_nn[, 1]))
 ```
 
 ALS
@@ -131,14 +197,14 @@ pre_als <- als(obs, r=k, l.u=1e-3)
 
 ALS with truth
 ```{r}
-cheat_als <- als(obs, r=k, l.u=1e-5, u=utrue, v=vtrue)
+cheat_als <- als(obs, r=k, l.u=1e-5, u=utrue, v=vtrue, cc = ctrue)
 (cheat_effect <- mean(cheat_als[, 2] - cheat_als[, 1]))
 ```
 
 Results
 ```{r}
-c(true_effect = true_effect, unbiased_effect = unbiased_effect,
-  naive_effect = naive_effect, alt_effect = alt_effect,
+c(unbiased_effect = unbiased_effect,
+  naive_effect = naive_effect, reg_effect = reg_effect, alt_effect = alt_effect,
   mc_effect = mc_effect, als_effect = als_effect,
   cheat_effect = cheat_effect)
 ```
