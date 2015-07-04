@@ -98,7 +98,7 @@ nn_iterate <- function(Z, M, N, cc, W, lambda = 0.1, rho = 1) {
   ## N iterate
   temp <- M - ones(n, 1) %*% cc - W
   res <- svd(temp)
-  N <- res$u %*% (st(res$d, 2 * lambda/rho) *  t(res$v))
+  N <- res$u %*% (st(res$d, lambda/rho) *  t(res$v))
   ## c iterate
   temp <- -N + M - W
   cc <- t(colMeans(temp))
@@ -184,7 +184,7 @@ Matrix completion
 ```{r}
 #fit <- softImpute(obs, rank.max=k, type="als", lambda = 1e-3)
 #pre <- complete(obs, fit)
-res_nn <- nn_optim(obs, lambda = 5)
+res_nn <- nn_optim(obs, lambda = 5, n_its = 30)
 pre_nn <- res_nn$imputed
 (mc_effect <- mean(pre_nn[, 2] - pre_nn[, 1]))
 ```
