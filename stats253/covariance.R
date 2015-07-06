@@ -10,10 +10,13 @@ exp.cov.class <- function(theta) {
   return(function(h) theta[1]*exp(-theta[2]*h))
 }
 
-# TODO 1: Make a similar function to exp.cov.class but for a 
+# DONE 1: Make a similar function to exp.cov.class but for a 
 # different class of covariance functions (e.g., triangular, 
 # Gaussian, Matern).
 
+exp2.cov.class <- function(theta) {
+  return(function(h) theta[1]*exp(-theta[2]*h^2))
+}
 
 
 # estimate.cov.fun takes in:
@@ -33,8 +36,12 @@ estimate.cov.fun <- function(e, D, cov.class, theta.init, plot=TRUE) {
   ds <- D[upper.tri(D)]
   
   # TODO 2: estimate the covariance function at lags h
-  h <- c()  # this should depend on the range of ds
-  sample.cov <- c()
+  # this should depend on the range of ds
+  Nres <- 20
+  h <- seq(from=min(ds), to=max(ds), length.out=Nres)
+  sample.cov <- sapply(1:(Nres - 1), function(i) {mean(es[ds >= h[i] * ds < h[i + 1]])})
+  counts <- sapply(1:(Nres - 1), function(i) {length(es[ds >= h[i] * ds < h[i + 1]])})
+  
   
   # TODO 3: Choose parameters theta to minimize the (weighted) sum of squares between 
   #         sample.cov and cov.class(theta). This can be done by a grid search or 
