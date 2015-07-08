@@ -35,34 +35,43 @@ estimate.cov.fun <- function(e, D, cov.class, theta.init, plot=TRUE) {
   es <- E[upper.tri(E)]
   ds <- D[upper.tri(D)]
   
-  # TODO 2: estimate the covariance function at lags h
+  # DONE 2: estimate the covariance function at lags h
   # this should depend on the range of ds
   Nres <- 20
   h <- seq(from=min(ds), to=max(ds), length.out=Nres)
-  sample.cov <- sapply(1:(Nres - 1), function(i) {mean(es[ds >= h[i] * ds < h[i + 1]])})
-  counts <- sapply(1:(Nres - 1), function(i) {length(es[ds >= h[i] * ds < h[i + 1]])})
+  sample.cov <- sapply(1:(Nres - 1), function(i) {mean(es[ds >= h[i] & ds < h[i + 1]])})
+  sample.se <- sapply(1:(Nres - 1), function(i) {sd(es[ds >= h[i] & ds < h[i + 1]])})
+  counts <- sapply(1:(Nres - 1), function(i) {length(es[ds >= h[i] & ds < h[i + 1]])})
   
   
-  # TODO 3: Choose parameters theta to minimize the (weighted) sum of squares between 
+  # DONE 3: Choose parameters theta to minimize the (weighted) sum of squares between 
   #         sample.cov and cov.class(theta). This can be done by a grid search or 
   #         using "optim" in R.
-  theta.est <- theta.init
-  
-  
+  hmid <- (h[-1] + h[-length(h)]) / 2
+  theta2obj <- function(theta = 1/hmid[1]^2, vals = FALSE) {
+    cov.est <- cov.class(c(1, theta))
+    fcov <- cov.est(hmid)
+    res <- lm(sample.cov ~ fcov + 0, weights = counts)
+    if (vals) {
+      return(c(res$coefficients, theta))
+    }
+    sum(res$residuals^2 * counts)
+  }
+  bestt <- optimise(theta2obj, interval = c(1/max(hmid)^2, 1/min(hmid)^2))
+  theta.est <- theta2obj(bestt$minimum, TRUE)
   cov.est <- cov.class(theta.est)
-  
   # plot the sample covariances, 95% confidence band, and estimated covariance function
   if(plot) {
     # draw sample covariances
-    plot(h, sample.cov)
+    plot(hmid, sample.cov, cex = Nres/2 * sqrt(counts/sum(counts)))
     
-    # TODO 4: calculate the "standard errors"
-    std.errors <- c()
+    # DONE 4: calculate the "standard errors"
+    std.errors <- sample.se/sqrt(counts - 1)
     upper.lim <- sample.cov + 1.96 * std.errors
     lower.lim <- sample.cov - 1.96 * std.errors
     
     # draw confidence bands
-    polygon(c(h, rev(h)), c(upper.lim, rev(lower.lim)), col=rgb(0,0,0,.3))
+    polygon(c(hmid, rev(hmid)), c(upper.lim, rev(lower.lim)), col=rgb(0,0,0,.3))
     
     # plot estimated covariance function
     t <- seq(0, max(h), length.out=1000)
@@ -72,18 +81,21 @@ estimate.cov.fun <- function(e, D, cov.class, theta.init, plot=TRUE) {
   return(cov.est)
 }
 
-# TODO 5: compute the GLS estimator
+# DONE 5: compute the GLS estimator
 # If X0=NULL, then it returns the coefficients; otherwise, it 
 # returns the predictions for the observations in X0
-gls <- function(y, X, Sigma, X0=NULL) {
-  coefs <- c()
-  ses <- c()
+gls <- function(y, X, Sigma, SigmaX0_X = NULL, X0=NULL) {
+  gram <- t(X) %*% solve(Sigma, X)
+  xty <- t(X) %*% solve(Sigma, y)
+  coefs <- solve(gram, xty)
+  cov <- solve(gram)
+  ses <- sqrt(diag(cov))
   print(cbind(coef=coefs, se=ses))
-  
+  resids <- y - X %*% coefs
   if(is.null(X0)) {
     return(coefs)
   } else {
-    preds <- c()
+    preds <- X0 %*% coefs + SigmaX0_X %*% solve(Sigma, resids)
     return(preds)
   }
 }
