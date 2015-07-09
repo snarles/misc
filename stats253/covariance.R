@@ -52,6 +52,12 @@ estimate.cov.fun <- function(e, D, cov.class, plot=TRUE) {
     cov.est <- cov.class(c(1, theta))
     fcov <- cov.est(hmid)
     res <- lm(sample.cov[counts > 0] ~ fcov[counts > 0] + 0, weights = counts[counts > 0])
+    if (res$coefficients < 0) {
+      if (vals) {
+        return(c(0, theta))
+      }
+      return(sum(sample.cov^2 * counts))
+    }
     if (vals) {
       return(c(res$coefficients, theta))
     }
@@ -69,7 +75,7 @@ estimate.cov.fun <- function(e, D, cov.class, plot=TRUE) {
     std.errors <- ifelse(counts > 1, sample.se/sqrt(abs(counts - 1)), 100)
     upper.lim <- ifelse(counts > 1, sample.cov + 1.96 * std.errors, 100)
     lower.lim <- ifelse(counts > 1, sample.cov - 1.96 * std.errors, -100)
-    print(cbind(upper.lim, lower.lim, upper.lim - lower.lim, counts, std.errors))
+    #print(cbind(upper.lim, lower.lim, upper.lim - lower.lim, counts, std.errors))
     # draw confidence bands
     polygon(c(hmid, rev(hmid)), c(upper.lim, rev(lower.lim)), col=rgb(0,0,0,.3))
     
@@ -90,7 +96,7 @@ gls <- function(y, X, Sigma, SigmaX0_X = NULL, X0=NULL) {
   coefs <- solve(gram, xty)
   cov <- solve(gram)
   ses <- sqrt(diag(cov))
-  print(cbind(coef=coefs, se=ses))
+  #print(cbind(coef=coefs, se=ses))
   resids <- y - X %*% coefs
   if(is.null(X0)) {
     return(coefs)
