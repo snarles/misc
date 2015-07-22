@@ -6,17 +6,19 @@
 ##  Problem 1
 ####
 
-edat0 <- read.csv("stats253/2012USElection.csv", sep = ",")
-edat0$Obama.vote <- as.numeric(gsub(",", "", edat0$Obama.vote))
-edat0$Romney.vote <- as.numeric(gsub(",", "", edat0$Romney.vote))
-lapply(edat0, class)
+edat0 <- read.csv("stats253/PrezElection2012.csv", sep = ",")
+#edat0$Obama.vote <- as.numeric(gsub(",", "", edat0$Obama.vote))
+#edat0$Romney.vote <- as.numeric(gsub(",", "", edat0$Romney.vote))
+sapply(edat0, class)
 #View(edat0[edat0$FIPS == 0, ])
-filt <- !(edat0$State.Postal %in% c("AK", "HI") | edat0$FIPS == 0)
+filt <- !(edat0$State %in% c("AK", "HI", "DC") | edat0$FIPS == 0)
 edat <- edat0[filt, ]
-rownames(edat) <- paste(edat$County.Name, edat$FIPS)
-dim(edat) # 4021 7
-length(unique(edat$State.Postal)) # 41
-setdiff(unique(edat0$State.Postal), unique(edat$State.Postal)) # AK DC HI
+rownames(edat) <- paste(edat$Name, edat$FIPS)
+dim(edat) # 3109 6
+length(unique(edat$State)) # 48
+setdiff(unique(edat0$State), unique(edat$State)) # AK DC HI
+names(edat)
+## [1] "State"      "FIPS"       "Name"       "TotalVotes" "Obama"      "Romney"    
 
 ####
 ##  Problem 2
@@ -25,7 +27,6 @@ setdiff(unique(edat0$State.Postal), unique(edat$State.Postal)) # AK DC HI
 library(maptools)
 library(RColorBrewer)
 library(classInt)
-
 
 shapes <- readShapeSpatial("stats253/UScounties/UScounties.shp")
 class(shapes)
@@ -38,11 +39,9 @@ class(shapes)
 rownames(shapes@data) <- paste(shapes@data$NAME, shapes@data$FIPS)
 length(shapes@polygons)
 shapes@polygons[[1]]
-intersect(rownames(edat), rownames(shapes@data))
+#intersect(rownames(edat), rownames(shapes@data))
 setdiff(rownames(edat), rownames(shapes@data))
 setdiff(rownames(shapes@data), rownames(edat))
-
-"Anchorage" %in% edat0$County.Name
 
 
 edat2 <- edat[rownames(edat) %in% rownames(shapes@data), ]
@@ -60,12 +59,9 @@ setdiff(y = rownames(edat2), x =rownames(shapes2@data))
 #trace(SpatialPolygonsDataFrame, browser)
 edat3 <- SpatialPolygonsDataFrame(shapes2, edat2)
 names(edat3)
-plot(edat3["Obama.vote"], col = "grey")
+plot(edat3["Obama"], col = "grey")
 
-pal <- brewer.pal(5, "Reds")
-q5 <- classIntervals(edat3@data$Obama.vote, n = 5, style = "quantile")
-plot(q5, pal = pal)
-
-
+pal <- brewer.pal(5, "Blues")
+q5 <- classIntervals(edat3@data$Obama, n = 5, style = "quantile")
 q5colors <- findColours(q5, pal)
 plot(edat3, col = q5colors)
