@@ -163,8 +163,9 @@ lw <- nb2listw(nb2)
 res1 <- spautolm(Obama ~ 1, data = edat, listw=lw)
 summary(res1)
 
-edat["fitted1"] <- res1$fit$fitted.values
-edat["resid1"] <- res1$fit$residuals
+edat2 <- edat
+edat2["fitted1"] <- res1$fit$fitted.values
+edat2["resid1"] <- res1$fit$residuals
 
 plot_edat <- function(edat, variable, colr = "Blues") {
   edat3 <- SpatialPolygonsDataFrame(shapes2, edat)
@@ -174,11 +175,22 @@ plot_edat <- function(edat, variable, colr = "Blues") {
   plot(edat3, col = q5colors)
 }
 
-plot_edat(edat, "fitted1")
-plot_edat(edat, "resid1", "Reds")
+plot_edat(edat2, "fitted1")
+plot_edat(edat2, "resid1", "Reds")
 
+####
+##  Problem 5
+####
 
+census_dat <- read.table("census/DataSet.txt", header = TRUE, sep = ",")
+census_dict <- read.fwf("census/DataDict.txt", header = FALSE, 
+                        widths=c(10, 87, 5, 7, 12, 8, 9, 8))
+census_dat$fips <- as.numeric(as.character(census_dat$fips))
+length(unique(census_dat$fips))
+length(unique(intersect(census_dat$fips, efips))) # 3108
+help(merge)
+names(census_dat)[1] <- "FIPS"
 
-
+edat2 <- merge(edat, census_dat, by = "FIPS")
 
 
