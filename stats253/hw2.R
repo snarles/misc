@@ -59,7 +59,7 @@ setdiff(y = rownames(edat2), x =rownames(shapes2@data))
 #trace(SpatialPolygonsDataFrame, browser)
 edat3 <- SpatialPolygonsDataFrame(shapes2, edat2)
 names(edat3)
-plot(edat3["Obama"], col = "grey")
+#plot(edat3["Obama"], col = "grey")
 
 pal <- brewer.pal(5, "Blues")
 q5 <- classIntervals(edat3@data$Obama, n = 5, style = "quantile")
