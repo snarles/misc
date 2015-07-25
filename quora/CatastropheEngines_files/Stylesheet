@@ -1,0 +1,90 @@
+
+/* Styling for embedded wiki pages */
+#wiki #jump-to-nav, #wiki #siteSub,
+.wiki-comment-help div#jump-to-nav, .wiki-comment-help #siteSub,
+#wiki h1#firstHeading, .wiki-comment-help h1,
+#wiki #toc,
+#wiki #catlinks, .wiki-comment-help div#catlinks {
+    display: none;
+}
+#wiki .printfooter, .wiki-comment-help .printfooter {
+    display: none;
+}
+#wiki h1 {
+    font-family: Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
+    font-style: italic;
+    color: #538d4d;
+}
+#wiki .article-list ul {
+    list-style: none;
+    margin-left: 0;
+    font-size: 1.17em;
+    font-weight: bold;
+}
+#wiki .article-list li {
+    border-bottom: 1px solid #D6D5D6;
+    padding: 10px 0;
+}
+#wiki .article-list a {
+    text-decoration: none;
+}
+#wiki hr {
+    border: none;
+    border-bottom: 1px dotted #D6D5D6;
+}
+form.invalidate {
+    float: right;
+    font-size: 6pt;
+}
+
+/* Brain Image */
+
+#brainImage {
+    position: relative;
+    margin-top: 23px;
+    margin-bottom: 15px;
+    border-bottom: 1px dotted #b6b6b6;
+    background: url(http://wiki.lesswrong.com/mediawiki/images/f/f5/LW-brain.png?5423) 50% 0 no-repeat;
+    font-family: "Helvitica Light", Arial, san-serif;
+    font-size: 17px;
+    line-height: 1;
+    color: #323431;
+    text-align: left;
+    height: 391px;
+}
+
+#brainImage .communityBlog {
+    left: 226px;
+    position: absolute;
+    top: 69px;
+}
+
+#brainImage .discussionBoard {
+    left: 361px;
+    position: absolute;
+    top: 53px;
+}
+
+#brainImage .rationalityMaterials {
+    left: 245px;
+    position: absolute;
+    top: 149px;
+    width: 224px;
+}
+
+#brainImage .meetUps {
+    left: 357px;
+    position: absolute;
+    text-align: right;
+    top: 218px;
+}
+
+#brainImage .lessWrong {
+    color: #CECECE;
+    font-family: "Palatino",Times,serif;
+    font-size: 23px;
+    left: 148px;
+    top: 278px;
+    font-weight: bold;
+    position: absolute;
+}
