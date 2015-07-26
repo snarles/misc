@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Scotland Lip Cancer Data</title>
+<LINK HREF="style.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+
+<H1>Scotland Lip Cancer Data</H1>
+
+<p><i>Data provided "as is," no warranties.</i></p>
+
+<hr />
+
+<p><b>File Description</b><br />
+Male lip cancer cases in Scottish districts 1975-80 and male population years at risk.</p>
+<table>
+<tbody>
+   <tr>
+      <td> scotdistricts.txt:</td>
+      <td> ASCII boundary files in GeoDa format (scotdistricts*.txt working versions, only final counts)</td>
+   </tr>
+   <tr>
+      <td> scotlipdata.dbf:</td>
+      <td> Dbf file with actual data (needed to join with base map) </td>
+   </tr>
+      <tr>
+      <td> scotdistricts.dbf, shp, shx:</td>
+      <td> Shape file created from scotdistricts.txt </td>
+   </tr>
+      <tr>
+      <td> scotlip.dbf, shp, shx:</td>
+      <td> Shape file created by joining scotdistricts with scotlipdata </td>
+   </tr>
+</tbody>
+</table>
+
+
+<p>Type = Polygon shape files<br />
+Observations = 56<br />
+Variables = 8</p>
+
+<p><b>Source</b><br />
+Original from Clayton, D., and Kaldor, J. (1987). Empirical Bayes estimates of age standardised relative risks for use in disease mapping. <i>Biometrics,</i> 43,671-681, reproduced from Cressie, N. A. C. (1993). <i>Statistics for Spatial Data.</i> New York: John Wiley & Sons, p. 537 Table 7.2.</p>
+<p>Expected cases and percent of population in outdoor industry AFF (agriculture, fishing, forestry) from Lawson et al. (1999). <i>Disease Mapping and Risk Assessment for Public Health.</i> New York: Wiley, pp. 68-69, Table 5.1.</p>
+<p>Base map from Scotland.map included with WinBugs, exported to S-Plus format and edited (conversion to GeoDa input format, elimination of duplicate coordinates and editing of sliver polygons); islands with multiple polygons represented by a single polygon.</p>
+
+
+<table>
+<thead>
+   <tr>
+      <th>Variable</th>
+      <th>Description</th>
+   </tr>
+</thead>
+<tbody>
+      <tr>
+      <td> CODENO </td>
+      <td> Code converted to numeric (drop w prefix) </td>
+   </tr>
+      <tr>
+      <td> RECORD_ID</td>
+      <td> Unique ID </td>
+   </tr>
+   <tr>
+      <td> DISTRICT </td>
+      <td> District number 1-56 </td>
+   </tr>
+   <tr>
+      <td> NAME </td>
+      <td> Name of districts from Cressie </td>
+   </tr>
+      <tr>
+      <td> CODE </td>
+      <td> District code from WinBugs </td>
+   </tr>
+      <tr>
+      <td> CANCER </td>
+      <td> Lip cancer cases from Cressie </td>
+   </tr>
+      <tr>
+      <td> POP </td>
+      <td> Population years at risk from Cressie </td>
+   </tr>
+      <tr>
+      <td> CEXP</td>
+      <td> Expected cases from Lawson et al.</td>
+   </tr>
+      <tr>
+      <td> AFF</td>
+      <td> Outdoor industry from Lawson et al.</td>
+   </tr>
+  </tbody>
+</table>
+
+
+<br />
+<hr />
+<p>Prepared by <a href="mailto:anselin@uiuc.edu">Luc Anselin</a></p>
+<p><a href="http://sal.agecon.uiuc.edu">UIUC-ACE Spatial Analysis Laboratory</a></p>
+<p>Last updated June 3, 2004</p>
+
+</body>
+</html>
