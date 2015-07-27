@@ -118,10 +118,12 @@ model <- jags.model("pois_sp.bug", data=list(eps = rnorm(56), d = d, n = 56,
 Draw samples
 
 ```{r, results='hide'}
-out <- coda.samples(model, c("phi", "mu", "beta"), n.iter = 10000)
+#out <- coda.samples(model, c("phi", "mu", "beta"), n.iter = 100000)
+#save(out, file="~/out.RData")
+load("~/out.RData")
 ```
 
-Diagnostic
+### Diagnostics
 
 ```{r}
 gd <- gelman.diag(out)
@@ -129,9 +131,45 @@ plot(rep(1:dim(gd$psrf)[1], each = 2), as.numeric(t(gd$psrf)), type = "l")
 abline(a=1, b = 0, lwd = 2)
 ```
 
+Does not converge even with 100000 iterations.
+
 ```{r}
-traceplot(out[[1]][, "beta[1]"])
+traceplot(out[[1]][, "phi"], main = "phi")
+traceplot(out[[1]][, "mu[1]"], main = "mu[1]")
+traceplot(out[[1]][, "beta[1]"], main = "beta[1]")
+traceplot(out[[1]][, "beta[2]"], main = "beta[2]")
+traceplot(out[[1]][, "beta[3]"], main = "beta[3]")
+traceplot(out[[1]][, "beta[4]"], main = "beta[4]")
+traceplot(out[[1]][, "beta[5]"], main = "beta[5]")
 ```
+
+Traceplots look good expect for $\beta$...
+
+### Posterior
+
+We look at the posterior fitted values
+
+```{r}
+pmu <- out[[1]][, paste0("mu[", 1:56, "]")]
+sd <- SpatialPolygonsDataFrame(shapes, shapes@data)
+plot(sd["CANCER"], col = gray(1:56/56)[order(pmu[10000, ])], main = "fitted")
+plot(sd["CANCER"], col = gray(1:56/56)[order(pmu[20000, ])], main = "fitted")
+```
+
+Posterior residuals, defined as $(y - \mu)/sqrt(\mu)$
+
+```{r}
+resid <- t(y - t(pmu))/sqrt(pmu)
+st_resid <- resid %>% {(. - mean(.))/sd(.)}
+plot(sd["CANCER"], col = gray(pnorm(st_resid[10000, ])), main = "residuals")
+plot(sd["CANCER"], col = gray(pnorm(st_resid[50000, ])), main = "residuals")
+plot(sd["CANCER"], col = gray(pnorm(st_resid[90000, ])), main = "residuals")
+```
+
+There is still spatial correlation in the residuals!
+
+
+
 
 
 
