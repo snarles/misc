@@ -72,39 +72,6 @@ n <- dim(W)[1]
 ## Models
 
 Model file
-```
-data {
-  for (i in 1:n) {
-    zeros[i] <- 0
-  }
-}
-
-model {
-  phi ~ dunif(0, 0.5)
-  tau ~ dgamma(2, 100)
-  eps[] ~ dmnorm(zeros[], T[ , ])
-  for (i in 1:n) {
-    for (j in 1:n) {
-      Wt[i,j] <- pow(tau, 2)/(1 - phi * d[j]) * Vt[i, j]
-    }
-  }
-  for (i in 1:n) {
-    for (j in 1:n) {
-      T[i, j] <- inprod(V[i,1:n],Wt[1:n,j])
-    }
-  }
-}
-```
-```{r}
-model <- jags.model("pois_sp.bug", data=list(eps = rnorm(56), d = d, n = 56,
-                                             V = V, Vt = t(V)),
-                    inits = list(phi = 0.2, tau = 2))
-out <- coda.samples(model, "phi", n.iter = 1000)
-traceplot(out[[1]])
-hist(out[[1]])
-```
-
-
 
 ```
 data {
@@ -114,7 +81,7 @@ data {
 }
 
 model {
-  phi ~ dunif(0, 0.5)
+  phi ~ dunif(0, 0.9)
   tau ~ dgamma(2, 100)
   tau2 ~ dgamma(2, 100)
   beta0 ~ dnorm(0, tau2)
@@ -139,14 +106,23 @@ model {
 }
 ```
 
-```{r}
+Intializing model...
+
+```{r, results='hide'}
 model <- jags.model("pois_sp.bug", data=list(eps = rnorm(56), d = d, n = 56,
                                              V = V, Vt = t(V), y = y, X = X, p = 5),
                     inits = list(phi = 0.2, tau = 2, tau2 = 2,
-                                 beta0 = 0, beta = rep(0, 5)))
-out <- coda.samples(model, "phi", n.iter = 1000)
-traceplot(out[[1]])
-hist(out[[1]])
+                                 beta0 = 0, beta = rep(0, 5)), n.chains = 5)
+```
+
+Draw samples
+
+```{r, results='hide'}
+out <- coda.samples(model, c("phi", "beta", "eps"), n.iter = 2000)
+```
+
+```{r}
+traceplot(out[[1]][, "beta[1]"])
 ```
 
 

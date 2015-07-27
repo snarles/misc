@@ -285,15 +285,277 @@ dim(X)
 
 <p>Model file</p>
 
-<pre><code>model {
-  phi ~ dunif(0, 1)
-  for (j in 1:n) {
-    D[j, j] &lt;- pow(tau, 2)/(1 - phi * d[j])
+<pre><code>data {
+  for (i in 1:n) {
+    zeros[i] &lt;- 0
   }
-  T[,] &lt;- V %*% D %*% Vt
-  eps[1:n] ~ dnorm(0,T)
+}
+
+model {
+  phi ~ dunif(0, 0.9)
+  tau ~ dgamma(2, 100)
+  tau2 ~ dgamma(2, 100)
+  beta0 ~ dnorm(0, tau2)
+  for (i in 1:p) {
+    beta[i] ~ dnorm(0, tau2)
+  }
+  eps[] ~ dmnorm(zeros[], T[ , ])
+  for (i in 1:n) {
+    mu[i] &lt;- exp(inprod(X[i, 1:p], beta[]) + beta0 + eps[i])
+    y[i] ~ dpois(mu[i])
+  }
+  for (i in 1:n) {
+    for (j in 1:n) {
+      Wt[i,j] &lt;- pow(tau, 2)/(1 - phi * d[j]) * Vt[i, j]
+    }
+  }
+  for (i in 1:n) {
+    for (j in 1:n) {
+      T[i, j] &lt;- inprod(V[i,1:n],Wt[1:n,j])
+    }
+  }
 }
 </code></pre>
+
+<p>Intializing model&hellip;</p>
+
+<pre><code class="r">model &lt;- jags.model(&quot;pois_sp.bug&quot;, data=list(eps = rnorm(56), d = d, n = 56,
+                                             V = V, Vt = t(V), y = y, X = X, p = 5),
+                    inits = list(phi = 0.2, tau = 2, tau2 = 2,
+                                 beta0 = 0, beta = rep(0, 5)), n.chains = 5)
+</code></pre>
+
+<pre><code>## Compiling data graph
+##    Resolving undeclared variables
+##    Allocating nodes
+##    Initializing
+##    Reading data back into data table
+## Compiling model graph
+##    Resolving undeclared variables
+##    Allocating nodes
+##    Graph Size: 13297
+## 
+## Initializing model
+## 
+## 
+  |                                                        
+  |                                                  |   0%
+  |                                                        
+  |+                                                 |   2%
+  |                                                        
+  |++                                                |   4%
+  |                                                        
+  |+++                                               |   6%
+  |                                                        
+  |++++                                              |   8%
+  |                                                        
+  |+++++                                             |  10%
+  |                                                        
+  |++++++                                            |  12%
+  |                                                        
+  |+++++++                                           |  14%
+  |                                                        
+  |++++++++                                          |  16%
+  |                                                        
+  |+++++++++                                         |  18%
+  |                                                        
+  |++++++++++                                        |  20%
+  |                                                        
+  |+++++++++++                                       |  22%
+  |                                                        
+  |++++++++++++                                      |  24%
+  |                                                        
+  |+++++++++++++                                     |  26%
+  |                                                        
+  |++++++++++++++                                    |  28%
+  |                                                        
+  |+++++++++++++++                                   |  30%
+  |                                                        
+  |++++++++++++++++                                  |  32%
+  |                                                        
+  |+++++++++++++++++                                 |  34%
+  |                                                        
+  |++++++++++++++++++                                |  36%
+  |                                                        
+  |+++++++++++++++++++                               |  38%
+  |                                                        
+  |++++++++++++++++++++                              |  40%
+  |                                                        
+  |+++++++++++++++++++++                             |  42%
+  |                                                        
+  |++++++++++++++++++++++                            |  44%
+  |                                                        
+  |+++++++++++++++++++++++                           |  46%
+  |                                                        
+  |++++++++++++++++++++++++                          |  48%
+  |                                                        
+  |+++++++++++++++++++++++++                         |  50%
+  |                                                        
+  |++++++++++++++++++++++++++                        |  52%
+  |                                                        
+  |+++++++++++++++++++++++++++                       |  54%
+  |                                                        
+  |++++++++++++++++++++++++++++                      |  56%
+  |                                                        
+  |+++++++++++++++++++++++++++++                     |  58%
+  |                                                        
+  |++++++++++++++++++++++++++++++                    |  60%
+  |                                                        
+  |+++++++++++++++++++++++++++++++                   |  62%
+  |                                                        
+  |++++++++++++++++++++++++++++++++                  |  64%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++                 |  66%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++                |  68%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++               |  70%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++              |  72%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++             |  74%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++            |  76%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++           |  78%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++          |  80%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++++         |  82%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++++        |  84%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++++++       |  86%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++++++      |  88%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++++++++     |  90%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++++++++    |  92%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++++++++++   |  94%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++++++++++  |  96%
+  |                                                        
+  |+++++++++++++++++++++++++++++++++++++++++++++++++ |  98%
+  |                                                        
+  |++++++++++++++++++++++++++++++++++++++++++++++++++| 100%
+</code></pre>
+
+<p>Draw samples</p>
+
+<pre><code class="r">out &lt;- coda.samples(model, c(&quot;phi&quot;, &quot;beta&quot;, &quot;eps&quot;), n.iter = 2000)
+</code></pre>
+
+<pre><code>## 
+  |                                                        
+  |                                                  |   0%
+  |                                                        
+  |*                                                 |   2%
+  |                                                        
+  |**                                                |   4%
+  |                                                        
+  |***                                               |   6%
+  |                                                        
+  |****                                              |   8%
+  |                                                        
+  |*****                                             |  10%
+  |                                                        
+  |******                                            |  12%
+  |                                                        
+  |*******                                           |  14%
+  |                                                        
+  |********                                          |  16%
+  |                                                        
+  |*********                                         |  18%
+  |                                                        
+  |**********                                        |  20%
+  |                                                        
+  |***********                                       |  22%
+  |                                                        
+  |************                                      |  24%
+  |                                                        
+  |*************                                     |  26%
+  |                                                        
+  |**************                                    |  28%
+  |                                                        
+  |***************                                   |  30%
+  |                                                        
+  |****************                                  |  32%
+  |                                                        
+  |*****************                                 |  34%
+  |                                                        
+  |******************                                |  36%
+  |                                                        
+  |*******************                               |  38%
+  |                                                        
+  |********************                              |  40%
+  |                                                        
+  |*********************                             |  42%
+  |                                                        
+  |**********************                            |  44%
+  |                                                        
+  |***********************                           |  46%
+  |                                                        
+  |************************                          |  48%
+  |                                                        
+  |*************************                         |  50%
+  |                                                        
+  |**************************                        |  52%
+  |                                                        
+  |***************************                       |  54%
+  |                                                        
+  |****************************                      |  56%
+  |                                                        
+  |*****************************                     |  58%
+  |                                                        
+  |******************************                    |  60%
+  |                                                        
+  |*******************************                   |  62%
+  |                                                        
+  |********************************                  |  64%
+  |                                                        
+  |*********************************                 |  66%
+  |                                                        
+  |**********************************                |  68%
+  |                                                        
+  |***********************************               |  70%
+  |                                                        
+  |************************************              |  72%
+  |                                                        
+  |*************************************             |  74%
+  |                                                        
+  |**************************************            |  76%
+  |                                                        
+  |***************************************           |  78%
+  |                                                        
+  |****************************************          |  80%
+  |                                                        
+  |*****************************************         |  82%
+  |                                                        
+  |******************************************        |  84%
+  |                                                        
+  |*******************************************       |  86%
+  |                                                        
+  |********************************************      |  88%
+  |                                                        
+  |*********************************************     |  90%
+  |                                                        
+  |**********************************************    |  92%
+  |                                                        
+  |***********************************************   |  94%
+  |                                                        
+  |************************************************  |  96%
+  |                                                        
+  |************************************************* |  98%
+  |                                                        
+  |**************************************************| 100%
+</code></pre>
+
+<pre><code class="r">traceplot(out[[1]][, &quot;beta[1]&quot;])
+</code></pre>
+
+<p><img src="data:image/png;base64,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" alt="plot of chunk unnamed-chunk-4"/> </p>
 
 </body>
 

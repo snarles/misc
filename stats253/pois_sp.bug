@@ -5,7 +5,7 @@ data {
 }
 
 model {
-  phi ~ dunif(0, 0.5)
+  phi ~ dunif(0, 0.9)
   tau ~ dgamma(2, 100)
   tau2 ~ dgamma(2, 100)
   beta0 ~ dnorm(0, tau2)
