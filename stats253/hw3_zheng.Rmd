@@ -1,0 +1,32 @@
+Charles Zheng Homework 3
+========================================================
+
+Consider a CAR model, with a weight matrix $W$ which is not necessarily symmetric and has zero diagonal.
+Let $\tilde{W}$ denote the lower triangle of $W$.
+We have
+$$
+\frac{p(\epsilon)}{p(0)} = \exp\left(-\frac{1}{2\tau^2} \epsilon^T (I - 2\phi \tilde{W}) \epsilon\right)
+$$
+which is equivalent to
+$$
+\frac{p(\epsilon)}{p(0)} = \exp\left(-\frac{1}{2\tau^2} \epsilon^T (I - \phi (\tilde{W} + \tilde{W}^T)) \epsilon\right).
+$$
+Since $(\tilde{W} + \tilde{W}^T)/2$ is symmetric, we might as well assume that $W$ is symmetric.
+Hence
+$$
+\epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
+$$
+and the model is
+$$
+y = X\beta + \epsilon.
+$$
+Now suppose
+$$
+W = V^T D V
+$$
+with $V$ orthogonal and $D$ diagonal.  Then let $\tilde{y} = V^T y$, $\tilde{X} = V^T X$, and $\tilde{\epsilon} = V^T \epsilon$.
+We therefore have
+$$
+\tilde{y} = \tilde{X}\beta + \tilde{\epsilon}
+$$
+with $\tilde{\epsilon} \sim N(0, (I - \phi D)^{-1})$.
