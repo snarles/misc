@@ -1,0 +1,7 @@
+model {
+  for (j in 1:n) {
+    D[j, j] <- pow(tau, 2)/(1 - phi * d[j])
+  }
+  T[,] <- V %*% D %*% Vt
+  eps[1:n] ~ dnorm(0,T)
+}
