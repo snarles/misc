@@ -1,6 +1,8 @@
 Charles Zheng Homework 3
 ========================================================
 
+## Computation
+
 Consider a CAR model, with a weight matrix $W$ which is not necessarily symmetric and has zero diagonal.
 Let $\tilde{W}$ denote the lower triangle of $W$.
 We have
@@ -11,7 +13,7 @@ which is equivalent to
 $$
 \frac{p(\epsilon)}{p(0)} = \exp\left(-\frac{1}{2\tau^2} \epsilon^T (I - \phi (\tilde{W} + \tilde{W}^T)) \epsilon\right).
 $$
-Since $(\tilde{W} + \tilde{W}^T)/2$ is symmetric, we might as well assume that $W$ is symmetric.
+Since $\tilde{W} + \tilde{W}^T$ is symmetric, we might as well assume that $W$ is symmetric.
 Hence
 $$
 \epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
@@ -30,3 +32,17 @@ $$
 \tilde{y} = \tilde{X}\beta + \tilde{\epsilon}
 $$
 with $\tilde{\epsilon} \sim N(0, (I - \phi D)^{-1})$.
+
+## Model
+
+
+
+
+```{r, warning=FALSE, message=FALSE}
+library(maptools)
+library(RColorBrewer)
+library(classInt)
+library(magrittr)
+library(spdep)
+library(pracma)
+```
