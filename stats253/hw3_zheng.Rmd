@@ -18,25 +18,27 @@ Hence
 $$
 \epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
 $$
-and the model is
-$$
-y = X\beta + \epsilon.
-$$
 Now suppose
 $$
-W = V^T D V
+W = V D V^T.
 $$
-with $V$ orthogonal and $D$ diagonal.  Then let $\tilde{y} = V^T y$, $\tilde{X} = V^T X$, and $\tilde{\epsilon} = V^T \epsilon$.
-We therefore have
+Then
 $$
-\tilde{y} = \tilde{X}\beta + \tilde{\epsilon}
+\tau^2 (I - \phi W)^{-1} = \tau^2 V (I - \phi D)^{-1} V^T 
 $$
-with $\tilde{\epsilon} \sim N(0, (I - \phi D)^{-1})$.
 
 ## Model
 
-
-
+Since we have Poisson data, we use the model
+$$
+y \sim Poisson(e^{X\beta + \epsilon})
+$$
+where
+$$
+\epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
+$$
+Here the model is no longer a CAR model due to the Poisson transformation.
+Instead, $\epsilon$ act as latent variables which induce spatial correlation.
 
 ```{r, warning=FALSE, message=FALSE}
 library(maptools)

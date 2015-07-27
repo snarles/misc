@@ -12,6 +12,7 @@ library(classInt)
 library(magrittr)
 library(spdep)
 library(pracma)
+library(rjags)
 
 shapes <- readShapeSpatial("scotlip/scotlip.shp")
 plot(shapes)
@@ -53,9 +54,10 @@ f2(solve(eye(n) - phi * W2), V %*% (1/(1 - phi * d) * t(V)))
 
 y <- shapes@data$CANCER
 X <- shapes@data %$% cbind(POP, CEXP, AFF, AREA, PERIMETER)
+dim(X)
 colnames(X)
 
-
+model <- 
 
 
 

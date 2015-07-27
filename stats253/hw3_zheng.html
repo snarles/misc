@@ -206,6 +206,8 @@ hr {
 <body>
 <h1>Charles Zheng Homework 3</h1>
 
+<h2>Computation</h2>
+
 <p>Consider a CAR model, with a weight matrix \(W\) which is not necessarily symmetric and has zero diagonal.
 Let \(\tilde{W}\) denote the lower triangle of \(W\).
 We have
@@ -221,20 +223,27 @@ Hence
 \[
 \epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
 \]
-and the model is
-\[
-y = X\beta + \epsilon.
-\]
 Now suppose
 \[
-W = V^T D V
+W = V D V^T.
 \]
-with \(V\) orthogonal and \(D\) diagonal.  Then let \(\tilde{y} = V^T y\), \(\tilde{X} = V^T X\), and \(\tilde{\epsilon} = V^T \epsilon\).
-We therefore have
+Then
 \[
-\tilde{y} = \tilde{X}\beta + \tilde{\epsilon}
+\tau^2 (I - \phi W)^{-1} = \tau^2 V (I - \phi D)^{-1} V^T 
+\]</p>
+
+<h2>Model</h2>
+
+<p>Since we have Poisson data, we use the model
+\[
+y \sim Poisson(e^{X\beta + \epsilon})
 \]
-with \(\tilde{\epsilon} \sim N(0, (I - \phi D)^{-1})\).</p>
+where
+\[
+\epsilon \sim N(0, \tau^2(I - \phi W)^{-1})
+\]
+Here the model is no longer a CAR model due to the Poisson transformation.
+Instead, \(\epsilon\) act as latent variables which induce spatial correlation.</p>
 
 <pre><code class="r">library(maptools)
 library(RColorBrewer)
