@@ -1,7 +1,30 @@
-model {
-  for (j in 1:n) {
-    D[j, j] <- pow(tau, 2)/(1 - phi * d[j])
+data {
+  for (i in 1:n) {
+    zeros[i] <- 0
   }
-  T[,] <- V %*% D %*% Vt
-  eps[1:n] ~ dnorm(0,T)
+}
+
+model {
+  phi ~ dunif(0, 0.5)
+  tau ~ dgamma(2, 100)
+  tau2 ~ dgamma(2, 100)
+  beta0 ~ dnorm(0, tau2)
+  for (i in 1:p) {
+    beta[i] ~ dnorm(0, tau2)
+  }
+  eps[] ~ dmnorm(zeros[], T[ , ])
+  for (i in 1:n) {
+    mu[i] <- exp(inprod(X[i, 1:p], beta[]) + beta0 + eps[i])
+    y[i] ~ dpois(mu[i])
+  }
+  for (i in 1:n) {
+    for (j in 1:n) {
+      Wt[i,j] <- pow(tau, 2)/(1 - phi * d[j]) * Vt[i, j]
+    }
+  }
+  for (i in 1:n) {
+    for (j in 1:n) {
+      T[i, j] <- inprod(V[i,1:n],Wt[1:n,j])
+    }
+  }
 }

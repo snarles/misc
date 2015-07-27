@@ -21,7 +21,7 @@ model{
 	for (j in 2 : s - 1) {
 		T[j, j] <- tau * (1 + pow(rho, 2))
 	}
-	T[1, 1] <- tau T[s, s] <- tau
+	T[1, 1] <- tau; T[s, s] <- tau
 	for (j in 1 : s-1) { 
 		T[j, j + 1] <- -tau * rho
 		T[j + 1, j] <- T[j, j + 1]

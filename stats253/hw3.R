@@ -56,8 +56,21 @@ y <- shapes@data$CANCER
 X <- shapes@data %$% cbind(POP, CEXP, AFF, AREA, PERIMETER)
 dim(X)
 colnames(X)
+X[, "POP"] <- log(X[, "POP"])
+X[, "CEXP"] <- log(X[, "CEXP"])
+X[, "AREA"] <- log(X[, "AREA"])
+X[, "PERIMETER"] <- log(X[, "PERIMETER"])
+hist(X[, "POP"])
+hist(X[, "CEXP"])
+hist(X[, "AFF"])
+hist(X[, "AREA"])
+hist(X[, "PERIMETER"])
 
-model <- 
+
+
+model <- jags.model("pois_sp.bug", data=list(eps = rnorm(56), V = V, Vt = t(V), d = d, n = n))
+
+
 
 
 
