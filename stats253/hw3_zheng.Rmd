@@ -118,7 +118,15 @@ model <- jags.model("pois_sp.bug", data=list(eps = rnorm(56), d = d, n = 56,
 Draw samples
 
 ```{r, results='hide'}
-out <- coda.samples(model, c("phi", "beta", "eps"), n.iter = 2000)
+out <- coda.samples(model, c("phi", "mu", "beta"), n.iter = 10000)
+```
+
+Diagnostic
+
+```{r}
+gd <- gelman.diag(out)
+plot(rep(1:dim(gd$psrf)[1], each = 2), as.numeric(t(gd$psrf)), type = "l")
+abline(a=1, b = 0, lwd = 2)
 ```
 
 ```{r}
