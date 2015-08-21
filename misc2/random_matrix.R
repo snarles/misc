@@ -3,6 +3,9 @@
 ####
 
 library(pracma)
+library(MASS)
+library(magrittr)
+library(parallel)
 f2 <- function(x, y = 0) sum((x- y)^2)
 
 ## Computes inverse of v(z)
@@ -45,4 +48,34 @@ mm <- repmat(ms, lt, 1)
 m2 <- colSums(ww/(tt * (1 - gm - gm * zz * mm) - zz))
 f2(ms, m2)
 #f2(gm * (ms + 1/zs), vs + 1/zs)
+
+
+####
+##  Confirm RMT results
+####
+
+gamma <- 0.5
+p <- 1000
+n <- gamma * p
+Sigma <- (1/2/p) * randn(p, 2 * p) %>% { .  %*% t(.) }
+ws <- rep(1/p, p)
+ts <- eigen(Sigma)$values
+
+## compute theoretical
+vs <- seq(1/10, 2, 1/10)
+zs <- zfunc(vs, gm, ws, ts)
+ms <- vs/gm + ((1/gm) - 1)/zs
+lps <- -1/gm * (1/(zs * vs) + 1)
+
+## compute empirical
+xtr <- mvrnorm(n, mu = rep(0, p), Sigma = Sigma)
+SigmaH <- (1/n) * xtr %>% { t(.) %*% .}
+m_emp <- function(z) 1/p * sum(diag(solve(SigmaH - z * eye(p))))
+lp_emp <- function(z) 1/p * sum(diag(solve(SigmaH - z * eye(p), Sigma)))
+ms_e <- unlist(mclapply(zs, m_emp, mc.cores = 3))
+lp_e <- unlist(mclapply(zs, m_emp, mc.cores = 3))
+
+View(cbind(zs, ms, ms_e))
+View(cbind(zs, lps, lp_e))
+
 
