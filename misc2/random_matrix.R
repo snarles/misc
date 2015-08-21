@@ -54,9 +54,9 @@ f2(ms, m2)
 ##  Confirm RMT results
 ####
 
-gamma <- 0.5
-p <- 1000
-n <- gamma * p
+gamma <- 2
+n <- 1000
+p <- gamma * n
 Sigma <- (1/2/p) * randn(p, 2 * p) %>% { .  %*% t(.) }
 ws <- rep(1/p, p)
 ts <- eigen(Sigma)$values
