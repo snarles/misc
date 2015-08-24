@@ -1,0 +1,111 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+%\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{caption}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Vol}{\text{Vol}}
+%\pagestyle{fancy}
+
+\title{Notes on Information Geometry}
+
+\author{Charles Zheng}
+
+
+\maketitle
+
+
+
+\section{Definitions}
+
+The $\alpha$-connection
+\[
+\Gamma^{(\alpha)}_{ij, k}(\theta) = \E_\theta[((\partial_i\partial_j \ell_\theta) - (\partial_i \ell_\theta)(\partial_j \ell_\theta)) \partial_k \ell_\theta]
+\]
+
+\section{Exponential families}       
+
+\subsection{Definitions}
+\[
+p_\theta(x) = C(x) \exp[\Sigma_i \theta_i t_i(x) - \psi(\theta)]
+\]
+\[
+\ell_\theta(x) = \log p_\theta(x) = \log C(x) + \sum_i \theta_i t_i(x) - \psi(\theta)
+\]
+\[
+\psi(\theta) = \log \int_x C(x) e^{\theta^T t(x)} dx
+\]
+\[
+\eta_i(\theta) = \E_\theta[t_i(X)]
+\]
+\[
+g_{ij}(\theta) = \Cov_\theta[t_i(X), t_j(X)] = g_{ji}
+\]
+
+\subsection{Properties under natural parameterization}
+\[
+\partial_i \stackrel{\Delta}{=} \frac{\partial}{\partial \theta_i}
+\]
+\[
+\partial_i \psi(\theta) = \eta_i(\theta)
+\]
+\[
+\partial_i \partial_j \psi(\theta) = g_{ij}(\theta)
+\]
+\[
+\partial_i \ell(x) = t_i(x) - \eta_i
+\]
+Note that $\partial_i \partial_j \ell(x)$ is constant as a function of $x$.
+\[
+\partial_i \partial_j \ell(x) = -g_{ij}
+\]
+\[
+\partial_i \partial_j \partial_k \ell(x) = -\partial_k g_{ij} = -\mathbb{E}(\partial_i \ell)(\partial_j \ell)(\partial_k \ell) \stackrel{D}{=} - T_{ijk}
+\]
+\[
+T_{ijk} = \partial_k g_{ij}  = T_{ikj} = \cdots = T_{kji}
+\]
+
+\subsection{Natural parameterization is e-affine}
+
+\[
+\Gamma^{(1)}_{ij, k}(\theta) = \E_\theta[(\partial_i \partial_j \ell)(\partial_k \ell)] = -g_{ij} \E[\partial_k \ell] = 0
+\]
+
+\subsection{Properties under $\eta$ parameterization}
+
+
+\[
+\frac{\partial \eta_i}{\partial \theta_j} = \partial_j (\partial_i \psi) = g_{ij}
+\]
+\[
+\tilde{\partial}_i \stackrel{\Delta}{=} \frac{\partial}{\partial \eta_i} = \sum_j \frac{\partial \theta_j}{\partial \eta_i} \partial_j = \sum_j \frac{\partial_j}{g_{ij}}
+\]
+\[
+\tilde{\partial}_i \ell = \sum_k \frac{\partial_k \ell}{g_{ik}}
+\]
+\begin{align*}
+\tilde{\partial}_i \tilde{\partial}_j \ell &= \sum_k \tilde{\partial}_j \left(\frac{\partial_k \ell}{g_{ik}}\right)
+\\&= \sum_{m, k} \frac{\partial_m}{g_{jm}} \left(\frac{\partial_k \ell}{g_{ik}}\right)
+\\& = \sum_{m,k} \frac{1}{g_{jm}}\left( \frac{g_{mk}}{g_{ik}} - \frac{(\partial_k \ell)T_{imk}}{g_{ik}^2}  \right)
+\end{align*}
+
+
+
+\end{document}
