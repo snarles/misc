@@ -88,7 +88,7 @@ T_{ijk} = \partial_k g_{ij}  = T_{ikj} = \cdots = T_{kji}
 \Gamma^{(1)}_{ij, k}(\theta) = \E_\theta[(\partial_i \partial_j \ell)(\partial_k \ell)] = -g_{ij} \E[\partial_k \ell] = 0
 \]
 
-\subsection{Properties under $\eta$ parameterization}
+\subsection{Properties under mean ($\eta$) parameterization}
 
 
 \[
@@ -97,15 +97,58 @@ T_{ijk} = \partial_k g_{ij}  = T_{ikj} = \cdots = T_{kji}
 \[
 \tilde{\partial}_i \stackrel{\Delta}{=} \frac{\partial}{\partial \eta_i} = \sum_j \frac{\partial \theta_j}{\partial \eta_i} \partial_j = \sum_j \frac{\partial_j}{g_{ij}}
 \]
+
+\subsubsection{Properties of $T_{ijk}$}
+
+We have
+\[
+\frac{\partial^2 \theta_k}{\partial \eta_i \partial \eta_j} = \tilde{\partial}_j \frac{1}{g_{ik}} = \tilde{\partial}_i \frac{1}{g_{jk}}
+\]
+therefore
+\[
+\sum_m \frac{1}{g_{jm}} \frac{T_{ikm}}{g_{ik}^2} = \sum_m \frac{1}{g_{im}} \frac{T_{jkm}}{g_{jk}^2}
+\]
+Hence, if we define
+\[
+C_{ijk} \stackrel{\Delta}{=} \frac{1}{g_{ik}^2} \sum_m \frac{T_{ikm}}{g_{jm}} = -\frac{\partial^2 \theta_k}{\partial \eta_i \partial \eta_j}
+\]
+then we have
+\[
+C_{ijk} = C_{jik}
+\]
+by definition, and from symmetry of $T_{ijk}$ we have
+\[
+C_{ijk} = C_{kji}
+\]
+hence $C_{ijk} = C_{kji} = C_{jki} = \cdots$, i.e. is symmetric with respect to indices.
+
+\subsubsection{Derivatives}
+
 \[
 \tilde{\partial}_i \ell = \sum_k \frac{\partial_k \ell}{g_{ik}}
 \]
+\[
+\tilde{\partial}_i \tilde{\partial}_j \ell = -\left(\sum_k C_{ijk} \partial_k \ell \right) - \left(\sum_{k,m} \frac{g_{km}}{g_{ik}g_{jm}}\right)
+\]
+
+\subsubsection{Mean parameterization is m-affine}
+
 \begin{align*}
-\tilde{\partial}_i \tilde{\partial}_j \ell &= \sum_k \tilde{\partial}_j \left(\frac{\partial_k \ell}{g_{ik}}\right)
-\\&= \sum_{m, k} \frac{\partial_m}{g_{jm}} \left(\frac{\partial_k \ell}{g_{ik}}\right)
-\\& = \sum_{m,k} \frac{1}{g_{jm}}\left( \frac{g_{mk}}{g_{ik}} - \frac{(\partial_k \ell)T_{imk}}{g_{ik}^2}  \right)
+\Gamma^{(-1)}_{ij,k}(\eta) &= \E_\eta[(\tilde{\partial}_i\tilde{\partial}_j \ell) (\tilde{\partial}_k \ell) 
++ (\tilde{\partial}_i \ell)(\tilde{\partial}_j \ell)(\tilde{\partial}_k \ell)]
+\\&= \E\left[\left(-\left(\sum_k C_{ijk} \partial_k \ell  + \sum_{k,m} \frac{g_{km}}{g_{ik}g_{jm}}\right) + (\tilde{\partial}_i \ell)(\tilde{\partial}_j \ell)\right)(\tilde{\partial_k} \ell)\right]
 \end{align*}
 
+\begin{align*}
+\E[(\tilde{\partial}_i \ell)(\tilde{\partial}_j \ell)(\tilde{\partial}_k \ell)] 
+&= \sum_{a,b,c} \frac{\E[(\partial_a \ell)(\partial_b \ell)(\partial_c \ell)]}{g_{ia}g_{jb}g_{kc}}
+\\&= \sum_{a,b,c} \frac{T_{abc}}{g_{ia}g_{jb}g_{kc}}
+\end{align*}
 
-
+\begin{align*}
+\E_\eta[(\tilde{\partial}_i\tilde{\partial}_j \ell) (\tilde{\partial}_k \ell)]  &= 
+\E\left[\left(-\sum_k C_{ijk} \partial_k \ell  - \sum_{k,m} \frac{g_{km}}{g_{ik}g_{jm}}\right)(\tilde{\partial}_k \ell)\right]
+\\&= - \E\left[   \left(\sum_a C_{ija} \partial_a \ell\right) \left(\sum_{b} \frac{\partial_b \ell}{g_{kb}}\right)\right]
+\\&= -\sum_{a, b} \frac{C_{ija}}{g_{kb}} \E[(\partial_a \ell)(\partial_b \ell)] = -\sum_{a,b} \frac{C_{ija} g_{ab}}{g_{kb}}
+\end{align*}
 \end{document}
