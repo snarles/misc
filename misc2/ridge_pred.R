@@ -44,7 +44,7 @@ simulate_ridge_risk_cov <- function(Sigma, n, p, alpha, lambda) {
   c(f2(yte, yh)/n, f2(ytr, yh_tr)/n)
 }
 
-n <- 30
+n <- 60
 grid_size <- 1e3
 n_lambda <- 1e2
 rate <- 1
@@ -74,12 +74,12 @@ ind <- order(abs(ls - lambda))[1]
 pred_out <- pred_risk[ind]
 
 ## compute for in-sample
-vs <- linspace(0.3, 0.4, 1e4)
+vs <- linspace(0.2, 0.4, 1e4)
 zattach(compute_st(vs, gm, ws, 1/ts))
-ind <- order(abs(zs + alpha^2/gm))[1]
-min(abs(zs + alpha^2/gm))
+ind <- order(abs(zs + lambda))[1]
+min(abs(zs + lambda))
 vs[ind]
-pred_in <- 1 + alpha^2 * ms[ind]
+pred_in <- 1 + gm * (1 - lambda * ms[ind])
 
 ## simulation
 
