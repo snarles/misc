@@ -44,18 +44,20 @@ simulate_ridge_risk_cov <- function(Sigma, n, p, alpha, lambda) {
   c(f2(yte, yh)/n, f2(ytr, yh_tr)/n)
 }
 
-n <- 60
+n <- 30
 grid_size <- 1e3
 n_lambda <- 1e2
 rate <- 1
 
-gm <- 2
+gm <- 1
 p <- n * gm
-g <- linspace(1/(2 * p), 1 - 1/(2 * p), p)
-g <- 1/rate * log(1/g)
-g <- rep(1, p)
-Sigma <- diag(g)
-ts <- g #eigen(Sigma)$values
+#g <- linspace(1/(2 * p), 1 - 1/(2 * p), p)
+#g <- 1/rate * log(1/g)
+#g <- rep(1, p)
+#Sigma <- diag(g)
+Sigma <- (randn(p, 2*p) %>% {. %*% t(.)})/(2 * p)
+#ts <- g #eigen(Sigma)$values
+ts <- eigen(Sigma)$values
 ws <- rep(1/p, p)
 
 lambdas <- linspace(0.1, 2.5, n_lambda)^2
@@ -64,17 +66,17 @@ lambdas <- linspace(0.1, 2.5, n_lambda)^2
 alpha <- 1
 lambda <- gm/(alpha^2)
 #vs <- linspace(1/grid_size, 1, grid_size)
-vs <- linspace(0, 0.5, 10000)
+vs <- linspace(0, 4, 1e5)
 zattach(compute_st(vs, gm, ws, ts))
 ls <- -zs
-min((ls - lambda)^2)
+min(abs(ls - lambda))
 vs[order(abs(ls - lambda))[1]]
 pred_risk <- (1 + (ls * alpha^2/gm - 1) * (1 - ls * vp/vs))/(ls * vs)
 ind <- order(abs(ls - lambda))[1]
 pred_out <- pred_risk[ind]
 
 ## compute for in-sample
-vs <- linspace(0.2, 0.4, 1e4)
+vs <- linspace(0, 4, 1e5)
 zattach(compute_st(vs, gm, ws, 1/ts))
 ind <- order(abs(zs + lambda))[1]
 min(abs(zs + lambda))
