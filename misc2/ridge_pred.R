@@ -55,7 +55,8 @@ p <- n * gm
 #g <- 1/rate * log(1/g)
 #g <- rep(1, p)
 #Sigma <- diag(g)
-Sigma <- (randn(p, 2*p) %>% {. %*% t(.)})/(2 * p)
+#Sigma <- (randn(p, 2*p) %>% {. %*% t(.)})/(2 * p)
+Sigma <- eye(p)
 #ts <- g #eigen(Sigma)$values
 ts <- eigen(Sigma)$values
 ws <- rep(1/p, p)
@@ -91,6 +92,9 @@ sim_risks <- mclapply(1:1000, function(i) simulate_ridge_risk_cov(Sigma, n, p, a
 colMeans(do.call(rbind, sim_risks))
 c(pred_out, pred_in)
 
+## special case identity
+c(2 - 1/pred_out, pred_in)
+c(pred_out, 1/(2 - pred_in))
 
 
 
