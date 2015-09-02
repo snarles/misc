@@ -64,10 +64,10 @@ ws <- rep(1/p, p)
 lambdas <- linspace(0.1, 2.5, n_lambda)^2
 
 ## compute theoretical values for out-of-sample
-alpha <- 1
+alpha <- 10
 lambda <- gm/(alpha^2)
 #vs <- linspace(1/grid_size, 1, grid_size)
-vs <- linspace(0, 4, 1e5)
+vs <- linspace(0, 10, 1e5)
 zattach(compute_st(vs, gm, ws, ts))
 ls <- -zs
 min(abs(ls - lambda))

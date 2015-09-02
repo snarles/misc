@@ -70,6 +70,9 @@ lps <- -1/gm * (1/(zs * vs) + 1)
 is <- 1 + zs * ms
 
 ## special case Identity
+m_ident <- function(z, gm) ((1 - gm - z) - sqrt((1 - gm - z)^2 - 4 * gm * z))/(2 * gm * z)
+v_ident <- function(z, gm) gm * m_ident(z, gm) + (gm - 1)/z
+zm_ident <- function(z, gm) z * m_ident(z, gm)
 ms_I <- ((1 - gm - zs) - sqrt((1 - gm - zs)^2 - 4 * gm * zs))/(2 * gm * zs)
 vs_I <- gm * ms + (gm - 1)/zs
 lps_I <- -1/gm * (1/(zs * vs_I) + 1)
