@@ -62,11 +62,11 @@ To prove this fact, note that $\hat{y} = Hy$, where $H$ is the
 projection onto the column space of $X$, and that $\tr(H) = p$.  Then
 \begin{align*}
 \text{r}_{in} &= \frac{1}{n} \E ||y^* - \hat{y}||^2
-\\&= \frac{1}{n} ||y^* - Hy||^2
-\\&= \frac{1}{n} ||(X\beta + \epsilon^*) - H(X\beta + \epsilon)||^2
-\\&= \frac{1}{n} ||(I-H)X\beta + \epsilon^* - H\epsilon||^2
-\\&= \frac{1}{n} ||\epsilon^* - H\epsilon||^2 \text{ (since $HX = X$) }
-\\&= \frac{1}{n} ||\epsilon||^2 + ||H\epsilon||^2
+\\&= \frac{1}{n} \E ||y^* - Hy||^2
+\\&= \frac{1}{n} \E ||(X\beta + \epsilon^*) - H(X\beta + \epsilon)||^2
+\\&= \frac{1}{n} \E ||(I-H)X\beta + \epsilon^* - H\epsilon||^2
+\\&= \frac{1}{n} \E ||\epsilon^* - H\epsilon||^2 \text{ (since $HX = X$) }
+\\&= \frac{1}{n} \E ||\epsilon||^2 + \E ||H\epsilon||^2
 \\&= \frac{1}{n} \tr(\sigma^2 I) + \tr(\sigma^2 H)
 \\&= \frac{1}{n} \sigma^2(n + p)
 \end{align*}
@@ -123,6 +123,22 @@ and thus
 \]
 Comparing with $\text{r}_{in}$, we see that $\text{r}_{out}$ is
 strictly larger, since $p/n$ has been replaced by $p/(n-p-1)$.
+
+Asymptotically, when both $n$ and $p$ are large, we can write a simple formula relating the two.
+Take $\sigma^2 = 1$ so that
+\[
+r_{in} = 1 + \frac{p}{n}
+\]
+and
+\[
+r_{out} = 1 + \frac{p}{n-p-1} \approx 1 + \frac{p}{n-p}
+\]
+Then,
+\begin{equation}\label{relation}
+r_{in} \approx = 2 - \frac{1}{r_{in}}
+\end{equation}
+
+As we will see, equation \eqref{relation} holds even for ridge regression (supposing one chooses the optimal $\lambda$).
 
 \subsection{Ridge regression}
 
@@ -236,6 +252,56 @@ Thus
 \[
 \lim_{n \to \infty} \text{r}_{in} = \sigma^2 \left(1 + \lim_{n \to \infty} \frac{\gamma}{p} \tr\E [\hat{\Sigma}(\hat{\Sigma} + \lambda^* I)^{-1}]\right) = \sigma^2 (1 + \gamma (1- \lambda^* m(-\lambda^*)))
 \]
+
+Now we will show that the relation
+\[
+r_{in} = 2 - \frac{1}{r_{out}}
+\]
+also holds in this case.
+Note that
+\[
+m(z) = \frac{\frac{1}{z} + v(z)}{\gamma} - \frac{1}{z}
+\]
+Hence, taking $\sigma^2 = 1$, we have
+\begin{align*}
+r_{in} &= 1 + \gamma ( 1 - \lambda^* m(-\lambda^*))
+\\&= 1 - \gamma \frac{\lambda^* v(-\lambda^*) + 1}{\gamma}
+\\&= 2 - \lambda^* v(-\lambda^*)
+\\&= 2 - \frac{1}{r_{out}}
+\end{align*}
+since $r_{in} = \frac{1}{\lambda^* v(-\lambda^*)}$.
+
+\subsection{Special case Identity}
+
+Suppose $H = I$, i.e. the rows of $X$ are standard multivariate normal.
+Then we have (Tulino and Verd\'{u} 2004)
+\[
+m_I(-\lambda; \gamma) = \frac{-(1 - \gamma + \lambda) + \sqrt{(1-\gamma + \lambda)^2 + 4\gamma \lambda}}{2\gamma \lambda}
+\]
+
+Recall that for OLS, $r_{out, 0} \approx \frac{1}{1-\gamma}$. Note that for ridge regression,
+\begin{align*}
+r_{out,\lambda^*} &= \frac{1}{1- \gamma  + \frac{1}{2}(\sqrt{(1-\gamma + \lambda^*)^2 + 4\gamma\lambda^*} - (1-\gamma + \lambda^*))}
+\\&= \frac{1}{1 - \gamma + f(\lambda^*,\gamma)}
+\end{align*}
+where
+\begin{align*}
+f(\lambda, \gamma) &= \frac{1}{2}(\sqrt{(1-\gamma + \lambda^*)^2 + 4\gamma\lambda^*} - (1-\gamma + \lambda^*)) 
+\\&\approx [1-\gamma + \lambda^*]_{-}+ \frac{\gamma \lambda^*}{|1-\gamma + \lambda|}
+\end{align*}
+
+\noindent\emph{For $\gamma, \alpha$ large}.  Then
+\[
+\lim_{z \to 0} v_I(z) = \frac{1}{\gamma - 1}
+\]
+since
+\begin{align*}
+v_I(z) &= \frac{1}{z}\left[\frac{1}{2}\left[(1-\gamma - z) - \sqrt{(1 - \gamma -z)^2 - 4 \gamma z}\right]\right]
+\\&\approx \frac{1}{z}\left[(1-\gamma - z) + \gamma - 1 - \frac{\gamma z}{1-\gamma - z}\right]
+\\&= \frac{1 + z}{\gamma - 1 - z}
+\end{align*}
+which clearly has the desired limit.
+
 
 TODO:
 \begin{itemize}
