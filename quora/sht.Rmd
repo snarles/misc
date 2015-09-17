@@ -1,0 +1,141 @@
+---
+title: "Simple Hypothesis Testing"
+author: "Charles Zheng"
+date: "09/17/2015"
+output: html_document
+---
+
+There are several kinds of hypothesis tests:
+
+ * Simple null hypothesis vs. simple alternative hypothesis.  Does the data come from distribution $F$ or distribution $G$?
+ * Simple null vs. composite alternative.  Does the data come from distribution $F$, or from one of $\{G_1, G_2, ...\}$?  In the latter case, we don't necessarily care which of the distributions $G_i$ it came from.
+ * Composite null vs. composite alternative.  Does the data come from one of $\{F_1, F_2, ...\}$, or one of $\{G_1, G_2, ...\}$?
+
+The first case (simple vs simple) is the easiest to understand both theoretically and intuitively.  Simple vs simple hypothesis testing has a close connection to classification.  To make this connection clear, imagine the dataset you are testing as a single point or instance.  For example, let's say that your dataset represents measurements from a particular batch of product, which was picked among many thousands of other batches produced by the factory.  It is known that some of the batches may be defective.  Flawless batches have measurements distributed according to a distribution $F$, while defective batches have measurements distributed according to a distribution $G$.
+
+Let's say that $F$ and $G$ have the following densities:
+
+
+```{r}
+set.seed(0)
+xs <- 0:100/100
+gg <- .5 * dbeta(xs, 40, 10) + .5 * dbeta(xs, 50, 70)
+ff <- dbeta(xs, 30, 20)
+par("mgp") # [1] 3 1 0
+par("mar") #5.1 4.1 4.1 2.1
+par(mar = c(5.1, 4.1, 4.1, 2.1))
+par(mgp = c(1, 1, 0))
+plot(xs, ff, type = 'l', lwd = 2, xlab = "x", ylab = "density",
+     axes = FALSE, frame.plot = TRUE, cex.lab = 2)
+lines(xs, gg, lwd = 2, lty = 2, col = "blue")
+text(0.288, 2.9, "g", col = "blue", cex = 3)
+text(0.6, 3.9, "f", cex = 3)
+```
+
+Now we start from the classification point of view.  Suppose you have many batches and you have to decide which ones to keep and which to reject.  Each batch has a single associated measurement, $x$. The values $x$ you are given can be plotted in the following histogram*:
+
+```{r}
+gsamp <- c(rbeta(50, 40, 10), rbeta(50, 50, 70))
+fsamp <- rbeta(100, 30, 20)
+par(mgp = c(3, 1, 0))
+hist(c(gsamp, fsamp), breaks = 20, main = "Data", xlab = "x")
+```
+
+and you have to come up with a classification rule to accept or reject any batch in the data based on $x$.
+
+Supposing you actually knew which points came from $F$ and which from $G$, you could display the information as follows:
+
+```{r}
+par(mgp = c(1, 1, 0))
+plot(0:1, 0:1, col = "white", xlab = "x", ylab = "",  axes = FALSE, frame.plot = TRUE, cex.lab = 2)
+points(gsamp, rep(0.7, 100))
+points(fsamp, rep(0.3, 100))
+text(0.1, 0.3, "F", cex = 2)
+text(0.1, 0.7, "G", cex = 2)
+```
+
+In this example, 100 points are from $F$ and 100 are from $G$.
+
+Of course, the hard part is that you don't know which points came from $F$ and which from $G$.  Therefore, the classification rule you end up using takes the form of a rejection region, which is a set of values $x$ (for example, "reject if $x$ > 3.2 or $x$ < 1.2"): any batch whose measurement $x$ falls in that region gets rejected.
+
+So what's a good rejection region?  We want to choose the regions to maximize the number of points in $G$ that are rejected while minimizing the number of points in $F$ which are rejected.
+
+```{r}
+lr <- log(gg/ff)
+olr <- rank(-lr)/length(lr)
+pts2intervals <- function(v, xs = 1:length(v)) {
+  bks <- c(0, which(v[-1] - v[-length(v)] > 1), length(v))
+  ans <- as.list(numeric(length(bks) - 1))
+  for (i in 1:(length(bks) - 1)) {
+    ans[[i]] <- xs[v[c(bks[i] + 1, bks[i+1])]]
+  }
+  ans
+}
+nrejected <- function(samp, ints) {
+  s <- 0
+  for (lu in ints) s <- s + sum(samp > lu[1] & samp < lu[2])
+  s
+}
+```
+
+Here's one possible rejection region (grey):
+
+```{r}
+ints <- pts2intervals(which(olr < .5), xs)
+par(mgp = c(1, 1, 0))
+plot(0:1, 0:1, col = "white", xlab = "x", ylab = "",  axes = FALSE, frame.plot = TRUE, cex.lab = 2)
+points(gsamp, rep(0.7, 100))
+points(fsamp, rep(0.3, 100))
+text(0.1, 0.3, "F", cex = 2)
+text(0.1, 0.7, "G", cex = 2)
+for(lu in ints) polygon(lu[c(1, 2, 2, 1)], c(0, 0, 1, 1), border = rgb(.2, .2, .2),
+                        col = rgb(.3, .3, .3, .3))
+c(nrejected(fsamp, ints), nrejected(gsamp, ints))
+```
+
+Suppose you used the above rejection region, you also reject 93/100 of the defective batches (G), but you also reject 13/100 flawless batches (F).
+
+Is this a good rejection region?  Perhaps we need to be even more stringent in terms of controlling defects.  Let's try an even larger rejection region:
+
+```{r}
+ints <- pts2intervals(which(olr < .63), xs)
+par(mgp = c(1, 1, 0))
+plot(0:1, 0:1, col = "white", xlab = "x", ylab = "",  axes = FALSE, frame.plot = TRUE, cex.lab = 2)
+points(gsamp, rep(0.7, 100))
+points(fsamp, rep(0.3, 100))
+text(0.1, 0.3, "F", cex = 2)
+text(0.1, 0.7, "G", cex = 2)
+for(lu in ints) polygon(lu[c(1, 2, 2, 1)], c(0, 0, 1, 1), border = rgb(.2, .2, .2),
+                        col = rgb(.3, .3, .3, .3))
+c(nrejected(fsamp, ints), nrejected(gsamp, ints))
+```
+
+This time we end up rejecting 99/100 of the defective batches (G), but 29/100 flawless batches (F).
+
+Note: I didn't tell you how I came up either of the rejection regions in the examples: there is a rule for doing so, which is optimal for both hypothesis testing and classification.  See https://en.wikipedia.org/wiki/Neyman%E2%80%93Pearson_lemma
+
+Which of the two rejection regions is better?  Comparing the second to the first, we accepted fewer defective batches, but also rejected more of the flawless batches.  This is an inevitable tradeoff, and you can illustrate it with an ROC curve, which plot the fraction of flawless batches that were rejected (the false positive rate/$FPR$) vs the fraction of defective batches that were rejected (the true positive rate/$TPR$).
+
+```{r}
+nrejectedfunc <- function(prop) {
+  ints <- pts2intervals(which(olr < prop), xs)
+  res <- c(nrejected(fsamp, ints)/length(fsamp), nrejected(gsamp, ints)/length(gsamp))
+  res
+}
+
+lala <- do.call(cbind, lapply(0:100/100, nrejectedfunc))
+
+par(mgp = c(3, 1, 0))
+plot(t(lala[, 13:91]), xlab = "FPR", ylab = "TPR", ylim = 0:1, xlim = 0:1, type = "o")
+abline(0, 1, lty = 2)
+```
+
+Now the difference between simple hypothesis testing and classification is generally in three respects.
+
+ * In hypothesis testing, you are generally only considering a single "batch", compared to classification where you may have many batches to label.  But in terms of decision-making, there is little difference between a single batch and many independent, identically distributed batches.
+ * In hypothesis testing, you have a pre-set goal of controlling the False Positive Rate to be at most $\alpha$.  Also, the FPR is generally called the "probability of Type I error", and $F$ is called the "null distribution" while $G$ is called the "alternative distribution."
+ * In classification, often you don't have prior knowledge of the distributions $F$ and $G$.  This means that you can't just use the Neyman-Pearson lemma to compute an optimal rejection region.  Instead, you try to "learn" a good rejection region by training a particular model on training data: e.g. k-nearest neighbors, logistic regression, etc.  Meanwhile, in hypothesis testing, you usually don't have any training data (you only have a single batch, rather than many) and you assume that you already know the null and alternative distribution beforehand.
+
+  Of course, the other two cases of hypothesis testing (simple vs composite and composite vs composite) are not as easy to relate to classification.  
+
+*: Keep in mind that in the given histogram, each point is actually an entire batch. Generally speaking, each batch may itself be represented as a histogram, but we are taking the simple case where each batch only has one associated measurement, so it's no problem to identify batches with numbers.  Distinguishing between a collection of batches and the set of measurements within a batch is essential to fully grasp the connection between classification and hypothesis testing.

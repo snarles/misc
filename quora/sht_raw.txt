@@ -1,0 +1,44 @@
+There are several kinds of hypothesis tests:
+
+ * Simple null hypothesis vs. simple alternative hypothesis.  Does the data come from distribution [math]F[/math] or distribution [math]G[/math]?
+ * Simple null vs. composite alternative.  Does the data come from distribution [math]F[/math], or from one of [math]\{G_1, G_2, ...\}[/math]?  In the latter case, we don't necessarily care which of the distributions [math]G_i[/math] it came from.
+ * Composite null vs. composite alternative.  Does the data come from one of [math]\{F_1, F_2, ...\}[/math], or one of [math]\{G_1, G_2, ...\}[/math]?
+
+The first case (simple vs simple) is the easiest to understand both theoretically and intuitively.  Simple vs simple hypothesis testing has a close connection to classification.  To make this connection clear, imagine the dataset you are testing as a single point or instance.  For example, let's say that your dataset represents measurements from a particular batch of product, which was picked among many thousands of other batches produced by the factory.  It is known that some of the batches may be defective.  Flawless batches have measurements distributed according to a distribution [math]F[/math], while defective batches have measurements distributed according to a distribution [math]G[/math].
+
+Let's say that [math]F[/math] and [math]G[/math] have the following densities:
+
+Now we start from the classification point of view.  Suppose you have many batches and you have to decide which ones to keep and which to reject.  Each batch has a single associated measurement, [math]x[/math]. The values [math]x[/math] you are given can be plotted in the following histogram*:
+
+and you have to come up with a classification rule to accept or reject any batch in the data based on [math]x[/math].
+
+Supposing you actually knew which points came from [math]F[/math] and which from [math]G[/math], you could display the information as follows:
+
+In this example, 100 points are from [math]F[/math] and 100 are from [math]G[/math].
+
+Of course, the hard part is that you don't know which points came from [math]F[/math] and which from [math]G[/math].  Therefore, the classification rule you end up using takes the form of a rejection region, which is a set of values [math]x[/math] (for example, "reject if [math]x[/math] > 3.2 or [math]x[/math] < 1.2"): any batch whose measurement [math]x[/math] falls in that region gets rejected.
+
+So what's a good rejection region?  We want to choose the regions to maximize the number of points in [math]G[/math] that are rejected while minimizing the number of points in [math]F[/math] which are rejected.
+
+Here's one possible rejection region (grey):
+
+Suppose you used the above rejection region, you also reject 72/100 of the defective batches (G), but you also reject 1/100 flawless batches (F).
+
+Is this a good rejection region?  Perhaps we need to be even more stringent in terms of controlling defects.  Let's try an even larger rejection region:
+
+This time we end up rejecting 91/100 of the defective batches (G), but 8/100 flawless batches (F).
+
+Note: I didn't tell you how I came up either of the rejection regions in the examples: there is a rule for doing so, which is optimal for both hypothesis testing and classification.  See https://en.wikipedia.org/wiki/Neyman%E2%80%93Pearson_lemma
+
+Which of the two rejection regions is better?  Comparing the second to the first, we accepted fewer defective batches, but also rejected more of the flawless batches.  This is an inevitable tradeoff, and you can illustrate it with an ROC curve, which plot the fraction of flawless batches that were rejected (the false positive rate/[math]FPR[/math]) vs the fraction of defective batches that were rejected (the true positive rate/[math]TPR[/math]).
+
+
+Now the difference between simple hypothesis testing and classification is generally in three respects.
+
+ * In hypothesis testing, you are generally only considering a single "batch", compared to classification where you may have many batches to label.  But in terms of decision-making, there is little difference between a single batch and many independent, identically distributed batches.
+ * In hypothesis testing, you have a pre-set goal of controlling the False Positive Rate to be at most [math]\alpha[/math].  Also, the FPR is generally called the "probability of Type I error", and [math]F[/math] is called the "null distribution" while [math]G[/math] is called the "alternative distribution."
+ * In classification, often you don't have prior knowledge of the distributions [math]F[/math] and [math]G[/math].  This means that you can't just use the Neyman-Pearson lemma to compute an optimal rejection region.  Instead, you try to "learn" a good rejection region by training a particular model on training data: e.g. k-nearest neighbors, logistic regression, etc.  Meanwhile, in hypothesis testing, you usually don't have any training data (you only have a single batch, rather than many) and you assume that you already know the null and alternative distribution beforehand.
+
+  Of course, the other two cases of hypothesis testing (simple vs composite and composite vs composite) are not as easy to relate to classification.  
+
+*: Keep in mind that in the given histogram, each point is actually an entire batch. Generally speaking, each batch may itself be represented as a histogram, but we are taking the simple case where each batch only has one associated measurement, so it's no problem to identify batches with numbers.  Distinguishing between a collection of batches and the set of measurements within a batch is essential to fully grasp the connection between classification and hypothesis testing.

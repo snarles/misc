@@ -2,14 +2,10 @@
 ##  Simple hypothesis tests and classification
 ####
 
+set.seed(0)
 xs <- 0:100/100
-
 gg <- .5 * dbeta(xs, 40, 10) + .5 * dbeta(xs, 50, 70)
 ff <- dbeta(xs, 30, 20)
-
-plot(ff, type = 'l')
-plot(gg, type = 'l')
-
 par("mgp") # [1] 3 1 0
 par("mar") #5.1 4.1 4.1 2.1
 par(mar = c(5.1, 4.1, 4.1, 2.1))
@@ -72,8 +68,8 @@ nrejected(gsamp, ints)
 
 nrejectedfunc <- function(prop) {
   ints <- pts2intervals(which(olr < prop), xs)
-  res <- c(nrejected(gsamp, ints)/length(gsamp), nrejected(fsamp, ints)/length(fsamp))
-  1- res
+  res <- c(nrejected(fsamp, ints)/length(fsamp), nrejected(gsamp, ints)/length(gsamp))
+  res
 }
 
 lala <- do.call(cbind, lapply(0:100/100, nrejectedfunc))
