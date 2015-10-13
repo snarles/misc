@@ -18,4 +18,5 @@ regfit.full = regsubsets(ALSFRS_slope~.,data=rcopy, nvmax=0, method="forward")
 for (i in 1:length(training.data.all)) {
   training.data.all[[i]] <- training.data.all[[i]] + 1e-5 * rnorm(dim(training.data.all)[1])
 }
+training.data.all$ALSFRS_slope <- training.data.all$ALSFRS_slope + 1e-5 * rnorm(2424)
 regfit.full = regsubsets(ALSFRS_slope~.,data=training.data.all, nvmax=19, method="forward")
