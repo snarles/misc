@@ -101,7 +101,9 @@ Let $S$ be the sum of the upvotes,
 \[
 S =V_{G_1} + \cdots + V_{G_{N_G}} + V_{B_1} + \cdots + V_{B_{N_G}}
 \]
-and $D = N-S$ be the number of downvotes.
+and $D = N-S$ be the number of downvotes.  Also define $D_B$ as the
+total number of downvotes from the Bad voters, and $D_G$ the total
+number of downvoters from the Good voters.
 
 In the judging round, the judge $J$ guesses the identities of the Bad
 voters.  The judge is required to pick $L$ players to identify as
@@ -148,10 +150,38 @@ Equilibrium 4 can occur if the payoff function is chosen poorly.  For
 all practical purposes, spies could just choose $p=0$, and we conclude
 that no information can be obtained.
 
+\subsection{Simple case}
 
+A particularly simple case of the model is if $L=1$ and
+\[
+P(S,C) = \alpha I(S = N) + \beta I(C = 1)
+\]
+The Good team gets a reward if there are no downvotes, and another
+reward if they guess a Bad voter correctly.
 
+The expected reward (or value of the game) $V$ can be decomposed as
+\[
+V = \E[P(S,C)] = \alpha \Pr[S = N] + \beta \Pr[C=1]
+\]
 
+Then,
+\[
+\Pr[S = N] = (1-\epsilon)^{N_G}(1-p)^{N_B}
+\]
+while
+\[
+\Pr[C = 1] = \E\left[\frac{I(D \geq 1)D_B}{D}\right] + \frac{N_B}{N_G}\Pr[S = N]
+\]
+Let us define $f(p,\epsilon) = \Pr[C=1]$ and define $\tilde{\alpha} = (\alpha + \beta\frac{N_B}{N_G})(1-\epsilon)^{N_G}$.
+Then we have
+\[
+V = \E[P(S,C)] = \tilde{\alpha} (1-p)^{N_B} + \beta f(p, \epsilon)
+\]
 
+It is not possible to write a closed-form expression for
+$f(p,\epsilon)$, but we can try to derive some useful approximations.
+We know that $S_B \sim \text{Binomial}(N_B, p)$ and $S_G \sim
+\text{Binomial}(N_G, \epsilon)$, with $S_B$ and $S_G$ independent.
 
 
 
