@@ -101,9 +101,10 @@ Let $S$ be the sum of the upvotes,
 \[
 S =V_{G_1} + \cdots + V_{G_{N_G}} + V_{B_1} + \cdots + V_{B_{N_G}}
 \]
+and $D = N-S$ be the number of downvotes.
 
 In the judging round, the judge $J$ guesses the identities of the Bad
-voters.  The judge is required to pick $N_B$ players to identify as
+voters.  The judge is required to pick $L$ players to identify as
 Bad players; let $C$ be the number of those players who are correctly
 identified.
 
@@ -112,18 +113,41 @@ $P(S, C)$ is a function of the number of upvotes $S$ and the number of
 Bad voters correctly identified by the judge, $C$.  The game is
 zero-sum, so the payoff for the Bad votes is $-P(S, C)$.
 
-The form of the payoff function $P(S,C)$ and the parameters $N_B$ and
-$\epsilon$ determine the set of optimal choices of downvoting
+To simplify the analysis, we let Nature control the actions of the Judge, so $J$ no longer counts as an actual ``player''.  Now the action of the judge is prescribed to be as follows:
+\begin{itemize}
+\item If there are more than $L$ downvoters, choose $L$ of the players amongst the downvoters uniformly at random
+\item Otherwise, choose all $D$ of the downvoters, and choose $L - D$ of the players amongst the upvoters uniformly at random
+\end{itemize}
+
+The form of the payoff function $P(S,C)$ and the parameters $N_B, N_G$
+and $\epsilon$ determine the set of optimal choices of downvoting
 probability $p$ for the Bad players.  A particular optimal choice of
 $p$ determines an equilibrium strategy for the game.  We categorize
-the possible equilibria as follows:
+the equilibria as follows:
 \begin{enumerate}
-\item A unique equilibrium with $p = 0$
+\item A unique equilibrium with $p \in [0, \epsilon]$
 \item A unique equilibrium with $p = 1$
-\item A unique equilibrium with $p \in (0, 1)$
+\item A unique equilibrium with $p \in (\epsilon, 1)$
 \item Every $p \in [0,1]$ results in the same expected payoff, hence
   there is no unique eqilibrium.
 \end{enumerate}
+
+In equilibrium 1, Bad voters are statistically indistinguishable from
+Good voters, and hence we conclude that there is no information to be
+gained from the votes.
+
+In equilibrium 2, $p=1$, votes contain the maximal amount possible
+under the model.  However, since the best strategy for spies is
+deterministic, this is an uninteresting case.
+
+In equilibrium 3, votes contain information and the strategy is
+non-degenerate.  Hence we might be most interested in model parameters
+which produce this class of equilibria.
+
+Equilibrium 4 can occur if the payoff function is chosen poorly.  For
+all practical purposes, spies could just choose $p=0$, and we conclude
+that no information can be obtained.
+
 
 
 
