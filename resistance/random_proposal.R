@@ -60,7 +60,6 @@ generate_5_man <- function(p1 = 0, p2 = 0) {
 }
 
 res <- generate_5_man()
-lineId::zattach(res)
 
 
 ####
@@ -110,7 +109,9 @@ for (ind in 1:n.its) {
 #plot(probs, wins + .1 * runif(n.its))
 #View(cbind(probs, nfails, wins))
 
+####
 ## effect of stealth mode
+####
 
 mean_wins <- function(p1, p2, n.its) {
   wins <- sapply(1:n.its, function(i) {
@@ -125,3 +126,5 @@ mean_wins(0, 0, 1e3) # 0.347
 mean_wins(1, 0, 1e3) # 0.386
 mean_wins(0, 1, 1e3) # 0.372
 mean_wins(1, 1, 1e3) # 0.395
+
+## stealth mode decreases spy winning probability by 0.04
