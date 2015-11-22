@@ -123,7 +123,7 @@ Then we for any $t > 0$, applying integration by parts we have
 \]
 Hence, supposing that $H_f(0) = 0$, $\HH_f(0) = 0$, and
 \[
-0 = \lim_{x \to \infty} H_f(x) g(x) = \lim_{x \to \infty} \HH_f (x) g''(x)
+0 = \lim_{x \to \infty} H_f(x) g(x) = \lim_{x \to \infty} \HH_f (x) g'(x)
 \]
 we have
 \[
@@ -134,7 +134,8 @@ This motivates the following lemma:
 
 \noindent\textbf{Lemma}. \emph{
 Suppose that 
-\[0 = \lim_{x \to \infty} H_f(x) = \lim_{x \to \infty} \HH_f(x).\]
+\[0 = \lim_{x \to \infty} x H_f(x) = \lim_{x \to \infty} \HH_f(x),\]
+and also that there exists $x^* > 0$ such that $\inf_{x \geq x^*} h_f(x) \geq 0$.
 Then
 \[
 \inf_{g: g'' \geq 0}\ \int_0^\infty g(x) h_f(x) dx < 0.
@@ -154,24 +155,35 @@ Then there exists $g$ with $g'' \geq 0$ such that
 \[
 \int_0^\infty g(x) h_f(x) dx  = \delta < 0.
 \]
-Then by continuity of the integral, there exists some $t > 0$ where
+Now consider piecewise functions $\tilde{g}$ of the form
 \[
-\int_0^t g(x) h_f(x) dx = \delta/2 = \int_0^\infty g(x) I(x \leq t) h_f(x) dx
+\tilde{g}(x) = \begin{cases}
+g(x) &\text{ for } x < t^*\\
+j(x) &\text{ for } x \in [t^*, t^* + \epsilon]\\
+j(t^* + \epsilon) + (x-t^*)g'(t^* + \epsilon) &\text{ for }x \geq t^*
+\end{cases}
 \]
-But observe that we can construct twice-differentiable and convex
-$\tilde{g}$ such that $\tilde{g}(x)$ and $g(x)I(x \leq t)$ are
-arbitrarily close.  Hence we conclude that there exists
+where $j$ is chosen so that $j(x) \leq g(x)$ and so that $\tilde{g}$ is twice-differentiable and convex,
+Since $\tilde{g}(x) \leq g(x)$ for $x \geq t^*$,
+and also since $h_f(x) \geq 0$ for $x \geq t^*$,
+we conclude that $\tilde{g}(x) h_f(x) \leq g(x) h_f(x)$ pointwise,
+and hence
+\[
+\int_0^\infty \tilde{g}(x) h_f(x) dx \leq \int_0^\infty g(x) h_f(x) < 0.
+\]
+Furthermore, we can modify $\tilde{g}$ to be twice-differentiable while preserving the above property.
+Hence we conclude that there exists
 $\tilde{g}$ with
 \[
-\int_0^\infty g(x) h_f(x) dx  < 0.
+\int_0^\infty \tilde{g}(x) h_f(x) dx  < 0.
 \]
-and
+and also
 \[
-0 = \lim_{x \to \infty} H_f(x) \tilde{g}(x) = \lim_{x \to \infty} \HH_f(x) \tilde{g}(x),
+0 = \lim_{x \to \infty} H_f(x) \tilde{g}(x) = \lim_{x \to \infty} \HH_f(x) \tilde{g}'(x).
 \]
-which implies
+This allows us to conclude that
 \[
-\int_0^\infty \tilde{g}''(x) \HH_f(x) dx < 0,
+\int_0^\infty \tilde{g}(x) h_f(x) dx = \int_0^\infty \tilde{g}''(x) \HH_f(x) dx < 0,
 \]
 completing the proof. $\Box$
 
