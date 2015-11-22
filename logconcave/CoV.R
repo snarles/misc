@@ -84,9 +84,11 @@ plot(exp(-fvec-evec), exp(-fvec)*(1-evec), type = "l")
 abline(0, 1, col = "red")
 
 ## gradient for exponential case
-fvec <- 10 * xs
+lmbda <- 1/10
+fvec <- xs/lmbda
 gr <- grad_CoV(fvec)
-plot(xs, gr, type = "l")
+plot(xs, reso * gr, type = "l")
+lines(xs, (1/lmbda)^2 * exp(-xs/lmbda) * (.5/lmbda * xs^2 - 2 * xs + lmbda), col = "blue")
 abline(0, 0)
 CoV(fvec)
 res <- optimise(function(eps) CoV(fvec - eps * gr), c(0, 1000))
