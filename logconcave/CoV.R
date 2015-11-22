@@ -23,12 +23,20 @@ varf <- function(fvec) {
   e2 <- sum(xs^2 * exp(-fvec))/sum(exp(-fvec))
   e2 - e1^2  
 }
+d_ef <- function(fvec, evec, naive = FALSE) {
+  if (naive) {
+    return(ef(fvec + evec) - ef(fvec))
+  }
+  e1 <- ef(fvec)
+  -sum(evec * (xs-e1) * exp(-fvec))/sum(exp(-fvec))
+}
+
 d_varf <- function(fvec, evec, naive = FALSE) {
   if (naive) {
     return(varf(fvec + evec) - varf(fvec))
   }
   e1 <- ef(fvec); e2 <- e2f(fvec)
-  -sum(evec * (xs^2 - 2*xs * e1) * exp(-fvec))/sum(exp(-fvec))
+  -sum(evec * (xs^2 - 2*xs * e1 - e2 + 2*e1^2) * exp(-fvec))/sum(exp(-fvec))
 }
 
 
@@ -47,10 +55,10 @@ CoV(5 * xs, TRUE)
 CoV(5 * xs)
 CoV(10 * xs, TRUE)
 
-evec <- 0.01 * xs
+evec <- 1e-2 * rnorm(reso)
 
-varf(fvec)
-varf(fvec + evec)
+d_ef(fvec, evec, TRUE)
+d_ef(fvec, evec)
 d_varf(fvec, evec, TRUE)
 d_varf(fvec, evec)
 
