@@ -1,0 +1,202 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+%\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{caption}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Vol}{\text{Vol}}
+\newcommand{\HH}{\boldsymbol{H}}
+%\pagestyle{fancy}
+
+\title{Minimum coefficient of variation for log-concave densities}
+
+\author{Charles Zheng}
+
+
+\maketitle
+
+\section{Problem}
+
+Let $f(x)$ be a twice-differentiable convex function on $\mathbb{R}^+$ such that $\int_0^\infty e^{-f(x)} < \infty$.
+Then, if $X$ is distributed according to
+\[
+\Pr[X < t] = \frac{\int_0^t e^{-f(x)} dx}{\int_0^\infty e^{-f(x)} dx}
+\]
+we say that $X$ has a log-concave distribution on the positive real line.
+
+Define the coefficient of variation of $X$ by
+\[
+\text{CV}[X] = \frac{\E[X]}{\sqrt{\Var[X]}}.
+\]
+
+Accordingly, define functionals
+\[
+E(f) = \frac{\int_0^\infty x e^{-f(x)} dx}{\int_0^\infty e^{-f(x)} dx}
+\]
+\[
+E_2(f) = \frac{\int_0^\infty x^2 e^{-f(x)} dx}{\int_0^\infty e^{-f(x)} dx}
+\]
+\[
+V(f) = E(f)^2 - E_2(f)
+\]
+\[
+\text{CV}(f) = \frac{E(f)}{\sqrt{V(f)}}
+\]
+so that $E(f) = \E[X]$, $E_2(f) = \E[X^2]$, $V(f) = \Var(X)$ and $\text{CV}(f) = \text{CV}[X]$ for $X$ defined as above.
+
+Now consider the problem of finding the log-concave distribution with the smallest coefficient of variation, i.e.
+\[
+\text{minimize}_f \ \text{CV}(f) \text{ subject to }f'' \geq 0.
+\]
+
+Intuitively, if the above optimization has a unique solution, then it
+should lie on the boundary of the constraint, hence $f''(x) = 0$.
+This suggests the exponential distribution, corresponding to $f(x) =
+x/\lambda$, which has a coefficient of variation equal to 1.  In the
+following, we will use the variational calculus to show that $f(x) =
+x$ is a local minimum of the optimization problem, but we do not have
+a proof that $f(x) = x$ is a global minimum.
+
+\section{Calculus of Variations}
+
+The calculus of variations allows one to define gradients of functionals.
+Given a functional $\Lambda : \mathbb{F} \to \mathbb{R}$ with function space $\mathcal{F}$ as domain , 
+any function $h$ in the dual space $\bar{\mathcal{F}}$
+ such that
+\[
+\lim_{\epsilon \to 0} \frac{\Lambda(f + \epsilon g) - \Lambda(f)}{\epsilon} = \int h(x) g(x) dx
+\]
+for all $g \in \mathcal{F}$
+is called a gradient of $\Lambda$ at $f$:
+\[h = \nabla \Lambda(f) .\]
+
+In our problem, the gradients of the functionals $E$, $V$, and $\text{CV}$ are given as follows:
+\[
+\nabla E(f) = p_f(x) (E(f) - x)
+\]
+\[
+\nabla V(f) = p_f(x) (E_2(f) - 2E(f)^2 + 2 E(f) x - x^2)
+\]
+\[
+\nabla \text{CV}(f) = p_f(x) \left[
+\frac{E(f) - x}{\sqrt{V(f)}} - \frac{E(f)}{2V(f)^{3/2}}\left(
+E_2(f) - 2E(f)^2 + 2 E(f) x - x^2
+\right)
+\right].
+\]
+where
+\[
+p_f(x) = \frac{e^{-f(x)}}{\int_0^\infty e^{-f(z)} dz}.
+\]
+
+Letting $h_f = \nabla \text{CV}(f)$, in order to show that $f$ is a local minimum, it suffices to show that
+\[
+\lim_{\epsilon \to 0} \frac{1}{\epsilon}(\text{CV}(f + \epsilon g) - \text{CV}(f)) > 0,
+\]
+i.e. that
+\[
+\int_0^\infty h_f(x) g(x) \geq 0
+\]
+for any $g$ such that $g''(x) \geq 0$ for all $x$ such that $f''(x) = 0$.
+
+Define $H_f(x) = \int_0^x h_f(z) dz$ and $\HH (x) = \int_0^x H_f(z) dz$.
+Then we for any $t > 0$, applying integration by parts we have
+\[
+\int_0^t h_f(x) g(x) dx = H_f(x) g(x) |_0^t - \HH_f (x) g'(x)|_0^t + \int_0^t \HH_f(x) g''(x) dx.
+\]
+Hence, supposing that $H_f(0) = 0$, $\HH_f(0) = 0$, and
+\[
+0 = \lim_{x \to \infty} H_f(x) g(x) = \lim_{x \to \infty} \HH_f (x) g''(x)
+\]
+we have
+\[
+\int_0^\infty h_f(x) g(x) = \int_0^\infty \HH_f(x) g''(x).
+\]
+
+This motivates the following lemma:
+
+\noindent\textbf{Lemma}. \emph{
+Suppose that 
+\[0 = \lim_{x \to \infty} H_f(x) = \lim_{x \to \infty} \HH_f(x).\]
+Then
+\[
+\inf_{g: g'' \geq 0}\ \int_0^\infty g(x) h_f(x) dx < 0.
+\]
+implies
+\[
+\inf_{g: g'' \geq 0}\ \int_0^\infty g''(x) \HH_f(x) dx < 0
+\]
+}
+
+\noindent \textbf{Proof.}  
+Suppose that
+\[
+\inf_{g: g'' \geq 0}\ \int_0^\infty g(x) h_f(x) dx < 0.
+\]
+Then there exists $g$ with $g'' \geq 0$ such that
+\[
+\int_0^\infty g(x) h_f(x) dx  = \delta < 0.
+\]
+Then by continuity of the integral, there exists some $t > 0$ where
+\[
+\int_0^t g(x) h_f(x) dx = \delta/2 = \int_0^\infty g(x) I(x \leq t) h_f(x) dx
+\]
+But observe that we can construct twice-differentiable and convex
+$\tilde{g}$ such that $\tilde{g}(x)$ and $g(x)I(x \leq t)$ are
+arbitrarily close.  Hence we conclude that there exists
+$\tilde{g}$ with
+\[
+\int_0^\infty g(x) h_f(x) dx  < 0.
+\]
+and
+\[
+0 = \lim_{x \to \infty} H_f(x) \tilde{g}(x) = \lim_{x \to \infty} \HH_f(x) \tilde{g}(x),
+\]
+which implies
+\[
+\int_0^\infty \tilde{g}''(x) \HH_f(x) dx < 0,
+\]
+completing the proof. $\Box$
+
+\subsection{Exponential distribution}
+
+For $f(x) = x$, the exponential distribution, we have
+\[
+h_f(x) = \frac{1}{2}e^{-x}(x^2 - 4x + 2)
+\]
+\[
+H_f(x) = \frac{1}{2}e^{-x}(2x-x^2)
+\]
+\[
+\HH_f(x) = \frac{1}{2}e^{-x}(x^2 + 4x).
+\]
+
+Since $\HH_f(x) \geq 0$, it is clear that
+\[
+\inf_{g: g'' \geq 0}\ \int_0^\infty \HH_f(x) g''(x) dx \geq 0.
+\]
+Now since $H_f(x)$ and $\HH_f(x)$ satisfy the conditions of the lemma, we can conclude from the contrapositive of the lemma that
+\[
+\inf_{g: g'' \geq 0}\ \int_0^\infty h_f(x) g(x) dx \geq 0,
+\]
+which thus implies that $f(x) = x$ is a local minimum.
+
+
+\end{document}
