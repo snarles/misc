@@ -39,6 +39,18 @@ d_varf <- function(fvec, evec, naive = FALSE) {
   -sum(evec * (xs^2 - 2*xs * e1 - e2 + 2*e1^2) * exp(-fvec))/sum(exp(-fvec))
 }
 
+d_CoV <- function(fvec, evec, naive = FALSE) {
+  if (naive) {
+    return(CoV(fvec + evec) - CoV(fvec))
+  }
+  e1 <- ef(fvec); e2 <- e2f(fvec); vv <- varf(fvec)
+  pf <- exp(-fvec)/sum(exp(-fvec))
+  sum(pf * evec * (
+    (e1 - xs)/sqrt(vv) - e1/2 * vv^(-3/2) * (e2 - 2*e1^2 + 2*e1*xs - xs^2)
+    ))
+}
+
+
 
 
 check_convex <- function(fvec) {
@@ -61,6 +73,8 @@ d_ef(fvec, evec, TRUE)
 d_ef(fvec, evec)
 d_varf(fvec, evec, TRUE)
 d_varf(fvec, evec)
+d_CoV(fvec, evec, TRUE)
+d_CoV(fvec, evec)
 
 plot(exp(-fvec-evec), exp(-fvec)*(1-evec), type = "l")
 abline(0, 1, col = "red")
