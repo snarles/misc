@@ -50,7 +50,11 @@ d_CoV <- function(fvec, evec, naive = FALSE) {
     ))
 }
 
-
+grad_CoV <- function(fvec) {
+  e1 <- ef(fvec); e2 <- e2f(fvec); vv <- varf(fvec)
+  pf <- exp(-fvec)/sum(exp(-fvec))
+  pf * ((e1 - xs)/sqrt(vv) - e1/2 * vv^(-3/2) * (e2 - 2*e1^2 + 2*e1*xs - xs^2))
+}
 
 
 check_convex <- function(fvec) {
@@ -79,3 +83,16 @@ d_CoV(fvec, evec)
 plot(exp(-fvec-evec), exp(-fvec)*(1-evec), type = "l")
 abline(0, 1, col = "red")
 
+## gradient for exponential case
+fvec <- 10 * xs
+gr <- grad_CoV(fvec)
+plot(xs, gr, type = "l")
+abline(0, 0)
+CoV(fvec)
+res <- optimise(function(eps) CoV(fvec - eps * gr), c(0, 1000))
+res$objective - CoV(fvec)
+res$minimum
+fvec2 <- fvec - res$minimum * gr
+plot(xs, fvec2 , type = "l")
+plot(xs, exp(-fvec2), type = "l")
+CoV(fvec2)
