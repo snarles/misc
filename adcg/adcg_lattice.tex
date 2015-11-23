@@ -308,23 +308,110 @@ w_i^{(k + 1)} = \left[w_i^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\p
 for $i = 1,\hdots, K$ and $j=1,\hdots, d$, and where the initial iterate $\{(w_i^{(0)},
 \theta_i^{(0)})\}$ is given by the the input set.
 
-We will need to assume the following property of gradient descent for $K=1$.
+In this section we will study the behavior of gradient descent under the \emph{pure noise model} where $y_z \sim F$ iid.
+We start by studying gradient descent for the single-source problem, $K=1$.
 
-
-\textbf{Definition. } 
-We say that gradient descent under noise $F$, kernel $\psi$, and
-tuning parameters $\epsilon_{grad}$, $L_{grad}$ satisfies the
-\emph{bounded path-length condition} if, under the single source model
-$K=1$ and under an infinite lattice $Z = \mathbb{Z}^d$, we have the
-path length $S(\theta)$ finite with probability 1, where $S(\theta)$ is defined as
+\textbf{Definition. }  Define the path length $S(\theta)$ as the random variable given by
 \[
 S(\theta) = \sum_{k=1}^{L_{grad}} ||\theta_1^{(k)} - \theta_1^{(k - 1)}||
 \]
 given the initial condition $w_i^{(0)} = 0, \theta_i^{(0)} = \theta$,
-for all $\theta \in \mathbb{R}^p$.
+for gradient descent under the single-source model $K=1$.  We say that
+gradient descent under noise $F$, kernel $\psi$, and tuning parameters
+$\epsilon_{grad}$, $L_{grad}$ satisfies the \emph{bounded path-length
+  condition} if, under the single source model $K=1$ and under an
+infinite lattice $Z = \mathbb{Z}^d$, where the data $y_z$ is drawn
+from the \emph{pure noise model} with $y_z \sim F$ i.i.d., the path
+length $S(\theta)$ can be uniformly bounded in probability by
+\[
+\sup_{\theta \in \mathbb{R}^p} \Pr[S(\theta) > q(\epsilon)] < \epsilon
+\]
+for all $\epsilon > 0$, for some function $q: (0, 1] \to
+  \mathbb{R}^+$ with $q(\epsilon) < \infty$.
+
+The bounded path-length assumption holds fairly generally, but for the sake of concreteness,
+we establish it holds under the following conditions.
 
 
-While it is difficult to verify the bounded path-length condition, it
-usually holds in practice.
+\textbf{Theorem. }\emph{
+Suppose $F$ is bounded, i.e. there exists a constant $c < \infty$ such that $\Pr[\sup_z y_z \leq c] = 1$,
+and also suppose that $\sup_\theta |\psi_j(\theta)| < M$ and $\sup_\theta \psi(\theta) < M$ for some $M < \infty$.
+Then it follows that
+$S(\theta)$ is bounded with probability 1;  hence, gradient
+descent satisfies the bounded path-length condition.  }
+
+
+
+\textbf{Proof.}
+We claim that
+\[
+w^{(k)} \leq \epsilon_{grad} k (2h+1)^d cM
+\]
+for $k = 1,\hdots, L_{grad}$.
+Recall that
+\[
+w^{(k+1)} = \left[w^{(k)} + \epsilon \sum_{z \in Z} (y_z - w^{(k)} \phi(z - \theta^{(k)})) \phi(z - \theta^{(k)})\right]_+
+\]
+But observe that $\phi(z - \theta^{(0)})$ is zero outside of a set $Z_{\theta}$, where $Z_\theta$ has at most $(2h + 1)^d$ elements.
+Hence,
+\begin{align*}
+w^{(k+1)} &= \left[w^{(k)} + \epsilon \sum_{z \in Z_{\theta^{(k)}}} (y_z - w^{(k)} \phi(z - \theta^{(k)})) \phi(z - \theta^{(k)})\right]_+
+\\&\leq \left[w^{(k)} + \epsilon \sum_{z \in Z_{\theta^{(k)}}} y_z \phi(z - \theta^{(k)})\right]_+
+\\&\leq \left[w^{(k)} + \epsilon (2h+1)^d c M\right]_+
+\end{align*}
+which establishes the claim.
+Defining $W = \epsilon_{grad} L_{grad} (2h+1)^d c M$, we thus have
+\[
+\max_{k=1}^{L_{grad}} w^{(k)} \leq W.
+\]
+
+Next, recall that
+\[
+\theta^{(k+1)} = \theta^{(k)} + \epsilon_{grad} w^{(k)} \sum_{z \in Z_{\theta^{(k)}}} (y_z - w^{(k)}) \dot{\phi}(z - \theta^{(k)})
+\]
+so that
+\begin{align*}
+||\theta^{(k+1)} - \theta^{(k)}|| &\leq \epsilon_{grad} w^{(k)} \sum_{z \in Z_{\theta^{(k)}}} |y_z - w^{(k)}| ||\dot{\phi}(z - \theta^{(k)})||
+\\&\leq \epsilon_{grad} W (2h+1)^d (c + W) M\sqrt{d}
+\end{align*}
+hence
+\[
+S(\theta) < L_{grad} W \epsilon_{grad} (2h+1)^d (c + W) M\sqrt{d}
+\]
+with probability one. $\Box$
+
+
+Having assumed the bounded path-length condition, we can proceed to
+study the behavior of the gradient path for general $K$, given that
+the initial points are well-separated.  Let $\{\theta_1, \hdots,
+\theta_K\}$ be a collection of random intitialization points.
+Consider the joint distribution of $(S(\theta_1),\hdots, S(\theta_K))$
+conditional on $\theta_1,\hdots, \theta_K$, but randomizing over the
+distribution of $y_k$.  Recall that $S(\theta)$ refers to the length
+of the gradient path in the \emph{isolated optimization problems}
+where only a single source is considered.  Hence, the lengths of the
+paths in the \emph{joint optimization problem} starting with
+$\{\theta_1,\hdots, \theta_k\}$ may be different.  However, we will
+show that if $\theta_1,\hdots, \theta_K$ are sufficiently
+well-separated, then the gradient paths in the joint optimization
+problem are the same as the gradient paths for the isolated
+optimization problems.
+
+Specifically, let $\theta_i^{(k, 1)}$ denote the iterates of $\theta_i$ in the isolated optimization problem,
+and let $\theta_i^{(k, K)}$ denote the iterates of $\theta_i$ in the joint optimization problem.
+Then we have the following result:
+
+\textbf{Lemma.} \emph{
+(Separation condition.)
+Suppose that
+\[
+h + 2 \max_{i=1}^K S(\theta_i) < \min_{i, j} ||\theta_i - \theta_j||.
+\]
+Then for $i = 1,\hdots, K$, $k = 1,\hdots, L_{grad}$, we have
+\[
+(w_i^{(k, 1)}, \theta_i^{(k, 1)}) = (w_i^{(k, K)}, \theta_i^{(k, K)}).
+\]
+}
+
 
 \end{document}
