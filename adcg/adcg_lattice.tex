@@ -281,32 +281,63 @@ For both approaches, we consider \emph{gradient descent} with a fixed
 step size $\epsilon_{grad}$ and a fixed number of steps $L_{grad}$, which we
 describe explicitly in the following section.
 
-\section{Gradient descent under pure noise}
+\section{Gradient descent}
 
 Under the setup described in \ref{section:Setup},
-the gradient of the objective at a particular a set of atoms $\{(w_i, \theta_i)\}$
+the gradient of the objective at a particular a set of atoms $\{(w_i, \theta_i)\}_{i=1}^K$
 is given by
 \[
-\frac{\partial \mathcal{L}}{\partial w_i} = -\sum_{z \in Z} r_z(\{(w_i, \theta_i)\}) \psi(z - \theta_i)
+\frac{\partial \mathcal{L}}{\partial w_i} = -\sum_{z \in Z} r_z(\{(w_j, \theta_j)\}_{j=1}^K) \psi(z - \theta_i)
 \]
 \[
-\frac{\partial \mathcal{L}}{\partial \theta_{ij}} = -w_i\sum_{z \in Z} r_z(\{(w_i, \theta_i)\}) \psi_j(z - \theta_i)
+\frac{\partial \mathcal{L}}{\partial \theta_{ij}} = -w_i\sum_{z \in Z} r_z(\{(w_j, \theta_j)\}_{j=1}^K) \psi_j(z - \theta_i)
 \]
 where $\psi_j$ denotes the $j$th partial derivative of $\psi(\theta)$, and $r_z$ denotes the residual at $z$:
 \[
-r_z(\{(w_i, \theta_i)\}) = y_z - \sum_{i=1}^K w_i \psi(z - \theta).
+r_z(\{(w_i, \theta_i)\}_{i=1}^K) = y_z - \sum_{i=1}^K w_i \psi(z - \theta).
 \]
-Given a set of atoms $\{(w_i, \theta_i)\}$, gradient descent produces iterates
-$\{(w_i^{(k)}, \theta_i^{(k)})\}$ for $k = 1,\hdots, L_{grad}$,
+Given a set of atoms $\{(w_i, \theta_i)\}_{i=1}^K$, gradient descent produces iterates
+$\{(w_i^{(k)}, \theta_i^{(k)})\}_{i=1}^K$ for $k = 1,\hdots, L_{grad}$,
 defined recusively by
 \[
-w_i^{(k + 1)} = \left[w_i^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_i^{(k)}, \theta_i^{(k)})\})\right]_+
+w_i^{(k + 1)} = \left[w_i^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_j^{(k)}, \theta_j^{(k)})\}_{j=1}^K)\right]_+
 \]
 \[
-\theta_{ij}^{(k + 1)} = \theta_{ij}^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_i^{(k)}, \theta_i^{(k)})\})
+\theta_{im}^{(k + 1)} = \theta_{ij}^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{im}}(\{(w_j^{(k)}, \theta_j^{(k)})\}_{j=1}^K)
 \]
-for $i = 1,\hdots, K$ and $j=1,\hdots, d$, and where the initial iterate $\{(w_i^{(0)},
-\theta_i^{(0)})\}$ is given by the the input set.
+for $i = 1,\hdots, K$ and $m=1,\hdots, d$, and where the initial iterate $\{(w_i^{(0)},
+\theta_i^{(0)})\}_{i=1}^K$ is given by the the input set.
+
+\subsection{Decomposition}
+
+We would like to understand the paths produced by gradient descent as
+a function of starting points $\theta_1,\hdots, \theta_K$ and the
+data.  A useful approach is to compare the behavior of the isolated
+single-source problems to the behavior of the joint optimization
+problem.  Formally, define the joint optimization iterates as
+\[
+w_i^{(k + 1, K)} = \left[w_i^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_j^{(k, K)}, \theta_j^{(k, K)})\}_{j=1}^K)\right]_+
+\]
+\[
+\theta_{im}^{(k + 1, K)} = \theta_{im}^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_j^{(k, K)}, \theta_{jm}^{(k, K)})\})
+\]
+for $i = 1,\hdots, K$ and $m=1,\hdots, d$.
+Define the isolated iterates as
+\[
+w_i^{(k + 1, K)} = \left[w_i^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_i^{(k, 1)}, \theta_i^{(k)})\})\right]_+
+\]
+\[
+\theta_{ij}^{(k + 1, K)} = \theta_{ij}^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_i^{(k, K)}, \theta_{ij}^{(k, K)})\}).
+\]
+The isolated iterates are given by the gradient path for the
+single-source optimization problem, initialized at each individual
+$\theta_i$.  Hence that the joint iterates $\theta_i^{(k, K)}$ are
+generally functions of the starting points $\{\theta_1,\hdots,
+\theta_K\}$, while the isolated iterates $\theta_i^{(k, K)}$ only
+depend on a single starting point $\theta_i^{(k, 1)}$.
+
+
+\subsection{Bounded path-length}
 
 In this section we will study the behavior of gradient descent under the \emph{pure noise model} where $y_z \sim F$ iid.
 We start by studying gradient descent for the single-source problem, $K=1$.
@@ -381,6 +412,8 @@ S(\theta) < L_{grad} W \epsilon_{grad} (2h+1)^d (c + W) M\sqrt{d}
 with probability one. $\Box$
 
 
+\end{document}
+
 Having assumed the bounded path-length condition, we can proceed to
 study the behavior of the gradient path for general $K$, given that
 the initial points are well-separated.  Let $\{\theta_1, \hdots,
@@ -414,4 +447,4 @@ Then for $i = 1,\hdots, K$, $k = 1,\hdots, L_{grad}$, we have
 }
 
 
-\end{document}
+
