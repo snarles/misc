@@ -99,10 +99,22 @@ A natural approach is to minimize the objective function
 \text{minimize} \sum_{i=1}^n \ell\left(y_i; \sum_{j=1}^K w_j \psi_{\theta_j}(x_i) \right)
 \]
 subject to some sparsity constraint, where $\ell$ is the
-log-likelihood function for $\{F(\mu)\}$.  However, throughout the
-literuature, a variety of methods have been proposed for choosing the
-sparsity constraint and for minimizing the objective function.
-We describe three main categories of methods:
+log-likelihood function for $\{F(\mu)\}$.  
+The objective function is a function of a set of weight-parameter pairs $\{w_i, \theta_i\}$,
+which as Boyd et al. noted describe a positive measure on the parameter space
+\[
+\sum_{i=1}^K w_i \delta_{\theta_i}.
+\]
+Since we are concerned with computational aspects in this work, we
+will generally work with the weight-parameter pairs represented as a
+set of tuples $(w_i,\theta_i)$ rather than as a measure, though we
+will borrow from the terminology and refer to a weight-parameter pair
+$(w_i,\theta_i)$ as an \emph{atom}, $w_i$ as the weight or amplitude
+of the $i$th atom, and $\theta_i$ as the location of the atom.
+
+However, throughout the literature, a variety of methods have been
+proposed for choosing the sparsity constraint and for minimizing the
+objective function.  We describe three main categories of methods:
 \begin{itemize}
 \item Using nonlinear optimization (e.g. gradient descent or Newton's
   method) to minimize the objective function subject to a constraint
@@ -158,5 +170,63 @@ product with the gradient of the loss with respect to the residuals:
 \[
 \tau(r_1,\hdots, r_n) = \argmax_\theta \sum_{i=1}^n \psi_\theta(x_i) \dot{\ell}(r_i).
 \]
+The descent subroutine $\nu$ is given a set of atoms
+$\{(w_i,\theta_i)\}_{i=1}^K$ as input, and applies nonlinear
+optimization to the objective function, starting from the input
+parameters.  The output will be a set of $K$ atoms
+which constitute a local minimum of the objective function, and with
+the property that the output set has an equal or lower value of the
+objective function than the input set.
+
+The ADCG algorithm iteratively updates a set of atoms $\{(w_i,
+\theta_i)\}$, whose size may change from iteration to iteration.  The
+parameter set is intitialized as the empty set.  In each iteration,
+the gradient subroutine is applied to the current residuals to yield a
+new parameter $\theta$, which defines the location of a new atom $(0,
+\theta)$ that is added to the set of atoms.  The convex reweighting
+step minimizes the objective function fixing the parameters
+$\theta_i$.  Having updated the weights $w_i$, one optionally prunes
+all atoms with zero weight, Finally, one applies the descent
+subroutine $\nu$ to jointly update the weights and locations of the
+atoms.
+
+In each iteration, the atoms grows by at most one, due to newly atom
+from the gradient subroutine.  Unless the algorithm has already
+converged, the newly added atom is sure to acquire a positive weight
+after the convex reweighting step; hence it will not be pruned.
+However, one or more of the atoms from previous iterates may be
+pruned; hence the set of atoms may experience a net decrease in size.
+
+While ADCG is guaranteed to optimize the global minimimum under a
+convex constraint, one can also consider using the algorithm to
+optimize the $L_0$ constraint.  Given a constraint on the number of
+atoms $K$, one runs ADCG until the number of atoms reaches $K$.  Due
+to the descent subroutine, the resulting set of atoms is guaranteed to
+be a local optimum of the objective function.  Utilizes this way, ADCG
+can be thought of as an intelligent way to iteratively build up a good
+intitialization for the nonlinear descent step in the final iteration.
+Additionally, if the number of sources $K$ is unknown, one can select
+for each possible $K=1,2,\hdots$, the ADCG iterate with the best
+objective function.  This allows one to efficiently obtain solutions
+for the $L_0$-constrained problem for each candidate value of $K$.
+
+In this paper, we will focus on the problem of solving the
+optimization problem subject to an $L_0$ constraint.  We will leave
+the analysis of the discretization approach to future
+work\begin{footnote}{While methods for converting an $L_1$-sparse
+  solution to an $L_0$-sparse solution exist in the literature
+  (e.g. ``peak-finding'' in diffusion-weighted imaging), such methods
+  are usually application-specific.}\end{footnote}, and concentrate on
+comparison of ADCG and the ``naive'' approach of applying nonlinear
+descent with random starting conditions.  Since the same nonlinear
+descent algorithm can be used in both ADCG and the random restart
+approach, this allows the two approaches to be compared ``on equal
+footing'': namely, we measure the complexity of each approach by the
+number of calls to the nonlinear descent algorithm $\nu$.  Since the
+nonlinear descent algorithm is usually the bottleneck in practice,
+this provides a reasonable estimate of the true computational cost.
+
+For the most part, we will deal with the problem where the true number
+of atoms $K$ is known in advance.
 
 \end{document}
