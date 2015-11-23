@@ -37,18 +37,15 @@ solving sparse inverse problems which combines nonconvex and convex
 optimization techniques.  Although ADCG is observed to achieve
 superior performance to alternative approaches, little is known about
 its performance due to its non-convex subroutines.  In this work, we
-consider a sparse inverse problem on an infinite lattice, and given a
-general nonlinear optimization subroutine, compare the performance of
-ADCG equipped with the given subroutine versus the approach of simply
-applying the subroutine with random intializations, supposing that the
-true signal is known to lie in a finite sublattice.  Under a number of
-symmetry assumptions, we show that under an asymptotic regime where
-the number of sources is growing, the volume of the support of the
-signal is relatively small compared to the volume of the sublattice,
-and where the signal size is large compared to the noise level, that
-ADCG converges to the global minimum with fixed number of calls while
-the probability of reaching the global minimum under a random
-intitialization goes to zero.
+consider a sparse inverse problem with i.i.d. noise on a
+$d$-dimensional lattice, and given a general nonlinear optimization
+subroutine, compare the performance of ADCG equipped with the given
+subroutine versus the approach of simply applying the subroutine with
+random intializations.  We establish a regime where the size of the
+lattice scales with the number of sources as well as the amplitude of
+each source, in which ADCG converges to the global minimum with fixed
+number of calls while the probability of reaching the global minimum
+under a random intitialization goes to zero.
 \end{abstract}
 
 \section{Introduction}
@@ -73,7 +70,7 @@ and the combined signal from all $K$ sources is given by the function
 In the case of super-resolution imaging, for example, the parameter
 $\theta \in \mathbb{R}^2$ gives the location of the point source on
 the slide, $w_i$ gives the intensity of the fluorescence, and
-$\phi_{\theta}(x)$ is a symmetric kernel function centered at $\theta$,
+$\psi_{\theta}(x)$ is a symmetric kernel function centered at $\theta$,
 given by the point-spread function of the lens.
 
 Given measurement locations $x_1,\hdots, x_N$, we observe signals
@@ -226,7 +223,108 @@ number of calls to the nonlinear descent algorithm $\nu$.  Since the
 nonlinear descent algorithm is usually the bottleneck in practice,
 this provides a reasonable estimate of the true computational cost.
 
-For the most part, we will deal with the problem where the true number
-of atoms $K$ is known in advance.
+In the following section, we present our model and the particular
+variants of ADCG and nonlinear descent to be studied.
+
+\section{Setup}\label{section:Setup}
+
+Consider a sparse recovery problem with parameters $\theta \in
+\mathbb{R}^d$ corresponding to locations of point sources, where the
+signal a source at $\theta$ is given by
+\[
+\psi_\theta(x) = \psi(x - \theta),
+\]
+where $\psi: \mathbb{R}^p \to \mathbb{R}^+$ is a nonnegative kernel
+function.  We assume that $\psi$ is twice-differentiable and has a
+bounded support in the sense that there exists a bandwidth $h > 0$
+such that $\psi(x) = 0$ for all $x \in \mathbb{R}^p$ with $||x|| > h$.
+
+Let the true atoms be given by the set $\{(w_i^0,
+\theta_i^0)\}_{i=1}^{K^0}$, such that $w_i^0 > 0$.  Furthermore, let
+us assume that $\theta_i$ are known \emph{a priori} to lie in a
+hypercube $[-T, T]^d$.  We observe data $y_z$ for each measurement
+point $z$ in the lattice $Z = \{-n,..., n\}^d \in \mathbb{Z}^d$, where $n
+>> T$, given by
+\[
+y_z = \epsilon_z + \sum_{i=1}^{K^0} w_i^0 \psi(z - \theta_i^0)
+\]
+where $\epsilon_z$ are identically and independently distributed
+according to a distribution $F$, with zero mean and unit variance.
+
+The condition that $n >> T$ ensures that the algorithms we study will
+not be affected by boundary issues: later, we will give exact
+conditions on the relationship between $n$ and $T$.  In practice, our
+results should still be approximately correct even if $n = T$.
+
+Consider the problem of minimizing the objective under $L_2$ loss, given by
+\[
+\mathcal{L}(\{w_i, \theta_i\}) = \frac{1}{2}\sum_{z \in Z} \left\|y_z - \sum_{j=1}^K w_j \psi(z - \theta) \right\|^2
+\]
+where $K$, the number of atoms, is fixed.
+
+We compare the following two approaches:
+\begin{itemize}
+\item \emph{Random restarts.} 
+For a fixed number of iterations $k = 1,\hdots, M$,
+choose a random starting condition $\{(0, \theta_i^{(k, 0)})\}_{i=1}^K$
+by drawing $\theta_i$ i.i.d. from the uniform distribution on $[-T,T]^d$.
+Apply nonlinear subroutine $\nu$ with the starting condition
+to obtain local minimum $\{(w_i^{(k, 1)}, \theta_i^{(k, 1)})\}_{i=1}^K$,
+and let $\mathcal{L}^{(k)}$ denote the value of the objective function.
+After $M$ such iterations, return $\{(w_i^{(k)}, \theta_i^{(k)})\}$ with the smallest $o^{(k)}$.
+\item \emph{ADCG without pruning.}
+Run the ADCG algorithm without pruning for $K$ iterations, then return the final set of atoms.
+In the gradient step of ADCG, limit the search to $\theta \in [-T, T]^d$.
+\end{itemize}
+
+For both approaches, we consider \emph{gradient descent} with a fixed
+step size $\epsilon_{grad}$ and a fixed number of steps $L_{grad}$, which we
+describe explicitly in the following section.
+
+\section{Gradient descent under pure noise}
+
+Under the setup described in \ref{section:Setup},
+the gradient of the objective at a particular a set of atoms $\{(w_i, \theta_i)\}$
+is given by
+\[
+\frac{\partial \mathcal{L}}{\partial w_i} = -\sum_{z \in Z} r_z(\{(w_i, \theta_i)\}) \psi(z - \theta_i)
+\]
+\[
+\frac{\partial \mathcal{L}}{\partial \theta_{ij}} = -w_i\sum_{z \in Z} r_z(\{(w_i, \theta_i)\}) \psi_j(z - \theta_i)
+\]
+where $\psi_j$ denotes the $j$th partial derivative of $\psi(\theta)$, and $r_z$ denotes the residual at $z$:
+\[
+r_z(\{(w_i, \theta_i)\}) = y_z - \sum_{i=1}^K w_i \psi(z - \theta).
+\]
+Given a set of atoms $\{(w_i, \theta_i)\}$, gradient descent produces iterates
+$\{(w_i^{(k)}, \theta_i^{(k)})\}$ for $k = 1,\hdots, L_{grad}$,
+defined recusively by
+\[
+w_i^{(k + 1)} = \left[w_i^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_i^{(k)}, \theta_i^{(k)})\})\right]_+
+\]
+\[
+\theta_{ij}^{(k + 1)} = \theta_{ij}^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_i^{(k)}, \theta_i^{(k)})\})
+\]
+for $i = 1,\hdots, K$ and $j=1,\hdots, d$, and where the initial iterate $\{(w_i^{(0)},
+\theta_i^{(0)})\}$ is given by the the input set.
+
+We will need to assume the following property of gradient descent for $K=1$.
+
+
+\textbf{Definition. } 
+We say that gradient descent under noise $F$, kernel $\psi$, and
+tuning parameters $\epsilon_{grad}$, $L_{grad}$ satisfies the
+\emph{bounded path-length condition} if, under the single source model
+$K=1$ and under an infinite lattice $Z = \mathbb{Z}^d$, we have the
+path length $S(\theta)$ finite with probability 1, where $S(\theta)$ is defined as
+\[
+S(\theta) = \sum_{k=1}^{L_{grad}} ||\theta_1^{(k)} - \theta_1^{(k - 1)}||
+\]
+given the initial condition $w_i^{(0)} = 0, \theta_i^{(0)} = \theta$,
+for all $\theta \in \mathbb{R}^p$.
+
+
+While it is difficult to verify the bounded path-length condition, it
+usually holds in practice.
 
 \end{document}
