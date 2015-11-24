@@ -235,26 +235,35 @@ signal a source at $\theta$ is given by
 \psi_\theta(x) = \psi(x - \theta),
 \]
 where $\psi: \mathbb{R}^p \to \mathbb{R}^+$ is a nonnegative kernel
-function.  We assume that $\psi$ is twice-differentiable and has a
-bounded support in the sense that there exists a bandwidth $h > 0$
-such that $\psi(x) = 0$ for all $x \in \mathbb{R}^p$ with $||x|| > h$.
+function.  
 
 Let the true atoms be given by the set $\{(w_i^0,
 \theta_i^0)\}_{i=1}^{K^0}$, such that $w_i^0 > 0$.  Furthermore, let
 us assume that $\theta_i$ are known \emph{a priori} to lie in a
 hypercube $[-T, T]^d$.  We observe data $y_z$ for each measurement
-point $z$ in the lattice $Z = \{-n,..., n\}^d \in \mathbb{Z}^d$, where $n
->> T$, given by
+point $z$ in the lattice $Z = \{-n,..., n\}^d \in \mathbb{Z}^d$, given by
 \[
 y_z = \epsilon_z + \sum_{i=1}^{K^0} w_i^0 \psi(z - \theta_i^0)
 \]
 where $\epsilon_z$ are identically and independently distributed
 according to a distribution $F$, with zero mean and unit variance.
 
-The condition that $n >> T$ ensures that the algorithms we study will
-not be affected by boundary issues: later, we will give exact
-conditions on the relationship between $n$ and $T$.  In practice, our
-results should still be approximately correct even if $n = T$.
+In our proof we will also make the following additional assumptions:
+\begin{itemize}
+\item[A1.] We assume that $\psi$ is twice-differentiable and has a
+bounded support in the sense that there exists a bandwidth $h > 0$
+such that $\psi(x) = 0$ for all $x \in \mathbb{R}^p$ with $||x|| > h$.
+\item[A2.] $F$ has bounded support, i.e. there exists $c < \infty$ so that $\Pr[|y| < c] = 1$ for $y \sim F$.
+\item[A3.] $\psi$ and its first derivatives are bounded in $L_\infty$ norm by some $M < \infty$.
+\item[A4.] \[
+\inf_\theta \sum_z \phi(z - \theta)^2  = B^{-1} > 0.
+\]
+\item[A5.] $n >> T$, i.e. the size of the data lattice is much larger than
+  the bounding box for the true parameters.  This assumption simply
+  allows us to ignore boundary issues.
+\end{itemize}
+All of the above assumptions are made purely for convenience, and any
+number of them could be relaxed.
 
 Consider the problem of minimizing the objective under $L_2$ loss, given by
 \[
@@ -280,6 +289,14 @@ In the gradient step of ADCG, limit the search to $\theta \in [-T, T]^d$.
 For both approaches, we consider \emph{gradient descent} with a fixed
 step size $\epsilon_{grad}$ and a fixed number of steps $L_{grad}$, which we
 describe explicitly in the following section.
+
+We use the following criterion for evaluating the algorithms.
+Assume that the true number of sources $K_0$ is known, and $K = K_0$.
+Then fixing $\Delta > 0$, we say that the estimated parameters $\theta_1,\hdots, \theta_K$
+\emph{recover the support within} $\Delta$ if
+\[
+\max_i \min_j ||\theta_i^0 - \theta_j|| < \Delta.
+\]
 
 \section{Gradient descent}
 
@@ -308,143 +325,109 @@ w_i^{(k + 1)} = \left[w_i^{(k)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\p
 for $i = 1,\hdots, K$ and $m=1,\hdots, d$, and where the initial iterate $\{(w_i^{(0)},
 \theta_i^{(0)})\}_{i=1}^K$ is given by the the input set.
 
-\subsection{Decomposition}
-
-We would like to understand the paths produced by gradient descent as
-a function of starting points $\theta_1,\hdots, \theta_K$ and the
-data.  A useful approach is to compare the behavior of the isolated
-single-source problems to the behavior of the joint optimization
-problem.  Formally, define the joint optimization iterates as
+The following notation will be used in the proofs.
+Define $Z_{\theta, r}$ to be the set of points $z$ in the lattice $Z$ with $||z - \theta|| < r$.
+Note that by assumption A1, it follows that
 \[
-w_i^{(k + 1, K)} = \left[w_i^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_j^{(k, K)}, \theta_j^{(k, K)})\}_{j=1}^K)\right]_+
+\sum_{z \in Z} y_z \phi(z - \theta) = \sum_{z \in Z_{\theta, h}} y_z \phi(z - \theta).
 \]
+Also note that the number of elements in $Z_{\theta, r}$ is at most $(2r + 1)^d$.
+
+\subsection{Non-recovery regime}
+
+First we present a deterministic sufficient condition so that gradient descent fails to recover the support within $\Delta$.
+
+\textbf{Theorem 1.}
+\emph{
+Assume conditions A1-A5.
+Define
+\[S = 2\max\{2h, \Delta, L_{grad}\epsilon_{grad} c^2 H^2M^2B (1 + H MB)\sqrt{d} \},\]
+where
 \[
-\theta_{im}^{(k + 1, K)} = \theta_{im}^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_j^{(k, K)}, \theta_{jm}^{(k, K)})\})
+H = \max_\theta |Z_{\theta, h}| < (2h+1)^d
 \]
-for $i = 1,\hdots, K$ and $m=1,\hdots, d$.
-Define the isolated iterates as
+Let $\theta_1^0,\hdots, \theta_K^0$ denote the true parameters
+and $\theta_1,\hdots, \theta_K$ denote the starting parameters for gradient descent.
+Suppose for all $i=1,\hdots, K$ and $j = 1,\hdots, K$ 
 \[
-w_i^{(k + 1, K)} = \left[w_i^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial w_i}(\{(w_i^{(k, 1)}, \theta_i^{(k)})\})\right]_+
+||\theta_i - \theta_j^0|| > 2S
 \]
+and if $i \neq j$,
 \[
-\theta_{ij}^{(k + 1, K)} = \theta_{ij}^{(k, K)} - \epsilon_{grad} \frac{\partial \mathcal{L}}{\partial \theta_{ij}}(\{(w_i^{(k, K)}, \theta_{ij}^{(k, K)})\}).
+||\theta_i - \theta_j|| > 2S
 \]
-The isolated iterates are given by the gradient path for the
-single-source optimization problem, initialized at each individual
-$\theta_i$.  Hence that the joint iterates $\theta_i^{(k, K)}$ are
-generally functions of the starting points $\{\theta_1,\hdots,
-\theta_K\}$, while the isolated iterates $\theta_i^{(k, K)}$ only
-depend on a single starting point $\theta_i^{(k, 1)}$.
-
-
-\subsection{Bounded path-length}
-
-In this section we will study the behavior of gradient descent under the \emph{pure noise model} where $y_z \sim F$ iid.
-We start by studying gradient descent for the single-source problem, $K=1$.
-
-\textbf{Definition. }  Define the path length $S(\theta)$ as the random variable given by
-\[
-S(\theta) = \sum_{k=1}^{L_{grad}} ||\theta_1^{(k)} - \theta_1^{(k - 1)}||
-\]
-given the initial condition $w_i^{(0)} = 0, \theta_i^{(0)} = \theta$,
-for gradient descent under the single-source model $K=1$.  We say that
-gradient descent under noise $F$, kernel $\psi$, and tuning parameters
-$\epsilon_{grad}$, $L_{grad}$ satisfies the \emph{bounded path-length
-  condition} if, under the single source model $K=1$ and under an
-infinite lattice $Z = \mathbb{Z}^d$, where the data $y_z$ is drawn
-from the \emph{pure noise model} with $y_z \sim F$ i.i.d., the path
-length $S(\theta)$ can be uniformly bounded in probability by
-\[
-\sup_{\theta \in \mathbb{R}^p} \Pr[S(\theta) > q(\epsilon)] < \epsilon
-\]
-for all $\epsilon > 0$, for some function $q: (0, 1] \to
-  \mathbb{R}^+$ with $q(\epsilon) < \infty$.
-
-The bounded path-length assumption holds fairly generally, but for the sake of concreteness,
-we establish it holds under the following conditions.
-
-
-\textbf{Theorem. }\emph{
-Suppose $F$ is bounded, i.e. there exists a constant $c < \infty$ such that $\Pr[\sup_z y_z \leq c] = 1$,
-and also suppose that $\sup_\theta |\psi_j(\theta)| < M$ and $\sup_\theta \psi(\theta) < M$ for some $M < \infty$.
-Then it follows that
-$S(\theta)$ is bounded with probability 1;  hence, gradient
-descent satisfies the bounded path-length condition.  }
-
-
+Then gradient descent fails to recover the support within $\Delta$.
+}
 
 \textbf{Proof.}
-We claim that
+We claim that for iterations $k = 1,\hdots, L_{grad}$, and for $i = 1,\hdots, K$, we have
 \[
-w^{(k)} \leq \epsilon_{grad} k (2h+1)^d cM
+w_i^{(k)} < c HMB,
 \]
-for $k = 1,\hdots, L_{grad}$.
-Recall that
+and also that
 \[
-w^{(k+1)} = \left[w^{(k)} + \epsilon \sum_{z \in Z} (y_z - w^{(k)} \phi(z - \theta^{(k)})) \phi(z - \theta^{(k)})\right]_+
+||\theta^{(k)}_i - \theta^{(k-1)}_i|| < \epsilon_{grad} c^2 H^2M^2B (1 + H MB)\sqrt{d}
 \]
-But observe that $\phi(z - \theta^{(0)})$ is zero outside of a set $Z_{\theta}$, where $Z_\theta$ has at most $(2h + 1)^d$ elements.
-Hence,
+The claim implies that
+\[
+||\theta_i^{(L_{grad})} - \theta_j^0|| \geq ||\theta_i - \theta_j^0|| - \sum_{k=1}^{L_{grad}} ||\theta^{(k)} - \theta^{(k-1)}|| \geq S \geq \Delta
+\]
+for all $i, j = 1,\hdots, K$,
+which implies that gradient descent fails to recover the support within $\Delta$.
+
+We prove the claim by induction on $k$.  For $k = 0$ the claim clearly
+holds.  Assume the induction hypothesis holds for iterations $j =
+1,\hdots, k$.  Then for all $i, j = 1,\hdots, K$ it follows that
+\[
+||\theta_i^{(k)} - \theta_j^0|| \geq ||\theta_i - \theta_j^0|| - \sum_{k=1}^{L_{grad}} ||\theta^{(k)} - \theta^{(k-1)}|| \geq S \geq 2h
+\]
+This means that for any $i, j$, the sets $Z_{\theta_i^{(k)}, h}$ and $Z_{\theta_j^{(0)}, h}$ are disjoint,
+i.e. $Z_{\theta_i^{(k)}, h}$ only consist of noise variates.
+It follows that
+\[
+\max_{i=1}^K \sup_{z \in Z_{\theta_i^{(k)}, h}} |y_z| < c.
+\]
+Therefore,
 \begin{align*}
-w^{(k+1)} &= \left[w^{(k)} + \epsilon \sum_{z \in Z_{\theta^{(k)}}} (y_z - w^{(k)} \phi(z - \theta^{(k)})) \phi(z - \theta^{(k)})\right]_+
-\\&\leq \left[w^{(k)} + \epsilon \sum_{z \in Z_{\theta^{(k)}}} y_z \phi(z - \theta^{(k)})\right]_+
-\\&\leq \left[w^{(k)} + \epsilon (2h+1)^d c M\right]_+
+w^{(k+1)}_i &= \left[w^{(k)}_i + \epsilon_{grad} \sum_{z \in Z} (y_z - w^{(k)}_i \phi(z - \theta^{(k)}_i)) \phi(z - \theta^{(k)}_i)\right]_+
+\\&= \left[w^{(k)}_i + \epsilon_{grad} \sum_{z \in Z_{\theta_i^{(k)}}, h} (y_z - w^{(k)}_i \phi(z - \theta^{(k)}_i)) \phi(z - \theta^{(k)}_i)\right]_+
+\\&= \left[w^{(k)}_i\left( 1- \epsilon_{grad} \sum_z \phi(z - \theta^{(k)}_i))^2 \right) + \epsilon_{grad} \sum_{z \in Z_{\theta_i^{(k)}}, h} y_z \phi(z - \theta^{(k)}_i)\right]_+
+\\&\leq w^{(k)}_i (1 - \epsilon_{grad} B^{-1}) + \epsilon_{grad} H c M
 \end{align*}
-which establishes the claim.
-Defining $W = \epsilon_{grad} L_{grad} (2h+1)^d c M$, we thus have
+which, by the induction hypothesis yields
 \[
-\max_{k=1}^{L_{grad}} w^{(k)} \leq W.
+w_i^{(k+1)} < c HMB.
 \]
 
-Next, recall that
-\[
-\theta^{(k+1)} = \theta^{(k)} + \epsilon_{grad} w^{(k)} \sum_{z \in Z_{\theta^{(k)}}} (y_z - w^{(k)}) \dot{\phi}(z - \theta^{(k)})
-\]
-so that
+Similarly, we have
 \begin{align*}
-||\theta^{(k+1)} - \theta^{(k)}|| &\leq \epsilon_{grad} w^{(k)} \sum_{z \in Z_{\theta^{(k)}}} |y_z - w^{(k)}| ||\dot{\phi}(z - \theta^{(k)})||
-\\&\leq \epsilon_{grad} W (2h+1)^d (c + W) M\sqrt{d}
+|\theta^{(k+1)}_{ij}-\theta^{(k)}_{ij}| &=  \left |\epsilon_{grad} w^{(k)}_i \sum_{z \in Z} (y_z - w^{(k)}_i \phi(z - \theta^{(k)}_i)) \phi_j(z - \theta^{(k)}_i)\right |
+\\& \leq \epsilon_{grad} c HMB H (c + c H MB) M = \epsilon_{grad} c^2 H^2M^2B (1 + H MB)
 \end{align*}
-hence
+implying
 \[
-S(\theta) < L_{grad} W \epsilon_{grad} (2h+1)^d (c + W) M\sqrt{d}
+||\theta^{(k+1)} - \theta^{(k)}|| \leq \epsilon_{grad} c^2 H^2M^2B (1 + H MB)\sqrt{d}.
 \]
-with probability one. $\Box$
+
+Having completed the induction, we conclude the proof. $\Box$.
+
+A trivial probabilistic argument then yields the stochastic version of the non-recovery result,
+given a sequence of problems where $K^0$ remains fixed while $T$ and $n$ go to infinity.
+
+\textbf{Corollary.}  \emph{ Assume conditions A1-A5.  Given fixed
+  problem parameters $\Delta$ and $K$, for any sequence $T_i \to
+  \infty$, $i = 1, 2, \hdots, $, with $n_i \geq T_i + S$ for $S$
+  defined in Theorem 1, and true parameters $\{\theta_1^{0, i},
+  \hdots, \theta_K^{0, i}\} \subset [-T_i, T_i]^d$, define the
+  probability $p_i$ as the probability that uniformly distributed
+  $\theta_1,\hdots, \theta_j$ satisfy the conditions of Theorem 1.
+  Then
+\[
+\lim_{i \to \infty} p_i = 1,
+\]
+i.e. gradient descent fails to recover the support with $\Delta$ with
+high probability.}
+
 
 
 \end{document}
-
-Having assumed the bounded path-length condition, we can proceed to
-study the behavior of the gradient path for general $K$, given that
-the initial points are well-separated.  Let $\{\theta_1, \hdots,
-\theta_K\}$ be a collection of random intitialization points.
-Consider the joint distribution of $(S(\theta_1),\hdots, S(\theta_K))$
-conditional on $\theta_1,\hdots, \theta_K$, but randomizing over the
-distribution of $y_k$.  Recall that $S(\theta)$ refers to the length
-of the gradient path in the \emph{isolated optimization problems}
-where only a single source is considered.  Hence, the lengths of the
-paths in the \emph{joint optimization problem} starting with
-$\{\theta_1,\hdots, \theta_k\}$ may be different.  However, we will
-show that if $\theta_1,\hdots, \theta_K$ are sufficiently
-well-separated, then the gradient paths in the joint optimization
-problem are the same as the gradient paths for the isolated
-optimization problems.
-
-Specifically, let $\theta_i^{(k, 1)}$ denote the iterates of $\theta_i$ in the isolated optimization problem,
-and let $\theta_i^{(k, K)}$ denote the iterates of $\theta_i$ in the joint optimization problem.
-Then we have the following result:
-
-\textbf{Lemma.} \emph{
-(Separation condition.)
-Suppose that
-\[
-h + 2 \max_{i=1}^K S(\theta_i) < \min_{i, j} ||\theta_i - \theta_j||.
-\]
-Then for $i = 1,\hdots, K$, $k = 1,\hdots, L_{grad}$, we have
-\[
-(w_i^{(k, 1)}, \theta_i^{(k, 1)}) = (w_i^{(k, K)}, \theta_i^{(k, K)}).
-\]
-}
-
-
-
