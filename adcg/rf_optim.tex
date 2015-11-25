@@ -1,0 +1,177 @@
+\documentclass[11pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+%\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{caption}
+%\usepackage{mathtools}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\Vol}{\text{Vol}}
+\newcommand{\HH}{\boldsymbol{H}}
+%\pagestyle{fancy}
+
+\title{Random Fields and Optimization}
+
+\author{Charles Zheng and ?}
+
+\maketitle
+
+\begin{abstract}
+One of the most common approaches for minimizing a function $f(x)$
+over a compact domain is to apply a deterministic local descent
+method, although such an approach is highly likely to yield a local
+minimum.  Using techniques borrowed from the optimal transport
+literature, we propose a new method for characterizing the probability
+of convergence to the global minimum from a random starting point.  In
+limit of infinitely small step sizes, the local descent iterates
+$x^{(0)}, \hdots, $ trace out a continuous trajectory $x(t)$, where
+$t$ is the limit of the iteration number times the step size.
+Consequently, the domains of attraction for local minima are simply
+connected and partition the domain, and the probability of convergence
+to the global minimum is equal to the mass of the initialization
+distribution contained in the domains of attraction of global minima.
+One can therefore achieve bounds on the probability of global
+convergence by bounding the \emph{radius} or \emph{diameter} of the
+domain of attraction.  While such computations may be generally
+intractable, here we obtain average-case bounds for such quantities
+for $f$ drawn from a random ensemble, e.g., a Gaussian process.  This
+produces convergence probabilities for a variety of applications: for
+instance, sparse inverse problems.
+\end{abstract}
+
+\section{Introduction}
+Suppose we are given a function $f: \mathcal{X} \to \mathbb{R}$, where $\mathcal{X}$ is a compact domain in $\mathbb{R}^p$,
+and we have access to the gradient $\nabla f$, and possibly the Hessian $H f$.
+Then we can solve the optimization problem
+\[
+\text{minimize} f(x)
+\]
+by applying a local descent method, such as gradient descent or
+Newton's method.  In general, such a method can be characterized by a
+direction mapping $g: \mathcal{X} \to \mathbb{R}^p$, and produces
+iterates $x^{(1)}, x^{(2)},\hdots$ given by
+\[x^{(k+1)} = x^{(k)} - \epsilon g(x^{(k)}),\]
+defining $x^{(0)}$ to be the starting point $x_0$.  In stochastic
+descent methods, $g$ can be a random mapping, but throughout this
+paper we limit our scope to deterministic methods.  Two well-known
+examples are gradient descent,
+\[
+g(x) = \nabla f(x)
+\]
+and Newton's method,
+\[
+g(x) = (H f(x))^{-1} \nabla f(x)
+\]
+Having chosen a step size, it follows that the iterates $x^{(k)}$ are
+each a function of the starting point $x^{(0)}$.
+
+In limit of infinitely small step size, $\epsilon \to 0$, the local
+descent iterates $x^{(1)}(x^{(0)}), x^{(2)}(x^{(0)}), \hdots, $ trace
+out a continuous trajectory $x(x^{(0)}, t)$, defined by
+\[
+x_t(x_0) = \lim_{\epsilon \to 0} x^{(\rfloor t/\epsilon \lfloor)}(x_0).
+\]
+The \emph{length} of the trajectory is defined as
+\[
+S(x_0) = \int_0^\infty || \nabla x_t(x_0)|| dt.
+\]
+Therefore, a sufficient condition for \emph{non-convergence} to a global minimum $x^*$ is that
+\[
+S(x_0) \geq ||x_0 - x^*||.
+\]
+Hence, one can get a sense of the difficulty of the problem by
+estimating the trajectory lengths.  Intuitively, if most trajectory
+lengths are small, this indicates that the problem is riddled with
+local minima.
+
+Suppose we initialize the local descent at a random point $x^{(0)}$,
+where the law of $x^{(0)}$ has density $\mu^0(x)$ with respect to
+Lesbegue measure.  Then the marginal density $\mu^t(x)$ of the current
+iterate at time $t$ is given by the \emph{continuity equation}:
+\[
+\frac{\partial}{\partial t} \mu^t(x) = -\nabla \cdot (f'(x) \mu^t(x)).
+\]
+
+Considering the densities $\mu^t$ allows one to relate local
+properties, such as trajectory length, to statistics of the local
+minima.  For instance, one can compute the \emph{average path length} via the integral
+\[
+\E_{\mu^0}[S(x_0)] = \int_0^\infty \int_{\mathcal{X}} ||g(x)|| \mu^t(x) dx dt.
+\]
+
+\emph{Question:} Can we obtain bounds for the average path length, if,
+for example, $f$ is a Gaussian process?
+
+\section{Example: Sparse recovery in the white-noise limit}
+
+In numerous applications, one is interested in reconstructing the
+locations and parameters of multiple signal sources from noisy
+observations.  For instance, in super-resolution imaging, one uses a
+microscope to obtain a 2D image of a number of fluorescing point sources,
+and the goal is to recover the locations of the point sources on the
+slide.
+
+Consider a sparse recovery problem with parameters $\theta \in
+\mathbb{R}^d$ corresponding to locations of point sources, where the
+signal a source at $\theta$ is given by
+\[
+\psi_\theta(x) = \psi(x - \theta),
+\]
+where $\psi: \mathbb{R}^p \to \mathbb{R}^+$ is a nonnegative kernel
+function.  
+
+Such a sparse inverse problem is described by a known,
+or unknown number of sources $K$, a vector of parameters $\theta_i \in
+\mathbb{R}^p$ describing the $i$th source (e.g. location in space),
+and a positive real weight $w_i$ giving amplitude of the signal from
+the $i$th source.  The signal from a single source $\theta$ is a
+function in $\mathbb{R}^d$, denoted by $\psi_\theta$,
+and the combined signal from all $K$ sources is given by the function
+\[
+m(x) = \sum_{i=1}^K w_i \psi_{\theta_i}(x).
+\]
+In the case of super-resolution imaging, for example, the parameter
+$\theta \in \mathbb{R}^2$ gives the location of the point source on
+the slide, $w_i$ gives the intensity of the fluorescence, and
+$\psi_{\theta}(x)$ is a symmetric kernel function centered at $\theta$,
+given by the point-spread function of the lens.
+
+Given measurement locations $x_1,\hdots, x_N$, we observe signals
+\[
+y_i = m(x_i) + \epsilon_i,
+\]
+where $\epsilon_i$ are indedependent with mean $0$ and variance $\sigma^2$.
+
+Having observed $y_1,\hdots, y_N$, our goal is to estimate the number
+of sources $K$ (if $K$ is unknown), and to recover the locations
+$\theta_1,\hdots, \theta_K$.
+A natural approach is to minimize the objective function
+\[
+\text{minimize} \sum_{i=1}^n \left\|y_i - \sum_{j=1}^K w_j \psi_{\theta_j}(x_i) \right\|^2.
+\]
+
+\section{References}
+
+\begin{itemize}
+\item Ambrosio, Luigi, Nicola Gigli, and Giuseppe Savaré. Gradient flows: in metric spaces and in the space of probability measures. Springer Science \& Business Media, 2008.
+\item Morgenshtern, Veniamin I., and Emmanuel J. Candes. "Super-Resolution of Positive Sources: the Discrete Setup." arXiv preprint arXiv:1504.00717 (2015).
+\end{itemize}
+
+
+
+\end{document}
