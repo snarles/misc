@@ -36,6 +36,21 @@ c(var(s2hats),
       n*(n-1) * (mean(x1^2 * x2^2) - 4 * mean(xbars * x1 * x2^2) + 4 * mean(xbars^2 * x1 * x2))
   ) - mu2^2)
 
+
+c( n^2 * (2 * mean(xbars^2 * x1^2) - 4 * mean(xbars^3 * x1) + mean(xbars^4)), 
+   mu4 * (2 - 3/n) + mu2^2 * (n-1) * (2 - 9/n))
+
+c(n * (mean(x1^4) - 4 * mean(xbars * x1^3) + 4 * mean(xbars^2 * x1^2)),
+  mu4 * (n - 4 + 4/n) + mu2^2 * (n-1) * 4/n)
+
+c(n*(n-1) * (mean(x1^2 * x2^2) - 4 * mean(xbars * x1 * x2^2) + 4 * mean(xbars^2 * x1 * x2)),
+  mu2^2 * (n-1) * (n - 4 + 8/n))
+
+c(var(s2hats), 
+  mu4/(n-1)^2 * (-2 + 1/n + n) +
+    mu2^2 * (-1 + (n -2 + 3/n)/(n-1))
+  )
+
 ## intermediate calculations
 
 x1 <- xs[, 1]; x2 <- xs[, 2]
