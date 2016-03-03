@@ -42,19 +42,37 @@ evaluate_poly <- function(powers, coefs, X) {
   ans
 }
 
+poly_second_moment <- function(powers, coefs) {
+  nbasis <- nrow(powers); p <- ncol(powers)
+  ## filter out zeroed interactions
+  filtmat <- matrix(TRUE, nbasis, nbasis)
+  for (i in 1:p) {
+    filtmat[powers[, i] %% 2 == 1, powers[, i] %% 2 == 0] <- FALSE
+    filtmat[powers[, i] %% 2 == 0, powers[, i] %% 2 == 1] <- FALSE
+  }
+  pairs <- which(filtmat, TRUE)
+  powers2 <- powers[pairs[, 1], ]+powers[pairs[, 2], ]
+  coefs2 <- coefs[pairs[, 1]] * coefs[pairs[, 2]]
+  mm <- apply(powers2, 1, mm_gaussian)
+  sum(mm * coefs2)
+}
+
 ####
 ##  Get a set of powers and a basis for random polynomials
 ####
-p <- 3
-deg_dist <- rep(1/6, 6)
-nbasis <- 10
-lineId::zattach(rand_poly_basis(p, nbasis, deg_dist))
-coefs <- nullspace %*% rnorm(dim(nullspace)[2])
-t(cmat) %*% coefs
-n <- 10000; X <- randn(n, p)
-ff <- evaluate_poly(powers, coefs, X)
-sum(ff)
-t(X) %*% ff
+# p <- 3
+# deg_dist <- rep(1/6, 6)
+# nbasis <- 10
+# lineId::zattach(rand_poly_basis(p, nbasis, deg_dist))
+# coefs <- nullspace %*% rnorm(dim(nullspace)[2])
+# vv <- poly_second_moment(powers, coefs)
+# coefs <- coefs/sqrt(vv)
+# t(cmat) %*% coefs
+# n <- 10000; X <- randn(n, p)
+# ff <- evaluate_poly(powers, coefs, X)
+# mean(ff)
+# var(ff)
+# t(X) %*% ff/n
 
 rand_poly_basis <- function(p, nbasis, deg_dist) {
   powers <- zeros(1, p)
