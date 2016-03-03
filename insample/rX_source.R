@@ -108,3 +108,21 @@ rand_poly_basis <- function(p, nbasis, deg_dist) {
   rownames(cmat) <- rownames(powers)
   list(powers = powers, cmat = cmat, nullspace = nullspace)
 }
+
+
+####
+##  Regression stuff
+####
+orthogonalize_X <- function(X, y) {
+  n <- nrow(X)
+  SH <- t(X) %*% X
+  tmat <- pracma::sqrtm(SH)$Binv * sqrt(n)
+  Xtilde <- X %*% tmat
+  v <- t(Xtilde) %*% y
+  v <- v/sqrt(f2(v))
+  res <- qr(cbind(v, eye(p)[, -p]))
+  Gmat <- cbind(v, qr.Q(res)[, -1])
+  tmat <- tmat %*% Gmat
+  Xtilde <- X %*% tmat
+  list(Xtilde = Xtilde, tmat = tmat, invmat = solve(tmat))
+}
