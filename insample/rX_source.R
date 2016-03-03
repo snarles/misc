@@ -6,6 +6,15 @@
 library(pracma)
 library(MASS)
 
+## misc
+zattach <- function(ll) {
+  for (i in 1:length(ll)) {
+    assign(names(ll)[i], ll[[i]], envir=globalenv())
+  }
+}
+
+f2 <- function(x, y = 0) sum((x-y)^2)
+
 ####
 ## multivariate moments of a Gaussian
 ####
@@ -51,7 +60,7 @@ poly_second_moment <- function(powers, coefs) {
     filtmat[powers[, i] %% 2 == 0, powers[, i] %% 2 == 1] <- FALSE
   }
   pairs <- which(filtmat, TRUE)
-  powers2 <- powers[pairs[, 1], ]+powers[pairs[, 2], ]
+  powers2 <- powers[pairs[, 1], , drop = FALSE]+powers[pairs[, 2], , drop = FALSE]
   coefs2 <- coefs[pairs[, 1]] * coefs[pairs[, 2]]
   mm <- apply(powers2, 1, mm_gaussian)
   sum(mm * coefs2)
@@ -63,7 +72,7 @@ poly_second_moment <- function(powers, coefs) {
 # p <- 3
 # deg_dist <- rep(1/6, 6)
 # nbasis <- 10
-# lineId::zattach(rand_poly_basis(p, nbasis, deg_dist))
+# zattach(rand_poly_basis(p, nbasis, deg_dist))
 # coefs <- nullspace %*% rnorm(dim(nullspace)[2])
 # vv <- poly_second_moment(powers, coefs)
 # coefs <- coefs/sqrt(vv)
@@ -84,7 +93,7 @@ rand_poly_basis <- function(p, nbasis, deg_dist) {
     powers <- unique(powers)
   }
   rownames(powers) <- paste0("d", rowSums(powers), ".", apply(powers, 1, paste0, collapse = "."))
-  powers <- powers[order(rownames(powers)), ]
+  powers <- powers[order(rownames(powers)), , drop = FALSE]
   ## build constraint matrix
   cmat <- matrix(NA, nbasis, p + 1)
   cmat[, 1] <- apply(powers, 1, mm_gaussian)
@@ -95,7 +104,7 @@ rand_poly_basis <- function(p, nbasis, deg_dist) {
   ## null space of constraint matrix
   pmat <- cmat %*% ginv(cmat)
   res <- eigen(pmat)
-  nullspace <- res$vectors[, res$values < 1e-5]
+  nullspace <- res$vectors[, res$values < 1e-5, drop = FALSE]
   rownames(cmat) <- rownames(powers)
   list(powers = powers, cmat = cmat, nullspace = nullspace)
 }
