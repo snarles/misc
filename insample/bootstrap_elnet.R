@@ -22,6 +22,18 @@ true_pred_err_dist <- function(n, bt, nte, mc.reps = 100) {
   errs
 }
 
+elnet_boot_err_dist <- function(X, y, nte, mc.reps = 100) {
+  errs <- numeric(mc.reps)
+  for (i in 1:mc.reps) {
+    inds.tr <- sample(nrow(X), n - nte, replace = FALSE)
+    res <- cv.glmnet(X[inds.tr, ], y[inds.tr], intercept = FALSE)
+    yh <- predict(res, X[-inds.tr, ], s=res$lambda.min)
+    err <- f2(y[-(inds.tr)], yh)
+    errs[i] <- err
+  }
+  errs
+}
+
 boot_err_dist <- function(X, y, nte, mc.reps = 100) {
   errs <- numeric(mc.reps)
   for (i in 1:mc.reps) {
@@ -61,6 +73,10 @@ yh <- predict(res, X[-(1:ntr), ], s=res$lambda.min)
 (err <- f2(y[-(1:ntr)], yh))
 
 inds <- which(coef(res, s = res$lambda.min)[-1] != 0)
+elnet.boot.errs <- elnet_boot_err_dist(X[, inds], y, nte)
+mean(elnet.boot.errs)
+
+
 boot.errs <- boot_err_dist(X[, inds], y, nte)
 mean(boot.errs)
 
@@ -70,6 +86,7 @@ mean(pboot.errs)
 
 layout(matrix(1:4, 2, 2))
 hist(errs)
+hist(elnet.boot.errs)
 hist(boot.errs)
 hist(pboot.errs)
 
