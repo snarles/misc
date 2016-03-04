@@ -33,9 +33,9 @@ generate_betasH <- function(n, powers, coefs, sigma2, mc.reps = 100) {
 ## generate poly
 
 n <- 20
-p <- 4
+p <- 1
 deg_dist <- rep(1/3, 3)
-nbasis <- 5
+nbasis <- 3
 fvar <- 1
 zattach(rand_poly_basis(p, nbasis, deg_dist))
 coefs <- nullspace %*% rnorm(dim(nullspace)[2])
