@@ -11,14 +11,14 @@ library(AlgDesign)
 ###
 
 ## Set the dimensionality (= diameter) of the hypercube.
-rho <- 6
+rho <- 5
 
 ## The volume of the set A.
 init_frac <- 0.5
 
 ## The set B will be generated as the set of all vertices outside this distance of A.
-dist_expand <- 1
-(epsilon <- dist_expand/rho)
+epsilon <- 0.2
+(dist_expand <- floor(epsilon * rho))
 
 ###
 #  CALCULATIONS
@@ -84,4 +84,6 @@ for (edge_no in 1:nrow(edges)) {
 points(t(proj_coords[, setA]), pch = 20)
 points(t(proj_coords[, setB]), pch = 20, col = "white")
 points(t(proj_coords[, setB]), pch = 1)
-
+title(mtext(bquote(rho == .(rho)), adj = 0))
+title(mtext(bquote(epsilon == .(epsilon)), adj = 1))
+title(sub = paste("b = ", sum(setB)/n))
