@@ -1,0 +1,9 @@
+name: shinyapps_test
+account: snarles-games
+server: shinyapps.io
+appId: 92683
+bundleId: 412432
+url: https://snarles-games.shinyapps.io/shinyapps_test/
+when: 1459986173.92075
+asMultiple: FALSE
+asStatic: FALSE
