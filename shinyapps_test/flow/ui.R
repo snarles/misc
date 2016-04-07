@@ -2,15 +2,18 @@
 ##  Sequence of menus, updating data also
 ####
 library(shiny)
-shinyUI(navbarPage("ROBUILDER",
-  navbarMenu("Game",
-    tabPanel("New",
-      radioButtons("new_game_confirm", "Confirm new game?", c("No", "Yes"))),
-    tabPanel("Save",
-      textInput("save_file", "Filename?")),
-    tabPanel("Load",
-             textInput("load_file", "Filename?"))
-  ),
+shinyUI(navbarPage("ROBUILDER", id = 'nav',
+  tabPanel("New Game",
+    fluidRow(
+      column(3, textInput("p1name", "Player 1 name:", "Sente"),
+             textInput("p2name", "Player 2 name:", "Gote"),
+             actionButton("newgame", "New Game"))
+  )),
   tabPanel("Build",
-           textInput("lala","LALA"))
+    fluidRow(
+      column(4, textOutput('army1_comment'),
+      tableOutput('army_table1'),
+      textOutput('army2_comment'),
+      tableOutput('army_table2'))
+    ))
 ))
