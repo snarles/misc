@@ -63,7 +63,7 @@ while (flag) {
   inds.u <- match(unique(solc), solc)
   solutions <- sols[inds.u]
   ## difficulty threshold
-  if (length(targd) <= mc.reps/difficulty) flag <- FALSE
+  if (length(targd) <= mc.reps/difficulty && length(targd) > 0) flag <- FALSE
 }
 
 print(sort(nums))
