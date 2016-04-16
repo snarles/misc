@@ -4,16 +4,16 @@
 
 
 ## number of cards (default 4)
-k <- 4
+k <- 5
 
 ## max card (default 10)
-maxcard <- 10
+maxcard <- 15
 
 ## target number (default 24)
 target <- 24
 
 ## difficulty (default 100)
-difficulty <- 100
+difficulty <- 1000
 
 ## allowed operations
 plus <- function(a, b) { a  + b}
@@ -25,14 +25,13 @@ expo  <- function(a, b) { a^b }
 operations <- list("+" = plus, 
                    "-" = minus, 
                    "*" = times, 
-                   "/" = div, 
-                   "^" = expo)
+                   "/" = div)
 
 ####
 ##  GENERATION LOOP
 ####
 
-mc.reps <- 1000
+mc.reps <- min(10000, 1000 * difficulty)
 flag <- TRUE
 while (flag) {
   nums <- sample(1:maxcard, k, TRUE)
@@ -60,8 +59,7 @@ while (flag) {
   targd <- which(output.table == 24)
   sols <- expressions[targd]
   ## count unique sols
-  sols <- lapply(sols, sort)
-  solc <- sapply(sols, paste, collapse = "  ")
+  solc <- sapply(lapply(sols, sort), paste, collapse = "  ")
   inds.u <- match(unique(solc), solc)
   solutions <- sols[inds.u]
   ## difficulty threshold
