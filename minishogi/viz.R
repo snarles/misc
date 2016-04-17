@@ -69,21 +69,28 @@ draw_board <- function(pieces, pc_just_moved = 0) {
   plot(-(0:6), -(0:6), asp = 1, ylim = c(-7, 1), axes = FALSE, ann = FALSE, col = "white")
   for (i in 1:6) lines(-c(.5, 5.5), -c(i - .5, i-.5))
   for (i in 1:6) lines(-c(i - .5, i-.5), -c(.5, 5.5))
-
+  nhand <- c(0, 0)
   for (piece in old_pieces) {
     ## check if in hand
-    draw_piece(piece)
+    if (piece$loc[1]==0 && piece$loc[2]==0) {
+      nhand[piece$pl] <- nhand[piece$pl] + 1
+      rw <- c(6, 0)[piece$pl]
+      cl <- c(nhand[1], 6 - nhand[2])[piece$pl]
+      draw_piece(piece, loc = c(cl, rw))
+    } else {
+      draw_piece(piece)
+    }
   }
   for (piece in new_pieces) {
     draw_piece(piece, new = TRUE)
   }
 }
 
-draw_piece <- function(piece, new = FALSE) {
+draw_piece <- function(piece, new = FALSE, loc = piece$loc) {
   ff <- "pro1"
   if (new) ff <- "wqy-microhei"
   code <- char.mat[piece$type, piece$prom + 1]
   colr <- c("black", "red")[piece$prom + 1]
   ort <- c(0, 180)[piece$pl]
-  text(-piece$loc[1], -piece$loc[2], code, col = colr, srt = ort, family = ff, cex = CEX)
+  text(-loc[1], -loc[2], code, col = colr, srt = ort, family = ff, cex = CEX)
 }
