@@ -37,13 +37,13 @@ init_state <- list(
   list(type = 3, pl = 1, prom = 0, loc = c(2, 5)),
   list(type = 4, pl = 1, prom = 0, loc = c(4, 5)),
   list(type = 5, pl = 1, prom = 0, loc = c(3, 5)),
-  list(type = 6, pl = 1, prom = 0, loc = c(1, 4)),
+  list(type = 6, pl = 1, prom = 0, loc = c(5, 4)),
   list(type = 1, pl = 2, prom = 0, loc = c(1, 1)),
   list(type = 2, pl = 2, prom = 0, loc = c(5, 1)),
   list(type = 3, pl = 2, prom = 0, loc = c(4, 1)),
   list(type = 4, pl = 2, prom = 0, loc = c(2, 1)),
   list(type = 5, pl = 2, prom = 0, loc = c(3, 1)),
-  list(type = 6, pl = 2, prom = 0, loc = c(5, 2))
+  list(type = 6, pl = 2, prom = 0, loc = c(1, 2))
 )
 
 draw_board(init_state)
