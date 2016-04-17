@@ -88,13 +88,17 @@ names(seqs) <- sapply(seqs, `[`, 1)
 scounts <- sapply(seqs, function(v) positions[[v[1]]]$count)
 topseqs <- names(seqs)[order(-scounts)]
 
-seqpos <- unique(as.character(seqlist))
+seqpos <- do.call(c, lapply(seqs, function(v) v[-length(v)]))
 singletons <- setdiff(top.pos, seqpos)
 sncounts <- sapply(singletons, function(v) positions[[v]]$count)
 
 table(sapply(seqs, length))
 
 ## fname stuff
+
+PNGWID <- 480
+PNGHGT <- 480
+LMAT <- t(matrix(1:6, 3, 2))
 
 output.dir <- "minishogi/temp/"
 ns <- c(paste0("00", 1:9),
@@ -108,9 +112,9 @@ ns <- c(paste0("00", 1:9),
 
 for (seqno in 1:length(seqs)) {
   seq <- seqs[[topseqs[seqno]]]
-  png(paste0(output.dir, "seq", ns[seqno], ".png"), width = 480, height = 720)
+  png(paste0(output.dir, "seqs/seq", ns[seqno], ".png"), width = PNGWID, height = PNGHGT)
   par(mar = c(0, 0, 0, 0))
-  layout(t(matrix(1:6, 2, 3)))
+  layout(LMAT)
   plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
   text(0.5, 0.7, paste0("Sequence ", seqno), cex = 3)
   ct <- positions[[seq[1]]]$count
@@ -120,6 +124,10 @@ for (seqno in 1:length(seqs)) {
     move <- positions[[seq[i-1]]]$succmoves[seq[i]]
     res <- get_pos(strsplit(move, ";")[[1]])
     draw_board(res$pieces, res$pc_just_moved, dev = FALSE)
+    if (seq[i] %in% singletons) {
+      sno <- which(singletons==seq[i])
+      text(-1, 0, paste0("-> pos ", sno))
+    }
   }
   dev.off()
 }
@@ -134,9 +142,9 @@ for (posno in 1:length(singletons)) {
   pos <- singletons[posno]
   succ <- positions[[pos]]$succ
   top_succ <- names(succ)[order(-succ)[1:pmin(4, length(succ))]]
-  par(mar = c(0, 0, 3, 0))
-  png(paste0(output.dir, "pos", ns[posno], ".png"), width = 480, height = 720)
-  layout(t(matrix(1:6, 2, 3)))
+  par(mar = c(0, 0, 0, 0))
+  png(paste0(output.dir, "pos/pos", ns[posno], ".png"), width = PNGWID, height = PNGHGT)
+  layout(LMAT)
   plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
   text(0.5, 0.7, paste0("Pos ", posno), cex = 3)
   ct <- positions[[pos]]$count
@@ -160,8 +168,8 @@ for (posno in 1:length(singletons)) {
       move <- positions[[pos]]$succmoves[succ]
       res <- get_pos(strsplit(move, ";")[[1]])
       draw_board(res$pieces, res$pc_just_moved, dev = FALSE)
-      if (succ %in% top.pos) {
-        sno <- which(top.pos==succ)
+      if (succ %in% singletons) {
+        sno <- which(singletons==succ)
         text(-1, 0, paste0("-> pos ", sno))
       }
     }
