@@ -35,4 +35,10 @@ for (player in players) {
   }
 }
 
+
+####
+## Fix errors
+###
+
+
 saveRDS(glist, file = "minishogi/lglist.rds")

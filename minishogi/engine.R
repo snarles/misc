@@ -50,13 +50,20 @@ init_state <- list(
 #  Parse moves
 ###
 
-LOCS <- list(
+revs <- function(v) {
+  paste(rev(strsplit(v, split = NULL)[[1]]), collapse = "")
+}
+
+LOCS0 <- list(
   "1a" = c(1, 1), "1b" = c(1, 2), "1c" = c(1, 3), "1d" = c(1, 4), "1e" = c(1, 5),
   "2a" = c(2, 1), "2b" = c(2, 2), "2c" = c(2, 3), "2d" = c(2, 4), "2e" = c(2, 5),
   "3a" = c(3, 1), "3b" = c(3, 2), "3c" = c(3, 3), "3d" = c(3, 4), "3e" = c(3, 5),
   "4a" = c(4, 1), "4b" = c(4, 2), "4c" = c(4, 3), "4d" = c(4, 4), "4e" = c(4, 5),
   "5a" = c(5, 1), "5b" = c(5, 2), "5c" = c(5, 3), "5d" = c(5, 4), "5e" = c(5, 5)
 )
+LOCS1 <- LOCS0
+names(LOCS1) <- sapply(names(LOCS1), revs)
+LOCS <- c(LOCS0, LOCS1)
 PTYPES <- c("K" = 1, "R" = 2, "B" = 3, "G" = 4, "S" = 5, "P" = 6)
 get_piece <- function(pieces, ptype, pl, loc) {
   filt <- sapply(pieces, function(v) {
@@ -79,7 +86,7 @@ check_loc <- function(pieces, loc) {
 
 process_move <- function(pieces, game, turn.no) {
   move <- game[turn.no]
-  if (move == "resign") return(list(pieces=pieces, pc_just_moved = 0))
+  if (move == "resign" || move == "") return(list(pieces=pieces, pc_just_moved = 0))
   pl <- c(2,1)[turn.no %% 2 + 1]
   if (substr(move, 1, 1) == "+") {
     ## handle promoted
@@ -118,7 +125,7 @@ process_move <- function(pieces, game, turn.no) {
   list(pieces = pieces, pc_just_moved = pnum)
 }
 
-get_pos <- function(game, nturns, pos.only = FALSE) {
+get_pos <- function(game, nturns = length(game), pos.only = FALSE) {
   pieces <- init_state
   for (turn.no in 1:nturns) {
     res <- process_move(pieces, game, turn.no)
