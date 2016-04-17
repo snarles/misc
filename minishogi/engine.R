@@ -118,17 +118,31 @@ process_move <- function(pieces, game, turn.no) {
   list(pieces = pieces, pc_just_moved = pnum)
 }
 
-glist <- readRDS("minishogi/lglist.rds")
-(game <- sample(glist, 1)[[1]])
-pieces <- init_state
-# draw_board(pieces)
+get_pos <- function(game, nturns, pos.only = FALSE) {
+  pieces <- init_state
+  for (turn.no in 1:nturns) {
+    res <- process_move(pieces, game, turn.no)
+    pieces <- res$pieces
+  }
+  if (pos.only) return(pieces)
+  list(pieces = pieces, pc_just_moved = res$pc_just_moved)
+}
 
+position_id <- function(pieces) {
+  ans <- numeric(25 + 12)
+  for (piece in pieces) {
+    if (piece$loc[1]==0 && piece$loc[2]==0) {
+      ind <- 25 + piece$type + 6 * (piece$pl - 1)
+      ans[ind] <- ans[ind] + 1
+    } else {
+      phash <- (piece$type - 1) * 4 + piece$prom * 2 + piece$pl
+      ind <- (piece$loc[1]-1) * 5 + piece$loc[2]
+      stopifnot(ans[ind]==0)
+      ans[ind] <- phash
+    }
+  }
+  ans <- c("", LETTERS)[ans + 1]
+  ans <- paste(ans, collapse = ":")
+  ans
+}
 
-turn.no <- 0
-
-(turn.no <- turn.no + 1)
-res <- process_move(pieces, game, turn.no)
-pieces <- res$pieces
-
-
-draw_board(pieces, res$pc_just_moved)
