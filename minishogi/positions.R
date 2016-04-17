@@ -94,34 +94,21 @@ sncounts <- sapply(singletons, function(v) positions[[v]]$count)
 
 table(sapply(seqs, length))
 
-## identify compatible move sequence
-# movelist <- list()
-# for (seq in seqs) {
-#   lastpos <- rev(seq)[1]
-#   moves <- positions[[lastpos]]$move
-#   main_move <- "FAIL"
-#   for (move in moves) {
-#     game <- strsplit(move, ";")[[1]]
-#     seq2 <- character(length(seq))
-#     for (i in 1:length(seq)) {
-#       turn.no <- length(game) - i + 1
-#       seq2[i] <- position_id(get_pos(game, turn.no, pos.only = TRUE), turn.no)
-#     }
-#     seq2 <- rev(seq2)
-#     if (sum(seq2 != seq)==0) main_move <- move
-#   }
-# }
+## fname stuff
 
+output.dir <- "minishogi/temp/"
+ns <- c(paste0("00", 1:9),
+        paste0("0", 10:99),
+        100:999)
 
 ###
 #  Compile sequence pages
 ###
 # 
-output.dir <- "minishogi/temp/"
 
 for (seqno in 1:length(seqs)) {
   seq <- seqs[[topseqs[seqno]]]
-  png(paste0(output.dir, "seq", seqno, ".png"), width = 480, height = 720)
+  png(paste0(output.dir, "seq", ns[seqno], ".png"), width = 480, height = 720)
   par(mar = c(0, 0, 0, 0))
   layout(t(matrix(1:6, 2, 3)))
   plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
@@ -148,7 +135,7 @@ for (posno in 1:length(singletons)) {
   succ <- positions[[pos]]$succ
   top_succ <- names(succ)[order(-succ)[1:pmin(4, length(succ))]]
   par(mar = c(0, 0, 3, 0))
-  png(paste0(output.dir, "pos", posno, ".png"), width = 480, height = 720)
+  png(paste0(output.dir, "pos", ns[posno], ".png"), width = 480, height = 720)
   layout(t(matrix(1:6, 2, 3)))
   plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
   text(0.5, 0.7, paste0("Pos ", posno), cex = 3)
