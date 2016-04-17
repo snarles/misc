@@ -5,30 +5,29 @@
 #plot(1:2);text(1.5, 1.5, "\\#J3023", vfont = c("serif", "plain"), cex = 10, srt = 0)
 
 library(showtext)
+font.files()
 font.add("heiti", "华文黑体.ttf")
-font.add("constan", "Chalkduster.ttf")
+font.add("fangti", "华文仿宋.ttf")
+font.add("pro1","儷宋 Pro.ttf")
+font.add("xihei", "华文细黑.ttf")
+
+
+chars <- c("K"="\u7389",
+           "R"="\u98DB",
+           "Rp"="\u7ADC",
+           "B"="\u89D2",
+           "Bp"="\u99AC",
+           "G"="\u91D1",
+           "S"="\u9280",
+           "Sp"="\u91D1",
+           "P"="\u6B69",
+           "Pp"="\u3068")
+
 dev.new(noRStudioGD = TRUE)
 showtext.auto()
 plot(1:2)
-text(1.5, 1.5, "\u4F60\u597D\uFF0C\u4E16\u754C", family = "heiti")
+text(1.5, 1.5, paste(chars, collapse = ""), family = "wqy-microhei", cex = 3, col = "red")
+text(1.5, 1.3, paste(chars, collapse = ""), family = "pro1", cex = 3, srt = 180)
 
 
 dev.off()
-
-text(1.5, 1.5, "\u4F60\u597D\uFF0C\u4E16\u754C", family = "heiti")
-
-
-library(ggplot2)
-p = ggplot(NULL, aes(x = 1, y = 1)) + ylim(0.8, 1.2) +
-  theme(axis.title = element_blank(), axis.ticks = element_blank(),
-        axis.text = element_blank()) +
-  annotate("text", 1, 1.1, family = "heiti", size = 15,
-           label = "\u4F60\u597D\uFF0C\u4E16\u754C") +
-  annotate("text", 1, 0.9, label = 'Chinese for "Hello, world!"',
-           family = "constan", size = 12)
-
-showtext.auto()  ## automatically use showtext for new devices
-
-print(p)  ## on-screen device
-
-showtext.auto(FALSE)  ## turn off if no longer needed
