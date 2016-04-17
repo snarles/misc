@@ -94,6 +94,12 @@ sncounts <- sapply(singletons, function(v) positions[[v]]$count)
 
 table(sapply(seqs, length))
 
+
+
+####
+##  GRAPHICS
+####
+
 ## fname stuff
 
 PNGWID <- 480
