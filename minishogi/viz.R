@@ -16,7 +16,7 @@ char.mat <- rbind(
   c("\u6B69","\u3068")
 )
 
-draw_board <- function(pieces, pc_just_moved = 0) {
+draw_board <- function(pieces, pc_just_moved = 0, dev = TRUE) {
   if (pc_just_moved == 0) {
     old_pieces <- pieces
     new_pieces <- list()
@@ -26,7 +26,7 @@ draw_board <- function(pieces, pc_just_moved = 0) {
   }
   ## get pieces in hand of p1 and p2[todo]
   par(mar = c(0, 0, 0, 0))
-  dev.new(noRStudioGD = TRUE)
+  if (dev) dev.new(noRStudioGD = TRUE)
   showtext.auto()
   plot(-(0:6), -(0:6), asp = 1, ylim = c(-7, 1), axes = FALSE, ann = FALSE, col = "white")
   for (i in 1:6) lines(-c(.5, 5.5), -c(i - .5, i-.5))

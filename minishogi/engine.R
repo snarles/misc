@@ -135,7 +135,7 @@ get_pos <- function(game, nturns = length(game), pos.only = FALSE) {
   list(pieces = pieces, pc_just_moved = res$pc_just_moved)
 }
 
-position_id <- function(pieces) {
+position_id <- function(pieces, turn.no) {
   ans <- numeric(25 + 12)
   for (piece in pieces) {
     if (piece$loc[1]==0 && piece$loc[2]==0) {
@@ -148,6 +148,7 @@ position_id <- function(pieces) {
       ans[ind] <- phash
     }
   }
+  ans <- c(turn.no %% 2 + 1, ans)
   ans <- c("", LETTERS)[ans + 1]
   ans <- paste(ans, collapse = ":")
   ans
