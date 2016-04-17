@@ -122,6 +122,7 @@ output.dir <- "minishogi/temp/"
 for (seqno in 1:length(seqs)) {
   seq <- seqs[[topseqs[seqno]]]
   png(paste0(output.dir, "seq", seqno, ".png"), width = 480, height = 720)
+  par(mar = c(0, 0, 0, 0))
   layout(t(matrix(1:6, 2, 3)))
   plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
   text(0.5, 0.7, paste0("Sequence ", seqno), cex = 3)
@@ -135,3 +136,49 @@ for (seqno in 1:length(seqs)) {
   }
   dev.off()
 }
+
+###
+#  Compile position pages
+###
+
+posno <- 1
+for (posno in 1:length(singletons)) {
+#for (posno in 1:100) {
+  pos <- singletons[posno]
+  succ <- positions[[pos]]$succ
+  top_succ <- names(succ)[order(-succ)[1:pmin(4, length(succ))]]
+  par(mar = c(0, 0, 3, 0))
+  png(paste0(output.dir, "pos", posno, ".png"), width = 480, height = 720)
+  layout(t(matrix(1:6, 2, 3)))
+  plot(NA, NA, axes = FALSE, ann = FALSE, xlim = c(0, 1), ylim = c(0, 1))
+  text(0.5, 0.7, paste0("Pos ", posno), cex = 3)
+  ct <- positions[[pos]]$count
+  text(0.5, 0.3, paste0(" (count: ", ct, ")"), cex = 1.5)
+  move <- positions[[pos]]$moves[1]
+  if (move != "") {
+    res <- get_pos(strsplit(move, ";")[[1]])
+    draw_board(res$pieces, res$pc_just_moved, dev = FALSE)
+  } else {
+    draw_board(init_state, dev = FALSE)
+  }
+  for (succ in top_succ) {
+    if (succ %in% seqpos) {
+      seq <- seqs[[which(sapply(seqs, function(v) succ %in% v))[1]]]
+      move <- positions[[rev(seq)[2]]]$succmoves[rev(seq)[1]]
+      res <- get_pos(strsplit(move, ";")[[1]])
+      draw_board(res$pieces, res$pc_just_moved, dev = FALSE)
+      sno <- which(topseqs==seq[1])[1]
+      text(-1, 0, paste0("-> seq ", sno))
+    } else {
+      move <- positions[[pos]]$succmoves[succ]
+      res <- get_pos(strsplit(move, ";")[[1]])
+      draw_board(res$pieces, res$pc_just_moved, dev = FALSE)
+      if (succ %in% top.pos) {
+        sno <- which(top.pos==succ)
+        text(-1, 0, paste0("-> pos ", sno))
+      }
+    }
+  }  
+  dev.off()
+}
+

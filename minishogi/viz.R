@@ -25,7 +25,7 @@ draw_board <- function(pieces, pc_just_moved = 0, dev = TRUE) {
     new_pieces <- pieces[pc_just_moved]
   }
   ## get pieces in hand of p1 and p2[todo]
-  par(mar = c(0, 0, 0, 0))
+  if (dev) par(mar = c(0, 0, 0, 0))
   if (dev) dev.new(noRStudioGD = TRUE)
   showtext.auto()
   plot(-(0:6), -(0:6), asp = 1, ylim = c(-7, 1), axes = FALSE, ann = FALSE, col = "white")
