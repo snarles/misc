@@ -68,7 +68,7 @@ loc_processor <- function(lc) {
 }
 
 trans_moves <- sapply(allmoves, move_processor, USE.NAMES = FALSE)
-lapply(glist, function(v) trans_moves[match(v, allmoves)])
+glist <- lapply(glist, function(v) trans_moves[match(v, allmoves)])
 
 ####
 ## Fix errors
