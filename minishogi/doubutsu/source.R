@@ -12,6 +12,8 @@
 ## game state: placeholder (pointing to predecessor),minvalue, maxvalue,  turn no, pieces on board, sente hand, gote hand
 ####
 
+library(Rcpp)
+
 init_state <- c(0,
                 -1,
                 1,
@@ -52,7 +54,14 @@ print_state <- function(state) {
   }
   hand1st <- paste(hand1st, collapse = "")
   hand2st <- paste(hand2st, collapse = "")
-  catn("SHOGI 34 STATE:")
+  cat("SHOGI 34 STATE: ")
+  if (state[2]==1) {
+    catn("Sente win!")
+  } else if (state[3]==-1) {
+    catn("Gote win!")
+  } else {
+    catn("")
+  }
   catn(paste0("Turn: ", state[4]))
   catn(paste0("Gote hand: ", hand2st))
   catn("  +--------+ ")
@@ -65,7 +74,7 @@ print_state <- function(state) {
   catn(paste0("Sente hand: ", hand1st))
 }
 
-library(Rcpp)
+
 
 cppFunction('
 int hashState(IntegerVector state) {
@@ -96,6 +105,7 @@ IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) 
   int startind = 1 + start * 3;
   int endind = 1 + end * 3;
   state2[0] = prev;
+  state2[3] = state[3] + 1;
   if (state[endind] == 1) {
     int pl = state[endind + 1];
     state2[1] = 2 * pl - 1;
@@ -124,6 +134,14 @@ IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) 
 
 state <- init_state
 ## move sente pawn to gote king
-move(state, 8, 2, 0, 99)
+st2 <- move(state, 8, 2, 0, 99)
+print_state(st2)
 ## move gote pawn to sente king
-move(state, 5, 11, 0, 99)
+st2 <- move(state, 5, 11, 0, 99)
+print_state(st2)
+## move sente pawn to gote pawn
+st2 <- move(state, 8, 5, 0, 99)
+print_state(st2)
+## then move gote bishop to sente pawn
+st2 <- move(st2, 3, 5, 0, 99)
+print_state(st2)
