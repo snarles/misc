@@ -114,3 +114,14 @@ unique_inds <- match(unique(gametable[, "gid"]), gametable[, "gid"])
 table(gametable[unique_inds, "variant"])
 
 save(gametable, unique_inds, file="minishogi/lg_scraping/gametable.rda")
+
+## validation
+
+for (i in 1:nrow(gametable)) {
+  matches <- setdiff(which(gametable[, "gid"]==gametable[i, "gid"]), i)
+  if (length(matches) > 0) {
+    if (gametable[i, "game"] != gametable[matches, "game"]) {
+      print(c(i, matches))
+    }
+  }
+}
