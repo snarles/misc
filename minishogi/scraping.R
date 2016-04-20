@@ -41,6 +41,76 @@ for (i in 1:nrow(shogi_players)) {
 }
 saveRDS(games_raws, file = "minishogi/lg_scraping/all_raws.rds")
 
+games_raws <- readRDS("minishogi/lg_scraping/all_raws.rds")
+valid_pl <- sapply(games_raws, function(v) nchar(v[1]) >0 && nchar(v[2]) > 0)
+games_raws <- games_raws[valid_pl]
+
+dsplit <- function(v, l, r) {
+  strsplit(strsplit(v, l)[[1]][2], r)[[1]][1]
+}
+
 # plid <- nos[1]
 # splits1 <- strsplit(raw1, "<tr>")[[1]]
 # splits1[20]
+
+raw <- games_raws[[1]]
+splits<- strsplit(raw[1], "<tr>")[[1]][-1:3]
+
+gregexpr("gid=", splits[5])
+splits[5]
+
+sort(sapply(lapply(games_raws, function(v) {
+  splits<- strsplit(v[1], "<tr>")[[1]]
+  grep("gid=", splits)
+}), max))
+
+gametables <- list()
+for (i in 1:length(games_raws)) {
+  (playername <- names(games_raws)[i])
+  raw <- games_raws[[i]]
+  splits<- strsplit(raw[1], "<tr>")[[1]][-(1:3)]
+  gids <- sapply(splits, function(v) {
+    loc <- gregexpr("gid=", v)[[1]][1]
+    gidstr <- substr(v, loc, loc + 15)
+    gidstr <- strsplit(gidstr, ">")[[1]][1]
+    substr(gidstr, 5, nchar(gidstr) - 1)
+  }, USE.NAMES = FALSE)
+  gametypes <- sapply(splits, function(v) {
+    dsplit(v, "<span style='color: FFFFFF;'>", "<")
+  }, USE.NAMES = FALSE)
+  opps <- sapply(splits, function(v) {
+    dsplit(v, "<td bgcolor='#E9D101'>", "<")
+  }, USE.NAMES = FALSE)
+  opps <- sapply(opps, function(v) {
+    if (length(grep("★", v)>0) ){
+      v <- substr(v, 1, nchar(v)-2)
+    }
+    v
+  }, USE.NAMES = FALSE)
+  nmoves <- sapply(splits, function(v) {
+    dsplit(v, "<td align='right'>", "<")
+  }, USE.NAMES = FALSE)
+  outcomes <- sapply(splits, function(v) {
+    dsplit(v, "<td align=center>", "<")
+  }, USE.NAMES = FALSE)
+  games <- strsplit(raw[2], "\n\n")[[1]]
+  games <- games[-length(games)]
+  games <- sapply(games, function(v) {
+    if (substr(v, 1, 1)!="[") {
+      v <- paste0("[shogi", strsplit(v, "shogi")[[1]][2])
+    }
+    v
+  }, USE.NAMES = FALSE)
+  game.table <- cbind(gids, gametypes, player = playername, opps, nmoves, outcomes, games)
+  #View(game.table)
+  gametables[[playername]] <- game.table
+}
+
+gametable <- do.call(rbind, gametables)
+nrow(gametable)
+View(gametable[1000:1100, ])
+colnames(gametable) <- c("gid", "variant", "player1", "player2", "nmoves", "outcome", "game")
+unique_inds <- match(unique(gametable[, "gid"]), gametable[, "gid"])
+table(gametable[unique_inds, "variant"])
+
+save(gametable, unique_inds, file="minishogi/lg_scraping/gametable.rda")
