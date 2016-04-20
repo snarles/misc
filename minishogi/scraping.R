@@ -24,11 +24,13 @@ names <- sapply(splits, function(v) strsplit(strsplit(v, ">")[[1]][2], "<")[[1]]
 shogi_players <- cbind(names, nos)
 write.csv(shogi_players, file = "minishogi/lg_scraping/shogi_players.csv")
 
+shogi_players <- read.csv("minishogi/lg_scraping/shogi_players.csv", sep = ",", stringsAsFactors = FALSE)[, -1]
+
 ## obtain games + metadata
 games_raws <- list()
 nrow(shogi_players) # 241
-#for (i in nrow(shogi_players)) {
-for (i in 1:241) {
+for (i in 1:nrow(shogi_players)) {
+#for (i in 1:241) {
   plid <- shogi_players[i, 2]
   url1 <- paste0("https://www.littlegolem.net/jsp/info/player_game_list.jsp?gtid=shogi&plid=", plid)
   url2 <- paste0("https://www.littlegolem.net/jsp/info/player_game_list_txt.jsp?plid=", plid, "&gtid=shogi")
