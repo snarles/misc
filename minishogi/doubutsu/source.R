@@ -128,10 +128,26 @@ IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) 
 }
 ')
 
+cppFunction('
+IntegerVector dropp(IntegerVector state, int pl, int ptype, int end, int prev) {
+  IntegerVector state2(clone(state));
+  int endind = 1 + end * 3;
+  state2[0] = prev;
+  state2[3] = state[3] + 1;
+  int handind = ptype + pl * 4 + 39;
+  state2[handind] += -1;
+  state2[endind] = ptype;
+  state2[endind + 1] = pl;
+  state2[endind + 2] = 0;
+  return state2;
+}
+')
+
 ###
 # Tests of move function
 ###
 
+## KING CAPTURE TESTS
 state <- init_state
 ## move sente pawn to gote king
 st2 <- move(state, 8, 2, 0, 99)
@@ -139,9 +155,16 @@ print_state(st2)
 ## move gote pawn to sente king
 st2 <- move(state, 5, 11, 0, 99)
 print_state(st2)
+
+## NORMAL PLAY TEST
+state <- init_state
+print_state(state)
 ## move sente pawn to gote pawn
 st2 <- move(state, 8, 5, 0, 99)
 print_state(st2)
 ## then move gote bishop to sente pawn
 st2 <- move(st2, 3, 5, 0, 99)
+print_state(st2)
+## then sente drops the pawn
+st2 <- dropp(st2, 0, 4, 7, 99)
 print_state(st2)
