@@ -117,6 +117,7 @@ table(gametable[unique_inds, "variant"])
 # 5862           6770            916            655            147            585 
 
 save(gametable, unique_inds, file="minishogi/lg_scraping/gametable.rda")
+write.csv(gametable, file = "minishogi/lg_scraping/gametable.csv", row.names = FALSE)
 
 ## validation
 
