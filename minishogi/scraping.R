@@ -113,6 +113,9 @@ colnames(gametable) <- c("gid", "variant", "player1", "player2", "nmoves", "outc
 unique_inds <- match(unique(gametable[, "gid"]), gametable[, "gid"])
 table(gametable[unique_inds, "variant"])
 
+# Mini Shogi          Shogi      Shogi 3x4      Shogi 5x6 Shogi 5x6 PLUS     Tori Shogi 
+# 5862           6770            916            655            147            585 
+
 save(gametable, unique_inds, file="minishogi/lg_scraping/gametable.rda")
 
 ## validation
