@@ -1,4 +1,5 @@
 source("minishogi/doubutsu/source.R")
+sourceCpp("minishogi/doubutsu/Rsource.cpp")
 
 zero_state <- c(0,
                 0,

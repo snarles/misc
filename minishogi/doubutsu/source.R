@@ -16,7 +16,7 @@
 
 library(Rcpp)
 
-sourceCpp("minishogi/doubutsu/Rsource.cpp")
+# sourceCpp("minishogi/doubutsu/Rsource.cpp")
 
 init_state <- c(0,
                 0,
@@ -42,7 +42,9 @@ print_state <- function(state) {
   board <- matrix(state[5:40], nrow = 3)
   hand1 <- state[41:44]
   hand2 <- state[45:48]
+  movev <- state[49:51]
   strs <- rep("", 12)
+  pl <- ((state[4] - 1) %% 2) + 1
   for (i in 1:12) {
     str <- PIECESTRS[board[1, i] + 1, board[2, i] + 1]
     if (board[3, i]==1) {
@@ -60,7 +62,15 @@ print_state <- function(state) {
   }
   hand1st <- paste(hand1st, collapse = "")
   hand2st <- paste(hand2st, collapse = "")
-  cat("SHOGI 34 STATE: ")
+  movest <- "begin"
+  if (movev[1] != 0) {
+    movest <- paste(PIECESTRS[movev[1] + 1, pl],
+                    c("**", LOX)[movev[2] + 1],
+                    c("**", LOX)[movev[3] + 1],
+                    sep = "-")
+  }
+  #cat("SHOGI 34 STATE: ")
+  catn("")
   if (state[2] >= 1000) {
     catn("Sente win!")
   } else if (state[2] <=-1000) {
@@ -68,7 +78,7 @@ print_state <- function(state) {
   } else {
     catn("")
   }
-  catn(paste0("Turn: ", state[4]))
+  catn(paste0(state[4], ".", movest))
   catn(paste0("Gote hand: ", hand2st))
   catn("  +--------+ ")
   for (i in 1:4) {
@@ -105,3 +115,47 @@ opt_path <- function(tree, startind = 1, print = FALSE) {
   inds
 }
 
+
+
+## converted LG interfacer
+
+
+move_parser <- function(state, str) {
+  ans <- state
+  if (str == "resign") return(state) # normally handle these in the game replayer
+  st <- strsplit(str, "-")[[1]]
+  ptype <- grep(st[1], PIECESTRS[, 1])-1
+  end <- which(LOX==st[3])
+  pl <- state[4] %% 2
+  if (st[2] == "**") {
+    # drop
+    state <- dropp(state,pl, ptype, end, 0)
+  }
+  else {
+    # move
+    start <- which(LOX==st[2])
+    prom <- 0
+    if (ptype == 4) {
+      prom <- (pl==0 && end < 4) + (pl==1 && end > 9)
+    }
+    state <- move(state, start, end, prom, 0)
+  }
+  state
+}
+
+statesFromGame <- function(game, nmoves = length(game), printt = FALSE) {
+  state <- init_state
+  states <- list()
+  for (i in 1:nmoves) {
+    str <- game[i]
+    if (str != "resign") {
+      state <- move_parser(state, str)
+      if (printt) print_state(state)
+      states <- c(states, list(state))
+    }
+    else {
+      if (printt) catn(paste0(state[4]+1, ". RESIGN"))
+    }
+  }
+  states
+}
