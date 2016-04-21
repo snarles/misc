@@ -117,6 +117,7 @@ bool stepMove(IntegerMatrix tree, IntegerVector tempvars, int start, int vert, i
   if(tempvars[1] < sz) {
     IntegerMatrix::Row rw = tree(tempvars[1], _);
     int prom = 0;
+    // handle pawn promotion
     if((cstate[startind] == 4) && (y2 == 1 + 3 * pl)) {
       prom = 1;
     }
@@ -124,6 +125,37 @@ bool stepMove(IntegerMatrix tree, IntegerVector tempvars, int start, int vert, i
   }
   else {
     ans = false;
+  }
+  return ans;
+}
+
+bool tryRule(IntegerMatrix tree, IntegerVector tempvars, int pl) {
+  int sz = tree.nrow();
+  bool ans = true;
+  IntegerMatrix::Row cs = tree(tempvars[0], _);
+  IntegerVector cstate = cs;
+  bool condition = false;
+  int st = 0;
+  if (pl == 0) {
+    st = 4;
+  }
+  if (pl == 1) {
+    st = 31;
+  }
+  for (int i = 0; i < 3; i++) {
+    int startind = st + 3 * i;
+    if (cstate[startind]==1 && cstate[startind+1]==pl) condition = true;
+  }
+  if (condition) {
+    tempvars[1] += 1;
+    if(tempvars[1] < sz) {
+      IntegerMatrix::Row rw = tree(tempvars[1], _);
+      IntegerVector wstate(clone(cstate));
+      wstate[1] = (2 * pl - 1) * -1001; // to make the move-counting correct
+      wstate[0] = tempvars[0];
+      wstate[3] = cstate[3] + 1;
+      rw = wstate;
+    }
   }
   return ans;
 }
@@ -154,6 +186,9 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
     }
     if (cstate[1] < 1000 && cstate[1] > -1000) {
       int pl = currentTurn % 2;
+      // check try rule
+      bool msg = tryRule(tree, tempvars, pl);
+      flag = flag && msg;
       // look for drops
       for (int ptype = 1; ptype < 5; ptype++) {
         int handind = ptype + pl * 4 + 39;
@@ -168,6 +203,7 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
       for (int start = 1; start < 13; start++) {
         int startind = 1 + start * 3;
         int ptype = cstate[startind];
+        int prom = cstate[startind + 2];
         if ((ptype != 0) && (cstate[startind + 1]==pl)) {
           bool msg = true;
           if (ptype==1) {
@@ -192,9 +228,18 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
             msg = stepMove(tree, tempvars, start, -1, 1);
             msg = stepMove(tree, tempvars, start, -1, -1);
           }
-          if (ptype==4) {
+          if (ptype==4 && prom == 0) {
             msg = stepMove(tree, tempvars, start, 1, 0);
           }
+          if (ptype==4 && prom == 1) {
+            msg = stepMove(tree, tempvars, start, 1, 1);
+            msg = stepMove(tree, tempvars, start, 1, 0);
+            msg = stepMove(tree, tempvars, start, 1, -1);
+            msg = stepMove(tree, tempvars, start, 0, 1);
+            msg = stepMove(tree, tempvars, start, 0, -1);
+            msg = stepMove(tree, tempvars, start, -1, 0);
+          }
+          
           flag = flag && msg;
         }
       }

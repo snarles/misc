@@ -48,7 +48,17 @@ lose_state2 <- c(0,
                  0,2,2,2,
                  0,0,0)
 
-
+try_test <- c(0,
+              0,
+              0,
+              0,
+              0,0,0,  0,0,0,  0,0,0,
+              1,1,0,  0,0,0,  0,0,0, 
+              0,0,0,  0,0,0,  1,0,0,
+              0,0,0,  0,0,0,  0,0,0,
+              0,0,0,0,
+              0,0,0,0,
+              0,0,0)
 
 
 ###
@@ -84,12 +94,12 @@ print_state(st2)
 #sourceCpp("minishogi/doubutsu/Rsource.cpp")
 #sourceCpp("minishogi/doubutsu/Rtest.cpp")
 
-tree <- buildTree(lose_state2, 2000000, 6)
+#tree <- buildTree(lose_state2, 2000000, 6)
+#tree <- buildTree(init_state, 2000000, 7)
+tree <- buildTree(try_test, 2000000, 5)
 tree <- tree[1:max(which(tree[, 4] != 0)), ]
 nrow(tree)
-
-
-# unique(tree[, 2])
+unique(tree[, 2])
 
 tree <- propagate(tree)
 
@@ -107,4 +117,6 @@ tree[1, 2]
 
 #View(tree[, 1:5])
 
-opt_path(tree, print = TRUE)
+inds <- opt_path(tree, print = TRUE)
+#tree[inds, 1:5]
+
