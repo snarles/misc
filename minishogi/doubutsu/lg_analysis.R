@@ -14,6 +14,8 @@ for (game in games) {
   }
 }
 
+
+saveRDS(hashtab, "minishogi/doubutsu/hashtab.rds")
 filt <- sapply(hashes, length) > 0
 hh <- do.call(c, hashes[filt])
 thashes <- table(hh)

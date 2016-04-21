@@ -44,7 +44,7 @@ LOX <- c("3a", "2a", "1a",
          "3d", "2d", "1d"
 )
 
-print_state <- function(state) {
+print_state <- function(state, blind = FALSE) {
   board <- matrix(state[5:40], nrow = 3)
   hand1 <- state[41:44]
   hand2 <- state[45:48]
@@ -85,15 +85,34 @@ print_state <- function(state) {
     catn("")
   }
   catn(paste0(state[4], ".", movest))
-  catn(paste0("Gote hand: ", hand2st))
-  catn("  +--------+ ")
-  for (i in 1:4) {
-    cat("  |")
-    cat(paste(mat[i, ], collapse = " "))
-    catn("|")
+  if (blind) {
+    occ <- which(mat!= "  ", TRUE)
+    pcs <- mat[mat!="  "]
+    pt <- match(sapply(pcs, substr, 2, 2), PIECESTRS)
+    pl1 <- (pt < 7)
+    ROW <- letters[occ[, 1]]
+    COL <- 4 - occ[, 2]
+    POS <- paste0(COL, ROW)
+    lala <- cbind(pcs, POS)
+    rownames(lala) <- rep(" ", nrow(lala))
+    colnames(lala) <- c(" ", " ")
+    catn("Board:")
+    lala <- lala[order(pt), ]
+    print(noquote(lala))
+    catn(paste0("Sente hand: ", hand1st))
+    catn(paste0("Gote hand: ", hand2st))
   }
-  catn("  +--------+ ")
-  catn(paste0("Sente hand: ", hand1st))
+  if (!blind) {
+    catn(paste0("Gote hand: ", hand2st))
+    catn("  +--------+ ")
+    for (i in 1:4) {
+      cat("  |")
+      cat(paste(mat[i, ], collapse = " "))
+      catn("|")
+    }
+    catn("  +--------+ ")
+    catn(paste0("Sente hand: ", hand1st))
+  }
 }
 
 build_tree <- function(state, depth, nodemax = 2e6) {
