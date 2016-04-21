@@ -15,7 +15,7 @@
 
 library(Rcpp)
 
-sourceCpp("minishogi/doubutsu/Rsource.cpp")
+# sourceCpp("minishogi/doubutsu/Rsource.cpp")
 
 init_state <- c(0,
                 -1,
@@ -25,6 +25,42 @@ init_state <- c(0,
                 0,0,0,  4,1,0,  0,0,0, 
                 0,0,0,  4,0,0,  0,0,0,
                 3,0,0,  1,0,0,  2,0,0,
+                0,0,0,0,
+                0,0,0,0,
+                0,0,0)
+
+zero_state <- c(0,
+                -1,
+                1,
+                0,
+                0,0,0,  0,0,0,  0,0,0,
+                0,0,0,  0,0,0,  0,0,0, 
+                0,0,0,  0,0,0,  0,0,0,
+                0,0,0,  0,0,0,  0,0,0,
+                1,1,1,1,
+                1,1,1,1,
+                0,0,0)
+
+king_state <- c(0,
+                -1,
+                1,
+                0,
+                0,0,0,  1,1,0,  0,0,0,
+                0,0,0,  0,0,0,  0,0,0, 
+                0,0,0,  0,0,0,  0,0,0,
+                0,0,0,  1,0,0,  0,0,0,
+                0,0,0,0,
+                0,0,0,0,
+                0,0,0)
+
+lose_state <- c(0,
+                -1,
+                1,
+                0,
+                0,0,0,  0,0,0,  0,0,0,
+                2,1,0,  2,1,0,  2,1,0, 
+                2,1,0,  1,0,0,  2,1,0,
+                2,1,0,  2,1,0,  2,1,0,
                 0,0,0,0,
                 0,0,0,0,
                 0,0,0)
@@ -116,9 +152,23 @@ print_state(st2)
 
 
 sourceCpp("minishogi/doubutsu/Rsource.cpp")
-buildTree(init_state, 3, 10)
-tree <- buildTree(st2, 20, 10)
+sourceCpp("minishogi/doubutsu/Rtest.cpp")
 
-for (i in 1:nrow(tree)) {
-  print_state(tree[i, ])
-}
+tree <- buildTree(lose_state, 10000, 2)
+tree <- tree[1:max(which(tree[, 4] != 0)), ]
+nrow(tree)
+tree0 <- tree
+tree2 <- propagate(tree)
+
+for (i in 1:3) print_state(tree[sample(nrow(tree), 1), ])
+for (i in 1:nrow(tree)) print_state(tree[i, ])
+
+print_state(tree[1, ])
+print_state(tree[nrow(tree), ])
+nrow(tree)
+
+print_state(tree[which(tree[, 2]==1)[1], ])
+print_state(tree[which(tree[, 3]==-1)[1], ])
+
+View(tree0[, 1:5])
+View(tree2[, 1:5])

@@ -89,12 +89,45 @@ bool addDrop(IntegerMatrix tree, IntegerVector tempvars, int pl, int ptype, int 
   return ans;
 }
 
-// bool stepMove(IntegerMatrix tree, IntegerVector tempvars, int start, int vert, int horz) {
-//   bool ans = true;
-//   IntegerMatrix::Row cs = tree(tempvars[0], _);
-//   IntegerVector cstate = cs;
-//   return ans;
-// }
+bool stepMove(IntegerMatrix tree, IntegerVector tempvars, int start, int vert, int horz) {
+  int sz = tree.nrow();
+  bool ans = true;
+  int x = (start - 1) % 3 + 1;
+  int y = (start - x)/3 + 1;
+  IntegerMatrix::Row cs = tree(tempvars[0], _);
+  IntegerVector cstate = cs;
+  int startind = 1 + start * 3;
+  int pl = cstate[startind + 1];
+  if (pl == 0) {
+    vert = -vert;
+    horz = -horz;
+  }
+  int x2 = x + horz;
+  int y2 = y + vert;
+  if ((x2 < 1) || (x2 > 3) || (y2 < 1) || (y2 > 4)) {
+    return ans;
+  }
+  int end = (y2 - 1)*3 + x2;
+  int endind = 1 + end * 3;
+  int endtype = cstate[endind];
+  int endpl = cstate[endind + 1];
+  if((endtype != 0) && (endpl == pl)) {
+    return ans;
+  }
+  tempvars[1] += 1;
+  if(tempvars[1] < sz) {
+    IntegerMatrix::Row rw = tree(tempvars[1], _);
+    int prom = 0;
+    if((cstate[startind] == 4) && (y2 == 1 + 3 * pl)) {
+      prom = 1;
+    }
+    rw = move(cstate, start, end, prom, tempvars[0]);
+  }
+  else {
+    ans = false;
+  }
+  return ans;
+}
 
 // [[Rcpp::export]]
 IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
@@ -103,11 +136,21 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
   IntegerMatrix tree(nodemax, 51);
   IntegerMatrix::Row rw = tree(0, _);
   rw = state;
+  tree(0,0) = 0;
   bool flag = true;
+  int prevTurn = state[3];
+  int backind = 0;
   while(flag) {
     IntegerMatrix::Row cs = tree(tempvars[0], _);
     IntegerVector cstate = cs;
     int currentTurn = cstate[3];
+    if (currentTurn > prevTurn) {
+      backind = tempvars[0] - 1;
+      if (currentTurn - turn == depthmax) {
+        backind = tempvars[0];
+        break;
+      }
+    }
     int pl = currentTurn % 2;
     // look for drops
     for (int ptype = 1; ptype < 5; ptype++) {
@@ -120,18 +163,40 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
       }
     }
     // look for moves
-    // for (int start = 1; start < 13; start++) {
-    //   int startind = 1 + start * 3;
-    //   int ptype = cstate[startind];
-    //   if ((ptype != 0) && (cstate[startind + 1]==pl)) {
-    //     bool msg = stepMove(tree, tempvars, start, 1, 0);
-    //     flag = flag && msg;
-    //   }
-    // }
-    tempvars[0] += 1;
-    if (tree(tempvars[0], 3) - turn > depthmax) {
-      flag = false;
+    for (int start = 1; start < 13; start++) {
+      int startind = 1 + start * 3;
+      int ptype = cstate[startind];
+      if ((ptype != 0) && (cstate[startind + 1]==pl)) {
+        bool msg = true;
+        if (ptype==1) {
+          msg = stepMove(tree, tempvars, start, 1, 1);
+          msg = stepMove(tree, tempvars, start, 1, 0);
+          msg = stepMove(tree, tempvars, start, 1, -1);
+          msg = stepMove(tree, tempvars, start, 0, 1);
+          msg = stepMove(tree, tempvars, start, 0, -1);
+          msg = stepMove(tree, tempvars, start, -1, 1);
+          msg = stepMove(tree, tempvars, start, -1, 0);
+          msg = stepMove(tree, tempvars, start, -1, -1);
+        }
+        if (ptype==2) {
+          msg = stepMove(tree, tempvars, start, 1, 0);
+          msg = stepMove(tree, tempvars, start, 0, 1);
+          msg = stepMove(tree, tempvars, start, 0, -1);
+          msg = stepMove(tree, tempvars, start, -1, 0);
+        }
+        if (ptype==3) {
+          msg = stepMove(tree, tempvars, start, 1, 1);
+          msg = stepMove(tree, tempvars, start, 1, -1);
+          msg = stepMove(tree, tempvars, start, -1, 1);
+          msg = stepMove(tree, tempvars, start, -1, -1);
+        }
+        if (ptype==4) {
+          msg = stepMove(tree, tempvars, start, 1, 0);
+        }
+        flag = flag && msg;
+      }
     }
+    tempvars[0] += 1;
     if (tempvars[0] > tempvars[1]) {
       flag = false;
     }
