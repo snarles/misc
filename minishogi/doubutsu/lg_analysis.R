@@ -27,33 +27,24 @@ plot(log(thashes), type = "l")
 hashmat <- do.call(rbind, hashtab)
 
 ####
-##  Mate in X
+##  Mate in X, taken from position near the end of games
 ####
 
-mate_in <- c()
-for (i in 1:length(hashtab)) {
-  state <- hashtab[[i]]
-  if (state[2] >= 1000 || state[2] <= -1000) {
-    mate_in[names(hashtab)[i]] <- 0
-  }
+topstates <- names(thashes)[order(-thashes)]
+
+fromend = 2;
+end_hashes <- lapply(hashes[filt], function(v) {
+  rev(v)[1:pmin(length(v), 2)]
+})
+end_hashes <- unique(do.call(c, end_hashes))
+##trees <- list()
+matein <- c()
+t1 <- proc.time()
+for (i in 1:100) {
+  state <- hashtab[[end_hashes[i]]]
+  res <- mate_in_X(state, maxK = 6, verbose = FALSE)
+  ##trees[[i]] <- res$tree
+  matein[i] <- res$mate_in
 }
-
-## Mate in KK
-maxK <- 2
-filt <- !(names(hashtab)) %in% names(mate_in)
-for (i in which(filt)) {
-  state <- hashtab[[i]]
-  tree <- build_tree(state, KK)
-  opt_path(tree, print = TRUE)
-  if (tree[1, 2] != 0) {
-    print_state(state)
-    mate_in[names(hashtab)[i]] <- KK
-  }
-}
-table(mate_in)
-
-end_states <- lapply(states[filt], function(v) v[[length(v)]])
-
-for (i in 1:10) print_state(end_states[[i]])
-
-res <- mate_in_X(end_states[[2]], maxK = 4, verbose = TRUE)
+proc.time() - t1
+table(matein)

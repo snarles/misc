@@ -170,6 +170,9 @@ statesFromGame <- function(game, nmoves = length(game), printt = FALSE) {
 hash_state <- function(v) paste0("s", paste0(hashState(v), collapse = "."))
 
 mate_in_X <- function(state, maxK = 4, nodemax = 2e6, verbose = FALSE) {
+  if (state[2] != 0) {
+    return(list(mate_in = 0, tree = t(state)))
+  }
   for (KK in 1:maxK) {
     tree <- build_tree(state, depth = KK, nodemax)
     if (nrow(tree)==nodemax) {
