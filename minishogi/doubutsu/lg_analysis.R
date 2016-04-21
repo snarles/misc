@@ -38,13 +38,17 @@ end_hashes <- lapply(hashes[filt], function(v) {
 })
 end_hashes <- unique(do.call(c, end_hashes))
 ##trees <- list()
-matein <- c()
+matein <- readRDS("minishogi/doubutsu/matein.rds")
 t1 <- proc.time()
-for (i in 1:100) {
-  state <- hashtab[[end_hashes[i]]]
-  res <- mate_in_X(state, maxK = 6, verbose = FALSE)
+for (h in setdiff(end_hashes, names(matein))[1:200]) {
+  state <- hashtab[[h]]
+  res <- mate_in_X(state, maxK = 6, nodemax = 1e7, verbose = FALSE)
   ##trees[[i]] <- res$tree
-  matein[i] <- res$mate_in
+  matein[h] <- res$mate_in
+  print(c(h, matein[h]))
 }
 proc.time() - t1
 table(matein)
+
+names(matein) <- end_hashes[1:length(matein)]
+saveRDS(matein, "minishogi/doubutsu/matein.rds")

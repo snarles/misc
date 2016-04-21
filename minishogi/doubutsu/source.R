@@ -176,7 +176,8 @@ mate_in_X <- function(state, maxK = 4, nodemax = 2e6, verbose = FALSE) {
   for (KK in 1:maxK) {
     tree <- build_tree(state, depth = KK, nodemax)
     if (nrow(tree)==nodemax) {
-      stop("MAXIMUM NODES REACHED, increase nodemax argument!")
+      print("MAXIMUM NODES REACHED, increase nodemax argument!")
+      return(list(mate_in = -1, tree = tree))
     }
     if (tree[1, 2] != 0) {
       if (verbose) {
