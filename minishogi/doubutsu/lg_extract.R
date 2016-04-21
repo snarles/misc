@@ -26,11 +26,7 @@ loc_processor <- function(lc) {
   as <- strsplit(lc, NULL)[[1]]
   paste0(TAB1[TAB1[, 1]==as[1], 2], TAB2[TAB2[, 1]==as[2], 2])
 }
-LOX <- c("3a", "2a", "1a", 
-         "3b", "2b", "1b",
-         "3c", "2c", "1c",
-         "3d", "2d", "1d"
-         )
+
 
 load("minishogi/lg_scraping/gametable.rda", verbose = TRUE)
 gametable <- gametable[unique_inds, ]
@@ -64,3 +60,23 @@ for (i in 1:length(glist)) {
 sink()
 
 saveRDS(state_collection, file = "minishogi/doubutsu/lg_states.rds")
+state_collection <- readRDS("minishogi/doubutsu/lg_states.rds")
+
+allstates <- do.call(c, state_collection)
+allstates <- do.call(rbind, allstates)
+dim(allstates)
+allstates <- unique(allstates)
+dim(allstates)
+
+## various testing stuff
+# Export the subroutines to run the test!
+#  
+# state_collection <- readRDS("minishogi/doubutsu/lg_states.rds")
+# sourceCpp("minishogi/doubutsu/Rtest.cpp")
+# state <- state_collection[[5]][[11]]
+# print_state(state)
+# print_state(flipState(state))
+# print_state(mirrorState(state))
+# hashState0(state)
+# hashState0(mirrorState(state))
+

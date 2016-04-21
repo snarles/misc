@@ -38,6 +38,12 @@ catn <- function(x) cat(paste0(x, "\n"))
 
 PIECESTRS <- cbind(c(" ", "K","R","B","P"), c(" ", "k", "r", "b", "p"))
 
+LOX <- c("3a", "2a", "1a", 
+         "3b", "2b", "1b",
+         "3c", "2c", "1c",
+         "3d", "2d", "1d"
+)
+
 print_state <- function(state) {
   board <- matrix(state[5:40], nrow = 3)
   hand1 <- state[41:44]
