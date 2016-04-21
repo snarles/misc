@@ -1,0 +1,1034 @@
+---------------------------------------
+[ Position id: s127842.327437.2190 ]
+
+
+8.k-2a-2b
+Board:
+       
+   K 2d
+   B 2c
+   k 2b
+   r 3a
+   p 1a
+Sente hand: BP
+Gote hand: r
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1080774.1057.2187 ]
+
+
+24.k-3a-3b
+Board:
+       
+   K 1c
+   R 2c
+   B 2b
+   B 1b
+   k 3b
+   r 3d
+Sente hand: PP
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.441.2217 ]
+
+
+13.K-2c-1c
+Board:
+       
+   K 1c
+   B 3c
+   k 2a
+   b 1b
+Sente hand: RP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s98494.15609.60 ]
+
+
+20.k-1a-2a
+Board:
+       
+   K 2c
+   B 3c
+   k 2a
+Sente hand: B
+Gote hand: rrpp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s327426.263588.738 ]
+
+
+46.r-1b-1c
+Board:
+       
+   K 3b
+   R 3a
+   k 1a
+   r 1c
+   p 3c
+   p 2b
+Sente hand: B
+Gote hand: b
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10654.15202.3159 ]
+
+
+36.k-1b-2a
+Board:
+       
+   K 1d
+   R 2c
+   B 1c
+   k 2a
+   p 3b
+Sente hand: RBP
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.198.2226 ]
+
+
+12.k-2a-3b
+Board:
+       
+   K 2d
+   B 1c
+   k 3b
+Sente hand: RP
+Gote hand: rbp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s127782.14740.2193 ]
+
+
+22.k-1b-2a
+Board:
+       
+   K 3d
+   B 3c
+   B 2c
+   k 2a
+Sente hand: PP
+Gote hand: rr
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.201.2217 ]
+
+
+13.K-2c-3c
+Board:
+       
+   K 3c
+   B 1c
+   k 2a
+   b 1b
+Sente hand: RP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.337315.2430 ]
+
+
+9.P-**-1c
+Board:
+       
+   K 2d
+   R 2c
+   R 1d
+   P 1c
+   k 3b
+   b 2b
+   b 1b
+Sente hand: 
+Gote hand: p
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s131835.644282.981 ]
+
+
+10.p-**-1a
+Board:
+       
+   K 2d
+   R 1b
+   P 2c
+   k 3b
+   b 2b
+   p 1a
+Sente hand: R
+Gote hand: b
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s372.2138.972 ]
+
+
+27.B-**-3a
+Board:
+       
+   K 1d
+   B 3a
+   P 1c
+   k 2b
+   r 2c
+   p 1a
+Sente hand: 
+Gote hand: rb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1094082.336820.2214 ]
+
+
+13.R-**-1d
+Board:
+       
+   K 2d
+   R 1d
+   k 1b
+   b 3b
+   b 2b
+Sente hand: P
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s976954.18395.270 ]
+
+
+14.b-**-3b
+Board:
+       
+   K 2c
+   B 3c
+   P 1b
+   k 2a
+   r 3a
+   b 3b
+Sente hand: R
+Gote hand: p
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s131835.78.2448 ]
+
+
+21.K-2c-1c
+Board:
+       
+   K 1c
+   k 2a
+   p 2b
+Sente hand: BB
+Gote hand: rrp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s98494.164560.4383 ]
+
+
+17.R-**-3d
+Board:
+       
+   K 1d
+   R 3d
+   P 1c
+   k 2b
+   r 2c
+   b 3b
+Sente hand: B
+Gote hand: p
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.14718.2226 ]
+
+
+13.K-2c-2d
+Board:
+       
+   K 2d
+   k 2a
+   b 1b
+Sente hand: RBP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s7986.14891.2466 ]
+
+
+10.r-2b-1b
+Board:
+       
+   K 1c
+   B 2c
+   k 2a
+   r 3b
+   r 1b
+Sente hand: P
+Gote hand: bp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s58570.1728486.732 ]
+
+
+21.K-2c-1c
+Board:
+       
+   K 1c
+   P 2b
+   k 1a
+   r 3c
+  +p 3d
+Sente hand: R
+Gote hand: bb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s978386.15099.0 ]
+
+
+39.R-**-3a
+Board:
+       
+   K 2d
+   R 3a
+   B 1c
+   k 1a
+   r 3c
+   b 2c
+   p 3b
+   p 2a
+Sente hand: 
+Gote hand: 
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s87853.161092.2457 ]
+
+
+24.r-1c-2c
+Board:
+       
+   K 2d
+   R 3d
+   B 3b
+   k 1a
+   r 2c
+   b 2b
+Sente hand: P
+Gote hand: p
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s39930.2060.2457 ]
+
+
+15.R-**-2b
+Board:
+       
+   K 3d
+   R 2b
+   B 3c
+   k 1b
+   b 3b
+Sente hand: P
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s114290.1610511.972 ]
+
+
+43.K-3d-3c
+Board:
+       
+   K 3c
+   k 2a
+   r 2b
+   b 3b
+   p 1a
+   p 1c
+Sente hand: 
+Gote hand: rb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s117194.3520.4383 ]
+
+
+18.k-2a-2b
+Board:
+       
+   K 2d
+   B 2c
+   k 2b
+   r 3a
+Sente hand: RPP
+Gote hand: b
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1094082.14744.246 ]
+
+
+15.P-3d-3c
+Board:
+       
+   K 2d
+   P 3c
+   k 1b
+   b 3b
+   b 2b
+Sente hand: R
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s7986.1906.2433 ]
+
+
+16.b-**-3b
+Board:
+       
+   K 3c
+   k 3a
+   b 3b
+   p 1b
+Sente hand: RBP
+Gote hand: r
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s98494.15133.2193 ]
+
+
+19.K-1d-2d
+Board:
+       
+   K 2d
+   P 1c
+   k 2b
+   b 3b
+Sente hand: RR
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s3.2138.999 ]
+
+
+45.B-**-3a
+Board:
+       
+   K 3d
+   B 3a
+   P 3c
+   k 2b
+   r 2c
+Sente hand: P
+Gote hand: rb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.202.2199 ]
+
+
+13.K-2d-1c
+Board:
+       
+   K 1c
+   P 3c
+   k 2a
+   b 3b
+Sente hand: RB
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s0.161541.531 ]
+
+
+30.k-2a-1a
+Board:
+       
+   K 3c
+   k 1a
+   p 1b
+Sente hand: RR
+Gote hand: bbp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s978285.166826.246 ]
+
+
+24.b-2a-1b
+Board:
+       
+   K 1c
+   P 3c
+   k 1a
+   b 1b
+   p 3a
+Sente hand: RB
+Gote hand: r
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s9383.15177.252 ]
+
+
+16.k-1a-2a
+Board:
+       
+   K 2d
+   R 1c
+   k 2a
+   p 3b
+   p 2b
+Sente hand: RB
+Gote hand: b
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s855.483324.270 ]
+
+
+9.K-2d-3c
+Board:
+       
+   K 3c
+   B 3d
+   P 2c
+   k 1b
+   r 3a
+   b 1a
+Sente hand: P
+Gote hand: r
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s98494.20933.2193 ]
+
+
+19.K-1d-2d
+Board:
+       
+   K 2d
+   P 3d
+   k 2b
+   b 3b
+Sente hand: RR
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s127842.29403.2217 ]
+
+
+17.K-3d-3c
+Board:
+       
+   K 3c
+   R 2d
+   k 2a
+   b 1b
+Sente hand: RP
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s97163.165891.783 ]
+
+
+15.B-2d-1c
+Board:
+       
+   K 1d
+   B 3d
+   B 1c
+   k 2b
+   r 3b
+   r 1b
+Sente hand: PP
+Gote hand: 
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s127842.58685.2193 ]
+
+
+17.K-3d-3c
+Board:
+       
+   K 3c
+   P 2d
+   k 2a
+   b 1b
+Sente hand: RR
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10714.78.2226 ]
+
+
+20.k-2a-3b
+Board:
+       
+   K 2d
+   B 3c
+   k 3b
+Sente hand: RP
+Gote hand: rbp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s9383.340788.2187 ]
+
+
+4.p-**-2b
+Board:
+       
+   K 2d
+   R 1c
+   B 2c
+   k 2a
+   r 3a
+   b 1a
+   p 2b
+Sente hand: P
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s102493.161509.2214 ]
+
+
+39.B-**-3c
+Board:
+       
+   K 3d
+   B 3c
+   k 1a
+   r 2b
+   r 1c
+Sente hand: P
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s10722.202.2190 ]
+
+
+21.P-**-1c
+Board:
+       
+   K 3c
+   P 1c
+   k 2a
+   r 2b
+   b 1a
+   b 1b
+Sente hand: R
+Gote hand: p
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s330088.15133.2919 ]
+
+
+31.K-3d-2d
+Board:
+       
+   K 2d
+   R 3b
+   P 3c
+   k 1b
+   b 2b
+Sente hand: R
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s87846.161143.2922 ]
+
+
+27.P-1d-1c
+Board:
+       
+   K 3d
+   P 1c
+   k 2b
+   b 1b
+Sente hand: RR
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s5324.30086.3645 ]
+
+
+14.b-**-2b
+Board:
+       
+   K 1b
+   R 2c
+   k 3b
+   r 2a
+   b 2b
+   p 3c
+Sente hand: BP
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s978285.89.282 ]
+
+
+11.K-1d-1c
+Board:
+       
+   K 1c
+   k 3b
+   b 2c
+Sente hand: RBP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.20064.255 ]
+
+
+12.k-3b-2a
+Board:
+       
+   K 1c
+   B 2c
+   k 2a
+   p 1a
+Sente hand: RP
+Gote hand: rb
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s12045.4841.279 ]
+
+
+9.K-2d-1c
+Board:
+       
+   K 1c
+   B 1d
+   k 2a
+   r 3c
+Sente hand: BP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s131835.104819.2430 ]
+
+
+18.k-3b-3a
+Board:
+       
+   K 2d
+   B 1b
+   P 2c
+   k 3a
+   b 2b
+Sente hand: RRP
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s652190.14891.279 ]
+
+
+19.P-**-1b
+Board:
+       
+   K 2d
+   R 1c
+   P 1b
+   k 3b
+   b 2b
+Sente hand: BP
+Gote hand: r
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1094082.14747.2190 ]
+
+
+17.K-3d-2d
+Board:
+       
+   K 2d
+   k 1b
+   r 3c
+   b 3b
+   b 2b
+Sente hand: R
+Gote hand: pp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s491139.15177.246 ]
+
+
+52.p-**-2b
+Board:
+       
+   K 3c
+   B 2c
+   k 2a
+   b 1c
+   p 2b
+   p 1b
+Sente hand: R
+Gote hand: r
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.164846.972 ]
+
+
+24.r-**-1a
+Board:
+       
+   K 1c
+   B 2c
+   P 3c
+   k 3a
+   r 1a
+   p 2b
+Sente hand: RB
+Gote hand: 
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s0.190790.2457 ]
+
+
+17.R-**-2d
+Board:
+       
+   K 3d
+   R 2d
+   B 3c
+   k 1c
+   b 1b
+Sente hand: P
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s127842.646877.2190 ]
+
+
+10.k-2a-2b
+Board:
+       
+   K 2d
+   B 2c
+   k 2b
+   r 3a
+   p 1a
+Sente hand: BP
+Gote hand: r
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.14718.2226 ]
+
+
+26.k-3a-2a
+Board:
+       
+   K 1c
+   R 3b
+   B 2c
+   k 2a
+Sente hand: P
+Gote hand: rbp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s654918.198.2199 ]
+
+
+14.k-2a-3b
+Board:
+       
+   K 2d
+   B 1c
+   k 3b
+   p 3c
+Sente hand: RP
+Gote hand: rb
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s652190.206.2919 ]
+
+
+21.K-2d-3c
+Board:
+       
+   K 3c
+   P 3b
+   k 1b
+   b 1c
+Sente hand: R
+Gote hand: rbp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.129.2460 ]
+
+
+17.K-2d-3c
+Board:
+       
+   K 3c
+   k 1b
+   b 1c
+Sente hand: RP
+Gote hand: rbp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s99825.15642.273 ]
+
+
+24.b-**-2b
+Board:
+       
+   K 2c
+   P 1c
+   k 2a
+   b 2b
+Sente hand: RB
+Gote hand: rp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s98494.174438.2919 ]
+
+
+45.P-**-2b
+Board:
+       
+   K 1d
+   P 2b
+   k 2a
+   r 2c
+   b 3b
+  +p 3d
+Sente hand: R
+Gote hand: b
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s87853.15166.2430 ]
+
+
+23.P-3d-3c
+Board:
+       
+   K 2d
+   B 2c
+   P 3c
+   k 2b
+   r 1a
+Sente hand: 
+Gote hand: rbp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s3.727.1269 ]
+
+
+42.b-2c-1d
+Board:
+       
+   K 3c
+   k 1b
+   b 1d
+Sente hand: RRB
+Gote hand: pp
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1095413.161135.756 ]
+
+
+26.k-2a-1a
+Board:
+       
+   K 1c
+   R 3b
+   R 2b
+   P 3c
+   k 1a
+Sente hand: BB
+Gote hand: p
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s121127.59412.2190 ]
+
+
+17.B-2c-1b
+Board:
+       
+   K 1c
+   B 1b
+   P 2d
+   k 1a
+   r 3c
+Sente hand: R
+Gote hand: bp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s91839.1129781.972 ]
+
+
+25.B-**-3b
+Board:
+       
+   K 3d
+   B 3b
+   P 3c
+   k 2b
+   p 1c
+Sente hand: 
+Gote hand: rrb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s87846.323926.981 ]
+
+
+30.k-2a-3a
+Board:
+       
+   K 2c
+   P 3c
+   k 3a
+   r 1a
+   p 1b
+Sente hand: RB
+Gote hand: b
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s1094082.14740.273 ]
+
+
+13.K-3d-2d
+Board:
+       
+   K 2d
+   k 1b
+   b 3b
+   b 2b
+Sente hand: RP
+Gote hand: rp
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.15738.273 ]
+
+
+21.K-1d-2d
+Board:
+       
+   K 2d
+   k 3b
+   b 2b
+   p 1c
+Sente hand: RP
+Gote hand: rb
+** GOTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s125114.5544.255 ]
+
+
+20.k-3a-3b
+Board:
+       
+   K 1c
+   P 2b
+   k 3b
+   p 1a
+Sente hand: RB
+Gote hand: rb
+** SENTE TO MOVE (mate in 2) **
+---------------------------------------
+[ Position id: s12045.14935.252 ]
+
+
+33.K-3d-2d
+Board:
+       
+   K 2d
+   R 3c
+   P 2c
+   k 2a
+   p 1b
+Sente hand: B
+Gote hand: rb
+** GOTE TO MOVE (mate in 2) **
