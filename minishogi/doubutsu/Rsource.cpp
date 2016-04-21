@@ -151,7 +151,7 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
         break;
       }
     }
-    if (cstate[3] != 2) {
+    if (cstate[2] != 2) {
       int pl = currentTurn % 2;
       // look for drops
       for (int ptype = 1; ptype < 5; ptype++) {

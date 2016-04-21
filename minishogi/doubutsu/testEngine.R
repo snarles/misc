@@ -84,7 +84,7 @@ print_state(st2)
 #sourceCpp("minishogi/doubutsu/Rsource.cpp")
 #sourceCpp("minishogi/doubutsu/Rtest.cpp")
 
-tree <- buildTree(lose_state2, 100000, 4)
+tree <- buildTree(lose_state, 100000, 4)
 tree <- tree[1:max(which(tree[, 4] != 0)), ]
 nrow(tree)
 
