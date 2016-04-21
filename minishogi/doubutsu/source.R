@@ -9,10 +9,13 @@
 ## 3 = Bishop
 ## 4 = Pawn
 ## vec = type, player (Sente 0 or Gote 1), prom
-## game state: placeholder (pointing to predecessor),minvalue, maxvalue,  turn no, pieces on board, sente hand, gote hand
+## game state: placeholder (pointing to predecessor),minvalue, maxvalue,  turn no, 
+##  pieces on board, sente hand, gote hand, piecetype moved, start, end
 ####
 
 library(Rcpp)
+
+sourceCpp("minishogi/doubutsu/Rsource.cpp")
 
 init_state <- c(0,
                 -1,
@@ -23,7 +26,8 @@ init_state <- c(0,
                 0,0,0,  4,0,0,  0,0,0,
                 3,0,0,  1,0,0,  2,0,0,
                 0,0,0,0,
-                0,0,0,0)
+                0,0,0,0,
+                0,0,0)
 
 state <- init_state
 length(state)
@@ -76,72 +80,10 @@ print_state <- function(state) {
 
 
 
-cppFunction('
-int hashState(IntegerVector state) {
-  int s = 0;
-  int p = 1;
-  for (int k = 4; k < 40; k++) {
-    s = s + p * state[k];
-    if (k % 3 == 1) {
-      p = p * 5;
-    }
-    else {
-      p = p * 2;
-    }
-  }
-  for (int k = 40; k < 48; k++) {
-    s = s + p * state[k];
-    p = p * 3;
-  }
-  return s;
-}
-')
 
 hashState(state)
 
-cppFunction('
-IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) {
-  IntegerVector state2(clone(state));
-  int startind = 1 + start * 3;
-  int endind = 1 + end * 3;
-  state2[0] = prev;
-  state2[3] = state[3] + 1;
-  if (state[endind] == 1) {
-    int pl = state[endind + 1];
-    state2[1] = 2 * pl - 1;
-    state2[2] = 2 * pl - 1;
-  }
-  if (state[endind] > 0) {
-    int ptype = state[endind];
-    int pl = state[endind + 1];
-    int handind = ptype + (1 - pl) * 4 + 39;
-    state2[handind] += 1;
-  }
-  for (int k = 0; k < 3; k++) {
-    state2[endind + k] = state[startind + k];
-    state2[startind + k] = 0;
-  }
-  if (prom == 1) {
-    state2[endind + 2] = 1;
-  }
-  return state2;
-}
-')
 
-cppFunction('
-IntegerVector dropp(IntegerVector state, int pl, int ptype, int end, int prev) {
-  IntegerVector state2(clone(state));
-  int endind = 1 + end * 3;
-  state2[0] = prev;
-  state2[3] = state[3] + 1;
-  int handind = ptype + pl * 4 + 39;
-  state2[handind] += -1;
-  state2[endind] = ptype;
-  state2[endind + 1] = pl;
-  state2[endind + 2] = 0;
-  return state2;
-}
-')
 
 ###
 # Tests of move function
@@ -168,3 +110,15 @@ print_state(st2)
 ## then sente drops the pawn
 st2 <- dropp(st2, 0, 4, 7, 99)
 print_state(st2)
+
+
+
+
+
+sourceCpp("minishogi/doubutsu/Rsource.cpp")
+buildTree(init_state, 3, 10)
+tree <- buildTree(st2, 20, 10)
+
+for (i in 1:nrow(tree)) {
+  print_state(tree[i, ])
+}
