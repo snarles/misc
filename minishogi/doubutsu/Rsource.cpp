@@ -34,7 +34,6 @@ IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) 
   if (state[endind] == 1) {
     int pl = state[endind + 1];
     state2[1] = (2 * pl - 1) * 1000;
-    state2[2] = 2;
   }
   if (state[endind] > 0) {
     int ptype = state[endind];
@@ -137,6 +136,8 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
   IntegerMatrix::Row rw = tree(0, _);
   rw = state;
   tree(0,0) = 0;
+  tree(0,1) = 0;
+  tree(0,2) = 0;
   bool flag = true;
   int prevTurn = state[3];
   int backind = 0;
@@ -151,7 +152,7 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
         break;
       }
     }
-    if (cstate[2] != 2) {
+    if (cstate[1] < 1000 && cstate[1] > -1000) {
       int pl = currentTurn % 2;
       // look for drops
       for (int ptype = 1; ptype < 5; ptype++) {
@@ -217,23 +218,43 @@ IntegerMatrix propagate(IntegerMatrix tree) {
     int prev = prevs[backind];
     //Rprintf("|backind %d ", backind);
     //Rprintf("prev %d |", prev);
-    if (tree(backind, 1) != 0) {
+    if (tree(backind, 1) > 0) {
       if (tree(prev, 3) % 2 == 0) {
         if (tree(prev, 1) < tree(backind, 1) || tree(prev, 2)==0) {
           tree(prev, 1) = tree(backind, 1) - 1;
-          tree(prev, 2) = 1;
         }
       }
       else {
-        if (tree(prev, 1) < tree(backind, 1) || tree(prev, 2)==0) {
-          tree(prev, 1) = tree(backind, 1) + 1;
-          tree(prev, 2) = 1;
+        if (tree(prev, 1) > tree(backind, 1) || tree(prev, 2)==0) {
+          tree(prev, 1) = tree(backind, 1);
         }
       }
     }
-    else {
-      tree(prev, 2) = 1;
+    if (tree(backind, 1) < 0) {
+      if (tree(prev, 3) % 2 == 0) {
+        if (tree(prev, 1) < tree(backind, 1) || tree(prev, 2)==0) {
+          tree(prev, 1) = tree(backind, 1);
+        }
+      }
+      else {
+        if (tree(prev, 1) > tree(backind, 1) || tree(prev, 2)==0) {
+          tree(prev, 1) = tree(backind, 1) + 1;
+        }
+      }
     }
+    if (tree(backind, 1) == 0) {
+      if (tree(prev, 3) % 2 == 0) {
+        if (tree(prev, 1) < 0 || tree(prev, 2)==0) {
+          tree(prev, 1) = 0;
+        }
+      }
+      else {
+        if (tree(prev, 1) > 0 || tree(prev, 2)==0) {
+          tree(prev, 1) = 0;
+        }
+      }
+    }
+    tree(prev, 2) = backind;
   }
   return tree;
 }

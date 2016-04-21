@@ -40,8 +40,8 @@ lose_state2 <- c(0,
                  0,
                  0,
                  0,
-                 0,0,0,  0,0,0,  0,0,0,
-                 1,1,0,  0,0,0,  0,0,0, 
+                 3,1,0,  1,1,0,  3,1,0,
+                 2,1,0,  0,0,0,  2,1,0, 
                  0,0,0,  0,0,0,  0,0,0,
                  0,0,0,  0,0,0,  1,0,0,
                  0,0,0,0,
@@ -84,24 +84,27 @@ print_state(st2)
 #sourceCpp("minishogi/doubutsu/Rsource.cpp")
 #sourceCpp("minishogi/doubutsu/Rtest.cpp")
 
-tree <- buildTree(lose_state, 100000, 4)
+tree <- buildTree(lose_state2, 2000000, 6)
 tree <- tree[1:max(which(tree[, 4] != 0)), ]
 nrow(tree)
 
-summary(tree[, 2])
+
+# unique(tree[, 2])
 
 tree <- propagate(tree)
 
+tree[1, 2]
 
 
-for (i in 1:3) print_state(tree[sample(nrow(tree), 1), ])
-#for (i in 1:nrow(tree)) print_state(tree[i, ])
-for (i in 1:4) print_state(tree[i, ])
+# for (i in 1:3) print_state(tree[sample(nrow(tree), 1), ])
+# #for (i in 1:nrow(tree)) print_state(tree[i, ])
+# for (i in 1:4) print_state(tree[i, ])
+# 
+# 
+# print_state(tree[1, ])
+# print_state(tree[nrow(tree), ])
+# nrow(tree)
 
+#View(tree[, 1:5])
 
-print_state(tree[1, ])
-print_state(tree[nrow(tree), ])
-nrow(tree)
-
-View(tree[, 1:5])
-
+opt_path(tree, print = TRUE)

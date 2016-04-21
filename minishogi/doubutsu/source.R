@@ -61,9 +61,9 @@ print_state <- function(state) {
   hand1st <- paste(hand1st, collapse = "")
   hand2st <- paste(hand2st, collapse = "")
   cat("SHOGI 34 STATE: ")
-  if (state[2]==1000 && state[3]==2) {
+  if (state[2]==1000) {
     catn("Sente win!")
-  } else if (state[3]==-1000 && state[3]==2) {
+  } else if (state[2]==-1000) {
     catn("Gote win!")
   } else {
     catn("")
@@ -80,7 +80,28 @@ print_state <- function(state) {
   catn(paste0("Sente hand: ", hand1st))
 }
 
-opt_path <- function(tree) {
-  
+build_tree <- function(state, depth) {
+  tree <- buildTree(state, 2000000, 1)
+  tree <- tree[1:max(which(tree[, 4] != 0)), ]
+  tree
+}
+
+opt_path <- function(tree, startind = 1, print = FALSE) {
+  current <- startind
+  inds <- startind
+  while (tree[current, 3] != 0 && abs(tree[current, 2]) != 1000) {
+    nextinds <- (tree[current, 3]:(tree[current + 1, 3] - 1)) + 1
+    print_state(tree[current, ])
+    tree[nextinds, 1:5]
+    vals <- tree[nextinds, 2]
+    pl <- tree[current, 4] %% 2
+    if (pl == 1) vals <- -vals
+    current <- nextinds[order(-vals)[1]]
+    inds <- c(inds, current)
+  }
+  if (print) {
+    for (i in inds) print_state(tree[i, ])
+  }
+  inds
 }
 
