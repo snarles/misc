@@ -16,7 +16,7 @@
 
 library(Rcpp)
 
-# sourceCpp("minishogi/doubutsu/Rsource.cpp")
+if (!"buildTree" %in% ls()) sourceCpp("minishogi/doubutsu/Rsource.cpp")
 
 init_state <- c(0,
                 0,
@@ -165,3 +165,5 @@ statesFromGame <- function(game, nmoves = length(game), printt = FALSE) {
   }
   states
 }
+
+hash_state <- function(v) paste0("s", paste0(hashState(v), collapse = "."))
