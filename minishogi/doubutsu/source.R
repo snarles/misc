@@ -96,9 +96,10 @@ print_state <- function(state) {
   catn(paste0("Sente hand: ", hand1st))
 }
 
-build_tree <- function(state, depth) {
-  tree <- buildTree(state, 2000000, 1)
+build_tree <- function(state, depth, nodemax = 2e6) {
+  tree <- buildTree(state, nodemax, depth)
   tree <- tree[1:max(which(tree[, 4] != 0)), ]
+  tree <- propagate(tree)
   tree
 }
 
@@ -167,3 +168,20 @@ statesFromGame <- function(game, nmoves = length(game), printt = FALSE) {
 }
 
 hash_state <- function(v) paste0("s", paste0(hashState(v), collapse = "."))
+
+mate_in_X <- function(state, maxK = 4, nodemax = 2e6, verbose = FALSE) {
+  for (KK in 1:maxK) {
+    tree <- build_tree(state, depth = KK, nodemax)
+    if (nrow(tree)==nodemax) {
+      stop("MAXIMUM NODES REACHED, increase nodemax argument!")
+    }
+    if (tree[1, 2] != 0) {
+      if (verbose) {
+        print(paste0("MATE IN ", KK))
+        opt_path(tree, print = TRUE)
+      }
+      return(list(mate_in = KK, tree = tree))
+    }
+  }
+  return(list(mate_in = NA, tree = tree));
+}
