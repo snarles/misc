@@ -29,3 +29,27 @@ for (mate_in_what in 1:3) {
     sink()
   }
 }
+
+
+## write answers!
+fname <- paste0("minishogi/doubutsu/book/mateSolutions.txt")
+## Mate in X puzzles
+sink(fname)
+filt <- matein %in% c(2, 4, 6)
+for (h in sort(names(matein)[which(filt)])) {
+  gameno <- which(sapply(hashes, function(v) h %in% v))[1]
+  nextnode <- which(hashes[[gameno]] == h)[1]
+  problem <- games[[gameno]][[nextnode - 1]]
+  answer <- games[[gameno]][[nextnode]]
+  catn("---------------------------------------")
+  catn(paste0("[ Position id: ", h, " ]"))
+  print_state(problem, blind = blind)
+  if (problem[4] %% 2 == 0) {
+    catn(paste0("** SENTE TO MOVE (mate in ", mate_in_what, ") **"))
+  } else {
+    catn(paste0("** GOTE TO MOVE (mate in ", mate_in_what, ") **"))
+  }
+  catn("---ANSWER---")
+  print_state(answer)
+}
+sink()
