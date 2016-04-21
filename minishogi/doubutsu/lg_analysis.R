@@ -42,7 +42,7 @@ end_hashes <- unique(do.call(c, end_hashes))
 ##trees <- list()
 matein <- readRDS("minishogi/doubutsu/matein.rds")
 t1 <- proc.time()
-for (h in setdiff(end_hashes, names(matein))[1:200]) {
+for (h in setdiff(end_hashes, names(matein))) {
   state <- hashtab[[h]]
   res <- mate_in_X(state, maxK = 6, nodemax = 1e7, verbose = FALSE)
   ##trees[[i]] <- res$tree
@@ -52,5 +52,4 @@ for (h in setdiff(end_hashes, names(matein))[1:200]) {
 proc.time() - t1
 table(matein)
 
-names(matein) <- end_hashes[1:length(matein)]
 saveRDS(matein, "minishogi/doubutsu/matein.rds")
