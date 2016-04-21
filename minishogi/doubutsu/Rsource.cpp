@@ -33,8 +33,8 @@ IntegerVector move(IntegerVector state, int start, int end, int prom, int prev) 
   state2[50] = end;
   if (state[endind] == 1) {
     int pl = state[endind + 1];
-    state2[1] = 2 * pl - 1;
-    state2[2] = 2 * pl - 1;
+    state2[1] = (2 * pl - 1) * 1000;
+    state2[2] = 2;
   }
   if (state[endind] > 0) {
     int ptype = state[endind];
@@ -151,49 +151,51 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
         break;
       }
     }
-    int pl = currentTurn % 2;
-    // look for drops
-    for (int ptype = 1; ptype < 5; ptype++) {
-      int handind = ptype + pl * 4 + 39;
-      if (cstate[handind] > 0) {
-        for (int end = 1; end < 13; end++) {
-          bool msg = addDrop(tree, tempvars, pl, ptype, end);
-          flag = flag && msg;
+    if (cstate[3] != 2) {
+      int pl = currentTurn % 2;
+      // look for drops
+      for (int ptype = 1; ptype < 5; ptype++) {
+        int handind = ptype + pl * 4 + 39;
+        if (cstate[handind] > 0) {
+          for (int end = 1; end < 13; end++) {
+            bool msg = addDrop(tree, tempvars, pl, ptype, end);
+            flag = flag && msg;
+          }
         }
       }
-    }
-    // look for moves
-    for (int start = 1; start < 13; start++) {
-      int startind = 1 + start * 3;
-      int ptype = cstate[startind];
-      if ((ptype != 0) && (cstate[startind + 1]==pl)) {
-        bool msg = true;
-        if (ptype==1) {
-          msg = stepMove(tree, tempvars, start, 1, 1);
-          msg = stepMove(tree, tempvars, start, 1, 0);
-          msg = stepMove(tree, tempvars, start, 1, -1);
-          msg = stepMove(tree, tempvars, start, 0, 1);
-          msg = stepMove(tree, tempvars, start, 0, -1);
-          msg = stepMove(tree, tempvars, start, -1, 1);
-          msg = stepMove(tree, tempvars, start, -1, 0);
-          msg = stepMove(tree, tempvars, start, -1, -1);
+      // look for moves
+      for (int start = 1; start < 13; start++) {
+        int startind = 1 + start * 3;
+        int ptype = cstate[startind];
+        if ((ptype != 0) && (cstate[startind + 1]==pl)) {
+          bool msg = true;
+          if (ptype==1) {
+            msg = stepMove(tree, tempvars, start, 1, 1);
+            msg = stepMove(tree, tempvars, start, 1, 0);
+            msg = stepMove(tree, tempvars, start, 1, -1);
+            msg = stepMove(tree, tempvars, start, 0, 1);
+            msg = stepMove(tree, tempvars, start, 0, -1);
+            msg = stepMove(tree, tempvars, start, -1, 1);
+            msg = stepMove(tree, tempvars, start, -1, 0);
+            msg = stepMove(tree, tempvars, start, -1, -1);
+          }
+          if (ptype==2) {
+            msg = stepMove(tree, tempvars, start, 1, 0);
+            msg = stepMove(tree, tempvars, start, 0, 1);
+            msg = stepMove(tree, tempvars, start, 0, -1);
+            msg = stepMove(tree, tempvars, start, -1, 0);
+          }
+          if (ptype==3) {
+            msg = stepMove(tree, tempvars, start, 1, 1);
+            msg = stepMove(tree, tempvars, start, 1, -1);
+            msg = stepMove(tree, tempvars, start, -1, 1);
+            msg = stepMove(tree, tempvars, start, -1, -1);
+          }
+          if (ptype==4) {
+            msg = stepMove(tree, tempvars, start, 1, 0);
+          }
+          flag = flag && msg;
         }
-        if (ptype==2) {
-          msg = stepMove(tree, tempvars, start, 1, 0);
-          msg = stepMove(tree, tempvars, start, 0, 1);
-          msg = stepMove(tree, tempvars, start, 0, -1);
-          msg = stepMove(tree, tempvars, start, -1, 0);
-        }
-        if (ptype==3) {
-          msg = stepMove(tree, tempvars, start, 1, 1);
-          msg = stepMove(tree, tempvars, start, 1, -1);
-          msg = stepMove(tree, tempvars, start, -1, 1);
-          msg = stepMove(tree, tempvars, start, -1, -1);
-        }
-        if (ptype==4) {
-          msg = stepMove(tree, tempvars, start, 1, 0);
-        }
-        flag = flag && msg;
       }
     }
     tempvars[0] += 1;
@@ -204,3 +206,34 @@ IntegerMatrix buildTree(IntegerVector state, int nodemax, int depthmax) {
   return tree;
 }
 
+
+//[[Rcpp::export]]
+IntegerMatrix propagate(IntegerMatrix tree) {
+  //int oldprev = tree(tree.nrow(), 0) + 1;
+  IntegerMatrix::Column p = tree(_, 0);
+  IntegerVector p2 = p;
+  IntegerVector prevs = clone(p2);
+  for(int backind = tree.nrow() - 1; backind > 0; backind--) {
+    int prev = prevs[backind];
+    //Rprintf("|backind %d ", backind);
+    //Rprintf("prev %d |", prev);
+    if (tree(backind, 1) != 0) {
+      if (tree(prev, 3) % 2 == 0) {
+        if (tree(prev, 1) < tree(backind, 1) || tree(prev, 2)==0) {
+          tree(prev, 1) = tree(backind, 1) - 1;
+          tree(prev, 2) = 1;
+        }
+      }
+      else {
+        if (tree(prev, 1) < tree(backind, 1) || tree(prev, 2)==0) {
+          tree(prev, 1) = tree(backind, 1) + 1;
+          tree(prev, 2) = 1;
+        }
+      }
+    }
+    else {
+      tree(prev, 2) = 1;
+    }
+  }
+  return tree;
+}
