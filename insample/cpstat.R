@@ -26,7 +26,7 @@ cp_simulation <- function(X, bt = rnorm(ncol(X)), sigm2 = 1) {
 }
 
 ## estimate insample error using Cp
-cp_simulation_nonlin <- function(X, f, sigm2 = 1) {
+cp_simulation_nonlin <- function(X, f, sigm2 = 1, true_sigma = FALSE) {
   n <- nrow(X)
   p <- ncol(X)
   y <- f(X) + sqrt(sigm2) * rnorm(n)
@@ -36,6 +36,7 @@ cp_simulation_nonlin <- function(X, f, sigm2 = 1) {
   true_sspe <- sum((yh - y2)^2) ## sum of squared prediction error
   sse <- sum((y - yh)^2)
   sigma2_hat <- sse/(n-p)
+  if (true_sigma) sigma2_hat <- sigm2
   cp_sspe <- sse + 2 * p * sigma2_hat
   c(true_sspe, cp_sspe)
 }
@@ -50,4 +51,9 @@ rowMeans(res)
 
 f <- function(X) X[, 1]^2 + sin(X[, 2]/5)
 res <- sapply(1:1e5, function(i) cp_simulation_nonlin(X, f))
+rowMeans(res)
+
+
+f <- function(X) X[, 1]^2 + sin(X[, 2]/5)
+res <- sapply(1:1e5, function(i) cp_simulation_nonlin(X, f, true_sigma = TRUE))
 rowMeans(res)
