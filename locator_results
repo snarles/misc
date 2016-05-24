@@ -1,0 +1,44 @@
+Results :
+
+Window size 1,
+
+---------------trial 1:
+
+> lm(rez[, 3] ~ rez[, 1])
+(Intercept)     rez[, 1]  
+     0.2641       0.9385  
+
+> rez <- cal$rez[[2]]
+     0.1857       0.9351  
+
+> rez <- cal$rez[[3]]
+(Intercept)     rez[, 1]  
+     0.6218       0.9333  
+
+------------trial 2:
+
+> rez <- cal$rez[[1]]
+(Intercept)     rez[, 1]  
+     0.2876       0.9328  
+
+> rez <- cal$rez[[2]]
+(Intercept)     rez[, 1]  
+     0.1905       0.9347  
+
+> rez <- cal$rez[[3]]
+(Intercept)     rez[, 1]  
+     0.6498       0.9347  
+     
+     
+=============================\=\
+=============================
+Window wider:
+
+> rez <- cal$rez[[1]]
+     0.1892       0.9560  
+
+> rez <- cal$rez[[2]]
+     0.1243       0.9582  
+
+> rez <- cal$rez[[3]]
+     0.4324       0.9549  
