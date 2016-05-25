@@ -1,7 +1,7 @@
 library(pracma)
 
 rmat <- function(theta) {
-  matrix(c(cos(theta), sin(theta), -sin(theta), cos(theta)), 2, 2)
+  matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
 }
 
 draw_dice <- function(xl = .GlobalEnv[["xl"]], 
@@ -71,7 +71,7 @@ apply_wall <- function(xl = .GlobalEnv[["xl"]],
       vp <- vvs[ind, ]
       j <- compute_j(newton_e, normal_v, vp, r, dice_mass, dice_inertia)
       dice_v <- dice_v + j/dice_mass * normal_v
-      dice_omega <- dice_omega - j/dice_inertia * sum(rperp * normal_v)
+      dice_omega <- dice_omega + j/dice_inertia * sum(rperp * normal_v)
     }
   }
   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
@@ -179,8 +179,8 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(0.01, 0)
-dice_omega <- 0.01
+dice_v <- c(4, 0)
+dice_omega <- 0.5
 
 ## graphical params
 framerate <- 0.1
