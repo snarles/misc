@@ -184,17 +184,23 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
     }
   }
   params <- modifyList(params, update)
-  print(eps)
   update <- do.call2(apply_wall, params)
   params <- modifyList(params, update)
   ## run until noncollision
-  h0 <- do.call(get_hitlist0, params)
-  while(sum(h0) > 0) {
+  eps <- eps/16
+  (h0 <- do.call(get_hitlist0, params))
+  counter <- 0
+  CMAX <- 1024
+  while(sum(h0) > 0 && counter < CMAX) {
+    counter <- counter + 1
     params$eps <- eps
     update <- do.call2(apply_uncons, params)
-    h0 <- do.call(hitlist0, update)
+    (h0 <- do.call(hitlist0, update))
     params <- modifyList(params, update)
+    do.call(get_dcoords, params)
+    do.call(get_vvs, params)
   }
+  if (counter == CMAX) params$terminal = TRUE
   params$eps <- eps0
   params
 }
@@ -205,7 +211,7 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
 
 ## simulation step size
 eps0 <- 0.05
-eps_power <- 10
+eps_power <- 20
 ## hack to fix simulation
 # collision_thres <- 0.1
 
@@ -238,8 +244,8 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(4.3 + 0.1 * runif(1), 0)
-dice_omega <- 0.5 + 0.1 * runif(1)
+dice_v <- c(4.3 + 5 * runif(1), 0)
+dice_omega <- 0.5 + 5 * runif(1)
 
 ## time variable
 tt <- 0
@@ -275,13 +281,23 @@ do.call(draw_dice, params)
 
 
 ## find collision and apply wall
-update <- do.call2(find_collision_time, params)
-params <- modifyList(params, update)
-update <- do.call2(apply_wall, params)
-params <- modifyList(params, update)
-do.call(draw_dice, params)
-en <- do.call(get_energy, params)
-do.call(draw_dice, params); title("post-collision", sub = en)
+while(is.null(params[["terminal"]])) {
+  oldparams <- params
+  update <- do.call2(find_collision_time, params)
+  params <- modifyList(params, update)
+  update <- do.call2(apply_wall, params)
+  params <- modifyList(params, update)
+  en <- do.call(get_energy, params)
+  do.call(draw_dice, params); title("post-collision", sub = en)
+}
+params[["terminal"]]
+do.call(get_dcoords, params)
+do.call(get_hitlist0, params)
+do.call(get_vvs, params)
+
+
+params <- oldparams
+zattach(params)
 ## run until noncollision
 # update <- do.call2(run_until_noncollision, params)
 # params <- modifyList(params, update)
