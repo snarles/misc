@@ -173,7 +173,6 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
                  dice_mass = dice_mass, dice_inertia = dice_inertia,
                  tt = tt, dice_pos = dice_pos, dice_angle = dice_angle, 
                  dice_v = dice_v, dice_omega = dice_omega, eps = eps)
-  update <- list()
   for (i in 1:eps_power) {
     eps <- eps/2
     h0 <- do.call(get_hitlist0, params)
@@ -184,36 +183,25 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
       if (sum(h0) == 0) params <- modifyList(params, update)
     }
   }
-  #update <- do.call(apply_uncons, params)
   params <- modifyList(params, update)
+  print(eps)
+  update <- do.call2(apply_wall, params)
+  params <- modifyList(params, update)
+  ## run until noncollision
+  h0 <- do.call(get_hitlist0, params)
+  while(sum(h0) > 0) {
+    params$eps <- eps
+    update <- do.call2(apply_uncons, params)
+    h0 <- do.call(hitlist0, update)
+    params <- modifyList(params, update)
+  }
   params$eps <- eps0
   params
 }
 
-run_until_noncollision <- function(eps = 0.05, eps_power = 10,
-                                   xl, yl, gcons, drag_f, newton_e, dice_mass, dice_inertia,
-                                   tt, dice_pos, dice_angle, dice_v, dice_omega, ...
-) {
-  eps0 <- eps
-  params <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, newton_e = newton_e,
-                 dice_mass = dice_mass, dice_inertia = dice_inertia,
-                 tt = tt, dice_pos = dice_pos, dice_angle = dice_angle, 
-                 dice_v = dice_v, dice_omega = dice_omega, eps = eps0)
-  update <- list()
-  for (i in 1:eps_power) {
-    eps <- eps/2
-    h0 <- do.call(get_hitlist0, params)
-    while(sum(h0) > 0) {
-      params$eps <- eps
-      update <- do.call2(apply_uncons, params)
-      h0 <- do.call(hitlist0, update)
-      if (sum(h0) > 0) params <- modifyList(params, update)
-    }
-  }
-  params <- modifyList(params, update)
-  params$eps <- eps0
-  params
-}
+####
+##  DEMO
+####
 
 ## simulation step size
 eps0 <- 0.05
@@ -284,22 +272,24 @@ do.call(draw_dice, params)
 ####
 
 ## check energy before collision
-# en <- do.call(get_energy, params)
-# do.call(draw_dice, params); title("pre-collision", sub = en)
+
 
 ## find collision and apply wall
 update <- do.call2(find_collision_time, params)
 params <- modifyList(params, update)
 update <- do.call2(apply_wall, params)
 params <- modifyList(params, update)
-## run until noncollision
-update <- do.call2(run_until_noncollision, params)
-params <- modifyList(params, update)
+do.call(draw_dice, params)
 en <- do.call(get_energy, params)
 do.call(draw_dice, params); title("post-collision", sub = en)
-do.call(get_dcoords, params)
-do.call(get_hitlist0, params)
-do.call(get_vvs, params)
+## run until noncollision
+# update <- do.call2(run_until_noncollision, params)
+# params <- modifyList(params, update)
+# en <- do.call(get_energy, params)
+# do.call(draw_dice, params); title("post-collision", sub = en)
+# do.call(get_dcoords, params)
+# do.call(get_hitlist0, params)
+# do.call(get_vvs, params)
 #do.call(draw_dice, params)
 
 
