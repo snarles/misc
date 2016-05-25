@@ -157,14 +157,33 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
                  dice_mass = dice_mass, dice_inertia = dice_inertia,
                  tt = tt, dice_pos = dice_pos, dice_angle = dice_angle, 
                  dice_v = dice_v, dice_omega = dice_omega, eps = eps)
+  ft <- TRUE
+  count <- 1
   for (i in 1:eps_power) {
     eps <- eps/2
     h0 <- do.call(get_hitlist0, params)
     while(sum(h0) == 0) {
       params$eps <- eps
       update <- do.call2(apply_uncons, params)
-      h0 <- do.call(hitlist0, update)
-      if (sum(h0) == 0) params <- modifyList(params, update)
+      h0 <- do.call(get_hitlist0, modifyList(params, update))
+      if (sum(h0) == 0) {
+        params <- modifyList(params, update)
+        count <- count + 1
+        if (count %% 3 == 0) {
+          params$add = TRUE
+          polygon(c(-3, 3, 3, -3), c(5, 5, 0, 0), col = rgb(1,1,1,0.1),
+                  border = "black")
+          do.call(draw_dice, params)
+          params$add = FALSE
+          
+        }
+        
+        if (!ft) { 
+          Sys.sleep(0.2)
+        } else {
+          ft <- FALSE
+        }
+      }
     }
   }
   params <- modifyList(params, update)
@@ -172,14 +191,14 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
   params <- modifyList(params, update)
   ## run until noncollision
   eps <- eps/16
-  (h0 <- do.call(get_hitlist0, params))
+  (h0 <- do.call(get_hitlist0, modifyList(params, update)))
   counter <- 0
-  CMAX <- 1024
+  CMAX <- 1000
   while(sum(h0) > 0 && counter < CMAX) {
     counter <- counter + 1
     params$eps <- eps
     update <- do.call2(apply_uncons, params)
-    (h0 <- do.call(hitlist0, update))
+    (h0 <- do.call(get_hitlist0, modifyList(params, update)))
     params <- modifyList(params, update)
     do.call(get_dcoords, params)
     do.call(get_vvs, params)
@@ -200,9 +219,9 @@ eps_power <- 10
 # collision_thres <- 0.1
 
 ## gravity
-gcons <- 2
+gcons <- 9
 ## newton e const
-newton_e <- 0.8
+newton_e <- 0.2
 ## air_res effect
 drag_f <- 0
 
@@ -228,8 +247,8 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(4.3 + 5 * runif(1), 0)
-dice_omega <- 0.5 + 5 * runif(1)
+dice_v <- c(0 + 2 * runif(1), 0)
+dice_omega <- 0.5 + 2 * runif(1)
 
 ## time variable
 tt <- 0
