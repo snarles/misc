@@ -54,6 +54,18 @@ apply_uncons <- function(gcons, dice_pos, dice_angle, dice_v, dice_omega, drag_f
        tt = tt)
 }
 
+apply_slide <- function(gcons, dice_pos, dice_angle, dice_v, dice_omega, drag_f, eps, tt, ...) {
+  #dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
+  dice_v[2] <- 0
+  dice_omega <- 0
+  #dice_v[2] <- dice_v[2] - eps * gcons
+  #dice_angle <- dice_angle + eps * dice_omega
+  dice_pos <- dice_pos + eps * dice_v
+  tt <- tt + eps
+  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega,
+       tt = tt)
+}
+
 apply_wall <- function(xl, yl, dice_pos, dice_angle, dice_v, dice_omega, dice_mass,
                        dice_inertia, newton_e, ...) {
   ## compute the coordinates
@@ -122,22 +134,6 @@ get_energy <- function(gcons, dice_pos, dice_angle,
   gpot + kinet
 }
 
-# force_energy_conservation <- function(en0, gcons = .GlobalEnv[["gcons"]],
-#                                       dice_pos = .GlobalEnv[["dice_pos"]],
-#                                       dice_angle = .GlobalEnv[["dice_angle"]],
-#                                       dice_v = .GlobalEnv[["dice_v"]],
-#                                       dice_omega = .GlobalEnv[["dice_omega"]],
-#                                       dice_mass = .GlobalEnv[["dice_mass"]],
-#                                       ...) {
-#   en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
-#   while (en > en0 && sum(abs(dice_v) + abs(dice_omega)) > 1e-3) {
-#     dice_v <- dice_v * c(0.999, 0.99)
-#     dice_omega <- dice_omega * 0.95
-#     en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
-#   }
-#   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
-# }
-
 get_dcoords <- function(dice_pos, dice_angle, ...) {
   dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
 }
@@ -183,25 +179,24 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
       if (sum(h0) == 0) params <- modifyList(params, update)
     }
   }
-  params_post <- modifyList(params, update)
-  update <- do.call2(apply_wall, params_post)
-  params$dice_v <- update$dice_v
-  params$dice_omega <- update$dive_c
-  # ## run until noncollision
-  # eps <- eps/16
-  # (h0 <- do.call(get_hitlist0, params))
-  # counter <- 0
-  # CMAX <- 1024
-  # while(sum(h0) > 0 && counter < CMAX) {
-  #   counter <- counter + 1
-  #   params$eps <- eps
-  #   update <- do.call2(apply_uncons, params)
-  #   (h0 <- do.call(hitlist0, update))
-  #   params <- modifyList(params, update)
-  #   do.call(get_dcoords, params)
-  #   do.call(get_vvs, params)
-  # }
-  # if (counter == CMAX) params$terminal = TRUE
+  params <- modifyList(params, update)
+  update <- do.call2(apply_wall, params)
+  params <- modifyList(params, update)
+  ## run until noncollision
+  eps <- eps/16
+  (h0 <- do.call(get_hitlist0, params))
+  counter <- 0
+  CMAX <- 1024
+  while(sum(h0) > 0 && counter < CMAX) {
+    counter <- counter + 1
+    params$eps <- eps
+    update <- do.call2(apply_uncons, params)
+    (h0 <- do.call(hitlist0, update))
+    params <- modifyList(params, update)
+    do.call(get_dcoords, params)
+    do.call(get_vvs, params)
+  }
+  if (counter == CMAX) params$terminal = TRUE
   params$eps <- eps0
   params
 }
@@ -300,14 +295,13 @@ do.call(get_vvs, params)
 
 params <- oldparams
 zattach(params)
-## run until noncollision
-# update <- do.call2(run_until_noncollision, params)
-# params <- modifyList(params, update)
-# en <- do.call(get_energy, params)
-# do.call(draw_dice, params); title("post-collision", sub = en)
-# do.call(get_dcoords, params)
-# do.call(get_hitlist0, params)
-# do.call(get_vvs, params)
-#do.call(draw_dice, params)
 
+# saveRDS(params, "physics/testcase.rds")
+params <- readRDS("physics/testcase.rds")
+params$eps <- 1e-7
+update <- do.call(apply_uncons, params)
 
+params <- modifyList(params, update)
+update <- do.call(apply_uncons, params)
+do.call(get_dcoords, update)
+do.call(get_vvs, update)
