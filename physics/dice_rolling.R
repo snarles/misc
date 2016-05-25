@@ -138,8 +138,8 @@ force_energy_conservation <- function(en0, gcons = .GlobalEnv[["gcons"]],
                                       dice_mass = .GlobalEnv[["dice_mass"]]) {
   en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
   while (en > en0 && sum(abs(dice_v) + abs(dice_omega)) > 1e-3) {
-    dice_v <- dice_v * 0.99
-    dice_omega <- dice_omega * 0.99
+    dice_v <- dice_v * c(0.999, 0.99)
+    dice_omega <- dice_omega * 0.95
     en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
   }
   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
@@ -176,11 +176,11 @@ dice_inertia <- dice_mass/4 * sum(rowSums(dice_verts^2))
 
 ## initial position of dice
 dice_pos <- c(0, 3)
-dice_angle <- 0.2
+dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(3, -1)
-dice_omega <- 0
+dice_v <- c(0.01, 0)
+dice_omega <- 0.01
 
 ## graphical params
 framerate <- 0.1
