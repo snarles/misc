@@ -191,7 +191,7 @@ framerate <- 0.1
 # eps0 <- 0.05
 # eps <- pmin(0.2/abs(dice_omega + 1), eps0)
 draw_dice()
-for (i in 1:50) {
+for (i in 1:100) {
   en_prev <- energy_dice()
   update <- apply_uncons()
   lineId::zattach(update)
@@ -202,7 +202,7 @@ for (i in 1:50) {
   update <- force_energy_conservation(en_prev)
   lineId::zattach(update)
   if (i %%5 == 0) {
-    polygon(c(xl[1], xl[2], xl[2], xl[1]), c(yl[1], yl[1], yl[2], yl[2]), col = rgb(1,1,1,0.1))
+    polygon(c(xl[1], xl[2], xl[2], xl[1]), c(yl[1], yl[1], yl[2], yl[2]), col = rgb(1,1,1,0.05))
     draw_dice(add = TRUE)
   }
 }
