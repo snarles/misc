@@ -183,24 +183,25 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
       if (sum(h0) == 0) params <- modifyList(params, update)
     }
   }
-  params <- modifyList(params, update)
-  update <- do.call2(apply_wall, params)
-  params <- modifyList(params, update)
-  ## run until noncollision
-  eps <- eps/16
-  (h0 <- do.call(get_hitlist0, params))
-  counter <- 0
-  CMAX <- 1024
-  while(sum(h0) > 0 && counter < CMAX) {
-    counter <- counter + 1
-    params$eps <- eps
-    update <- do.call2(apply_uncons, params)
-    (h0 <- do.call(hitlist0, update))
-    params <- modifyList(params, update)
-    do.call(get_dcoords, params)
-    do.call(get_vvs, params)
-  }
-  if (counter == CMAX) params$terminal = TRUE
+  params_post <- modifyList(params, update)
+  update <- do.call2(apply_wall, params_post)
+  params$dice_v <- update$dice_v
+  params$dice_omega <- update$dive_c
+  # ## run until noncollision
+  # eps <- eps/16
+  # (h0 <- do.call(get_hitlist0, params))
+  # counter <- 0
+  # CMAX <- 1024
+  # while(sum(h0) > 0 && counter < CMAX) {
+  #   counter <- counter + 1
+  #   params$eps <- eps
+  #   update <- do.call2(apply_uncons, params)
+  #   (h0 <- do.call(hitlist0, update))
+  #   params <- modifyList(params, update)
+  #   do.call(get_dcoords, params)
+  #   do.call(get_vvs, params)
+  # }
+  # if (counter == CMAX) params$terminal = TRUE
   params$eps <- eps0
   params
 }
@@ -289,6 +290,7 @@ while(is.null(params[["terminal"]])) {
   params <- modifyList(params, update)
   en <- do.call(get_energy, params)
   do.call(draw_dice, params); title("post-collision", sub = en)
+  print(params$tt - oldparams$tt)
 }
 params[["terminal"]]
 do.call(get_dcoords, params)
