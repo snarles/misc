@@ -7,12 +7,14 @@ rmat <- function(theta) {
 draw_dice <- function(xl = .GlobalEnv[["xl"]], 
                       yl = .GlobalEnv[["yl"]], 
                       dice_pos = .GlobalEnv[["dice_pos"]],
-                      dice_angle = .GlobalEnv[["dice_angle"]]) {
-  plot(NA, NA, xlim = xl, ylim = yl, ann = FALSE, axes = FALSE, asp = 1)
-  abline(yl[1],0, lwd = 2)
-  abline(yl[2],0, lwd = 2)
-  abline(v = xl[1], lwd = 2)
-  abline(v = xl[2], lwd = 2)
+                      dice_angle = .GlobalEnv[["dice_angle"]], add = FALSE) {
+  if (!add) {
+    plot(NA, NA, xlim = xl, ylim = yl, ann = FALSE, axes = FALSE, asp = 1)
+    abline(yl[1],0, lwd = 2)
+    abline(yl[2],0, lwd = 2)
+    abline(v = xl[1], lwd = 2)
+    abline(v = xl[2], lwd = 2)
+  }
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   lines(dcoors[2:3, ], col = "grey", lwd = 2)
   lines(dcoors[3:4, ], col = "grey", lwd = 2)
@@ -179,26 +181,29 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(4, 0)
-dice_omega <- 0.5
+dice_v <- c(4.3 + 0.1 * runif(1), 0)
+dice_omega <- 0.5 + 0.1 * runif(1)
 
 ## graphical params
 framerate <- 0.1
 
-draw_dice()
 
 # eps0 <- 0.05
 # eps <- pmin(0.2/abs(dice_omega + 1), eps0)
-
-en_prev <- energy_dice()
-update <- apply_uncons()
-lineId::zattach(update)
-update <- apply_wall()
-lineId::zattach(update)
-update <- project_back()
-lineId::zattach(update)
-update <- force_energy_conservation(en_prev)
-lineId::zattach(update)
-
 draw_dice()
+for (i in 1:50) {
+  en_prev <- energy_dice()
+  update <- apply_uncons()
+  lineId::zattach(update)
+  update <- apply_wall()
+  lineId::zattach(update)
+  update <- project_back()
+  lineId::zattach(update)
+  update <- force_energy_conservation(en_prev)
+  lineId::zattach(update)
+  if (i %%5 == 0) {
+    polygon(c(xl[1], xl[2], xl[2], xl[1]), c(yl[1], yl[1], yl[2], yl[2]), col = rgb(1,1,1,0.1))
+    draw_dice(add = TRUE)
+  }
+}
 list(dice_omega = dice_omega, dice_v = dice_v, dice_en = en_prev)
