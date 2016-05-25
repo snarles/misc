@@ -54,18 +54,6 @@ apply_uncons <- function(gcons, dice_pos, dice_angle, dice_v, dice_omega, drag_f
        tt = tt)
 }
 
-apply_slide <- function(gcons, dice_pos, dice_angle, dice_v, dice_omega, drag_f, eps, tt, ...) {
-  #dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
-  dice_v[2] <- 0
-  dice_omega <- 0
-  #dice_v[2] <- dice_v[2] - eps * gcons
-  #dice_angle <- dice_angle + eps * dice_omega
-  dice_pos <- dice_pos + eps * dice_v
-  tt <- tt + eps
-  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega,
-       tt = tt)
-}
-
 apply_wall <- function(xl, yl, dice_pos, dice_angle, dice_v, dice_omega, dice_mass,
                        dice_inertia, newton_e, ...) {
   ## compute the coordinates
@@ -207,16 +195,16 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
 
 ## simulation step size
 eps0 <- 0.05
-eps_power <- 20
+eps_power <- 10
 ## hack to fix simulation
 # collision_thres <- 0.1
 
 ## gravity
 gcons <- 2
 ## newton e const
-newton_e <- 0.9
+newton_e <- 0.8
 ## air_res effect
-drag_f <- 0.05
+drag_f <- 0
 
 ## size of box
 xl <- c(-3, 3)
@@ -293,15 +281,15 @@ do.call(get_hitlist0, params)
 do.call(get_vvs, params)
 
 
-params <- oldparams
-zattach(params)
+# params <- oldparams
+# zattach(params)
 
 # saveRDS(params, "physics/testcase.rds")
-params <- readRDS("physics/testcase.rds")
-params$eps <- 1e-7
-update <- do.call(apply_uncons, params)
-
-params <- modifyList(params, update)
-update <- do.call(apply_uncons, params)
-do.call(get_dcoords, update)
-do.call(get_vvs, update)
+# params <- readRDS("physics/testcase.rds")
+# params$eps <- 1e-7
+# update <- do.call(apply_uncons, params)
+# 
+# params <- modifyList(params, update)
+# update <- do.call(apply_uncons, params)
+# do.call(get_dcoords, update)
+# do.call(get_vvs, update)
