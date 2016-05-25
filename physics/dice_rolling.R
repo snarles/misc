@@ -1,14 +1,32 @@
 library(pracma)
 
+###
+# Utility functions
+###
+
+zattach <- function (ll) 
+{
+  for (i in 1:length(ll)) {
+    assign(names(ll)[i], ll[[i]], envir = globalenv())
+  }
+}
+
+do.call2 <- function (f, ll, ...) 
+{
+  dots <- eval(substitute(alist(...)))
+  ll <- modifyList(ll, dots)
+  do.call(f, ll)
+}
+
+###
+#  Code
+###
+
 rmat <- function(theta) {
   matrix(c(cos(theta), -sin(theta), sin(theta), cos(theta)), 2, 2)
 }
 
-draw_dice <- function(xl = .GlobalEnv[["xl"]], 
-                      yl = .GlobalEnv[["yl"]], 
-                      dice_pos = .GlobalEnv[["dice_pos"]],
-                      dice_angle = .GlobalEnv[["dice_angle"]], add = FALSE,
-                      ...) {
+draw_dice <- function(xl, yl, dice_pos, dice_angle, add = FALSE, ...) {
   if (!add) {
     plot(NA, NA, xlim = xl, ylim = yl, ann = FALSE, axes = FALSE, asp = 1)
     abline(yl[1],0, lwd = 2)
@@ -24,34 +42,20 @@ draw_dice <- function(xl = .GlobalEnv[["xl"]],
   lines(dcoors[1:2, ], col = "red", lwd = 2)
 }
 
-apply_uncons <- function(gcons = .GlobalEnv[["gcons"]],
-                         dice_pos = .GlobalEnv[["dice_pos"]],
-                         dice_angle = .GlobalEnv[["dice_angle"]],
-                         dice_v = .GlobalEnv[["dice_v"]],
-                         dive_omega = .GlobalEnv[["dice_omega"]],
-                         drag_f = .GlobalEnv[["drag_f"]],
-                         eps =  .GlobalEnv[["eps"]],
-                         ...) {
+apply_uncons <- function(gcons, dice_pos, dice_angle, dice_v, dice_omega, drag_f, eps, tt, ...) {
   #dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   dice_v[2] <- dice_v[2] - eps * gcons
   dice_angle <- dice_angle + eps * dice_omega
   dice_pos <- dice_pos + eps * dice_v
   dice_v <- dice_v * (1 - eps* drag_f)
   dice_omega <- dice_omega * (1- eps*drag_f)
-  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
-  
+  tt <- tt + eps
+  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega,
+       tt = tt)
 }
 
-apply_wall <- function(xl = .GlobalEnv[["xl"]], 
-                       yl = .GlobalEnv[["yl"]], 
-                       dice_pos = .GlobalEnv[["dice_pos"]],
-                       dice_angle = .GlobalEnv[["dice_angle"]],
-                       dice_v = .GlobalEnv[["dice_v"]],
-                       dice_omega = .GlobalEnv[["dice_omega"]],
-                       dice_mass = .GlobalEnv[["dice_mass"]],
-                       dice_inertia = .GlobalEnv[["dice_inertia"]],
-                       newton_e = .GlobalEnv[["newton_e"]],
-                       ...) {
+apply_wall <- function(xl, yl, dice_pos, dice_angle, dice_v, dice_omega, dice_mass,
+                       dice_inertia, newton_e, ...) {
   ## compute the coordinates
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   dcoors0 <- dice_verts %*% rmat(dice_angle) 
@@ -82,11 +86,7 @@ apply_wall <- function(xl = .GlobalEnv[["xl"]],
   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
 }
 
-project_back <- function(xl = .GlobalEnv[["xl"]], 
-                         yl = .GlobalEnv[["yl"]], 
-                         dice_pos = .GlobalEnv[["dice_pos"]],
-                         dice_angle = .GlobalEnv[["dice_angle"]],
-                         ...) {
+project_back <- function(xl, yl, dice_pos, dice_angle, ...) {
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   if (min(dcoors[, 1]) < xl[1]) dice_pos[1] <- dice_pos[1] + (xl[1] - min(dcoors[, 1]))
   if (max(dcoors[, 1]) > xl[2]) dice_pos[1] <- dice_pos[1] + (xl[2] - max(dcoors[, 1]))
@@ -100,20 +100,9 @@ compute_j <- function(newton_e, normal_v, v, r, Ma, Ia) {
   -(1 + newton_e) * sum(v * normal_v)/(1/Ma + sum(rperp * normal_v)^2/Ia)
 }
 
-simulate_dice <- function(xl = .GlobalEnv[["xl"]], 
-                          yl = .GlobalEnv[["yl"]], 
-                          gcons = .GlobalEnv[["gcons"]],
-                          drag_f = .GlobalEnv[["drag_f"]],
-                          dice_pos = .GlobalEnv[["dice_pos"]],
-                          dice_angle = .GlobalEnv[["dice_angle"]],
-                          dice_v = .GlobalEnv[["dice_v"]],
-                          dice_omega = .GlobalEnv[["dice_omega"]],
-                          dice_mass = .GlobalEnv[["dice_mass"]],
-                          dice_inertia = .GlobalEnv[["dice_inertia"]],
-                          newton_e = .GlobalEnv[["newton_e"]],
-                          eps =  .GlobalEnv[["eps"]],
-                          framerate = .GlobalEnv[["framerate"]],
-                          ...) {
+simulate_dice <- function(xl, yl, gcons, drag_f, dice_pos, dice_angle,
+                          dice_v, dice_omega, dice_mass, dice_inertia,
+                          newton_e, eps, framerate, ...) {
   tt <- 0
   params <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, 
                  dice_pos = dice_pos, dice_angle = dice_angle,
@@ -122,13 +111,8 @@ simulate_dice <- function(xl = .GlobalEnv[["xl"]],
                  newton_e = newton_e, eps = eps, framerate = framerate)
 }
 
-energy_dice <- function(gcons = .GlobalEnv[["gcons"]],
-                        dice_pos = .GlobalEnv[["dice_pos"]],
-                        dice_angle = .GlobalEnv[["dice_angle"]],
-                        dice_v = .GlobalEnv[["dice_v"]],
-                        dice_omega = .GlobalEnv[["dice_omega"]],
-                        dice_mass = .GlobalEnv[["dice_mass"]],
-                        ...) {
+get_energy <- function(gcons, dice_pos, dice_angle,
+                        dice_v, dice_omega, dice_mass, ...) {
   gpot <- gcons * dice_mass * dice_pos[2]
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   dcoors0 <- dice_verts %*% rmat(dice_angle) 
@@ -138,41 +122,27 @@ energy_dice <- function(gcons = .GlobalEnv[["gcons"]],
   gpot + kinet
 }
 
-force_energy_conservation <- function(en0, gcons = .GlobalEnv[["gcons"]],
-                                      dice_pos = .GlobalEnv[["dice_pos"]],
-                                      dice_angle = .GlobalEnv[["dice_angle"]],
-                                      dice_v = .GlobalEnv[["dice_v"]],
-                                      dice_omega = .GlobalEnv[["dice_omega"]],
-                                      dice_mass = .GlobalEnv[["dice_mass"]],
-                                      ...) {
-  en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
-  while (en > en0 && sum(abs(dice_v) + abs(dice_omega)) > 1e-3) {
-    dice_v <- dice_v * c(0.999, 0.99)
-    dice_omega <- dice_omega * 0.95
-    en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
-  }
-  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
-}
+# force_energy_conservation <- function(en0, gcons = .GlobalEnv[["gcons"]],
+#                                       dice_pos = .GlobalEnv[["dice_pos"]],
+#                                       dice_angle = .GlobalEnv[["dice_angle"]],
+#                                       dice_v = .GlobalEnv[["dice_v"]],
+#                                       dice_omega = .GlobalEnv[["dice_omega"]],
+#                                       dice_mass = .GlobalEnv[["dice_mass"]],
+#                                       ...) {
+#   en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
+#   while (en > en0 && sum(abs(dice_v) + abs(dice_omega)) > 1e-3) {
+#     dice_v <- dice_v * c(0.999, 0.99)
+#     dice_omega <- dice_omega * 0.95
+#     en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
+#   }
+#   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
+# }
 
-dyn_vars <- function(dice_pos = .GlobalEnv[["dice_pos"]],
-                     dice_angle = .GlobalEnv[["dice_angle"]],
-                     dice_v = .GlobalEnv[["dice_v"]],
-                     dice_omega = .GlobalEnv[["dice_omega"]],
-                     ...) {
-  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
-}
-
-dcoords <- function(dice_pos = .GlobalEnv[["dice_pos"]],
-                    dice_angle = .GlobalEnv[["dice_angle"]],
-                    ...) {
+get_dcoords <- function(dice_pos, dice_angle, ...) {
   dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
 }
 
-hitlist0 <- function(xl = .GlobalEnv[["xl"]], 
-                     yl = .GlobalEnv[["yl"]], 
-                     dice_pos = .GlobalEnv[["dice_pos"]],
-                     dice_angle = .GlobalEnv[["dice_angle"]],
-                     ...) {
+get_hitlist0 <- function(xl, yl,  dice_pos, dice_angle,  ...) {
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   hitX1 <- dcoors[, 1] < xl[1]
   hitX2 <- dcoors[, 1] > xl[2]
@@ -192,6 +162,57 @@ get_vvs <- function(dice_pos = .GlobalEnv[["dice_pos"]],
   dcoors_perp <- cbind(-dcoors0[, 2], dcoors0[, 1])
   ## vertex velocities
   repmat(dice_v, 4, 1) + dcoors_perp * dice_omega
+}
+
+find_collision_time <- function(eps = 0.05, eps_power = 10,
+                                xl, yl, gcons, drag_f, newton_e, dice_mass, dice_inertia,
+                                tt, dice_pos, dice_angle, dice_v, dice_omega, ...
+) {
+  eps0 <- eps
+  params <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, newton_e = newton_e,
+                 dice_mass = dice_mass, dice_inertia = dice_inertia,
+                 tt = tt, dice_pos = dice_pos, dice_angle = dice_angle, 
+                 dice_v = dice_v, dice_omega = dice_omega, eps = eps)
+  update <- list()
+  for (i in 1:eps_power) {
+    eps <- eps/2
+    h0 <- do.call(get_hitlist0, params)
+    while(sum(h0) == 0) {
+      params$eps <- eps
+      update <- do.call2(apply_uncons, params)
+      h0 <- do.call(hitlist0, update)
+      if (sum(h0) == 0) params <- modifyList(params, update)
+    }
+  }
+  #update <- do.call(apply_uncons, params)
+  params <- modifyList(params, update)
+  params$eps <- eps0
+  params
+}
+
+run_until_noncollision <- function(eps = 0.05, eps_power = 10,
+                                   xl, yl, gcons, drag_f, newton_e, dice_mass, dice_inertia,
+                                   tt, dice_pos, dice_angle, dice_v, dice_omega, ...
+) {
+  eps0 <- eps
+  params <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, newton_e = newton_e,
+                 dice_mass = dice_mass, dice_inertia = dice_inertia,
+                 tt = tt, dice_pos = dice_pos, dice_angle = dice_angle, 
+                 dice_v = dice_v, dice_omega = dice_omega, eps = eps0)
+  update <- list()
+  for (i in 1:eps_power) {
+    eps <- eps/2
+    h0 <- do.call(get_hitlist0, params)
+    while(sum(h0) > 0) {
+      params$eps <- eps
+      update <- do.call2(apply_uncons, params)
+      h0 <- do.call(hitlist0, update)
+      if (sum(h0) > 0) params <- modifyList(params, update)
+    }
+  }
+  params <- modifyList(params, update)
+  params$eps <- eps0
+  params
 }
 
 ## simulation step size
@@ -235,80 +256,50 @@ dice_omega <- 0.5 + 0.1 * runif(1)
 ## time variable
 tt <- 0
 
-params <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, 
+## graphical params
+framerate <- 0.1
+
+# list of params for copy/paste
+# xl, yl, gcons, drag_f, newton_e, dice_mass, dice_inertia,
+# tt, dice_pos, dice_angle, dice_v, dice_omega, 
+
+## put everything into a list
+params0 <- list(xl = xl, yl = yl, gcons = gcons, drag_f = drag_f, 
                dice_pos = dice_pos, dice_angle = dice_angle,
                dice_v = dice_v, dice_omega = dice_omega,
                dice_mass = dice_mass, dice_inertia = dice_inertia,
                newton_e = newton_e, eps0 = eps0, framerate = framerate, 
                eps = eps0, eps_power = eps_power, tt = tt)
 
-params0 <- params
-do.call(energy_dice, params)
+####
+##  Initialize
+####
+
+params <- params0
+do.call(get_energy, params)
 do.call(draw_dice, params)
-
-## graphical params
-framerate <- 0.1
-
 
 ####
 ##  Find collision time
 ####
 
-
-
-eps <- 0.05
-for (i in 1:eps_power) {
-  eps <- eps/2
-  h0 <- hitlist0()
-  while(sum(h0) == 0) {
-    update <- apply_uncons()
-    h0 <- do.call(hitlist0, update)
-    if (sum(h0) == 0) lineId::zattach(update)
-  }
-}
-# draw_dice()
-# hitlist0()
-# dcoords()
-
 ## check energy before collision
-energy_dice()
-update <- apply_uncons()
-lineId::zattach(update)
-hitlist0()
-dcoords()
-update <- apply_wall()
-do.call(energy_dice, update) ## postcollision energy
-do.call(dcoords, update)
-do.call(get_vvs, update)
-lineId::zattach(update)
+# en <- do.call(get_energy, params)
+# do.call(draw_dice, params); title("pre-collision", sub = en)
 
+## find collision and apply wall
+update <- do.call2(find_collision_time, params)
+params <- modifyList(params, update)
+update <- do.call2(apply_wall, params)
+params <- modifyList(params, update)
 ## run until noncollision
-(h0 <- hitlist0())
-while(sum(h0) > 0) {
-  update <- apply_uncons()
-  lineId::zattach(update)
-  (h0 <- hitlist0())
-}
+update <- do.call2(run_until_noncollision, params)
+params <- modifyList(params, update)
+en <- do.call(get_energy, params)
+do.call(draw_dice, params); title("post-collision", sub = en)
+do.call(get_dcoords, params)
+do.call(get_hitlist0, params)
+do.call(get_vvs, params)
+#do.call(draw_dice, params)
 
 
-
-
-# eps0 <- 0.05
-# eps <- pmin(0.2/abs(dice_omega + 1), eps0)
-# draw_dice()
-# for (i in 1:100) {
-#   en_prev <- energy_dice()
-#   update <- apply_uncons()
-#   lineId::zattach(update)
-#   update <- apply_wall()
-#   lineId::zattach(update)
-#   update <- project_back()
-#   lineId::zattach(update)
-#   update <- force_energy_conservation(en_prev)
-#   lineId::zattach(update)
-#   if (i %%5 == 0) {
-#     polygon(c(xl[1], xl[2], xl[2], xl[1]), c(yl[1], yl[1], yl[2], yl[2]), col = rgb(1,1,1,0.05))
-#     draw_dice(add = TRUE)
-#   }
-# }
-# list(dice_omega = dice_omega, dice_v = dice_v, dice_en = en_prev)
