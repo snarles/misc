@@ -28,6 +28,7 @@ apply_uncons <- function(gcons = .GlobalEnv[["gcons"]],
                          dive_omega = .GlobalEnv[["dice_omega"]],
                          drag_f = .GlobalEnv[["drag_f"]],
                          eps =  .GlobalEnv[["eps"]]) {
+  #dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   dice_v[2] <- dice_v[2] - eps * gcons
   dice_angle <- dice_angle + eps * dice_omega
   dice_pos <- dice_pos + eps * dice_v
@@ -67,9 +68,10 @@ apply_wall <- function(xl = .GlobalEnv[["xl"]],
       ind <- which(hitlist[[i]])[sample(sum(hitlist[[i]]), 1)]
       r <- dcoors0[ind, ]
       rperp <- c(-r[2], r[1])
-      j <- compute_j(newton_e, normal_v, dice_v, r, dice_mass, dice_inertia)
+      vp <- vvs[ind, ]
+      j <- compute_j(newton_e, normal_v, vp, r, dice_mass, dice_inertia)
       dice_v <- dice_v + j/dice_mass * normal_v
-      dice_omega <- dice_omega + j/dice_inertia * sum(r * normal_v)
+      dice_omega <- dice_omega - j/dice_inertia * sum(rperp * normal_v)
     }
   }
   list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
@@ -113,22 +115,54 @@ simulate_dice <- function(xl = .GlobalEnv[["xl"]],
                  newton_e = newton_e, eps = eps, framerate = framerate)
 }
 
+energy_dice <- function(gcons = .GlobalEnv[["gcons"]],
+                        dice_pos = .GlobalEnv[["dice_pos"]],
+                        dice_angle = .GlobalEnv[["dice_angle"]],
+                        dice_v = .GlobalEnv[["dice_v"]],
+                        dice_omega = .GlobalEnv[["dice_omega"]],
+                        dice_mass = .GlobalEnv[["dice_mass"]]) {
+  gpot <- gcons * dice_mass * dice_pos[2]
+  dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
+  dcoors0 <- dice_verts %*% rmat(dice_angle) 
+  dcoors_perp <- cbind(-dcoors0[, 2], dcoors0[, 1])
+  vvs <- repmat(dice_v, 4, 1) + dcoors_perp * dice_omega
+  kinet <- 1/2 * sum(rowSums(vvs^2) * dice_mass/4)
+  gpot + kinet
+}
+
+force_energy_conservation <- function(en0, gcons = .GlobalEnv[["gcons"]],
+                                      dice_pos = .GlobalEnv[["dice_pos"]],
+                                      dice_angle = .GlobalEnv[["dice_angle"]],
+                                      dice_v = .GlobalEnv[["dice_v"]],
+                                      dice_omega = .GlobalEnv[["dice_omega"]],
+                                      dice_mass = .GlobalEnv[["dice_mass"]]) {
+  en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
+  while (en > en0 && sum(abs(dice_v) + abs(dice_omega)) > 1e-3) {
+    dice_v <- dice_v * 0.99
+    dice_omega <- dice_omega * 0.99
+    en <- energy_dice(gcons, dice_pos, dice_angle, dice_v, dice_omega, dice_mass)
+  }
+  list(dice_pos = dice_pos, dice_angle = dice_angle, dice_v = dice_v, dice_omega = dice_omega)
+}
+
 ## simulation step size
 eps <- 0.05
+## hack to fix simulation
+collision_thres <- 0.1
 
 ## gravity
 gcons <- 2
 ## newton e const
-newton_e <- 0.99
+newton_e <- 0.9
 ## air_res effect
-drag_f <- 0.1
+drag_f <- 0.05
 
 ## size of box
 xl <- c(-3, 3)
 yl <- c(0, 5)
 
 ## size of dice
-dice_sz <- 0.5
+dice_sz <- 0.9
 ## coords of dice relative to center of mass
 dice_verts <- dice_sz * 
   rbind(c(-.5, .5),
@@ -142,20 +176,29 @@ dice_inertia <- dice_mass/4 * sum(rowSums(dice_verts^2))
 
 ## initial position of dice
 dice_pos <- c(0, 3)
-dice_angle <- 0.3
+dice_angle <- 0.2
 
 ## initial velocity of dice
-dice_v <- c(1, 0)
+dice_v <- c(3, -1)
 dice_omega <- 0
+
+## graphical params
+framerate <- 0.1
 
 draw_dice()
 
-eps0 <- 0.05
-eps <- pmin(0.05/abs(dice_omega + 1), eps0)
+# eps0 <- 0.05
+# eps <- pmin(0.2/abs(dice_omega + 1), eps0)
+
+en_prev <- energy_dice()
 update <- apply_uncons()
 lineId::zattach(update)
 update <- apply_wall()
 lineId::zattach(update)
 update <- project_back()
 lineId::zattach(update)
+update <- force_energy_conservation(en_prev)
+lineId::zattach(update)
+
 draw_dice()
+list(dice_omega = dice_omega, dice_v = dice_v, dice_en = en_prev)
