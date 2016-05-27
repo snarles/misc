@@ -248,7 +248,7 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(2.1, 0) # 2, 2.01, 2.1
+dice_v <- c(2, 0) # 2, 2.01, 2.1
 dice_omega <- 0.5
 
 ## time variable
