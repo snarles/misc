@@ -312,13 +312,13 @@ simulate_dice <- function(init_pos = c(0.99, 3)) {
 
 
 library(parallel)
-xs <- seq(-2, 2, 0.5)
-ys <- seq(1, 4, 0.2)
+xs <- seq(-2, 2, 0.05)
+ys <- seq(1, 5, 0.05)
 temp <- as.matrix(AlgDesign::gen.factorial(c(length(xs), length(ys)), center = FALSE))
 des <- cbind(x0 = xs[temp[, 1]], y0 = ys[temp[, 2]])
 t1 <- proc.time()
 res <- mclapply(1:nrow(des), function(i) simulate_dice(des[i, ]),
-                mc.cores= 9)
+                mc.cores= 39)
 t2 <- proc.time() - t1
 res2 <- do.call(rbind, res)
 lab <- floor(((floor(res2[, "a"]/(pi/8)) + 2) %% 16)/4)
@@ -339,10 +339,11 @@ for (i in 1:nrow(res3)) {
 }
 
 layout(1)
-plot(res3[, 1:2])
-colrs <- rainbow(4)
+par(bg = "white")
+plot(res3[, 1:2], col = "white")
+colrs <- c("black", "green", "red", "blue")
 for (i in 0:3) {
-  points(res3[res3[, "lab"] == i, 1:2], col = colrs[i+1], pch = 19, cex = 2)
+  points(res3[res3[, "lab"] == i, 1:2], col = colrs[i+1], pch = 19, cex = 1)
 }
 
 saveRDS(res3, file = "physics/dr2.rds")
