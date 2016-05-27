@@ -67,8 +67,9 @@ cp_simulation_out <- function(X, X2, bt = rnorm(ncol(X)), sigm2 = 1,
 ##  Run the stuff
 ####
 
-res_cp <- sapply(1:1e5, function(i) cp_simulation(X, rep(0,p)))
+res_cp <- sapply(1:1e5, function(i) cp_simulation(X, rep(0,p), true_sigma = TRUE))
 rowMeans(res_cp)
+apply(res_cp, 1, var) ## 2sigma4 * (n + 3p, n - p)
 
 f <- function(X) X[, 1]^2 + sin(X[, 2]/5)
 res_cp_nl <- sapply(1:1e5, function(i) cp_simulation_nonlin(X, f))
