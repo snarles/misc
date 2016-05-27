@@ -343,7 +343,7 @@ par(bg = "white")
 plot(res3[, 1:2], col = "white")
 colrs <- c("black", "green", "red", "blue")
 for (i in 0:3) {
-  points(res3[res3[, "lab"] == i, 1:2], col = colrs[i+1], pch = 19, cex = 1)
+  points(res3[res3[, "lab"] == i, 1:2], col = colrs[i+1], pch = 15, cex = 1)
 }
 
 saveRDS(res3, file = "physics/dr2.rds")
