@@ -312,8 +312,8 @@ simulate_dice <- function(init_pos = c(0.99, 3)) {
 
 
 library(parallel)
-xs <- seq(-2, 2, 0.05)
-ys <- seq(1, 5, 0.05)
+xs <- seq(-2, 2, 0.01)
+ys <- seq(1, 5, 0.01)
 temp <- as.matrix(AlgDesign::gen.factorial(c(length(xs), length(ys)), center = FALSE))
 des <- cbind(x0 = xs[temp[, 1]], y0 = ys[temp[, 2]])
 t1 <- proc.time()
@@ -332,11 +332,11 @@ draw_cell <- function(i) {
   print(res3[i, ])
 }
 
-layout(matrix(1:16, 4, 4))
-par(mar = c(1,1,1,1))
-for (i in 1:nrow(res3)) {
-  draw_cell(i)
-}
+# layout(matrix(1:16, 4, 4))
+# par(mar = c(1,1,1,1))
+# for (i in 1:nrow(res3)) {
+#   draw_cell(i)
+# }
 
 layout(1)
 par(bg = "white")
