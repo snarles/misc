@@ -29,10 +29,11 @@ rmat <- function(theta) {
 draw_dice <- function(xl, yl, dice_pos, dice_angle, add = FALSE, ...) {
   if (!add) {
     plot(NA, NA, xlim = xl, ylim = yl, ann = FALSE, axes = FALSE, asp = 1)
-    abline(yl[1],0, lwd = 2)
-    abline(yl[2],0, lwd = 2)
-    abline(v = xl[1], lwd = 2)
-    abline(v = xl[2], lwd = 2)
+    #abline(yl[1],0, lwd = 2)
+    #abline(yl[2],0, lwd = 2)
+    #abline(v = xl[1], lwd = 2)
+    #abline(v = xl[2], lwd = 2)
+    polygon(xl[c(1,2,2,1)],yl[c(2,2,1,1)],border = "black",col = "white", lwd = 3)
   }
   dcoors <- dice_verts %*% rmat(dice_angle) + repmat(dice_pos, 4, 1)
   lines(dcoors[2:3, ], col = "grey", lwd = 2)
@@ -211,7 +212,7 @@ find_collision_time <- function(eps = 0.05, eps_power = 10,
 ####
 ##  DEMO
 ####
-
+par(mar = c(0.5,0.5,0.5,0.5))
 ## simulation step size
 eps0 <- 0.05
 eps_power <- 10
@@ -219,9 +220,9 @@ eps_power <- 10
 # collision_thres <- 0.1
 
 ## gravity
-gcons <- 9
+gcons <- 2
 ## newton e const
-newton_e <- 0.2
+newton_e <- 0.8
 ## air_res effect
 drag_f <- 0
 
@@ -247,8 +248,8 @@ dice_pos <- c(0, 3)
 dice_angle <- pi/4
 
 ## initial velocity of dice
-dice_v <- c(0 + 2 * runif(1), 0)
-dice_omega <- 0.5 + 2 * runif(1)
+dice_v <- c(2.1, 0) # 2, 2.01, 2.1
+dice_omega <- 0.5
 
 ## time variable
 tt <- 0
@@ -291,7 +292,7 @@ while(is.null(params[["terminal"]])) {
   update <- do.call2(apply_wall, params)
   params <- modifyList(params, update)
   en <- do.call(get_energy, params)
-  do.call(draw_dice, params); title("post-collision", sub = en)
+  do.call(draw_dice, params); #title("post-collision", sub = en)
   print(params$tt - oldparams$tt)
 }
 params[["terminal"]]
