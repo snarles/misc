@@ -3,30 +3,26 @@ library(AlgDesign)
 
 f2 <- function(x, y=0) sum((x - y)^2)
 
+## LAWSUIT DATA
+# tab <- readRDS("../secret/klausner/database4.rds")
+# tab <- tab[complete.cases(tab), ]
+# inds_n <- which(unlist(lapply(lapply(tab, class), `[[`, 1)) == "numeric")
+# tab <- tab[, inds_n]
+# X <- as.matrix(tab[, -13])
+# y <- tab[, 13]
 
-tab <- readRDS("../secret/klausner/database4.rds")
-head(tab)
-tab <- tab[complete.cases(tab), ]
-head(tab)
+load("reginference/data/HIV.rda", verbose = TRUE)
+tab <- HIV
+X <- HIV[, -1]
+y <- HIV[, 1]
 
-inds_n <- which(unlist(lapply(lapply(tab, class), `[[`, 1)) == "numeric")
-tab <- tab[, inds_n]
-head(tab)
-cbind(1:ncol(tab), colnames(tab))
-
-
-X <- as.matrix(tab[, -13])
-y <- tab[, 13]
-
-head(X)
 
 ss <- 1:3
 
 
 (p <- ncol(X))
 
-sss <- combn(1:p, 4)
-
+sss <- combn(1:p, 3)
 gm <- 0.5
 raw_log_post <- function(y, X, ss, return.rss = FALSE) {
   n <- length(y)
@@ -42,6 +38,7 @@ raw_log_post <- function(y, X, ss, return.rss = FALSE) {
     lgamma((n - km)/2) -1/2 * detr - (n - km)/2 * log(rss)
   ans
 }
+
 
 post_normalization <- function(pv, log = TRUE) {
   if (log) {
