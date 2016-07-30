@@ -1,0 +1,62 @@
+---
+title: "Concave function problem"
+author: "Charles Zheng"
+date: "July 30, 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem
+
+Find twice-differentiable $f$ such that
+
+* $f''(x) \leq 0$ (concavity)
+* $f'(x) = -\alpha$ for $x \leq x_1$,
+* $f'(x) = -\beta$ for $x \geq x_2$,
+* $f(x_1) = y_1$ and $f(x_2) = y_2$.
+
+Does such a function exist for all $y_2 > y_1$, $\alpha_1 < \alpha_2$?
+
+## Polynomial approach
+
+Without loss of generality, let $x_1 = 0$, $x_2 = 1$, $y_1=0$ and define $y =y_2$.
+
+Let us assume that a solution exists such that $f$ is equal to a $k$-degree polynomial on $[0, 1]$.
+
+$$
+f(x) = \sum_{i=0}^k a_i x^i.
+$$
+
+Then the conditions on the coefficients $a_0,...,a_k$ are as follows.
+
+* $a_0 = 0$
+* $a_1 = -\alpha$
+* $a_2 = 0$
+* $\sum_i a_i = y$
+* $\sum_i i a_i = -\beta$
+* $\sum_i i(i-1)a_i = 0$
+* $\sum_i i(i-1)a_i x^{i-2} \leq 0$ for $x \in [0,1]$.
+
+The only free parameters are $a_3,...,a_k$, and we have 3 linear constraints on the parameters and 1 inequality constraint.  We must have at least 3 free parameters, so we need $k \geq 5$ The inequality constraint is quite difficult to handle theoretically, since it involves checking the roots of polynomials.  Therefore, we will proceed on a case-by-case basis, starting with $k=5$.
+
+## Case k=5
+
+The conditions for $k=5$ are written
+
+* $a_3 + a_4 + a_5 = y + \alpha$
+* $3 a_3 + 4 a_4 + 5 a_5 = -\beta + \alpha$
+* $6 a_3 + 12 a_4 + 20 a_5 = 0$
+* $6 a_3 + 12 a_4 x + 20 a_5 x^2 \leq 0$ for $x \in [0,1]$
+
+By minimizing the inequality constraint, we rewrite it as follows:
+
+Either:
+* $a_4 \leq 0$, $a_4 \geq -\frac{5}{3}a_5$, and 
+
+$a_3, a_4, a_5$ are uniquely determined by the boundary conditions.
+
+
+
