@@ -1,38 +1,12 @@
 ### implementing stability selection w/ randomized lasso
 
-library(glmnet)
+source("varsel/lasso_stability_source.R")
 library(reginference)
-
-
-ssel <- function(x, y, s = 0.1, pw = 0.5, wkns = 0.9, n.reps = 100) {
-  x <- as.matrix(x)
-  y <- y - mean(y)
-  as <- matrix(0, n.reps, ncol(x))
-  colnames(as) <- colnames(x)
-  n <- nrow(x)
-  for ( i in 1:n.reps ) {
-    inds <- sample(n, floor(n/2), replace = FALSE)
-    yt <- y[inds]
-    xt <- x[inds, ]
-    vs <- apply(xt, 2, var)
-    xt <- xt[, vs != 0]
-    xt <- scale(xt)
-    ws <- sample(c(wkns, 1), ncol(xt), replace = TRUE, prob = c(pw, 1-pw))
-    xt <- t(t(xt)/ws)
-    res <- glmnet(xt, yt, alpha = 1, standardize = FALSE)
-    bt <- coef(res, s= s)
-    nms <- rownames(as.matrix(bt))[which(bt > 0)]
-    nms <- setdiff(nms, "(Intercept)")
-    as[i, nms] <- 1
-  }
-  as
-}
-
 data(HIV)
 colnames(HIV)
-hist(HIV$NFV)
-
-apply(HIV, 2, function(v) sum(v != 0))
+# hist(HIV$NFV)
+# 
+# apply(HIV, 2, function(v) sum(v != 0))
 
 x <- as.matrix(HIV[, -1])
 y <- HIV$NFV
@@ -41,5 +15,18 @@ y <- HIV$NFV
 # v <- coef(res, s = 0.1)
 # which(v !=0) - 1
 
-as <- ssel(x, y, s = 0.1)
+as <- ssel(x, y, s = 0.1, n.reps = 1000)
 colSums(as)
+
+pthres <- 0.8
+## first selected
+sel1 <- colnames(as)[colSums(as) > pthres * nrow(as)]
+as2 <- as[, setdiff(colnames(as), sel1)]
+sst <- list()
+for (i in 1:ncol(as2)) {
+  a3 <- as2
+  a3[as2[, i]==1, ] <- 1
+  sst[[i]] <- colnames(a3)[colSums(a3) > pthres * nrow(a3)]
+}
+names(sst) <- colnames(a3)
+sst
