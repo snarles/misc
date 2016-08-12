@@ -22,6 +22,8 @@ pthres <- 0.8
 ## first selected
 sel1 <- colnames(as)[colSums(as) > pthres * nrow(as)]
 as2 <- as[, setdiff(colnames(as), sel1)]
+## second selected
+pthres2 <- 1
 sst <- list()
 for (i in 1:ncol(as2)) {
   a3 <- as2
@@ -29,4 +31,5 @@ for (i in 1:ncol(as2)) {
   sst[[i]] <- colnames(a3)[colSums(a3) > pthres * nrow(a3)]
 }
 names(sst) <- colnames(a3)
+sst <- sst[sapply(sst, length) > 0]
 sst
