@@ -33,3 +33,20 @@ for (i in 1:ncol(as2)) {
 names(sst) <- colnames(a3)
 sst <- sst[sapply(sst, length) > 0]
 sst
+
+
+
+
+
+
+
+
+
+counts <- sort(colSums(as), decreasing = TRUE)
+as2 <- as[, names(counts)[counts > 0]]
+View(as2)
+image(t(as2))
+
+
+
+
