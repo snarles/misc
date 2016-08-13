@@ -47,6 +47,6 @@ as2 <- as[, names(counts)[counts > 0]]
 View(as2)
 image(t(as2))
 
-
+saveRDS(as2, "varsel/temp_as.rds")
 
 
