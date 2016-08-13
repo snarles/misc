@@ -21,13 +21,36 @@ hist(demo$t.dmfs)
 sum(demo$er==1)
 colnames(data)[1:100]
 
-vs <- apply(data, 2, var)
-hist(vs)
-x.inds <- order(vs, decreasing = TRUE)[1:3000]
+flist <- c("MAINZ", "MSK", 
+           "TRANSBIG", "VDX")
 
-flist <- c("CAL", "MAINZ", "MSK", 
-           "SUPERTAM_HGU133PLUS2",
-           "TRANSBIG", "UNT", "VDX")
+
+
+xs <- list()
+for (f in flist) {
+  load(paste0("../gwas_data/data/", f, ".RData"))
+  xs[[f]] <- data[demo$er == 1, ]
+}
+
+cs <- lapply(xs, colnames)
+csf <- Reduce(f = intersect, cs)
+length(csf)
+
+for (f in flist) xs[[f]] <- xs[[f]][, csf]
+
+X <- do.call(rbind, xs)
+
+X[1:10, 1:10]
+
+nas <- apply(X, 2, function(v) sum(is.na(v)))
+table(nas)
+
+vs <- apply(X, 2, var)
+hist(vs)
+x.o <- order(vs, decreasing = TRUE)[1:3000]
+X <- X[, x.o]
+x.inds <- colnames(X)
+
 
 ys <- list()
 xs <- list()
@@ -36,6 +59,9 @@ for (f in flist) {
   xs[[f]] <- data[demo$er == 1, x.inds]
   ys[[f]] <- demo$t.dmfs[demo$er == 1]
 }
+View(xs[[2]])
+
+sapply(xs, dim)
 
 save(xs, ys, file = "varsel/bc3000.rda")
 
