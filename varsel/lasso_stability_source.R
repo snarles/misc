@@ -67,8 +67,11 @@ ssel_no_scale <- function(x, y, s = 0.1,
     ws <- sample(c(wkns, 1), ncol(xt), replace = TRUE, prob = c(pw, 1-pw))
     xt <- t(t(xt)/ws)
     res <- glmnet(xt, yt, alpha = 1, standardize = FALSE)
-    bt <- get_lasso_k_sparse(res, k)
-#    bt <- coef(res, s= s)
+    if (is.null(s)) {
+      bt <- get_lasso_k_sparse(res, k)
+    } else {
+      bt <- coef(res, s= s)
+    }
     nms <- rownames(as.matrix(bt))[which(bt > 0)]
     nms <- setdiff(nms, "(Intercept)")
     as[i, nms] <- 1

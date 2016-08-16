@@ -108,7 +108,7 @@ y <- train_resp_1f[, 3294]
 var(y)
 
 
-as <- ssel_no_scale(X, y, s = 0.03, k = 5, n.reps = 100)
+as <- ssel_no_scale(X, y, s = 0.03, k = NULL, n.reps = 100)
 rowSums(as)
 
 counts <- sort(colSums(as), decreasing = TRUE)
