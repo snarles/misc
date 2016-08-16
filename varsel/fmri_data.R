@@ -1,3 +1,5 @@
+source("varsel/lasso_stability_source.R")
+library(corrplot)
 ## Speed things up by using Kernel
 
 ####
@@ -94,6 +96,7 @@ rm(train_resp_2)
 gc()
 
 X <- X1
+colnames(X) <- paste0("V", 1:ncol(X))
 Yvaris <- apply(rbind(train_resp_1f, train_resp_2f), 2, var)
 Ydiffs <- colSums((train_resp_1f - train_resp_2f)^2)/3500
 Ysigs <- Yvaris - Ydiffs
@@ -101,13 +104,17 @@ snrs <- Ydiffs/Ysigs
 hist(snrs)
 order(snrs, decreasing = TRUE)[1:50]
 
-y <- train_resp_1f[, 14261]
+y <- train_resp_1f[, 3294]
 var(y)
 
-colnames(X) <- paste0("V", 1:ncol(X))
 
-source("varsel/lasso_stability_source.R")
-as <- ssel_no_scale(X, y, s = 0.01, n.reps = 2)
+as <- ssel_no_scale(X, y, s = 0.03, n.reps = 100)
 rowSums(as)
 
+counts <- sort(colSums(as), decreasing = TRUE)
+as2 <- as[, names(counts)[counts > 0]]
+image(t(as2))
 
+
+
+corrplot(cor(as2[, 1:20]))
