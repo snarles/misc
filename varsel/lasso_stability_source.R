@@ -26,6 +26,19 @@ library(glmnet)
 #   as
 # }
 
+## without subsampling
+ssel0 <- function(x, y, s = 0.1, pw = 0.5, wkns = 0.9) {
+  x <- as.matrix(x)
+  x <- scale(x)
+  y <- y - mean(y)
+  n <- nrow(x)
+  ws <- sample(c(wkns, 1), ncol(x), replace = TRUE, prob = c(pw, 1-pw))
+  xt <- t(t(x)/ws)
+  res <- glmnet(xt, y, alpha = 1, standardize = FALSE)
+  bt <- coef(res, s= s)
+  (as.numeric(bt) > 0) + 0
+}
+
 ## without standardizing within
 ssel <- function(x, y, s = 0.1, pw = 0.5, wkns = 0.9, n.reps = 100) {
   x <- as.matrix(x)
@@ -101,3 +114,35 @@ get_lasso_k_sparse <- function(res, k, s.min = 1e-5, s.max = 10) {
   bt
 }
 
+###
+## Using forward stepwise
+###
+
+fwdsel <- function(x, y, k=2) {
+  p <- ncol(x)
+  df <- data.frame(x, y)
+  biggest <- formula(lm(y ~ ., data = df))
+  res <- step(lm(y ~ 1, data = df), scope = biggest, k = k, trace = FALSE)
+  nms <- names(res$coefficients)[-1]
+  inds <- match(nms, colnames(df))
+  as0 <- rep(0, p)
+  as0[inds] <- 1
+  as0
+}
+
+## without standardizing within
+bootfwd <- function(x, y, k = 2, n.reps = 100) {
+  x <- as.matrix(x)
+  x <- scale(x)
+  y <- y - mean(y)
+  as <- matrix(0, n.reps, ncol(x))
+  colnames(as) <- colnames(x)
+  n <- nrow(x)
+  for ( i in 1:n.reps ) {
+    inds <- sample(n, floor(n/2), replace = FALSE)
+    yt <- y[inds]
+    xt <- x[inds, ]
+    as[i, ] <- fwdsel(xt, yt, k)
+  }
+  as
+}
