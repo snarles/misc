@@ -13,10 +13,15 @@ getresults <- function(i) {
     nms[i] <- paste(tab[2 * i - 1, 1], tab[2 *i, 1], sep = "v")
     xdiff <- as.numeric(tab[2 * i - 1, -1]) - as.numeric(tab[2 *i, -1])
     xdiff <- xdiff/sd(xdiff)
-    results[i] <- empprob(xdiff[xdiff > 0], -xdiff[xdiff < 0], 1e6)
+    results[i] <- empprob(xdiff[xdiff > 0], -xdiff[xdiff < 0], 1e8)
   }
   names(results) <- nms
   results  
 }
 
-allress <- mclapply(1:10, getresults, mc.cores = 3)
+t1 <- proc.time()
+allress <- mclapply(1:1000, getresults, mc.cores = 40)
+proc.time() - t1
+
+allress <- do.call(rbind, allress)
+colMeans(allress)
