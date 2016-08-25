@@ -29,6 +29,23 @@ compute_V_diff <- function(X, mu, eps, ss) {
   ans
 }
 
+
+compute_V_diff_chisq <- function(X, mu, eps, ss) {
+  Xmu <- as.numeric(t(X) %*% mu)
+  Xeps <- as.numeric(t(X) %*% eps)
+  XtX <- t(X) %*% X
+  ans <- apply(ss, 2, function(S) {
+    S <- S[S != 0]
+    as.numeric(t(Xeps[S]) %*% solve(XtX[S, S], Xeps[S]))
+  })
+  names(ans) <- apply(ss, 2, function(S) {
+    S <- S[S != 0]
+    paste(S, collapse = ".")
+  })
+  ans
+}
+
+
 compute_V_diff_empirical <- function(X, mu, sigma2, ss, n.its = 1e2) {
   draws <- sapply(1:n.its, function(i) {
     max(compute_V_diff(X, mu, sqrt(sigma2) * rnorm(nrow(X)), ss))
@@ -77,3 +94,17 @@ list(length(aset_oracle), (ind_star %in% aset_oracle))
 
 aset <- which(Vs_Y - min(vquants2) > max(Vs_Y) - max(vquants2))
 list(length(aset), (ind_star %in% aset))
+
+####
+## approximations
+####
+
+eps <- sqrt(sigma2) * rnorm(n)
+V_diff <- compute_V_diff(X, mu, eps, ss)
+V_chisq <- compute_V_diff_chisq(X, mu, eps, ss)
+max(V_diff)
+max(V_chisq)
+
+sigma2 * qchisq(1- 1/length(ss), k)
+
+## can't treat as independent... but its not really too large
