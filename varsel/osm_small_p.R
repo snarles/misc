@@ -67,5 +67,13 @@ V_diff2 <- compute_V_diff(X, mu, eps, ss)
 V_thres <- compute_V_diff_empirical(X, mu, sigma2, ss, n.its = 1000)
 vquants <- quantile(V_thres, 0.1 * 1:10)
 
-aset <- which(Vs_Y - min(vquants) > max(Vs_Y) - max(vquants))
+V_thres_emp <- compute_V_diff_empirical(X, Y, sigma2, ss, n.its = 1000)
+vquants2 <- quantile(V_thres_emp, 0.1 * 1:10)
+
+rbind(vquants, vquants2)
+
+aset_oracle <- which(Vs_Y - min(vquants) > max(Vs_Y) - max(vquants))
+list(length(aset_oracle), (ind_star %in% aset_oracle))
+
+aset <- which(Vs_Y - min(vquants2) > max(Vs_Y) - max(vquants2))
 list(length(aset), (ind_star %in% aset))
