@@ -30,8 +30,7 @@ compute_V_diff <- function(X, mu, eps, ss) {
 }
 
 
-compute_V_diff_chisq <- function(X, mu, eps, ss) {
-  Xmu <- as.numeric(t(X) %*% mu)
+compute_V_diff_chisq <- function(X, eps, ss) {
   Xeps <- as.numeric(t(X) %*% eps)
   XtX <- t(X) %*% X
   ans <- apply(ss, 2, function(S) {
@@ -101,8 +100,10 @@ list(length(aset), (ind_star %in% aset))
 
 eps <- sqrt(sigma2) * rnorm(n)
 V_diff <- compute_V_diff(X, mu, eps, ss)
-V_chisq <- compute_V_diff_chisq(X, mu, eps, ss)
+V_chisq <- compute_V_diff_chisq(X, eps, ss)
+V_chimu <- compute_V_diff_chisq(X, mu, ss)
 max(V_diff)
+sqrt(max(V_chisq)) * (sqrt(max(V_chisq)) + 2 * sqrt(max(V_chimu)))
 max(V_chisq)
 
 sigma2 * qchisq(1- 1/length(ss), k)
