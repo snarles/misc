@@ -227,21 +227,21 @@ Therefore,
 |\Delta V_S| \leq \|P_{X_S} \epsilon\|(2 \|P_{X_S} \mu\| + \|P_{X_S}\epsilon \|).
 \]
 
-And furthermore, letting $M_1 = \max_{S \in \mathcal{S}} \|P_{X_S} \epsilon\|$ and $M_2 =  \max_{S \in \mathcal{S}} \|P_{X_S} \mu\|$,
+And furthermore, letting $A = \max_{S \in \mathcal{S}} \|P_{X_S} \epsilon\|$ and $B =  \max_{S \in \mathcal{S}} \|P_{X_S} \mu\|$,
 we have
 \[
-\max_{S \in \mathcal{S}} |\Delta V_S| \leq M_1(2 M_2 + M_1).
+\max_{S \in \mathcal{S}} |\Delta V_S| \leq A(2 B + A).
 \]
 
-$M_1$ is random, but we can calculate its $\frac{\alpha}{3}$th upper quantile, $\kappa$, i.e. we can find $\kappa$ such that
+$A$ is random, but we can calculate its $\frac{\alpha}{3}$th upper quantile, $\kappa$, i.e. we can find $\kappa$ such that
 \[
-\Pr[M_1 > \kappa] < \frac{\alpha}{3}.
+\Pr[A > \kappa] < \frac{\alpha}{3}.
 \]
 We can compute $\kappa$ given $X$, $\mathcal{S}$, and $\sigma^2$.  More details are provided in section 3 on computation.
 
-$M_2$ is deterministic given the unknown $\mu$, however it cannot be computed in practice.  Therefore, define
+$B$ is deterministic given the unknown $\mu$, however it cannot be computed in practice.  Therefore, define
 \[
-\hat{M}_2 = \sup_{S \in \mathcal{S}} \|P_S Y\|.
+\hat{B} = \sup_{S \in \mathcal{S}} \|P_S Y\|.
 \]
 
 \end{document}
