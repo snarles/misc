@@ -214,35 +214,58 @@ i.e. $\hat{V}_S$ is unbiased for $V_S$.
 
 Let us define
 \[
-\Delta V_S = \hat{V}_S - V_S +\sigma^2 r_s = 2 \mu^T P_{X_S} \epsilon + \epsilon^T P_{X_S} \epsilon.
+\Delta V_S = \hat{V}_S - V_S  = 2 \mu^T P_{X_S} \epsilon + \epsilon^T P_{X_S} \epsilon - \sigma^2 r_s.
 \]
 
 By Cauchy-Schwarz inequality,
 \[
-|\mu^T P_{X_S} \epsilon | \leq \| P_{X_S} \mu\| \| P_{X_S} \epsilon \|
+|\mu^T P_{X_S} \epsilon | \leq \| P_{X_S} \mu\| \| P_{X_S} \epsilon \| \leq \|\mu\| \|P_{X_S} \epsilon \|
 \]
 
 Therefore,
 \[
-|\Delta V_S| \leq \|P_{X_S} \epsilon\|(2 \|P_{X_S} \mu\| + \|P_{X_S}\epsilon \|).
+\Delta V_S \leq \|P_{X_S} \epsilon\|(2 \|\mu\| + \|P_{X_S}\epsilon \|) - \sigma^2 r_S.
 \]
 
-And furthermore, letting $A = \max_{S \in \mathcal{S}} \|P_{X_S} \epsilon\|$ and $B =  \max_{S \in \mathcal{S}} \|P_{X_S} \mu\|$,
+And furthermore, letting $A = \max_{S \in \mathcal{S}} \|P_{X_S} \epsilon\|$,
 we have
 \[
-\max_{S \in \mathcal{S}} |\Delta V_S| \leq A(2 B + A).
+\max_{S \in \mathcal{S}} \Delta V_S \leq A(2 \|\mu\| + A) - \sigma^2 r_{min}.
 \]
+where $r_{min} = \text{min}_{S \in \mathcal{S}} r_S$.
 
 $A$ is random, but we can calculate its $\frac{\alpha}{3}$th upper quantile, $\kappa$, i.e. we can find $\kappa$ such that
 \[
-\Pr[A > \kappa] < \frac{\alpha}{3}.
+\Pr[A > \kappa] \leq \frac{\alpha}{3}.
 \]
 We can compute $\kappa$ given $X$, $\mathcal{S}$, and $\sigma^2$.  More details are provided in section 3 on computation.
 
-$B$ is deterministic given the unknown $\mu$, however it cannot be computed in practice.  Therefore, define
+Meanwhile, since $||Y||^2$ is a scaled noncentral chi-squared distribution with noncentrality $\|\mu\|^2$, $n$ degrees of freedom, and variance parameter $\sigma^2$, we can obtain a $\alpha/3$ lower confidence bound for $\|\mu\|$.  Let $\gamma$ denote the lower confidence bound:
 \[
-\hat{B} = \sup_{S \in \mathcal{S}} \|P_S Y\|.
+\sup_{\mu} \Pr[\gamma(Y) \geq \|\mu\|^2] \leq \frac{\alpha}{3}.
 \]
+
+Therefore,
+\[
+\max_{S \in \mathcal{S}} \Delta V_S \leq \kappa(2\gamma + \kappa).
+\]
+
+Meanwhile, we can find a $\alpha/3$ lower confidence bound for $V_{S^*}$, conditional on $\|\mu\|^2 \leq \gamma$ and using the fact that $\hat{V}_{S^*} + \sigma^2 r_{S^*}$ has a noncentral chi-squared distribution with noncentrality $\mu^T P_{X_{S^*}} \mu$, $n$ degrees of freedom and variance parameter $\sigma^2$.  Therefore, we construct $D$ such that
+\[
+\Pr[\Delta_{V_{S^*}} + \sigma^2 r_{S^*} < D| \|\mu^2\| < \gamma] \leq \frac{\alpha}{3}.
+\]
+
+Thus, defining
+\[
+T = \kappa(2\gamma + \kappa) + (r_{max}- r_{min}) \sigma^2 - D
+\]
+where $r_{max} = \max_{S \in \mathcal{S}} r_S$,
+we have the needed property
+\[
+\Pr[\hat{V}_{S^*} < \max_{S \in \mathcal{S}} V_S - T] \leq \alpha.
+\]
+
+
 
 \end{document}
 
