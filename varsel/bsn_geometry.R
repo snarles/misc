@@ -18,6 +18,23 @@ Qs <- lapply(1:nq, function(i) {
   Q
 })
 
+cca_method <- function(Qs) {
+  mat <- zeros(k * nq)
+  for (i in 1:nq) {
+    for (j in 1:nq) {
+      if (i == j) {
+        mat[(1:k) + (i-1) * k, (1:k) + (j-1) * k] <- eye(k)
+      } else {
+        mat[(1:k) + (i-1) * k, (1:k) + (j-1) * k] <- t(Qs[[i]]) %*% Qs[[j]]        
+      }
+    }
+  }
+  res <- eigen(mat)
+  y <- do.call(cbind, Qs) %*% res$vectors[, 1]
+  print(tau_func0(y))
+  normalize(y)
+}
+
 tau_func0 <- function(y) {
   vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
   min(vs)/sum(y^2)
