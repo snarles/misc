@@ -6,17 +6,20 @@
 
 library(pracma)
 
-nq <- 3
-n <- 30
-p <- 50
-X <- randn(n, p)
-k <- 5
-Qs <- lapply(1:nq, function(i) {
-  #S <- randn(n, k)
-  S <- X[, sample(p, k, replace = FALSE)]
-  Q <- qr.Q(qr(S))
-  Q
-})
+## WARNING!! use global variable Qs
+tau_func0 <- function(y) {
+  vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
+  min(vs)/sum(y^2)
+}
+
+Qprods <- function(Qs, y) {
+  vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
+  vs/sum(y^2)
+}
+normalize <- function(x) {
+  x/sqrt(sum(x^2))
+}
+
 
 cca_method <- function(Qs, nv = 5) {
   mat <- zeros(k * nq)
@@ -36,14 +39,43 @@ cca_method <- function(Qs, nv = 5) {
   ys
 }
 
-tau_func0 <- function(y) {
-  vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
-  min(vs)/sum(y^2)
+## refine an optimum further
+alternating_proj <- function(Qs, y, nits = 100, eps.0 = 0.1) {
+  eps <- eps.0
+  for (it.no in 1:nits) {
+    qsp <- Qprods(Qs, y)
+    ind.min <- which.min(qsp)
+    yp <- normalize(Qs[[ind.min]] %*% t(Qs[[ind.min]]) %*% y)
+    newpts <- sapply(1:10, function(i) {
+      min(Qprods(Qs, normalize(y + eps * i * yp)))
+    })
+    if (max(newpts) < min(qsp)) {
+      eps <- eps/2
+    } else {
+      y <- normalize(y + eps * which.max(newpts) * yp)
+      #print(Qprods(Qs, y))
+    }
+  }
+  y
 }
 
-normalize <- function(x) {
-  x/sqrt(sum(x^2))
-}
+####
+##  TESTS
+####
+
+nq <- 5
+n <- 30
+p <- 50
+X <- randn(n, p)
+k <- 5
+Qs <- lapply(1:nq, function(i) {
+  #S <- randn(n, k)
+  S <- X[, sample(p, k, replace = FALSE)]
+  Q <- qr.Q(qr(S))
+  Q
+})
+
+
 
 ## CCA METHOD
 ys_cca <- cca_method(Qs)
@@ -79,3 +111,8 @@ colnames(sols) <- paste(vals)
 sols <- sols[, order(-vals)]
 head(sols[, 1:10])
 floor(cor(sols[, 1:10]) * 10)
+
+y_star <- normalize(res1$par)
+Qprods(Qs, y_star)
+y_star2 <- alternating_proj(Qs, y_star)
+Qprods(Qs, y_star2)
