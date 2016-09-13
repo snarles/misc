@@ -7,10 +7,10 @@
 library(pracma)
 
 nq <- 3
-n <- 10
-p <- 20
+n <- 30
+p <- 50
 X <- randn(n, p)
-k <- 3
+k <- 5
 Qs <- lapply(1:nq, function(i) {
   #S <- randn(n, k)
   S <- X[, sample(p, k, replace = FALSE)]
@@ -18,7 +18,7 @@ Qs <- lapply(1:nq, function(i) {
   Q
 })
 
-cca_method <- function(Qs) {
+cca_method <- function(Qs, nv = 5) {
   mat <- zeros(k * nq)
   for (i in 1:nq) {
     for (j in 1:nq) {
@@ -30,9 +30,10 @@ cca_method <- function(Qs) {
     }
   }
   res <- eigen(mat)
-  y <- do.call(cbind, Qs) %*% res$vectors[, 1]
-  print(tau_func0(y))
-  normalize(y)
+  ys <- do.call(cbind, Qs) %*% res$vectors[, 1:nv]
+  ys <- apply(ys, 2, normalize)
+  colnames(ys) <- paste(apply(ys, 2, tau_func0))
+  ys
 }
 
 tau_func0 <- function(y) {
@@ -51,20 +52,22 @@ normalize <- function(x) {
   x/sqrt(sum(x^2))
 }
 
+## CCA METHOD
+ys_cca <- cca_method(Qs)
+head(ys_cca)
+
+## PURE RANDOM METHOD
 ys <- randn(n, 1e4)
 taus <- apply(ys, 2, tau_func0)
 max(taus)
 
-#(res <- optim(rnorm(n), tau_func, method = "SANN"))
-#(res <- optim(rnorm(n), tau_func))
-#ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func, method = "SANN"))
+## OPTIMIZATION METHOD
 ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func))
-# vals <- sapply(ress, `[[`, "value")
-# sort(vals)
 sols <- sapply(ress, `[[`, "par")
 sols <- apply(sols, 2, normalize)
 vals <- apply(sols, 2, tau_func0)
+max(vals)
 colnames(sols) <- paste(vals)
 sols <- sols[, order(-vals)]
-sols[, 1:10]
-cor(t(sols[, 1:10]))
+head(sols[, 1:10])
+#cor(t(sols[, 1:10]))
