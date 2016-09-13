@@ -47,12 +47,29 @@ normalize <- function(x) {
 
 
 ####
+##  Meta-calculations to check accuracy of IU comps
+####
+
+approx_probs <- function(Vss, thres) {
+  
+}
+
+####
 ##  Intersection-union computations
 ####
 
 ## probability that min R^2 over subsets in ss > thres
-subspace_intersection_prob <- function(X, ss, thres) {
-  
+subspace_intersection_prob <- function(X, ss, thres, max.order = 20) {
+  counts <- apply(Vss, 1, function(v) sum(v > thres))
+  (true_prob <- mean(counts > 0))
+  tab <- table(counts)/length(counts)
+  ns <- as.numeric(names(tab))
+  proxes <- numeric()
+  for (i in 1:max.order) {
+    current <- (-1)^(i+1) * sum(choose(ns, i) * tab)
+    proxes <- c(proxes, current)
+  }
+  c(true_prob = true_prob, cumsum(proxes))
 }
 
 ## probability that max over ss subsets will yield R^2 > thres
@@ -63,7 +80,7 @@ full_int_union <- function(X, ss, thres) {
 
 
 n <- 30
-p <- 8
+p <- 20
 X <- randn(n, p)
 X <- apply(X, 2, normalize)
 k <- 3
@@ -76,7 +93,7 @@ ss <- combn(1:p, k)
 # Vs <- compute_true_Vs(X, y, ss)
 # Vs2 <- compute_true_Vs2(X, y, ss)
 
-n.its <- 20000
+n.its <- 10000
 ys <- randn(n, n.its)
 ys <- apply(ys, 2, normalize)
 # Vs <- compute_true_Vs2(X, ys[, 1], ss)
@@ -84,5 +101,8 @@ Vss <- compute_true_Vs2_par(X, ys, ss)
 
 sup_dist <- apply(Vss, 1, max)
 hist(sup_dist)
-mean(sup_dist > 0.4)
+mean(sup_dist > 0.35)
 
+## probability of an intersection event
+counts <- apply(Vss, 1, function(v) sum(v > 0.35))
+barplot(table(counts)[-1])
