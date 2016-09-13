@@ -41,13 +41,6 @@ tau_func0 <- function(y) {
   min(vs)/sum(y^2)
 }
 
-tau_func <- function(y) {
-  vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
-  -min(vs) + sum(y^2)
-}
-
-tau_func(rnorm(n))
-
 normalize <- function(x) {
   x/sqrt(sum(x^2))
 }
@@ -62,7 +55,8 @@ taus <- apply(ys, 2, tau_func0)
 max(taus)
 
 ## OPTIMIZATION METHOD
-ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func))
+ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func0, 
+                                        control = list(fnscale = -1)))
 sols <- sapply(ress, `[[`, "par")
 sols <- apply(sols, 2, normalize)
 vals <- apply(sols, 2, tau_func0)
@@ -70,4 +64,18 @@ max(vals)
 colnames(sols) <- paste(vals)
 sols <- sols[, order(-vals)]
 head(sols[, 1:10])
-#cor(t(sols[, 1:10]))
+floor(cor(sols[, 1:10]) * 10)
+
+## OPTIMIZATION INITIALIZING WITH CCA
+res1 <- optim(ys_cca[, 1], tau_func0, control = list(fnscale = -1))
+ress <- lapply(1:100, function(i) optim(ys_cca[, 1:3] %*% runif(3), tau_func0, 
+                                        control = list(fnscale = -1)))
+sols <- sapply(ress, `[[`, "par")
+sols <- apply(sols, 2, normalize)
+vals <- apply(sols, 2, tau_func0)
+max(vals)
+res1$value
+colnames(sols) <- paste(vals)
+sols <- sols[, order(-vals)]
+head(sols[, 1:10])
+floor(cor(sols[, 1:10]) * 10)
