@@ -45,6 +45,23 @@ normalize <- function(x) {
   x/sqrt(sum(x^2))
 }
 
+
+####
+##  Intersection-union computations
+####
+
+## probability that min R^2 over subsets in ss > thres
+subspace_intersection_prob <- function(X, ss, thres) {
+  
+}
+
+## probability that max over ss subsets will yield R^2 > thres
+full_int_union <- function(X, ss, thres) {
+  
+}
+
+
+
 n <- 30
 p <- 8
 X <- randn(n, p)
@@ -59,7 +76,7 @@ ss <- combn(1:p, k)
 # Vs <- compute_true_Vs(X, y, ss)
 # Vs2 <- compute_true_Vs2(X, y, ss)
 
-n.its <- 200
+n.its <- 20000
 ys <- randn(n, n.its)
 ys <- apply(ys, 2, normalize)
 # Vs <- compute_true_Vs2(X, ys[, 1], ss)
@@ -67,5 +84,5 @@ Vss <- compute_true_Vs2_par(X, ys, ss)
 
 sup_dist <- apply(Vss, 1, max)
 hist(sup_dist)
-
+mean(sup_dist > 0.4)
 
