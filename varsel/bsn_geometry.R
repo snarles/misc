@@ -112,6 +112,13 @@ sols <- sols[, order(-vals)]
 head(sols[, 1:10])
 floor(cor(sols[, 1:10]) * 10)
 
+## ALTERNATING PROJ
+y_rand <- alternating_proj(Qs, normalize(rnorm(n)))
+Qprods(Qs, y_rand)
+y_cca_ap <- alternating_proj(Qs, ys_cca[, 1])
+Qprods(Qs, y_cca_ap)
+
+## TRIPLE COMBO
 y_star <- normalize(res1$par)
 Qprods(Qs, y_star)
 y_star2 <- alternating_proj(Qs, y_star)
