@@ -12,6 +12,14 @@ tau_func0 <- function(y) {
   min(vs)/sum(y^2)
 }
 
+## since optimal y must lie in span of Qs
+tau_func <- function(gm) {
+  y <- do.call(cbind, Qs) %*% gm
+  vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
+  min(vs)/sum(y^2)
+}
+
+
 Qprods <- function(Qs, y) {
   vs <- sapply(Qs, function(Q) sum((t(Q) %*% y)^2))
   vs/sum(y^2)
@@ -21,7 +29,7 @@ normalize <- function(x) {
 }
 
 
-cca_method <- function(Qs, nv = 5) {
+cca_method <- function(Qs, nv = 5, ret.gm = FALSE) {
   mat <- zeros(k * nq)
   for (i in 1:nq) {
     for (j in 1:nq) {
@@ -33,6 +41,7 @@ cca_method <- function(Qs, nv = 5) {
     }
   }
   res <- eigen(mat)
+  if (ret.gm) return(res$vectors[, 1:nv])
   ys <- do.call(cbind, Qs) %*% res$vectors[, 1:nv]
   ys <- apply(ys, 2, normalize)
   colnames(ys) <- paste(apply(ys, 2, tau_func0))
@@ -79,7 +88,9 @@ Qs <- lapply(1:nq, function(i) {
 
 ## CCA METHOD
 ys_cca <- cca_method(Qs)
+gm_cca <- cca_method(Qs, ret.gm = TRUE)
 head(ys_cca)
+
 
 ## PURE RANDOM METHOD
 ys <- randn(n, 1e4)
@@ -87,26 +98,32 @@ taus <- apply(ys, 2, tau_func0)
 max(taus)
 
 ## OPTIMIZATION METHOD
-ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func0, 
-                                        control = list(fnscale = -1)))
-sols <- sapply(ress, `[[`, "par")
-sols <- apply(sols, 2, normalize)
-vals <- apply(sols, 2, tau_func0)
-max(vals)
-colnames(sols) <- paste(vals)
-sols <- sols[, order(-vals)]
-head(sols[, 1:10])
-floor(cor(sols[, 1:10]) * 10)
+# ress <- lapply(1:100, function(i) optim(rnorm(n), tau_func0, 
+#                                         control = list(fnscale = -1)))
+# sols <- sapply(ress, `[[`, "par")
+# sols <- apply(sols, 2, normalize)
+# vals <- apply(sols, 2, tau_func0)
+# max(vals)
+# colnames(sols) <- paste(vals)
+# sols <- sols[, order(-vals)]
+# head(sols[, 1:10])
+# floor(cor(sols[, 1:10]) * 10)
 
 ## OPTIMIZATION INITIALIZING WITH CCA
 res1 <- optim(ys_cca[, 1], tau_func0, control = list(fnscale = -1))
-ress <- lapply(1:100, function(i) optim(ys_cca[, 1:3] %*% runif(3), tau_func0, 
+res1gm <- optim(gm_cca[, 1], tau_func, control = list(fnscale = -1))
+
+# ress <- lapply(1:100, function(i) optim(ys_cca[, 1:3] %*% runif(3), tau_func0, 
+#                                         control = list(fnscale = -1)))
+# sols <- sapply(ress, `[[`, "par")
+ress <- lapply(1:100, function(i) optim(gm_cca[, 1:2] %*% runif(2), tau_func, 
                                         control = list(fnscale = -1)))
-sols <- sapply(ress, `[[`, "par")
+sols <- do.call(cbind, Qs) %*% sapply(ress, `[[`, "par")
 sols <- apply(sols, 2, normalize)
 vals <- apply(sols, 2, tau_func0)
 max(vals)
 res1$value
+res1gm$value
 colnames(sols) <- paste(vals)
 sols <- sols[, order(-vals)]
 head(sols[, 1:10])
