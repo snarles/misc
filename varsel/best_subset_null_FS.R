@@ -42,7 +42,7 @@ fs_stat <- function(Vss) {
 
 
 n <- 1000
-p <- 20
+p <- 30
 X <- randn(n, p)
 X <- apply(X, 2, normalize)
 k <- 3
@@ -54,22 +54,17 @@ k <- 3
 # Vs <- compute_true_Vs(X, y, ss)
 # Vs2 <- compute_true_Vs2(X, y, ss)
 
-n.its <- 10000
+n.its <- 1000
 ys <- randn(n, n.its)
 ys <- apply(ys, 2, normalize)
 # Vs <- compute_true_Vs2(X, ys[, 1], ss)
 Vss <- all_k_R2(X, ys, k)
 
 sup_dist <- apply(Vss, 1, max)
-hist(sup_dist)
 
 fsR2 <- fs_stat(Vss)
-# mean(sup_dist > 0.085)
-# 
-# ## probability of an intersection event
-max(sup_dist)
-max(fsR2)
-thres <- 0.025
-counts <- apply(Vss, 1, function(v) sum(v > thres))
-barplot(table(counts)[-1])
-approx_probs(Vss, thres, max.order = 5)
+hist(sup_dist)
+hist(fsR2)
+
+plot(sort(sup_dist), sort(fsR2))
+
