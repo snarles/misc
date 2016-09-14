@@ -45,7 +45,7 @@ n <- 1000
 p <- 30
 X <- randn(n, p)
 X <- apply(X, 2, normalize)
-k <- 3
+k <- 4
 
 
 
