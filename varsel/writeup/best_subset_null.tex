@@ -1,0 +1,111 @@
+\title{Computing the null distribution for best-subset}
+\author{Charles Zheng and Trevor Hastie}
+\date{\today}
+
+\documentclass[12pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{csquotes}
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+\maketitle
+
+\newcommand{\tr}{\text{tr}}
+\newcommand{\E}{\textbf{E}}
+\newcommand{\diag}{\text{diag}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\Vol}{\text{Vol}}
+\newcommand{\comm}[1]{}
+
+\newcommand{\bx}{\boldsymbol{x}}
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bY}{\boldsymbol{Y}}
+
+
+\section{Introduction}
+
+Given $n \times p$ design matrix $X$ and data $y$, the \emph{best
+k-subset} procedure finds a subset $S \subset \{1,..,p\}$ of size $k$
+which maximizes the coefficient of determination, $R^2$:
+\[
+R^2(S) := \frac{||P_S y||^2}{||y||^2}
+\]
+where
+\[
+P_S = X_S (X_S^T X_S)^{-1} X_S^T
+\]
+and $X_S$ is the submatrix $X$ with columns indexed by $S$.
+
+The best k-subset coefficient of determination is defined
+\[
+R^2_k = \sup_{|S| = k} R^2(S).
+\]
+
+In this work we consider computing the \emph{null distribution} of
+$R^2_k$ under the null hypothesis that the data is pure Gaussian
+noise: $y \sim N(0, \sigma^2 I)$.
+
+A potential application of this work is testing the null hypothesis
+versus the alternative hypothesis that the data was generated from a
+sparse linear model.
+
+\section{Intersection-Union method}
+
+Define $Q_S$ as the $Q$ matrix obtained from the QR-decomposition of
+$X_S$.  We have
+\[
+||P_S y||^2 = ||Q_S y||^2
+\]
+so we can also write
+\[
+R^2(S) = \frac{||Q_S y||^2}{||y||^2}.
+\]
+
+Let $\mathcal{S}$ denote a set of subsets of $\{1,...,p\}$.  For instance, for best-$k$ subset, we would take
+\[
+\mathcal{S} = \{S \subset \{1,...,p\}: |S| = k\}
+\]
+but the theory may also be applied to more general families of
+subsets.
+
+Define
+\[
+R^2(\mathcal{S}) = \max_{S \in \mathcal{S}} R^2(S) = \max_{S \in \mathcal{S}} R^2(S) \frac{||Q_S y||^2}{||y||^2}.
+\]
+
+We would like to compute the exceedence probability
+$\Pr[R^2 \geq \tau]$ when $y \sim N(0, I)$, for arbitrary $\tau \in
+[0, 1]$.
+
+The intersection-union formula gives
+\begin{align*}
+\Pr[R^(\mathcal{S}) \geq \tau] &= \Pr[\cup_{S \in \mathcal{S}} R^2(S) \geq \tau] 
+\\&= \sum_{j=1}^{|\mathcal{S}|} (-1)^{j+1} \sum_{S_1 \neq ... \neq S_j \in \mathcal{S}} \Pr[\min_i R^2(S_i) \geq \tau] 
+\\&= \sum_{S \in |S|} \Pr[R^2(S) \geq \tau] - \sum_{S_1 \neq S_2} \Pr[R^2(S_1)\vee R^2(S_2) \geq \tau] + ...
+\end{align*}
+
+If we could approximate the most important terms in the expansion,
+then we could approximate the exceedence probability
+$\Pr[R^2(\mathcal{S}) \geq \tau]$.  We present empirical evidence that
+the first two terms suffice in the subsection, ``How many terms are
+needed?''
+
+\subsection{How many terms are needed?}
+
+\end{document}
+
+
+
