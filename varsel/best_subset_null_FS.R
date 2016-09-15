@@ -1,5 +1,6 @@
 library(pracma)
 
+normalize <- function(x) x/sqrt(sum(x^2))
 
 ## empirically compute true null distribution
 all_k_R2 <- function(X, mus, kmax) {
@@ -40,13 +41,14 @@ fs_stat <- function(Vss) {
 }
 
 
-
-n <- 1000
-p <- 30
-X <- randn(n, p)
+library(MASS)
+n <- 100
+p <- 20
+Sigma <- cor(randn(2 * p, p))
+X <- mvrnorm(n, mu = rep(0, p), Sigma = Sigma)
 X <- apply(X, 2, normalize)
-k <- 4
-
+k <- 6
+(offd <- sum(abs(cor(X) - eye(p)))/(p^2))
 
 
 # y <- normalize(rnorm(n))
@@ -68,3 +70,8 @@ hist(fsR2)
 
 plot(sort(sup_dist), sort(fsR2))
 
+plot(sup_dist, fsR2, pch = "+"); abline(0, 1, col = "red")
+title(paste("n=", n, ", p=", p, ", k=", k), sub = paste("offdiag", offd))
+
+plot(sort(sup_dist), sort(fsR2), type = "o"); abline(0, 1, col = "red")
+title(paste("Quantiles n=", n, ", p=", p, ", k=", k), sub = paste("offdiag", offd))
