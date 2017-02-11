@@ -1,0 +1,127 @@
+---
+title: "theory"
+author: "Charles Zheng"
+date: "2/10/2017"
+output: html_document
+---
+
+## Misspecified prediction in OLS
+
+In polynomial regression, we often assume a model of the form
+$$
+E[Y|X = x] = f(x) = \sum_{k=0}^d \beta_k x^k.
+$$
+However, in applications, $f(x)$ is rarely a $d$-degree polynomial.  Instead, it is more realistic to assume that on a domain $D$, that $f(x)$ is well-approximated by a $d$-degree polynomial $p(x)$, so that
+$$
+f(x) = p(x) + a(x)
+$$
+where $a(x)$ is the "approximation error" between $f$ and $p$.  The severity of misspecification can be quantified by a norm on $a(x)$.  In this work, we consider the $\ell_\infty$ norm.  Therefore, let
+$$
+\delta = ||a(x)||_\infty.
+$$
+Suppose now that we obtain observations $(x_i, y_i)$ for $i = 1,...,n$, where 
+
+$$
+y_i = f(x_i) + \epsilon_i,
+$$
+where $\epsilon_i$ are zero-mean, uncorrelated errors with constant variance $\sigma^2$.
+The design matrix $X$ is the $n \times (d + 1)$ Vandermonde matrix with
+$$
+X_{ij} = x_i^j
+$$
+for $j = 0,...,d$.  (Note the columns of $X$ are indexed starting from 0.)
+The estimated coefficients $\hat{\beta}$ are given by $(X^T X)^{-1} X^T y$.
+Let $x_0$ be a new point.  The prediction $\hat{y}_0$ is given by
+$$
+\hat{y}_0 = h^T y = x_0^T (X^T X)^{-1}X^T y.
+$$
+What can we say about the prediction risk
+$$
+R = E[(\hat{y}_0 - y_0)^2]?
+$$
+
+## Misspecified linear regression
+
+We now generalize to misspecified OLS in general, where 
+$$f(x) = x^T \beta + a(x).$$
+
+The prediction error can be computed via the bias-variance decomposition
+$$
+R = \text{Bias}^2 + \text{Var},
+$$
+where the variance term is
+$$
+\text{Var} = \sigma^2(1 + ||h||^2)
+$$
+Meanwhile, the bias term is
+$$
+\text{Bias} = E[h_0^T y - f(x)] = h_0^T (X^T \beta + a(X)) - (x_0^T \beta + a(x_0))
+$$
+$$
+= h^T a(X) - a(x_0)
+$$
+where $a(X) = (a(x_1),...,a(x_n))$.  By assumption, $||a(X)||_\infty \leq \delta$ and $a(x_0) \leq \delta.$
+
+Let us find a bound on the bias.  The bias term is the same no matter what the true value of $\beta$, so we can take $\beta = 0$ without loss of generality.
+Also note that the prediction risk is invariant to change-of-basis, so without loss of generality we can take $x_0 = (1,0,...)$.  This means that $\hat{y}_0 = \hat{\beta}_1$.  But since the true signal is zero, we also have $E[\hat{y}_0] = E[\hat{\beta}_1] = h^T a(X)$--which is the estimated $\hat{\beta}_1$ for an OLS regression of response $a(X)$ on $X$.
+
+Let us change the problem accordingly to the problem of the maximum size of $\hat{\beta}_1$ for an OLS regression of $y$ on $X$ where it is known that $||y||_\infty \leq \delta$.  The maximum size of $\hat{\beta}_1$ in this problem gives us the bound on the bias which we originally sought.
+
+Now note that by Holder's inequality,
+$$
+|\hat{\beta}_1| = |h^T y| \leq ||y||_\infty ||h||_1 = \delta ||h||_1
+$$
+so the key problem is to bound the L1-norm of $h$.
+
+We know that $\hat{\beta}_1$ for the regression $y \sim X$ is the same as the $\hat{\beta}$ obtained in the univariate regression of $y$ on $X_{1|-1} = (I-P_{X_{-1}}) X_1$.  Here, $P_A$ denotes the projection matrix onto the column space of matrix $A$, $P_A = A (A^T A)^{-1} A^T.$
+This means that the $h$ vector can be written
+$$
+h = \frac{1}{||X_{1|-1}||^2}X_{1|-1}.
+$$
+Therefore, we have
+$$
+||h||_1 = \frac{||X_{1|-1}||_1}{||X_{1|-1}||^2}.
+$$
+The above expression is exact, but can we obtain a bound in terms of the original column $X_1$?
+
+## How much can L1-norm be increased by projections?
+
+Can we find an upper bound to
+$$
+\frac{||Pu||_1}{||u||_1}
+$$
+for all vectors $u \in \mathbb{R}^n$ and projection matrices $P$?
+
+Fix $u$.  Define $P^*$ as the projection which maximizes $||Pu||_1$.
+Observe that defining $v^* = P^* u$, we have $P^* u = P_{v^*} u$.
+Therefore, it suffices to search for unit vector $v$ which maximizes
+$$
+||P_v u||_1 = |v^T u| ||v||_1.
+$$
+Without loss of generality, we can assume that all entries of $u$ are positive (since flipping signs of entries leaves norms unchanged.)  The maximum of the above optimization problem is attained by $v$ with nonnegative entries as well.  Therefore, it suffices to look for the unit vector $v$ which maximizes
+$$
+|v^T u|||v||1 = (u^T v) (v^T 1) = v^T (\frac{1}{2} u 1^T + \frac{1}{2}1 u^T) v,
+$$
+in other words, the top eigenvector of the symmetric matrix $\frac{1}{2} u 1^T + \frac{1}{2}1 u^T$.
+Any eigenvector $v$ satisfies
+$$
+(\frac{1}{2} u 1^T + \frac{1}{2}1 u^T) v = \lambda v,
+$$
+therefore we conclude that $v = \alpha u + \beta 1$ for some $\alpha, \beta$.
+Since $$||v||^2 = 1$$, we have
+$$
+1 = \alpha^2 + \beta^2 n + 2\alpha\beta ||u||_1.
+$$
+We get
+$$
+\lambda (\alpha u + \beta 1) = (\frac{1}{2} u 1^T + \frac{1}{2}1 u^T) (\alpha u + \beta 1)
+$$
+therefore
+$$
+\lambda \alpha = \frac{||u||_1}{2} \alpha + \frac{n}{2} \beta
+$$
+$$
+\lambda \beta = \frac{1}{2}\alpha  + \frac{||u||_1}{2} \beta
+$$
+
+
