@@ -15,14 +15,12 @@ xsigs <- sapply(museq, function(mu) dnorm(xseq, mu))
 plot(xsigs[, 1])
 
 
-res <- lars(xsigs, ysig)
-plot(res)
-plot()
-
-aa <- coef(res, 1e-5)
+res <- lars(xsigs, ysig, normalize = FALSE, intercept = FALSE, type = "lar")
+plot(res, xlim = c(0, 0.0001), ylim = c(-100, 100))
+aa <- coef(res, 1)
 dim(aa)
 
-plot(aa[2, ])
+for (i in rev(1:42))  matplot(museq, t(aa[1:i, , drop = FALSE]), type = "l", col = rainbow(42)[1:i])
 
 xtx <- t(xsigs) %*% xsigs
 xty <- t(xsigs) %*% ysig
