@@ -26,5 +26,7 @@ xtx <- t(xsigs) %*% xsigs
 xty <- t(xsigs) %*% ysig
 plot(xty)
 xtx0 <- t(xsigs) %*% xsigs[, museq == 0]
-plot(xtx0)
-plot(xty - 0.55 * xtx0)
+plot(museq, xtx0)
+for (x in seq(0.56, 0.54, -0.001)) {
+  plot(museq, xty - x * xtx0, main = x, type = "l")
+}
