@@ -1,0 +1,59 @@
+
+
+\documentclass[12pt]{article} 
+
+% packages with special commands
+\usepackage{amssymb, amsmath}
+\usepackage{epsfig}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{color}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{csquotes}
+\usepackage{chngcntr}
+\usepackage{apptools}
+\AtAppendix{\counterwithin{lemma}{section}}
+
+\definecolor{grey}{rgb}{0.5,0.5,0.5}
+
+\begin{document}
+
+7. In the general case, the Bayes prediction rule for a new observation $x$ is to predict $\hat{y} = c_k$, where
+\[
+k = \text{argmin}_k \sum_{\ell=1}^{K} \Pr(y=c_\ell|x) L_{kl}.
+\]
+However, if $L_{kl} = 1(k \neq \ell)$, then the above simplifies to
+\[
+k = \text{argmax}_k \Pr(y = c_k|x),
+\]
+or equivalently,
+\[
+k = \text{argmax}_k p(x|y=c_k) \pi(y).
+\]
+In other words, the Bayes prediction rule chooses the class with the highest posterior probability in the special case of zero-one loss.
+
+16. The advantages of such a model include:
+\begin{itemize}
+\item Invariance to linear transformations of the input
+\item May in some situations be a better fit to the true function
+\end{itemize}
+However, some disadvantages are:
+\begin{itemize}
+\item Increases the order of the computation in finding the best split from order $O(p)$ to order exponential in $p$.
+\item Less fine-grained control over bias-variance tradeoff, because the complexity increases greatly at each split.
+\item More difficult to come up with a strategy for dealing with missing variables, since surrogate splitting strategy cannot be applied.
+\item More difficult to interpret the resulting trees.
+\end{itemize}
+
+Fun fact: (not expected as part of the answer.)  Such trees are known as ``oblique decision trees'' or decision trees with linear decision rules.  They were included in the book that introduced CART ( Breiman, L., Friedman, J., Stone, C. J., Olshen, R. A., 1984. Classification and regression trees. CRC press.), and have been revisited periodically in the machine learning literature since then.  But they do not appear to be widely used in applications.
+
+
+
+\end{document}
+
+
+
+
+
