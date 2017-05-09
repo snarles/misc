@@ -20,10 +20,27 @@
 
 \begin{document}
 
-7. In the general case, the Bayes prediction rule for a new observation $x$ is to predict $\hat{y} = c_k$, where
+7. The formula for the misclassification risk is
+\[
+\text{Risk} = \sum_{k = 1}^K \sum_{\ell = 1}^K \Pr[y = c_\ell, \hat{y} = c_k] L_{kl}.
+\]
+According to the problem, we can assume that $L_{kl} = r$ for some constant $r > 0$ for all $k \neq \ell$. Furthermore, we know that $L_{kk} = 0$ because the loss is zero for incorrect classification.  Using these two facts, we get
+\[
+\text{Risk} = \sum_{k = 1}^K \sum_{\ell = 1}^K \Pr[y = c_\ell, \hat{y} = c_k] r 1(k \neq l)
+\]
+\[
+ = r \sum_{k = 1}^K \sum_{\ell = 1}^K \Pr[y = c_\ell, \hat{y} = c_k] 1(k \neq l)
+\]
+\[
+ = r \Pr[y \neq \hat{y}].
+\]
+which is a constant times the error rate.
+
+In the general case, the Bayes prediction rule for a new observation $x$ is to predict $\hat{y} = c_k$, where
 \[
 k = \text{argmin}_k \sum_{\ell=1}^{K} \Pr(y=c_\ell|x) L_{kl}.
 \]
+
 However, if $L_{kl} = 1(k \neq \ell)$, then the above simplifies to
 \[
 k = \text{argmax}_k \Pr(y = c_k|x),
