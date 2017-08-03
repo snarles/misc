@@ -29,7 +29,7 @@ install.packages("testthat")
 install.packages("transport")
 ## install.packages("rgl")
 install.packages("stringr")
-
+install.packages("plotrix")
 
 ## new project ->
 ## https://github.com/snarles/misc
