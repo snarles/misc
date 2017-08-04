@@ -136,7 +136,7 @@
 \frametitle{Inference without assumptions}
 \begin{itemize}
 \item Larry Wasserman, ``Inference without assumptions, Review and Current Progress''
-\item Conformal prediction by Vovk, Gammerman and Shafer (2006)
+\item Conformal prediction by Vovk, Gammerman and Shafer (2006) \pause
 \item Exact prediction intervals, \emph{only} needing to assume i.i.d. data
 \begin{itemize}
 \item Suppose $Y_1,\hdots, Y_n \sim F$ iid
@@ -146,16 +146,24 @@
 \]
 for a new $Y^* \sim F$.
 \end{itemize}
+\pause
 \item Application to $k$-means..
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Using conformal prediction to choose $k$}
+\begin{center}
+\includegraphics[scale = 0.3, clip = true, trim = 0.3in 0.4in 0.3in 0.2in]{../conformal_kmeans/k3.pdf}
+\end{center}
 \begin{itemize}
-\item Wasserman's idea: build prediction set using $k$-means and data-splitting. 
-\item Resulting prediction set is a union of spheres centered around the centroids.
-\item When spheres intersect, merge those clusters.
+\item Wasserman's idea: build prediction set using $k$-means and data-splitting. \pause
+\item Resulting prediction set is a union of spheres $S$ centered around the centroids, with the propoerty that
+\[
+\Pr[Y^* \in S] \geq 1 -\alpha
+\]
+for a new point $Y^*$ \pause
+\item When spheres intersect, merge those clusters.\pause
 \end{itemize}
 Does it work?  I tried it out myself..
 \end{frame}
@@ -184,7 +192,7 @@ Does it work?  I tried it out myself..
 \begin{itemize}
 \item Method for integrating two datasets, and decomposing into joint and individual variance components
 \begin{center}
-\includegraphics[scale = 0.3]{jsm_figs/jive_decomposition.png}
+\includegraphics[scale = 0.25]{jsm_figs/jive_decomposition.png}
 \end{center}
 \item Angled-Based JIVE described in Feng, Hannig, Jiang and Marron (2017)
 \end{itemize}
