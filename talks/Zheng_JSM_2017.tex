@@ -137,7 +137,15 @@
 \begin{itemize}
 \item Larry Wasserman, ``Inference without assumptions, Review and Current Progress''
 \item Conformal prediction by Vovk, Gammerman and Shafer (2006)
-\item Exact confidence and prediction intervals, \emph{only} needing to assume i.i.d. data
+\item Exact prediction intervals, \emph{only} needing to assume i.i.d. data
+\begin{itemize}
+\item Suppose $Y_1,\hdots, Y_n \sim F$ iid
+\item Construct set $S$, such that
+\[
+\Pr[Y^* \in S] \geq 1 -\alpha
+\]
+for a new $Y^* \sim F$.
+\end{itemize}
 \item Application to $k$-means..
 \end{itemize}
 \end{frame}
@@ -169,10 +177,37 @@ Does it work?  I tried it out myself..
 \end{tabular}
 \end{center}
 \end{frame}
-\end{document}
+
 
 \begin{frame}
-\frametitle{Neuroscience at JSM}
+\frametitle{JIVE-Joint and individual variation explained}
 \begin{itemize}
+\item Method for integrating two datasets, and decomposing into joint and individual variance components
+\begin{center}
+\includegraphics[scale = 0.3]{jsm_figs/jive_decomposition.png}
+\end{center}
+\item Angled-Based JIVE described in Feng, Hannig, Jiang and Marron (2017)
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{JIVE-Joint and individual variation explained}
+\begin{itemize}
+\item Benjamin Risk described his joint work with Yu, Zhang and Marron applied to HCP data, comparing JIVE to PLS (partial least squares)
+\begin{center}
+\includegraphics[scale = 0.3]{jsm_figs/jive_brain.png}
+\end{center}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Fingerprinting}
+\begin{center}
+\includegraphics[scale = 0.3]{jsm_figs/finngerprinting.png}
+
+\includegraphics[scale = 0.3]{jsm_figs/airan_factors.png}
+\end{center}
+Brian Caffo is thinking about ``fingerprinting'' from a statistical point of view
+\end{frame}
+
+\end{document}
