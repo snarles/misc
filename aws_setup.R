@@ -30,7 +30,7 @@ install.packages("transport")
 ## install.packages("rgl")
 install.packages("stringr")
 install.packages("plotrix")
-
+install.packages("matpow")
 ## new project ->
 ## https://github.com/snarles/misc
 ## https://github.com/snarles/fmri
