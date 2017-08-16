@@ -40,5 +40,5 @@ install.packages("matpow")
 setwd("..")
 devtools::install('fmri/lineId')
 
-system('git config --global user.email "snarles@stanford.edu"')
+system('git config --global user.email "charles.y.zheng@gmail.com"')
 system('git config --global user.name "Charles Zheng"')
