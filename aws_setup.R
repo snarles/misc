@@ -13,6 +13,8 @@ install.packages("ggplot2")
 install.packages("glmnet")
 install.packages("knitr")
 install.packages("magrittr")
+install.packages("marima")
+install.packages("matpow")
 install.packages("nnls")
 install.packages("numDeriv")
 install.packages("oro.nifti")
@@ -21,16 +23,19 @@ install.packages("pracma")
 install.packages("prodlim")
 install.packages("quadprog")
 install.packages("rARPACK")
+## install.packages("rgl")
 install.packages("R.matlab")
 install.packages("rpart")
+install.packages("plotrix")
 install.packages("shiny")
+install.packages("spectral")
+install.packages("stringr")
 install.packages("tensorA")
 install.packages("testthat")
 install.packages("transport")
-## install.packages("rgl")
-install.packages("stringr")
-install.packages("plotrix")
-install.packages("matpow")
+
+
+
 ## new project ->
 ## https://github.com/snarles/misc
 ## https://github.com/snarles/fmri
