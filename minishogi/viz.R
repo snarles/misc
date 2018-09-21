@@ -4,7 +4,7 @@
 
 
 library(showtext)
-font.add("pro1","儷宋 Pro.ttf")
+font.add("pro1","lisong-pro.ttf")
 
 CEX <- 2
 char.mat <- rbind(
