@@ -1,0 +1,7 @@
+library(neurobase)
+anat <- readnii("~/Downloads/anatomical.nii.gz")
+img <- readnii("~/Downloads/action_association-test_z_FDR_0.01.nii.gz")
+sum(anat > 0)
+sum(img > 0)/sum(anat > 0)
+hist(img[img > 0])
+min(img[img > 0])
