@@ -7,7 +7,7 @@ from scipy.stats import pearsonr
 
 print('Welcome to Hide-and-Find Tickle Fight!')
 print('Here is a demo to teach you the rules and allow you to play against the computer.')
-print('If you have never played before, start by creating some fighters.')
+print('If you have never played before, start by playing vs CPU.')
 
 mainflag = True
 fighters = None
@@ -353,7 +353,7 @@ def random_fighter(upper = 100, lower = 95, base = 19, boost = True):
     return fighter
 
 
-def create_or_choose_fighter(fighters):
+def create_or_choose_fighter(fighters, page, per_page):
     flag = True
     while flag:
         print('')
@@ -361,44 +361,66 @@ def create_or_choose_fighter(fighters):
         print('2. Choose an existing fighter')
         print('3. Roll a random fighter')
         print('Q. Quit game')
-        inp = input('Please select one: ')
-        if inp in ['1', '2', '3', 'Q']:
-            flag = False
-    if inp == 'Q':
-        # Cause an error to exit the loop
-        return fighters, None
-    if inp == '1' or inp=='3':
-        if inp=='1':
-            fighter = create_fighter()
-            print('created')
-        if inp=='3':
+        flag2 = True
+        while flag2:
+            inp = input('Please select one: ')
+            if inp in ['1', '2', '3', 'Q']:
+                flag2 = False
+        if inp == 'Q':
+            # Cause an error to exit the loop
+            return fighters, None
+        if inp == '1' or inp=='3':
+            if inp=='1':
+                fighter = create_fighter()
+                print('created')
+                flag = False
+            if inp=='3':
+                flag2 = True
+                while flag2:
+                    print('\nRolled the following fighter:\n')
+                    fighter = random_fighter()
+                    print(list_to_fighter_df([fighter]))
+                    flag3 = True
+                    while flag3:
+                        inp = input('Re-roll? (y/n): ')
+                        if inp in ['y', 'n']:
+                            flag3 = False
+                        if inp == 'n':
+                            flag2 = False
+                flag = False
+            if fighters is None:
+                print('created DF')
+                fighters = pd.DataFrame({'name': [fighter[0]], 'H':[fighter[1]], 'F': [fighter[2]], 'L': [fighter[3]], 'T': [fighter[4]]})
+            else:
+                print('added to DF')
+                fighters.loc[len(fighters.index)] = fighter
+        if inp == '2':
             flag2 = True
             while flag2:
-                print('\nRolled the following fighter:\n')
-                fighter = random_fighter()
-                print(list_to_fighter_df([fighter]))
+                print('')
+                print(fighters.iloc[range((page-1) * per_page,min(len(fighters), page * per_page))])
+                print('n: next page')
+                print('p: previous page')
+                print('Q: back to menu')
+                print('')
+                chs = fighters.index.values.astype(str)[(page-1) * per_page:min(len(fighters), page * per_page)]
+                print('Choices: '+ ', '.join(chs) + ', n, p, Q')
                 flag3 = True
                 while flag3:
-                    inp = input('Re-roll? (y/n): ')
-                    if inp in ['y', 'n']:
+                    inp2 = input('Please select: ')
+                    if inp2 in chs or inp2 in ['n', 'p', 'Q']:
                         flag3 = False
-                    if inp == 'n':
-                        flag2 = False
-        if fighters is None:
-            print('created DF')
-            fighters = pd.DataFrame({'name': [fighter[0]], 'H':[fighter[1]], 'F': [fighter[2]], 'L': [fighter[3]], 'T': [fighter[4]]})
-        else:
-            print('added to DF')
-            fighters.loc[len(fighters.index)] = fighter
-    if inp == '2':
-        print('')
-        print(fighters)
-        print('')
-        choices = fighters.index.values.astype(str)
-        ch = input('Your choices are: %s.\nSelect a fighter: ' % ', '.join(choices))
-        assert(ch in choices)
-        ind = np.nonzero(choices == ch)[0][0]
-        fighter = [fighters.iloc[ind, 0], fighters.iloc[ind, 1],fighters.iloc[ind, 2],fighters.iloc[ind, 3],fighters.iloc[ind, 4]]
+                if inp2 == 'n' and per_page*page < len(fighters):
+                    page = page+1
+                if inp2 == 'p' and page > 1:
+                    page = page-1
+                if inp2 == 'Q':
+                    flag2 = False
+                if inp2 in chs:
+                    ind = np.nonzero(fighters.index.values.astype(str) == inp2)[0][0]
+                    fighter = [fighters.iloc[ind, 0], fighters.iloc[ind, 1],fighters.iloc[ind, 2],fighters.iloc[ind, 3],fighters.iloc[ind, 4]]
+                    flag = False
+                    flag2 = False
     return fighters, fighter
 
 def list_to_fighter_df(ls):
@@ -413,9 +435,9 @@ def view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_di
     print('\n\n\n********************************************')
     print('Game data')
     print('')
-    if spoiler:
+    inds_c_current = [i for i in range(len(cpu_fighters)) if i not in inds_c_discarded]
+    if spoiler and len(inds_c_current) > 0:
         print('Remaining CPU fighters:')
-        inds_c_current = [i for i in range(len(cpu_fighters)) if i not in inds_c_discarded]
         print(list_to_fighter_df([cpu_fighters[i] for i in np.unique(inds_c_current)]))
     else:
         print('Known CPU fighters:')
@@ -431,9 +453,9 @@ def view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_di
     else:
         print(list_to_fighter_df([cpu_fighters[i] for i in np.unique(inds_c_discarded)]))
     print('\n-------------------------------\n')
-    if display_own:
+    inds_p_current = [i for i in range(len(p_fighters)) if i not in inds_p_discarded]
+    if display_own and len(inds_p_current) > 0:
         print('Your fighters:')
-        inds_p_current = [i for i in range(len(p_fighters)) if i not in inds_p_discarded]
         p_current_fighters = [f for (i,f) in enumerate(p_fighters) if i not in inds_p_discarded]
         print(list_to_fighter_df(p_current_fighters))
         print('')
@@ -444,7 +466,7 @@ def view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_di
         print(list_to_fighter_df([p_fighters[i] for i in inds_p_discarded]))
     input('[Press enter]: ')
 
-def play_game(fighters):
+def play_game(fighters, page, per_page):
     print('')
     print('Once each player has a team of exactly five fighters, you can play.  Decide who goes first, then start taking turns.  On your turn, choose any other player to challenge to a tickle duel.  Since there\'s only two players in this case, you will be dueling the computer every turn.')
     print('')
@@ -467,7 +489,7 @@ def play_game(fighters):
             print('')
         print('Now you need to choose %i fighters:' % (5 - len(p_fighters)))
         try:
-            fighters, fighter = create_or_choose_fighter(fighters)
+            fighters, fighter = create_or_choose_fighter(fighters, page, per_page)
             if fighter is None:
                 return fighters
             else:
@@ -507,7 +529,7 @@ def play_game(fighters):
                 view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_discarded, inds_c_discarded, False, True)
                 print('')
                 try:
-                    fighters, fighter = create_or_choose_fighter(fighters)
+                    fighters, fighter = create_or_choose_fighter(fighters, page, per_page)
                     if fighter is None:
                         return fighters
                     else:
@@ -534,14 +556,16 @@ def play_game(fighters):
             print('')
             if not p_eliminated and not c_eliminated:
                 print('Choose a fighter from your team to send out!')
+                print('')
+                print(list_to_fighter_df(p_current_fighters))
+                ch_str = 'choices: ' + ', '.join([str(i) for i in range(len(p_current_fighters))]) + ', ?, Q'
             else:
                 print('Game over!')
-            print('')
-            print(list_to_fighter_df(p_current_fighters))
+                ch_str = 'choices: ?, Q'
             print('?: view game data')
             print('Q: quit game')
-            print('choices: ' + ', '.join([str(i) for i in range(len(p_current_fighters))]) + ', ?, Q')
-            inp = input('Choose one:')
+            print(ch_str)
+            inp = input('Please choose one: ')
             if inp in [str(i) for i in range(len(p_current_fighters))]:
                 flag = False
                 inds_p_used.append(inds_p_current[int(inp)])
@@ -580,36 +604,120 @@ def play_game(fighters):
             input('[Press enter]: ')
     return fighters
 
+page = 1
+per_page = 20
+
 while mainflag:
     print('')
     print('Menu:')
-    print('1. Create fighters')
-    print('2. View fighters')
-    print('3. Save current fighters to file')
-    print('4. Load a fighter file')
-    print('5. Play vs computer')
-    print('6. Exit')
+    print('1. Play vs computer')
+    print('2. Create fighters')
+    print('3. Roll a random fighter')
+    print('4. Edit fighters')
+    print('5. Save current fighters to file')
+    print('6. Load a fighter file')
+    print('7. Options')
+    print('Q. Exit')
     flag = True
     while flag:
         inp = input('Please select one: ')
-        if inp in ['1', '2', '3', '4', '5', '6', 'test']:
+        if inp in ['1', '2', '3', '4', '5', '6', '7', 'Q']:
             flag = False
-    if inp == 'test':
-        fighters, fighter = create_or_choose_fighter(fighters)
-        print(fighter)
-    if inp == '2':
+    if inp == '7':
+        input('Not implemented yet! [Press enter]:')
+    if inp == '4':
         if fighters is None:
             print('First create some fighters, or load a file!')
         else:
-            print('')
-            print(fighters)
-            print('')
-        pause = input('Press enter: ')
-    if inp == '6':
+            flag2 = True
+            while flag2:
+                print('')
+                print(fighters.iloc[range((page-1) * per_page,min(len(fighters), page * per_page))])
+                print('n: next page')
+                print('p: previous page')
+                print('Q: back to menu')
+                print('')
+                chs = fighters.index.values.astype(str)[(page-1) * per_page:min(len(fighters), page * per_page)]
+                print('Choices: '+ ', '.join(chs) + ', n, p, Q')
+                flag3 = True
+                while flag3:
+                    inp2 = input('Please select: ')
+                    if inp2 in chs or inp2 in ['n', 'p', 'Q']:
+                        flag3 = False
+                if inp2 == 'n' and per_page*page < len(fighters):
+                    page = page+1
+                if inp2 == 'p' and page > 1:
+                    page = page-1
+                if inp2 == 'Q':
+                    flag2 = False
+                # edit fighter
+                if inp2 in chs:
+                    flag3 = True
+                    while flag3:
+                        try:
+                            print('\n')
+                            f_ind = np.nonzero(fighters.index.values.astype(str) == inp2)[0][0]
+                            print(fighters.iloc[[f_ind]])
+                            print("\nEdit menu\nN. Name\nH. HIDE\nF. FIND\nL. LUCK\nT. TICKLE\nI. Index\nD. Delete fighter\nB. Back to edit")
+                            flag4 = True
+                            while flag4:
+                                h, f, l, t = fighters.iloc[f_ind, 1:5]
+                                inp3 = input('Please select (N, H, F, L, T, D, B): ')
+                                if inp3 in ['N', 'H', 'F', 'L', 'T', 'D', 'B']:
+                                    flag4 = False
+                                if inp3 == 'B':
+                                    flag3 = False
+                                if inp3 == 'N':
+                                    fighters.iloc[f_ind, 0] = input('Please enter new name: ')
+                                if inp3 == 'I':
+                                    flag4 = False
+                                    fighters.rename(index = {fighters.index[f_ind]: int(input('Please enter new index: '))}, inplace=True)
+                                if inp3 == 'H':
+                                    max_h = min(20, int((100 - f*t)/(l + f)))
+                                    h = int(input('H score [1-%i]: ' % max_h))
+                                    if h < 1:
+                                        h = 1
+                                    if h > max_h:
+                                        h = max_h
+                                    fighters.iloc[f_ind, 1] = h
+                                if inp3 == 'F':
+                                    max_f = min(20, int((100 - h*l)/(t + h)))
+                                    f = int(input('F score [1-%i]: ' % max_f))
+                                    if f < 1:
+                                        f = 1
+                                    if f > max_f:
+                                        f = max_f
+                                    fighters.iloc[f_ind, 2] = f
+                                if inp3 == 'L':
+                                    max_l = min(20, int((100 - h*f - f*t)/h))
+                                    l = int(input('L score [1-%i]: ' % max_l))
+                                    if l < 1:
+                                        l = 1
+                                    if l > max_l:
+                                        l = max_l
+                                    fighters.iloc[f_ind, 3] = l
+                                if inp3 == 'T':
+                                    max_t = min(20, int((100 - h*f - h*l)/f))
+                                    t = int(input('T score [1-%i]: ' % max_t))
+                                    if t < 1:
+                                        t = 1
+                                    if t > max_t:
+                                        t = max_t
+                                    fighters.iloc[f_ind, 4] = t
+                                if inp3 == 'D':
+                                    inp4 = input('Delete fighter: Are you sure (y/n)?: ')
+                                    if inp4 != 'n':
+                                        flag4 = False
+                                        flag3 = False
+                                        fighters = fighters.drop([fighters.index[f_ind]])
+                        except:
+                            input("Error! Press enter: ")
+
+    if inp == 'Q':
         mainflag = False
         print('\nThank you for playing the demo for Hide-and-Find Tickle Fight!')
         print('Game created by Charles Zheng and Helen Xu in 2023.  This game, demo, and associated files (names.txt, adjectives.txt, nouns.txt) are considered public domain under the CC0 license (https://creativecommons.org/share-your-work/public-domain/cc0/).')
-    if inp == '3':
+    if inp == '5':
         fn = input('filename: ')
         try:
             fighters.to_csv(fn)
@@ -617,7 +725,7 @@ while mainflag:
         except:
             print('error saving!')
             pause = input('Press enter: ')
-    if inp == '4':
+    if inp == '6':
         fn = input('filename: ')
         try:
             fighters = pd.read_csv(fn, index_col = 0)
@@ -628,14 +736,28 @@ while mainflag:
         except:
             print('error loading!')
             pause = input('Press enter: ')
-    if inp == '1':
+    if inp == '2' or inp == '3':
         try:
-            fighter = create_fighter()
+            if inp=='2':
+                fighter = create_fighter()
+            if inp=='3':
+                flag2 = True
+                while flag2:
+                    print('\nRolled the following fighter:\n')
+                    fighter = random_fighter()
+                    print(list_to_fighter_df([fighter]))
+                    flag3 = True
+                    while flag3:
+                        inp = input('Re-roll? (y/n): ')
+                        if inp in ['y', 'n']:
+                            flag3 = False
+                        if inp == 'n':
+                            flag2 = False
             if fighters is None:
                 fighters = pd.DataFrame({'name': [fighter[0]], 'H':[fighter[1]], 'F': [fighter[2]], 'L': [fighter[3]], 'T': [fighter[4]]})
             else:
                 fighters.loc[len(fighters.index)] = fighter
         except:
             print('An error occurred in creating a fighter.  Please try again.')
-    if inp == '5':
-        fighters = play_game(fighters)
+    if inp == '1':
+        fighters = play_game(fighters, page, per_page)

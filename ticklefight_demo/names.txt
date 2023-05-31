@@ -8,6 +8,7 @@ Armin
 Aaron
 Antonio
 Abraham
+Amuro
 Amalia
 Andrew
 Amanda
@@ -19,6 +20,7 @@ Bailey
 Beth
 Blake
 Bart
+Buffy
 Belle
 Bruce
 Brandon
@@ -32,6 +34,8 @@ Bill
 Beatrice
 Bertrand
 Charles
+Cynthia
+Char
 Connie
 Carl
 Charisse
@@ -65,6 +69,7 @@ Ellen
 Elijah
 Eleanor
 Eve
+Eeyore
 Emily
 Eugene
 Eggbert
@@ -96,6 +101,7 @@ Hank
 Hanna
 Hillary
 Howard
+Honoka
 Helen
 Hermoine
 Hitomi
@@ -165,6 +171,7 @@ Martin
 Mary
 Mari
 Mason
+Misaki
 Maryam
 Max
 Mark
@@ -219,6 +226,7 @@ Ronald
 Ruth
 Steve
 Steven
+Sabrina
 Silas
 Susan
 Sean
@@ -250,6 +258,7 @@ Terrence
 Tong
 Trevor
 Tulip
+Tara
 Tracy
 Tony
 Trey
@@ -267,6 +276,7 @@ Victoria
 Vanya
 William
 Willy
+Willow
 Winona
 Wayne
 Wallace
@@ -276,6 +286,7 @@ Xi
 Xiao
 Xavier
 Xin
+Xander
 Xuemei
 Xena
 Yao
