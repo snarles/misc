@@ -4,6 +4,8 @@ Albert
 Asuka
 Argyris
 Ash
+Arnold
+Arthur
 Aesin
 Armin
 Aaron
@@ -15,17 +17,24 @@ Alison
 Apollo
 Anthony
 Andrew
+Annie
 Amanda
 Andy
+Agnes
+Alan
 Aria
 Amy
 Ayane
 Bailey
+Berkley
 Beth
 Blake
 Brock
 Brent
 Bruno
+Ben
+Benjamin
+Barbara
 Bart
 Buffy
 Belle
@@ -34,6 +43,7 @@ Brandon
 Brook
 Brooke
 Buhong
+Buck
 Britney
 Brianna
 Bob
@@ -59,6 +69,7 @@ Cameron
 Carolina
 Clark
 Casper
+Connor
 Danny
 Dakota
 Dongmae
@@ -71,8 +82,10 @@ David
 Django
 Dorothy
 Dory
+Domingo
 Dipta
 Dima
+Douglas
 Dylan
 Diana
 Dmitri
@@ -88,6 +101,8 @@ Eeyore
 Emily
 Eugene
 Eggbert
+Edgar
+Edward
 Frank
 Fred
 Fanny
@@ -97,6 +112,7 @@ Felix
 Felicia
 Francisco
 Francesca
+Francine
 Frederic
 Franz
 Guillermo
@@ -119,6 +135,8 @@ Heidi
 Hillary
 Howard
 Honoka
+Hosanna
+Hongying
 Helen
 Hermoine
 Hitomi
@@ -134,7 +152,9 @@ Janet
 Jane
 Jason
 Joey
+Joy
 Javier
+Jess
 Jessica
 Jennifer
 Joshua
@@ -167,6 +187,8 @@ Kachun
 Kokoro
 Kim
 Kiki
+Keith
+Kyle
 Kurt
 Kylie
 Larry
@@ -189,6 +211,7 @@ Luffy
 Lucy
 Manny
 Madoka
+Malcolm
 Michael
 Misato
 Melvin
@@ -208,6 +231,7 @@ Marshall
 Melbourne
 Marissa
 Mai
+Monica
 Melissa
 Milan
 Moses
@@ -218,7 +242,11 @@ Nora
 Nelly
 Nemo
 Natasha
+Natalie
 Noah
+Nelson
+Nicolas
+Nikita
 Ogden
 Orissa
 Onassa
@@ -252,8 +280,10 @@ Rita
 Ritsuko
 Richard
 Ricardo
+Russel
 Ricky
 Ronald
+Robert
 Ruth
 Steve
 Steven
@@ -309,6 +339,7 @@ Valerie
 Victor
 Vincent
 Victoria
+Virginia
 Vanya
 William
 Willy
@@ -321,6 +352,7 @@ Wallace
 Winnie
 Xiaoping
 Xi
+Xinhong
 Xiao
 Xavier
 Xin
@@ -331,11 +363,14 @@ Xena
 Yao
 Yael
 Yenho
+Yi
 Yasmin
 Yvonne
 Yuting
 Yujing
 Yuan
+Yuval
+Yoav
 Yolanda
 Yugi
 Yui
