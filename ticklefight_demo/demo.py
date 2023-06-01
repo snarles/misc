@@ -353,7 +353,7 @@ def random_fighter(upper = 100, lower = 95, base = 19, boost = True):
     return fighter
 
 
-def create_or_choose_fighter(fighters, page, per_page):
+def create_or_choose_fighter(fighters, pp):
     flag = True
     while flag:
         print('')
@@ -398,27 +398,34 @@ def create_or_choose_fighter(fighters, page, per_page):
             flag2 = True
             while flag2:
                 print('')
-                print(fighters.iloc[range((page-1) * per_page,min(len(fighters), page * per_page))])
+                print(fighters.iloc[range((pp['page']-1) * pp['per_page'],min(len(fighters), pp['page'] * pp['per_page']))])
                 print('n: next page')
                 print('p: previous page')
                 print('Q: back to menu')
                 print('')
-                chs = fighters.index.values.astype(str)[(page-1) * per_page:min(len(fighters), page * per_page)]
+                chs = fighters.index.values.astype(str)[(pp['page']-1) * pp['per_page']:min(len(fighters), pp['page'] * pp['per_page'])]
                 print('Choices: '+ ', '.join(chs) + ', n, p, Q')
                 flag3 = True
                 while flag3:
                     inp2 = input('Please select: ')
                     if inp2 in chs or inp2 in ['n', 'p', 'Q']:
                         flag3 = False
-                if inp2 == 'n' and per_page*page < len(fighters):
-                    page = page+1
-                if inp2 == 'p' and page > 1:
-                    page = page-1
+                if inp2 == 'n' and pp['per_page']*pp['page'] < len(fighters):
+                    pp['page'] = pp['page']+1
+                if inp2 == 'p' and pp['page'] > 1:
+                    pp['page'] = pp['page']-1
                 if inp2 == 'Q':
                     flag2 = False
                 if inp2 in chs:
                     ind = np.nonzero(fighters.index.values.astype(str) == inp2)[0][0]
-                    fighter = [fighters.iloc[ind, 0], fighters.iloc[ind, 1],fighters.iloc[ind, 2],fighters.iloc[ind, 3],fighters.iloc[ind, 4]]
+                    fighter = [
+                        fighters.iloc[ind, 0],
+                        int(np.clip(fighters.iloc[ind, 1], 1, 20)),
+                        int(np.clip(fighters.iloc[ind, 2], 1, 20)),
+                        int(np.clip(fighters.iloc[ind, 3], 1, 20)),
+                        int(np.clip(fighters.iloc[ind, 4], 1, 20))]
+                    h,f,l,t = fighters.iloc[ind, 1:5]
+                    assert(h*f + f*t + h*l <= 100)
                     flag = False
                     flag2 = False
     return fighters, fighter
@@ -466,7 +473,7 @@ def view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_di
         print(list_to_fighter_df([p_fighters[i] for i in inds_p_discarded]))
     input('[Press enter]: ')
 
-def play_game(fighters, page, per_page):
+def play_game(fighters, pp):
     print('')
     print('Once each player has a team of exactly five fighters, you can play.  Decide who goes first, then start taking turns.  On your turn, choose any other player to challenge to a tickle duel.  Since there\'s only two players in this case, you will be dueling the computer every turn.')
     print('')
@@ -489,7 +496,7 @@ def play_game(fighters, page, per_page):
             print('')
         print('Now you need to choose %i fighters:' % (5 - len(p_fighters)))
         try:
-            fighters, fighter = create_or_choose_fighter(fighters, page, per_page)
+            fighters, fighter = create_or_choose_fighter(fighters, pp)
             if fighter is None:
                 return fighters
             else:
@@ -529,7 +536,7 @@ def play_game(fighters, page, per_page):
                 view_game_data(p_fighters, cpu_fighters, inds_p_used, inds_c_used, inds_p_discarded, inds_c_discarded, False, True)
                 print('')
                 try:
-                    fighters, fighter = create_or_choose_fighter(fighters, page, per_page)
+                    fighters, fighter = create_or_choose_fighter(fighters, pp)
                     if fighter is None:
                         return fighters
                     else:
@@ -561,11 +568,18 @@ def play_game(fighters, page, per_page):
                 ch_str = 'choices: ' + ', '.join([str(i) for i in range(len(p_current_fighters))]) + ', ?, Q'
             else:
                 print('Game over!')
-                ch_str = 'choices: ?, Q'
+                print('+: Add computer fighters to collection')
+                ch_str = 'choices: ?, +, Q'
             print('?: view game data')
             print('Q: quit game')
             print(ch_str)
             inp = input('Please choose one: ')
+            if inp == '+' and (p_eliminated or c_eliminated):
+                fighters = pd.concat([fighters, list_to_fighter_df(cpu_fighters)], axis = 0)
+                fighters.reset_index(drop=True, inplace=True)
+                print('')
+                print(fighters)
+                input('\nAdded!\n[Press enter]:')
             if inp in [str(i) for i in range(len(p_current_fighters))]:
                 flag = False
                 inds_p_used.append(inds_p_current[int(inp)])
@@ -604,8 +618,8 @@ def play_game(fighters, page, per_page):
             input('[Press enter]: ')
     return fighters
 
-page = 1
-per_page = 20
+# page params
+pp = {'page' : 1, 'per_page' : 20}
 
 while mainflag:
     print('')
@@ -624,7 +638,11 @@ while mainflag:
         if inp in ['1', '2', '3', '4', '5', '6', '7', 'Q']:
             flag = False
     if inp == '7':
-        input('Not implemented yet! [Press enter]:')
+        try:
+            pp['per_page'] = int(input('Set fighters per page: '))
+            pp['per_page'] = int(np.clip(pp['per_page'], 2, 9999999))
+        except:
+            input('Error! [Press enter]:')
     if inp == '4':
         if fighters is None:
             print('First create some fighters, or load a file!')
@@ -632,22 +650,22 @@ while mainflag:
             flag2 = True
             while flag2:
                 print('')
-                print(fighters.iloc[range((page-1) * per_page,min(len(fighters), page * per_page))])
+                print(fighters.iloc[range((pp['page']-1) * pp['per_page'],min(len(fighters), pp['page'] * pp['per_page']))])
                 print('n: next page')
                 print('p: previous page')
                 print('Q: back to menu')
                 print('')
-                chs = fighters.index.values.astype(str)[(page-1) * per_page:min(len(fighters), page * per_page)]
+                chs = fighters.index.values.astype(str)[(pp['page']-1) * pp['per_page']:min(len(fighters), pp['page'] * pp['per_page'])]
                 print('Choices: '+ ', '.join(chs) + ', n, p, Q')
                 flag3 = True
                 while flag3:
                     inp2 = input('Please select: ')
                     if inp2 in chs or inp2 in ['n', 'p', 'Q']:
                         flag3 = False
-                if inp2 == 'n' and per_page*page < len(fighters):
-                    page = page+1
-                if inp2 == 'p' and page > 1:
-                    page = page-1
+                if inp2 == 'n' and pp['per_page']*pp['page'] < len(fighters):
+                    pp['page'] = pp['page']+1
+                if inp2 == 'p' and pp['page'] > 1:
+                    pp['page'] = pp['page']-1
                 if inp2 == 'Q':
                     flag2 = False
                 # edit fighter
@@ -658,7 +676,7 @@ while mainflag:
                             print('\n')
                             f_ind = np.nonzero(fighters.index.values.astype(str) == inp2)[0][0]
                             print(fighters.iloc[[f_ind]])
-                            print("\nEdit menu\nN. Name\nH. HIDE\nF. FIND\nL. LUCK\nT. TICKLE\nI. Index\nD. Delete fighter\nB. Back to edit")
+                            print("\nEdit menu\nN. Name\nH. HIDE\nF. FIND\nL. LUCK\nT. TICKLE\nI. (Switch) Index\nD. Delete fighter\nB. Back to edit")
                             flag4 = True
                             while flag4:
                                 h, f, l, t = fighters.iloc[f_ind, 1:5]
@@ -671,7 +689,11 @@ while mainflag:
                                     fighters.iloc[f_ind, 0] = input('Please enter new name: ')
                                 if inp3 == 'I':
                                     flag4 = False
-                                    fighters.rename(index = {fighters.index[f_ind]: int(input('Please enter new index: '))}, inplace=True)
+                                    new_ind = int(input('Please enter index to switch with: '))
+                                    fighters.rename(index = {fighters.index[f_ind]: new_ind, new_ind: fighters.index[f_ind]}, inplace=True)
+                                    fighters = fighters.iloc[np.argsort(fighters.index.values)]
+                                    fighters.reset_index(inplace=True, drop = True)
+                                    flag3 = False
                                 if inp3 == 'H':
                                     max_h = min(20, int((100 - f*t)/(l + f)))
                                     h = int(input('H score [1-%i]: ' % max_h))
@@ -710,6 +732,9 @@ while mainflag:
                                         flag4 = False
                                         flag3 = False
                                         fighters = fighters.drop([fighters.index[f_ind]])
+                                        if ((pp['page']-1) * pp['per_page']+1) > len(fighters):
+                                            pp['page'] = pp['page'] - 1
+                                        fighters.reset_index(inplace=True, drop = True)
                         except:
                             input("Error! Press enter: ")
 
@@ -732,6 +757,7 @@ while mainflag:
             print('')
             print(fighters)
             print('')
+            pp['page'] = 1
             pause = input('Success!  Press enter: ')
         except:
             print('error loading!')
@@ -760,4 +786,4 @@ while mainflag:
         except:
             print('An error occurred in creating a fighter.  Please try again.')
     if inp == '1':
-        fighters = play_game(fighters, page, per_page)
+        fighters = play_game(fighters, pp)
