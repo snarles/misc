@@ -14,6 +14,7 @@ Curious,0,2,1,0
 Crazy,0,0,1,1
 Cosmic,0,0,1,1
 Crystal,0,0,1,1
+Classy,0,1,1,0
 Calm,1,1,0,0
 Dangerous,0,0,0,2
 Daring,0,1,1,1
@@ -21,12 +22,15 @@ Dancing,2,0,2,0
 Elusive,2,0,0,0
 Energetic,1,0,1,1
 Elevated,0,1,1,0
+Elegant,1,1,1,0
 Funny,0,0,2,0
 Furry,1,0,0,1
 Fiery,0,1,0,2
 Frozen,1,1,1,1
 Giant,0,0,0,3
 Gentle,2,1,0,0
+Generous,0,0,2,1
+Gallant,0,1,1,1
 Good,0,0,1,0
 Happy,0,1,1,0
 Heroic,0,2,1,1
@@ -84,6 +88,7 @@ Willful,0,2,0,1
 Wonderous,0,0,2,0
 Warm,0,1,1,1
 Xtreme,0,1,0,2
+Xtraverted,0,1,1,1
 Xact,0,2,0,0
 Xquisite,1,1,2,1
 Xceeding,0,0,0,1

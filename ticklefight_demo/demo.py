@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 from numpy.random import choice, rand
-from scipy.stats import pearsonr
 
 print('Welcome to Hide-and-Find Tickle Fight!')
 print('Here is a demo to teach you the rules and allow you to play against the computer.')
@@ -342,10 +341,7 @@ def random_fighter(upper = 100, lower = 95, base = 19, boost = True):
     for i in range(10):
         name, v2 = random_name_and_stat()
         name_s.append(name)
-        if np.var(v) == 0 or np.var(v2) == 0:
-            corrs.append(0)
-        else:
-            corrs.append(pearsonr(v, v2)[0])
+        corrs.append(np.dot(v, v2)/np.sqrt(1 + np.dot(v,v))/np.sqrt(1 + np.dot(v2,v2)))
     name = name_s[np.argmax(corrs)]
     h, f, l, tt = v
     fighter = [name, h, f, l, tt]
