@@ -10,7 +10,18 @@ print('If you have never played before, start by playing vs CPU.')
 
 mainflag = True
 fighters = None
-names = pd.read_csv('names.txt', header = None)[0].values
+# data needed to generate names
+subs = np.loadtxt('name_parts.txt', dtype = str)
+initial_subs = subs[:337]
+heads = {}
+for s in subs:
+    head = s[0:2]
+    tail = s[1:3]
+    heads[head] = []
+    heads[tail] = []
+for s in subs:
+    head = s[0:2]
+    heads[head].append(s)
 adjectives = pd.read_csv('adjectives.csv')
 nouns = pd.read_csv('nouns.csv')
 
@@ -46,13 +57,43 @@ def print_stat_comparison(f1, f2, v_i, w_i, comparisons):
         rel = 'less than'
     print('%s\'s %s %i is %s %s\'s %s %i.' % (nm1, statnames[v_i], v[v_i], rel, nm2, statnames[w_i], w[w_i]))
 
+def random_name(name = None, req_len = None):
+    if name is None:
+        name = initial_subs[choice(len(initial_subs))]
+    flag = True
+    while flag:
+        s = name[-2:]
+        ws = heads[s]
+        if len(ws) == 0:
+            flag = False
+        else:
+            if req_len is None:
+                w = ws[choice(len(ws))]
+                name = name + w[-1]
+            elif len(name) >= req_len:
+                sub_ws = [w for w in ws if w[-1] == '.']
+                if len(sub_ws) > 0:
+                    w = sub_ws[choice(len(sub_ws))]
+                else:
+                    w = ws[choice(len(ws))]
+                name = name + w[-1]
+            elif len(name) < req_len:
+                sub_ws = [w for w in ws if w[-1] != '.']
+                if len(sub_ws) > 0:
+                    w = sub_ws[choice(len(sub_ws))]
+                else:
+                    w = ws[choice(len(ws))]
+                name = name + w[-1]
+    return name[:-1]
+
 def random_name_and_stat():
-    type = choice(5, p=[0.1,0.1,0.1,0.1,0.6])
-    allit = choice(2)
+    type = choice(5, p=[0.2,0.2,0.2,0.2,0.2])
+    allit = choice(2, p = [0.8, 0.2])
     v = np.array([0,0,0,0])
     # name + adjective/noun
     if type in [0,1,2,3]:
-        nm = names[choice(len(names))]
+        len_nm = choice(5) + 3
+        nm = random_name(req_len = len_nm)
         if type in [0,1]:
             inds = range(len(adjectives))
             if allit==1:
