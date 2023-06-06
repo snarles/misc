@@ -12,7 +12,7 @@ mainflag = True
 fighters = None
 # data needed to generate names
 subs = np.loadtxt('name_parts.txt', dtype = str)
-initial_subs = subs[:337]
+initial_subs = subs[:396]
 heads = {}
 for s in subs:
     head = s[0:2]
