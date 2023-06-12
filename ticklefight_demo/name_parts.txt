@@ -12,9 +12,11 @@ Ale
 Ali
 All
 Ama
+Ami
 Amu
 Amy
 And
+Ang
 Ani
 Ann
 Ant
@@ -64,6 +66,7 @@ Cin
 Cla
 Cli
 Con
+Cos
 Cur
 Cyn
 Dai
@@ -145,16 +148,19 @@ Hon
 Hos
 How
 Hug
+Igo
 Ing
 Ire
 Isa
 Iva
 Jac
+Jak
 Jam
 Jan
 Jas
 Jav
 Jay
+Jef
 Jem
 Jen
 Jer
@@ -164,6 +170,7 @@ Jij
 Jil
 Jim
 Jin
+Jio
 Joe
 Joh
 Jon
@@ -229,6 +236,7 @@ Meg
 Mel
 Mic
 Mid
+Mik
 Mil
 Min
 Mis
@@ -260,6 +268,7 @@ Pau
 Pav
 Ped
 Pem
+Pen
 Pep
 Pet
 Phi
@@ -274,6 +283,7 @@ Rah
 Rak
 Raq
 Ray
+Reb
 Ree
 Rei
 Ren
@@ -364,6 +374,7 @@ Way
 Wen
 Wil
 Win
+Wya
 Xan
 Xav
 Xen
@@ -378,6 +389,7 @@ Yen
 Yi.
 Yoa
 Yol
+Yon
 Yos
 Yua
 Yug
@@ -401,6 +413,7 @@ ac.
 ace
 ach
 ack
+aco
 acq
 acy
 ade
@@ -509,6 +522,7 @@ bar
 bas
 bby
 be.
+bec
 ber
 bet
 bin
@@ -518,6 +532,7 @@ bri
 by.
 ca.
 car
+cca
 ce.
 cel
 cen
@@ -536,6 +551,7 @@ ck.
 cke
 cky
 co.
+cob
 col
 cqu
 cra
@@ -569,6 +585,8 @@ eah
 ean
 eat
 eba
+ebe
+ecc
 eci
 eck
 ed.
@@ -581,6 +599,7 @@ eel
 eep
 ef.
 efa
+eff
 eg.
 ega
 egu
@@ -611,6 +630,7 @@ enc
 end
 ene
 enf
+eng
 enh
 eni
 enj
@@ -649,6 +669,7 @@ et.
 ete
 eth
 etr
+ett
 eut
 eve
 evi
@@ -673,6 +694,7 @@ gat
 gbe
 gde
 ge.
+gel
 gen
 ger
 ggb
@@ -684,6 +706,7 @@ gma
 gmu
 gne
 go.
+gor
 gri
 gru
 gum
@@ -693,6 +716,7 @@ gyi
 gyr
 ha.
 hae
+hai
 hal
 ham
 han
@@ -753,6 +777,7 @@ igm
 igo
 ija
 iji
+ikh
 iki
 iku
 il.
@@ -816,6 +841,7 @@ ka.
 ke.
 kes
 key
+kha
 ki.
 kir
 kit
@@ -922,6 +948,7 @@ my.
 na.
 nal
 nan
+nar
 nas
 nat
 nce
@@ -942,6 +969,7 @@ net
 ney
 nfu
 ng.
+nge
 ngm
 ngo
 ngr
@@ -1047,6 +1075,7 @@ os.
 osa
 ose
 osh
+osm
 ota
 oth
 ott
@@ -1089,6 +1118,7 @@ reg
 rem
 ren
 res
+ret
 rev
 rew
 rey
@@ -1163,6 +1193,7 @@ sil
 sim
 sin
 ska
+sma
 smi
 son
 spe
@@ -1212,6 +1243,7 @@ tor
 tra
 tri
 tsu
+tt.
 tth
 ttl
 ty.

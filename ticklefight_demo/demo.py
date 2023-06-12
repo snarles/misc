@@ -12,7 +12,7 @@ mainflag = True
 fighters = None
 # data needed to generate names
 subs = np.loadtxt('name_parts.txt', dtype = str)
-initial_subs = subs[:396]
+initial_subs = subs[:408]
 heads = {}
 for s in subs:
     head = s[0:2]
@@ -382,7 +382,7 @@ def random_fighter(upper = 100, lower = 95, base = 19, boost = True):
     for i in range(10):
         name, v2 = random_name_and_stat()
         name_s.append(name)
-        corrs.append(np.dot(v, v2)/np.sqrt(1 + np.dot(v,v))/np.sqrt(1 + np.dot(v2,v2)))
+        corrs.append(np.dot(v, v2)/np.sqrt(0.1 + np.dot(v,v))/np.sqrt(0.1 + np.dot(v2,v2)))
     name = name_s[np.argmax(corrs)]
     h, f, l, tt = v
     fighter = [name, h, f, l, tt]
