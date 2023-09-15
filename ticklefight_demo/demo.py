@@ -369,13 +369,13 @@ def random_fighter(upper = 100, lower = 95, base = 19, boost = True):
     while formula(v) > upper or formula(v) < lower:
         v = choice(base, 4) + 1
     if boost:
-        if (upper - formula(v)) >= v[1]:
+        while (upper - formula(v)) >= v[1]:
             v[3] = v[3] + 1
-        if (upper - formula(v)) >= v[0]:
+        while (upper - formula(v)) >= v[0]:
             v[2] = v[2] + 1
-        if (upper - formula(v)) >= (v[0] + v[3]):
+        while (upper - formula(v)) >= (v[0] + v[3]):
             v[1] = v[1] + 1
-        if (upper - formula(v)) >= (v[1] + v[2]):
+        while (upper - formula(v)) >= (v[1] + v[2]):
             v[0] = v[0] + 1
     corrs = []
     name_s = []
