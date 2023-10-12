@@ -7,8 +7,13 @@ openai.api_key = ''
 
 potato_dishes = np.loadtxt('wikipedia_dish_list.txt', dtype=str, delimiter = ':')
 
+score_fns = np.array([ff for ff in os.listdir("potato_openai/") if ff[:5]=='score'])
+score_is = np.array([f.split('_')[0][6:] for f in score_fns]).astype(int)
+potato_is = np.unique(score_is)
+
 rand_inds = np.sort(choice(len(potato_dishes), 35, replace = False))
-rand_inds
+rand_inds = np.array([v for v in rand_inds if not v in potato_is])
+len(rand_inds)
 
 for i in rand_inds:
     for j in range(3):

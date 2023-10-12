@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import os
+import scipy
+from scipy.stats import rankdata
 
 score_fns = np.array([ff for ff in os.listdir("potato_openai/") if ff[:5]=='score'])
 score_is = np.array([f.split('_')[0][6:] for f in score_fns]).astype(int)
@@ -157,6 +159,8 @@ np.savetxt("potato_open_ai_dishes.txt", dishes_final, fmt = "%s")
 
 arr = np.array(potato_vecs)
 np.savetxt("potato_open_ai_vec.txt", arr)
+for i in range(6):
+    arr[:, i] = rankdata(arr[:, i])
 
 for i in range(len(dishes_final)):
     st = dishes_final[i] + ","
