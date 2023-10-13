@@ -164,7 +164,7 @@ for i in range(6):
 
 
 for i in range(len(jobs_final)):
-    st = jobs_final[i] + ","
+    st = jobs_final[i].replace(',', '-') + ","
     v = arr[i]
     v = v/np.sum(v) * 20
     v = np.floor(v).astype(int)

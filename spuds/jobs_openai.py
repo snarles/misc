@@ -3,7 +3,7 @@ import openai
 import numpy as np
 from numpy.random import choice
 
-openai.api_key = ''
+openai.api_key = str(np.loadtxt("/Users/zhengchy/private/oai.txt", dtype=str))
 
 jobs = np.loadtxt('wikilist_jobs.txt', dtype=str, delimiter = ':')
 
@@ -11,7 +11,7 @@ score_fns = np.array([ff for ff in os.listdir("jobs_openai/") if ff[:5]=='score'
 score_is = np.array([f.split('_')[0][6:] for f in score_fns]).astype(int)
 job_is = np.unique(score_is)
 
-rand_inds = np.sort(choice(len(jobs), 35, replace = False))
+rand_inds = np.sort(choice(len(jobs), 5, replace = False))
 rand_inds = np.array([v for v in rand_inds if not v in job_is])
 len(rand_inds)
 
@@ -58,6 +58,8 @@ for i in rand_inds:
         )
 
         desc2 = response["choices"][0]["message"]["content"]
-
-        np.savetxt("jobs_openai/story%i_rep%i.txt" % (i, j), [desc], fmt = '%s')
-        np.savetxt("jobs_openai/scores%i_rep%i.txt" % (i, j),  [desc2], fmt = '%s')
+        j1 = j
+        while "scores%i_rep%i.txt" % (i, j1) in os.listdir("jobs_openai/"):
+            j1 += 1
+        np.savetxt("jobs_openai/story%i_rep%i.txt" % (i, j1), [desc], fmt = '%s')
+        np.savetxt("jobs_openai/scores%i_rep%i.txt" % (i, j1),  [desc2], fmt = '%s')
