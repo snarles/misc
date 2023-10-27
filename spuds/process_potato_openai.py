@@ -169,4 +169,4 @@ for i in range(len(dishes_final)):
     v = np.floor(v).astype(int)
     for j in range(6):
         st = st + str(v[j]) + ','
-    print(st)
+    print(st[:-1])

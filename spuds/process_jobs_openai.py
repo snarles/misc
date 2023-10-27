@@ -155,7 +155,7 @@ for ii in job_is:
 job_names = np.loadtxt('wikilist_jobs.txt', dtype=str, delimiter = ':')
 
 jobs_final = job_names[job_final_is]
-np.savetxt("job_open_ai_names.txt", dishes_final, fmt = "%s")
+np.savetxt("job_open_ai_names.txt", jobs_final, fmt = "%s")
 
 arr = np.array(job_vecs)
 np.savetxt("job_open_ai_vec.txt", arr)
