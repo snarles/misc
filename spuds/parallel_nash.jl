@@ -618,7 +618,7 @@ end
 
 # form initial library by subsampling indices
 library = Array{Spud}(undef, 100000)
-spud_i = 0
+global spud_i = 0
 ss_prob = 1.1
 
 
@@ -647,7 +647,7 @@ for h in hrange
                                                 check_l = (l == MXV) || (cost(h,f,l+1,p,r,s) > MXS)
                                                 check_prs = (p+r+s == 3*MXV) || (cost(h,f,l,p+1,r,s) > MXS)
                                                 if check_h && check_f && check_l && check_prs
-                                                    spud_i += 1
+                                                    global spud_i += 1
                                                     #randname = rand_rename(Spud(" ",h,f,l,p,r,s)).name
                                                     #name = string("#", @sprintf("%i", spud_i), ". ", randname)
                                                     name = ""
@@ -699,8 +699,8 @@ function ffp(nash_env, nits)
 end
 
 
-nash_env = library;
-#@time counts = ffp(nash_env[1:10], 1000);
+nash_env = library[1:10];
+#@time counts = ffp(nash_env, 1000);
 
 @time counts = ffp(nash_env, 100000000);
 
