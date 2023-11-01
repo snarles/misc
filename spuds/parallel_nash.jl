@@ -699,7 +699,7 @@ function ffp(nash_env, nits)
 end
 
 
-nash_env = library[1:10];
+nash_env = library;
 #@time counts = ffp(nash_env, 1000);
 
 @time counts = ffp(nash_env, 100000000);
