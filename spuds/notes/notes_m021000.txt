@@ -1,0 +1,12 @@
+Using Game Design E
+
+╔══════════════════════╗
+║ PLAYFUL              ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=2]            ║
+║    [h>=2]            ║
+║                      ║
+║    modifier: +021000 ║
+╚══════════════════════╝

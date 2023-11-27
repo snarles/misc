@@ -1,0 +1,90 @@
+Using Game Design E
+
+╔══════════════════════╗
+║ CHARMING             ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l<=4]            ║
+║    [l>=8]            ║
+║    [l+h <= 12]       ║
+║                      ║
+║    modifier: +101100 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ PLAYFUL              ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=2]            ║
+║    [h>=2]            ║
+║                      ║
+║    modifier: +021000 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ HOBBYIST             ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=2]            ║
+║    [h>=2]            ║
+║                      ║
+║    modifier: +000210 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ OBSERVANT            ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=2]            ║
+║    [h>=2]            ║
+║    [p==3,..6]        ║
+║                      ║
+║    modifier: +030000 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ SILENT               ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l<=5]            ║
+║                      ║
+║    modifier: +600000 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ EAGLE-EYED           ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=3]            ║
+║    [h>=4]            ║
+║                      ║
+║    modifier: +040000 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ CAFFEINATED          ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║    [l>=3]            ║
+║    [f<=4]            ║
+║                      ║
+║    modifier: +000004 ║
+╚══════════════════════╝
+
+╔══════════════════════╗
+║ CHARISMATIC          ║
+║      Exclusive Skill ║
+║                      ║
+║  requirement:        ║
+║  [l<=2]              ║
+║  [l+h <= 10]         ║
+║                      ║
+║    modifier: +003000 ║
+╚══════════════════════╝
