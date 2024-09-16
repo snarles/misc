@@ -1,0 +1,143 @@
+word,pronunciation,gloss
+ABA,a-ba,dad
+ABYIJ,a-va-ti-akh,watermelon
+ABIB,a-viv,spring
+ABL,a-val,but
+AGVDL,a-gu-dal,thumb
+AGVZ MLX,e-goz me-lekh,walnut
+AGS,a-gas,pear
+ADVM,a-dom,red
+AV,o,or
+AVZN,o-zen,ear
+AVYVBVS,o-to-bus,bus
+AVXL,o-khel,food
+AVLI,u-lai,maybe
+AVNIBRSIYH,u-ni-ver-si-ta,university
+AVPNIIM,o-fa-na-yim,bicycle
+AVRZ,o-rez,rice
+AZ,az,so/then
+AJ,akh,brother
+AJVT,a-khot,sister
+AJRVN,a-kha-ron,last/final
+AIZH,which,which
+AIYI,i-ti,slow
+AIX,eikh,how
+AIMA,i-ma,mom
+AIN,ein,there isn't/aren't
+AIPH,ei-fo,where
+AIWH,i-sha,wife
+AM,im,if
+ANGLIT,an-glit,(e)nglish
+ANJNV,a-nakh-nu,we
+ANI,a-ni,(i)
+ANNS,a-na-nas,pineapple
+ASVR,a-sur,forbidden
+AP,af,nose
+APRSQ,a-far-sek,peach
+APWR,ef-shar,(it is) possible
+ACBE,ets-ba,finger/toe
+ARVJT BVQR,a-ru-khat bo-ker,breakfast
+ARVJT ERB,a-ru-khat e-rev,dinner
+ARVJT CHRIIM,a-ru-khat tso-ho-ra-yim,lunch
+ARNQ,ar-nak,wallet
+AWXVLIT,esh-ko-lit,grapefruit
+AT,at,you (f.)
+ATH,a-tah,you (m.)
+ATM,a-tem,you (m.p.)
+ATMVL,at-mol,yesterday
+ATN,a-ten,you (f.p.)
+B,be/ba,in/at
+BBQWH,be-va-ka-sha,please
+BGDIM,be-ga-dim,clothes
+BHCLJH,be-hats-la-kha,good luck
+BVQR,bo-ker,morning
+BJVC,ba-khuts,outside
+BYYH,ba-ta-ta,sweet potato
+BTN,be-ten,stomach/abdomen/tummy
+BIJD,be-ya-khad,together
+BINVNI,bei-no-ni,medium
+BICH,bei-tsa,egg
+BIRH,bi-ra,beer
+BIT,ba-yit,house
+BIT JVLIM,beit kho-lim,hospital
+BIT XNST,beit kne-set,synagogue
+BIT MRQJT,beit mir-ka-khat,pharmacy
+BIT SPR,beit se-fer,school
+BLI,bli,without
+BN,ben,son
+BN DVD,ben dod,cousin
+BNZIN,ben-zin,gasoline
+BNIIN,bin-yan,building
+BNNH,ba-na-na,banana
+BNQ,bank,bank
+BSDR,be-se-der,okay
+BEL,ba-al,husband
+BPNIM,bif-nim,inside
+BCL,ba-tsal,onion
+BQBVQ,bak-buk,bottle
+BQR,ba-kar,beef
+BQRVB,be-ka-rov,soon
+BRIA,ba-ri,healthy
+BWR,ba-sar,meat
+BT,bat,daughter
+GVQ,juk,cockroach
+GB,gav,back
+GBVH,ga-vo-ha,high
+GBINH,gvi-na,cheese
+GDVL,ga-dol,big
+GVBH,go-va,height
+GVP,guf,body
+GZR,gezer,carrot
+GLIDH,gli-da,ice cream
+GM,gam,also
+GRBIIM,gar-ba-yim,socks
+GWM,ge-shem,rain
+DBW,dvash,honey
+DG,dag,fish
+DVAR,do-ar,mail/post office
+DVBDBN,duv-de-van,cherry
+DVD,dod,uncle
+DVDH,do-da,aunt
+DIRH,di-ra,apartment
+DLT,de-let,door
+DKH,da-ka,minute
+DRVM,da-rom,(s)outh
+DRXVN,dar-kon,passport
+DTI,da-ti,religious
+H,ha,the
+HBA,ha-ba,next
+HVA,hu,he
+HVDV,ho-du,turkey (animal)
+HVVH,ho-ve,present (tense)
+HVRIM,ho-rim,parents
+HIA,hi,she
+HIVM,ha-yom,today
+HM,hem,they (m.)
+HN,hen,they (f.)
+HFSQH,haf-sa-ka,break
+HRBH,har-be,a lot
+HTEMLVT,hit-am-lut,exercise
+V,ve,and
+ZH,ze,this
+ZVL,zol,cheap
+ZIT,za-yit,olive
+ZMN,zman,time
+ZQN,za-ken,old (person)
+JBR,kha-ver,friend
+JVRH,khev-ra,company
+JG,khag,holiday
+JGVRH,kha-go-ra,belt
+JDR,khe-der,room
+JDW,kha-dash,new
+JDWVT,kha-da-shot,news
+JVDW,kho-desh,month
+JVLH,kho-le,sick
+JLCH,khul-tsa,shirt
+JVM,khum,brown
+JVMVS,khum-mus,hummus
+JVP,khof,beach
+JVPWH,khuf-sha,vacation
+JHVRH,kha-go-ra,belt
+JVRP,kho-ref,winter
+JZH,kha-ze,chest
+JZQ,kha-zak,strong
