@@ -19,7 +19,7 @@ AZ,az,so/then
 AJ,akh,brother
 AJVT,a-khot,sister
 AJRVN,a-kha-ron,last/final
-AIZH,which,which
+AIZH,ei-ze,which
 AIYI,i-ti,slow
 AIX,eikh,how
 AIMA,i-ma,mom
@@ -100,7 +100,7 @@ DVD,dod,uncle
 DVDH,do-da,aunt
 DIRH,di-ra,apartment
 DLT,de-let,door
-DKH,da-ka,minute
+DQH,da-ka,minute
 DRVM,da-rom,(s)outh
 DRXVN,dar-kon,passport
 DTI,da-ti,religious
@@ -114,7 +114,7 @@ HIA,hi,she
 HIVM,ha-yom,today
 HM,hem,they (m.)
 HN,hen,they (f.)
-HFSQH,haf-sa-ka,break
+HPSQH,haf-sa-ka,break
 HRBH,har-be,a lot
 HTEMLVT,hit-am-lut,exercise
 V,ve,and
@@ -124,7 +124,7 @@ ZIT,za-yit,olive
 ZMN,zman,time
 ZQN,za-ken,old (person)
 JBR,kha-ver,friend
-JVRH,khev-ra,company
+JBRH,khev-ra,company
 JG,khag,holiday
 JGVRH,kha-go-ra,belt
 JDR,khe-der,room
@@ -137,7 +137,6 @@ JVM,khum,brown
 JVMVS,khum-mus,hummus
 JVP,khof,beach
 JVPWH,khuf-sha,vacation
-JHVRH,kha-go-ra,belt
 JVRP,kho-ref,winter
 JZH,kha-ze,chest
 JZQ,kha-zak,strong
