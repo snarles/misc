@@ -103,7 +103,7 @@ def winner(w1, w2):
         return np.sign(w1_adv)
 
 n_army = 11
-current_level = 3
+current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
 
 print("--------------------------")
@@ -194,7 +194,7 @@ while game_flag:
         print("==Player army==")
         print(",".join([word2heb(w) for w in player_lib]))
         print("==Current team==")
-        print(",".join([word2heb(w) for w in player_team]))
+        print(",".join([w for w in player_team]))
         print("==Choose your team (words separated by commas w/o spaces, press enter to keep current)==")
         ar = input()
         if len(ar) > 0:
@@ -289,7 +289,9 @@ while game_flag:
                     if current_opp == m-1:
                         print("@@@ DEFEATED ALL TEAMS! @@@")
                         war_flag = False
-                        current_level += 1
+                        if z > current_level -5:
+                            print("Level up!")
+                            current_level = z + 5
                     input()
                 else:
                     # CPU's turn
