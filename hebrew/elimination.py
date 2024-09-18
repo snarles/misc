@@ -295,7 +295,7 @@ while game_flag:
                     input()
                 else:
                     # CPU's turn
-                    if rng.random() < [0.0, 0.1, 0.5, 0.7, 0.9, 1.0][len(cpu_inactive)]:
+                    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.5, 0.7, 0.9, 1.0][len(cpu_inactive)]:
                         print("===** CPU recovery **===")
                         cpu_active = cpu_active + cpu_inactive
                         cpu_inactive = []
