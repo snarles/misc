@@ -275,7 +275,7 @@ while game_flag:
                             cpu_active = [w for w in cpu_active if w != target]
                             cpu_inactive = [w for w in cpu_inactive if w != target]
                         elif w_or_not == -1:
-                            print("...but " + word2heb(chosen) + " tied!")
+                            print("...but " + word2heb(chosen) + " lost!")
                     input()
                 if len(cpu_active) + len(cpu_inactive)==0:
                     battle_flag=False
@@ -318,7 +318,8 @@ while game_flag:
                                 defeats = [rng.choice(atargs)]
                             else:
                                 defeats = []
-                                print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
+                        if len(defeats)==0:
+                            print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
                         for target in defeats:
                             print("CPU " + word2heb(chosen) + " vs. your " + word2heb(target))
                             print(word2heb(target) + " eliminated.")
