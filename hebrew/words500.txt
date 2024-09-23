@@ -152,7 +152,7 @@ JSH,kha-sa,lettuce
 JCAIT,kha-tsa-it,skirt
 JCI,khe-tsi,half (of something)
 JRIP,kha-rif,spicy (hot)
-JWBVN,khesh-bon,bill, check
+JWBVN,khesh-bon,bill/check
 JWVB,kha-shuv,important
 JTVL,kha-tul,cat
 YVB,tov,good
