@@ -140,3 +140,24 @@ JVPWH,khuf-sha,vacation
 JVRP,kho-ref,winter
 JZH,kha-ze,chest
 JZQ,kha-zak,strong
+JLB,kha-lav,milk
+JLH,kha-la,challah
+JLVN,kha-lon,window
+JLVNI,khi-lo-ni,secular
+JM,kham,hot
+JMAH,kkem-a,butter
+JMVCIM,kha-mu-tsim,pickles
+JNVT,kha-nut,store
+JSH,kha-sa,lettuce
+JCAIT,kha-tsa-it,skirt
+JCI,khe-tsi,half (of something)
+JRIP,kha-rif,spicy (hot)
+JWBVN,khesh-bon,bill, check
+JWVB,kha-shuv,important
+JTVL,kha-tul,cat
+YVB,tov,good
+YIVL,ti-yul,trip/hike
+YLH,ta-le,lamb
+YLVVIZIH,te-le-viz-ya,tv
+YLPVN,te-le-fon,telephone
+YEIM,ta-im,tasty
