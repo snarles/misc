@@ -295,19 +295,24 @@ while game_flag:
                     input()
                 else:
                     # CPU's turn
-                    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.5, 0.7, 0.9, 1.0][len(cpu_inactive)]:
+                    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.2, 0.5, 0.8, 1.0][len(cpu_inactive)]:
                         print("===** CPU recovery **===")
                         cpu_active = cpu_active + cpu_inactive
                         cpu_inactive = []
                         input()
                     else:
-                        chosen = rng.choice(cpu_active)
-                        cpu_active = [w for w in cpu_active if w != chosen]
-                        cpu_inactive.append(chosen)
-                        cpu_target_inactive = False
-                        atargs = [w for w in pl_active if winner(chosen, w)>=0]
-                        itargs = [w for w in pl_inactive if winner(chosen, w)>=0]
-                        chance = [0.0, 0.3, 0.5, 0.8, 1.0][len(itargs)]
+                        can_kill_flag = False
+                        n_tries = 0
+                        while not can_kill_flag and n_tries < 3:
+                            chosen = rng.choice(cpu_active)
+                            cpu_active = [w for w in cpu_active if w != chosen]
+                            cpu_inactive.append(chosen)
+                            cpu_target_inactive = False
+                            atargs = [w for w in pl_active if winner(chosen, w)>=0]
+                            itargs = [w for w in pl_inactive if winner(chosen, w)>=0]
+                            if len(atargs) + len(itargs) > 0:
+                                can_kill_flag = True
+                        chance = [0.0, 0.3, 0.6, 0.8, 1.0][len(itargs)]
                         roll = rng.random()
                         if roll < chance or len(atargs)==0:
                             cpu_target_inactive = True
