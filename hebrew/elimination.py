@@ -203,6 +203,7 @@ while game_flag:
             valid_flag = True
             for w in army:
                 if w not in player_lib:
+                    print("%s not in library." % w)
                     valid_flag = False
             if len(army) != n_army:
                 print("Team needs %i unique words." % n_army)
