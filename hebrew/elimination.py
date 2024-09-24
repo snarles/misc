@@ -325,7 +325,13 @@ while game_flag:
                             else:
                                 defeats = []
                         if len(defeats)==0:
-                            print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
+                            if len(cpu_inactive) > 0:
+                                print("===** CPU recovery **===")
+                                cpu_active = cpu_active + cpu_inactive
+                                cpu_inactive = []
+                            else:
+                                print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
+                            input()
                         for target in defeats:
                             print("CPU " + word2heb(chosen) + " vs. your " + word2heb(target))
                             print(word2heb(target) + " eliminated.")
