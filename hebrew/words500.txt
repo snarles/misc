@@ -132,7 +132,7 @@ JDW,kha-dash,new
 JDWVT,kha-da-shot,news
 JVDW,kho-desh,month
 JVLH,kho-le,sick
-JLCH,khul-tsa,shirt
+JVLCH,khul-tsa,shirt
 JVM,khum,brown
 JVMVS,khum-mus,hummus
 JVP,khof,beach
@@ -161,3 +161,14 @@ YLH,ta-le,lamb
 YLVVIZIH,te-le-viz-ya,tv
 YLPVN,te-le-fon,telephone
 YEIM,ta-im,tasty
+IALLH,ya-la,get going
+ID,yad,arm
+IHVDI,ye-hu-di,(j)ewish
+IVGVRY,yo-gurt,yogurt
+IVM,yom,day
+IVM JMIWI,yom kha-mi-shi,(t)hursday
+IVM RAWVN,yom ri-shon,(s)unday
+IVM RBIEI,yom re-vi-i,(w)ednesday
+IVM WLIWI,yom shli-shi,(t)uesday
+IVM WNI,yom she-ni,(m)onday
+IVM WIWI,yom shi-shi,(f)riday
