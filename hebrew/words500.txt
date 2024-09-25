@@ -145,7 +145,7 @@ JLH,kha-la,challah
 JLVN,kha-lon,window
 JLVNI,khi-lo-ni,secular
 JM,kham,hot
-JMAH,kkem-a,butter
+JMAH,khem-a,butter
 JMVCIM,kha-mu-tsim,pickles
 JNVT,kha-nut,store
 JSH,kha-sa,lettuce
