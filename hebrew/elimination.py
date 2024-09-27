@@ -157,8 +157,9 @@ r0 = default_rng(0)
 multi_armies = {}
 for j in range(3):
     armies = []
-    for i in range(13):
-        armies.append(r0.choice(wds[:(i*10+20)], 11, False))
+    for i in range(17):
+        sub_wds = wds[:min(len(wds),(i*10+20))]
+        armies.append(r0.choice(sub_wds, 11, False))
     multi_armies[j] = armies
 
 game_flag=True
@@ -281,7 +282,7 @@ while game_flag:
                 if len(cpu_active) + len(cpu_inactive)==0:
                     battle_flag=False
                     print("@@@ VICTORY!! @@@")
-                    w_pool = wds[:(z+2)*10]
+                    w_pool = wds[:min(len(wds),(z*10+20))]
                     w_pool = list(set(w_pool).difference(set(player_lib)))
                     if len(w_pool) > 0:
                         w_new = rng.choice(w_pool)
@@ -306,8 +307,6 @@ while game_flag:
                         n_tries = 0
                         while not can_kill_flag and n_tries < 3:
                             chosen = rng.choice(cpu_active)
-                            cpu_active = [w for w in cpu_active if w != chosen]
-                            cpu_inactive.append(chosen)
                             cpu_target_inactive = False
                             atargs = [w for w in pl_active if winner(chosen, w)>=0]
                             itargs = [w for w in pl_inactive if winner(chosen, w)>=0]
@@ -332,6 +331,9 @@ while game_flag:
                             else:
                                 print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
                             input()
+                        else:
+                            cpu_active = [w for w in cpu_active if w != chosen]
+                            cpu_inactive.append(chosen)
                         for target in defeats:
                             print("CPU " + word2heb(chosen) + " vs. your " + word2heb(target))
                             print(word2heb(target) + " eliminated.")
