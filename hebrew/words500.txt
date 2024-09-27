@@ -172,3 +172,25 @@ IVM RBIEI,yom re-vi-i,(w)ednesday
 IVM WLIWI,yom shli-shi,(t)uesday
 IVM WNI,yom she-ni,(m)onday
 IVM WIWI,yom shi-shi,(f)riday
+IJID,ya-khid,singular/single (not married)
+IIN,ya-yin,wine
+ILD,ye-led,boy
+ILDH,yal-da,girl
+IM,yam,sea
+IMINH,ya-mi-na,right (direction)
+IPH,ya-fe,beautiful
+ICIAH,ye-tsi-a,exit
+IQR,ya-kar,expensive
+IRVQ,ya-rok,green
+IRJ,ya-re-akh,moon
+IRQVT,ye-ra-kot,vegetables
+IW,yesh,there is/are
+IWN,ya-shan,old (thing)
+IWR,ya-shar,straight ahead/honest
+IWRAL,is-ra-el,(i)srael
+ITVW,ya-tush,mosquito
+X,ke,as
+XAB,ke-ev,pain/ache
+XBIW,kvish,road/route
+XDVR,ka-dur,ball
+XDVRGL,ka-du-re-gel,soccer
