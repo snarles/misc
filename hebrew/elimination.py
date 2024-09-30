@@ -306,6 +306,7 @@ while game_flag:
                         can_kill_flag = False
                         n_tries = 0
                         while not can_kill_flag and n_tries < 3:
+                            ntries += 1
                             chosen = rng.choice(cpu_active)
                             cpu_target_inactive = False
                             atargs = [w for w in pl_active if winner(chosen, w)>=0]
