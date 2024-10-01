@@ -43,7 +43,7 @@ def word2heb(w):
     for i in range(len(w)):
         l = w[i]
         if i==len(w)-1:
-            if l in finals.keys():
+            if l in finals.keys() and len(w)>1:
                 w2 += finals[l]
             else:
                 w2 += lat2heb[l]

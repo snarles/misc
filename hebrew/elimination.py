@@ -43,7 +43,7 @@ def word2heb(w):
     for i in range(len(w)):
         l = w[i]
         if i==len(w)-1:
-            if l in finals.keys():
+            if l in finals.keys() and len(w)>1:
                 w2 += finals[l]
             else:
                 w2 += lat2heb[l]
@@ -157,7 +157,7 @@ r0 = default_rng(0)
 multi_armies = {}
 for j in range(3):
     armies = []
-    for i in range(17):
+    for i in range(20):
         sub_wds = wds[:min(len(wds),(i*10+20))]
         armies.append(r0.choice(sub_wds, 11, False))
     multi_armies[j] = armies

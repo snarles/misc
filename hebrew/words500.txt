@@ -194,3 +194,25 @@ XAB,ke-ev,pain/ache
 XBIW,kvish,road/route
 XDVR,ka-dur,ball
 XDVRGL,ka-du-re-gel,soccer
+XDVRSL,ka-dur-sal,basketball
+XVBE,ko-va,hat
+XVXB,ko-khav,star
+XVS,kos,glass/cup
+XVES,ko-es,angry
+XJVL,ka-khol,blue
+XISA,ki-se,chair
+XITH,ki-ta,classroom
+XL,kol,all
+XLB,ke-lev,dog
+XLVM,klum,nothing
+XMH,ka-ma,how much
+XN,ken,yes
+XNISH,kni-sa,entrance
+XSP,ke-sef,money
+XSPVMY,kas-po-mat,(a)(t)(m)
+XP,kaf,spoon
+XP ID,kaf yad,hand
+XP RGL,kaf regel,foot
+XRVB,kruv,cabbage
+XRIT,ka-rit,pillow
+XWR,ka-sher,kosher
