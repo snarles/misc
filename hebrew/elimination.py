@@ -157,7 +157,7 @@ r0 = default_rng(0)
 multi_armies = {}
 for j in range(3):
     armies = []
-    for i in range(20):
+    for i in range(21):
         sub_wds = wds[:min(len(wds),(i*10+20))]
         armies.append(r0.choice(sub_wds, 11, False))
     multi_armies[j] = armies

@@ -216,3 +216,14 @@ XP RGL,kaf regel,foot
 XRVB,kruv,cabbage
 XRIT,ka-rit,pillow
 XWR,ka-sher,kosher
+XTVBT,ktov-et,address
+XTVM,ka-tom,orange (color)
+L,le,to/for
+LA,lo,no
+LAY,le-at,slowly
+LB,lev,heart
+LBD,le-vad,alone
+LVN,la-van,white
+LBRIAVT,liv-ri-ut,bless you
+LHITRAVT,le-hit-ra-ot,see you later
+LJIIM,le-kha-yim,cheers!
