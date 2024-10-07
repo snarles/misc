@@ -122,7 +122,7 @@ if x=="1":
         print("===New team:===")
         w_pool = wds[:n_lib]
         player_lib = list(rng.choice(w_pool, n_army, replace=False))
-        player_team = player_lib
+        player_team = player_lib.copy()
         for w in player_lib:
             print(word2heb(w))
         print("Accept this team? (y)")
