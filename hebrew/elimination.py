@@ -195,10 +195,10 @@ def ai_target_based(rng, gamestate):
         return move
 
 diagnostic = ["threat"]
-    
+
 def threat(chosen, team):
     return len([w for w in team if winner(w, chosen)>=0])
-    
+
 def cpu_eval_threat(current_a, current_i, next_a, next_i):
     '''Compute an evaluation function based on threat formula'''
     te = -1.5 # threat exponent
@@ -246,7 +246,7 @@ def cpu_potential_moves(gamestate):
 def lsub(list1, list2):
     '''List subtraction'''
     return [v for v in list1 if v not in list2]
-    
+
 def ai_threat_based(rng, gamestate):
     cpu_active = gamestate["cpu_active"]
     cpu_inactive = gamestate["cpu_inactive"]
@@ -262,10 +262,17 @@ def ai_threat_based(rng, gamestate):
         ns = cpu_move_update(gamestate, mv)
         threatvals.append(cpu_eval_threat(ns["pl_active"], ns["pl_inactive"], ns["cpu_active"], ns["cpu_inactive"]))
     if np.max(threatvals) < -1000.0:
+        if "threat" in diagnostic:
+            print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         return {"move":"resign"}
+    # do not allow recovery if CPU guaranteed win
+    if len(threatvals) > 0 and np.max(threatvals[1:]) > 10000.0:
+        threatvals[0] = 0.0
+    if "threat" in diagnostic:
+        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     return moves[np.argmax(threatvals)]
-        
-    
+
+
 n_army = 11
 current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
