@@ -194,6 +194,78 @@ def ai_target_based(rng, gamestate):
         move["defeats"] = [targ]
         return move
 
+diagnostic = ["threat"]
+    
+def threat(chosen, team):
+    return len([w for w in team if winner(w, chosen)>=0])
+    
+def cpu_eval_threat(current_a, current_i, next_a, next_i):
+    '''Compute an evaluation function based on threat formula'''
+    te = -1.5 # threat exponent
+    td = 0.8 # time discount
+    eps = 0.0001 # fudge factor
+    cteam = current_a + current_i
+    nteam = next_a + next_i
+    cas = [(threat(w, nteam)+eps)**te for w in current_a] # current_a score
+    cis = [(threat(w, nteam)+eps)**te for w in current_i] # current_i score
+    nas = [(threat(w, cteam)+eps)**te for w in next_a] # next_a score
+    nis = [(threat(w, cteam)+eps)**te for w in next_i] # next_i score
+    score = np.sum(nas) + td * np.sum(nis) - td * np.sum(cas) - td * td * np.sum(cis)
+    if "threat" in diagnostic:
+        print("score %0.3f" % score + " cas %0.3f" % np.sum(cas) + " cis %0.3f" % np.sum(cis) + " nas %0.3f" % np.sum(nas) + " nis %0.3f"% np.sum(nis))
+    return score
+
+def cpu_move_update(gamestate, move):
+    '''Updates the game state given a cpu move'''
+    nextstate = {}
+    if move["move"]=="*":
+        nextstate["cpu_active"] = gamestate["cpu_active"] + gamestate["cpu_inactive"]
+        nextstate["cpu_inactive"] = []
+        nextstate["pl_active"] = gamestate["pl_active"]
+        nextstate["pl_inactive"] = gamestate["pl_inactive"]
+    else:
+        chosen = move["chosen"]
+        defeats = move["defeats"]
+        nextstate["cpu_active"] = lsub(gamestate["cpu_active"], [chosen])
+        nextstate["cpu_inactive"] = gamestate["cpu_inactive"] + [chosen]
+        nextstate["pl_active"] = lsub(gamestate["pl_active"], defeats)
+        nextstate["pl_inactive"] = lsub(gamestate["pl_inactive"], defeats)
+    return nextstate
+
+def cpu_potential_moves(gamestate):
+    moves = [{"move":"*"}]
+    for w in gamestate["cpu_active"]:
+        for w2 in gamestate["pl_active"]:
+            if winner(w,w2) >= 0:
+                moves.append({"move":"fight", "chosen":w, "defeats":[w2]})
+        itargs = [w2 for w2 in gamestate["pl_inactive"] if winner(w, w2)>=0]
+        if len(itargs) > 0:
+            moves.append({"move":"fight", "chosen":w, "defeats":itargs})
+    return moves
+
+def lsub(list1, list2):
+    '''List subtraction'''
+    return [v for v in list1 if v not in list2]
+    
+def ai_threat_based(rng, gamestate):
+    cpu_active = gamestate["cpu_active"]
+    cpu_inactive = gamestate["cpu_inactive"]
+    pl_active = gamestate["pl_active"]
+    pl_inactive = gamestate["pl_inactive"]
+    move = {"move": "*"}
+    # generate all possible moves
+    moves = cpu_potential_moves(gamestate)
+    threatvals = []
+    for mv in moves:
+        if "threat" in diagnostic:
+            print(mv)
+        ns = cpu_move_update(gamestate, mv)
+        threatvals.append(cpu_eval_threat(ns["pl_active"], ns["pl_inactive"], ns["cpu_active"], ns["cpu_inactive"]))
+    if np.max(threatvals) < -1000.0:
+        return {"move":"resign"}
+    return moves[np.argmax(threatvals)]
+        
+    
 n_army = 11
 current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
@@ -395,7 +467,7 @@ while game_flag:
                         "pl_active": pl_active,
                         "pl_inactive": pl_inactive
                     }
-                    cpu_ai = ai_target_based #ai_fighter_based
+                    cpu_ai = ai_threat_based #ai_fighter_based #ai_target_based
                     cpu_move = cpu_ai(rng, gamestate)
                     if cpu_move["move"] == "*":
                         print("===** CPU recovery **===")
