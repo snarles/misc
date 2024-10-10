@@ -393,6 +393,7 @@ while game_flag:
             pl_inactive = []
             battle_flag = True
             while battle_flag:
+                resign_flag = False
                 print("\n\n\n\n\n")
                 print("==CPU active==")
                 print(", ".join([word2heb(w) for w in cpu_active]))
@@ -405,18 +406,22 @@ while game_flag:
                 print(", ".join([word2heb(w) for w in pl_active]))
                 print("==Player inactive==")
                 print(", ".join([word2heb(w) for w in pl_inactive]))
-                print("==Choose a fighter (* for recovery)==")
+                print("==Choose a fighter (* for recovery, @ to resign)==")
                 choose_flag = True
                 while choose_flag:
                     xx = input()
                     if xx in pl_active:
                         choose_flag = False
-                    if xx == "*":
+                    if xx == "*" or xx == "@":
                         choose_flag = False
                 if xx == "*":
                     print("*** RECOVERY ***")
                     pl_active = pl_active + pl_inactive
                     pl_inactive = []
+                    input()
+                elif xx == "@":
+                    print("@@@ You resign! @@@")
+                    resign_flag = True
                     input()
                 else:
                     chosen = xx
@@ -466,6 +471,10 @@ while game_flag:
                             print("Level up!")
                             current_level = z + 5
                     input()
+                elif resign_flag == True:
+                    battle_flag = False
+                    pl_active = []
+                    pl_inactive = []
                 else:
                     # CPU's turn
                     gamestate = {
