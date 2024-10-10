@@ -102,6 +102,50 @@ def winner(w1, w2):
     else:
         return np.sign(w1_adv)
 
+def ai_fighter_based(rng, gamestate):
+    cpu_active = gamestate["cpu_active"]
+    cpu_inactive = gamestate["cpu_inactive"]
+    pl_active = gamestate["pl_active"]
+    pl_inactive = gamestate["pl_inactive"]
+    move = {"move": "*"}
+    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.2, 0.5, 0.8, 1.0][len(cpu_inactive)]:
+        move = {"move": "*"}
+        return move
+    can_kill_flag = False
+    n_tries = 0
+    while not can_kill_flag and n_tries < 3:
+        n_tries += 1
+        chosen = rng.choice(cpu_active)
+        cpu_target_inactive = False
+        atargs = [w for w in pl_active if winner(chosen, w)>=0]
+        itargs = [w for w in pl_inactive if winner(chosen, w)>=0]
+        if len(atargs) + len(itargs) > 0:
+            can_kill_flag = True
+    chance = [0.0, 0.3, 0.6, 0.8, 1.0][len(itargs)]
+    roll = rng.random()
+    if roll < chance or len(atargs)==0:
+        cpu_target_inactive = True
+    if cpu_target_inactive:
+        defeats = itargs
+    else:
+        if len(atargs) > 0:
+            defeats = [rng.choice(atargs)]
+        else:
+            defeats = []
+    if len(defeats)==0:
+        if len(cpu_inactive) > 0:
+            move = {"move": "*"}
+            return move
+        else:
+            print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
+            move = {"move": "*"}
+            return move
+    else:
+        move["move"] = "fight"
+        move["chosen"] = chosen
+        move["defeats"] = defeats
+        return move
+
 n_army = 11
 current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
@@ -297,44 +341,24 @@ while game_flag:
                     input()
                 else:
                     # CPU's turn
-                    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.2, 0.5, 0.8, 1.0][len(cpu_inactive)]:
+                    gamestate = {
+                        "cpu_active": cpu_active,
+                        "cpu_inactive": cpu_inactive,
+                        "pl_active": pl_active,
+                        "pl_inactive": pl_inactive
+                    }
+                    cpu_ai = ai_fighter_based
+                    cpu_move = cpu_ai(rng, gamestate)
+                    if cpu_move["move"] == "*":
                         print("===** CPU recovery **===")
                         cpu_active = cpu_active + cpu_inactive
                         cpu_inactive = []
                         input()
                     else:
-                        can_kill_flag = False
-                        n_tries = 0
-                        while not can_kill_flag and n_tries < 3:
-                            n_tries += 1
-                            chosen = rng.choice(cpu_active)
-                            cpu_target_inactive = False
-                            atargs = [w for w in pl_active if winner(chosen, w)>=0]
-                            itargs = [w for w in pl_inactive if winner(chosen, w)>=0]
-                            if len(atargs) + len(itargs) > 0:
-                                can_kill_flag = True
-                        chance = [0.0, 0.3, 0.6, 0.8, 1.0][len(itargs)]
-                        roll = rng.random()
-                        if roll < chance or len(atargs)==0:
-                            cpu_target_inactive = True
-                        if cpu_target_inactive:
-                            defeats = itargs
-                        else:
-                            if len(atargs) > 0:
-                                defeats = [rng.choice(atargs)]
-                            else:
-                                defeats = []
-                        if len(defeats)==0:
-                            if len(cpu_inactive) > 0:
-                                print("===** CPU recovery **===")
-                                cpu_active = cpu_active + cpu_inactive
-                                cpu_inactive = []
-                            else:
-                                print("CPU " + word2heb(chosen) + " cannot defeat any of your words.")
-                            input()
-                        else:
-                            cpu_active = [w for w in cpu_active if w != chosen]
-                            cpu_inactive.append(chosen)
+                        chosen = cpu_move["chosen"]
+                        defeats = cpu_move["defeats"]
+                        cpu_active = [w for w in cpu_active if w != chosen]
+                        cpu_inactive.append(chosen)
                         for target in defeats:
                             print("CPU " + word2heb(chosen) + " vs. your " + word2heb(target))
                             print(word2heb(target) + " eliminated.")
