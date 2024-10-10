@@ -146,6 +146,54 @@ def ai_fighter_based(rng, gamestate):
         move["defeats"] = defeats
         return move
 
+def ai_target_based(rng, gamestate):
+    cpu_active = gamestate["cpu_active"]
+    cpu_inactive = gamestate["cpu_inactive"]
+    pl_active = gamestate["pl_active"]
+    pl_inactive = gamestate["pl_inactive"]
+    move = {"move": "*"}
+    if len(cpu_active)==0 or rng.random() < [0.0, 0.1, 0.2, 0.5, 0.8, 1.0][len(cpu_inactive)]:
+        move = {"move": "*"}
+        return move
+    # look for a fighter that can win vs pl
+    if len(pl_inactive) > 1 or len(pl_active)==0:
+        search_order = rng.choice(cpu_active, len(cpu_active), replace=False)
+        n_kills = []
+        ind = 0
+        not_found_flag = True
+        # iterate through fighters
+        while not_found_flag and ind < len(search_order):
+            fighter = search_order[ind]
+            n_kills.append(len([targ for targ in pl_inactive if winner(fighter, targ) >= 0]))
+            if n_kills[-1] == len(pl_inactive):
+                not_found_flag = False
+            else:
+                ind += 1
+        #print(list(zip(search_order[:len(n_kills)], n_kills)))
+        # if can kill at least 2, choose the best
+        if np.max(n_kills) > 1 or len(pl_active)==0:
+            chosen = search_order[np.argmax(n_kills)]
+            move["move"] = "fight"
+            move["chosen"] = chosen
+            move["defeats"] = [w for w in pl_inactive if winner(chosen, w)>=0]
+            return move
+    # otherwise, choose a random opponent fighter and try to defeat
+    targ = rng.choice(pl_active)
+    can_beat_a = [w for w in cpu_active if winner(w, targ)>=0]
+    can_beat_i = [w for w in cpu_inactive if winner(w, targ)>=0]
+    if len(can_beat_a)==0 and len(can_beat_i)==0:
+        # no way to win
+        move["move"] = "resign"
+        return move
+    elif len(can_beat_a)==0:
+        move["move"] = "*"
+        return move
+    else:
+        move["move"] = "fight"
+        move["chosen"] = rng.choice(can_beat_a)
+        move["defeats"] = [targ]
+        return move
+
 n_army = 11
 current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
@@ -347,12 +395,29 @@ while game_flag:
                         "pl_active": pl_active,
                         "pl_inactive": pl_inactive
                     }
-                    cpu_ai = ai_fighter_based
+                    cpu_ai = ai_target_based #ai_fighter_based
                     cpu_move = cpu_ai(rng, gamestate)
                     if cpu_move["move"] == "*":
                         print("===** CPU recovery **===")
                         cpu_active = cpu_active + cpu_inactive
                         cpu_inactive = []
+                        input()
+                    elif cpu_move["move"] == "resign":
+                        battle_flag=False
+                        print("CPU resigns.")
+                        print("@@@ VICTORY!! @@@")
+                        w_pool = wds[:min(len(wds),(z*10+20))]
+                        w_pool = list(set(w_pool).difference(set(player_lib)))
+                        if len(w_pool) > 0:
+                            w_new = rng.choice(w_pool)
+                            print("You gain a word: " + word2heb(w_new))
+                            player_lib.append(w_new)
+                        if current_opp == m-1:
+                            print("@@@ DEFEATED ALL TEAMS! @@@")
+                            war_flag = False
+                            if z > current_level -5:
+                                print("Level up!")
+                                current_level = z + 5
                         input()
                     else:
                         chosen = cpu_move["chosen"]
