@@ -194,7 +194,7 @@ def ai_target_based(rng, gamestate):
         move["defeats"] = [targ]
         return move
 
-diagnostic = ["threat"]
+diagnostic = []#["threat"]
 
 def threat(chosen, team):
     return len([w for w in team if winner(w, chosen)>=0])
