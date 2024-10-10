@@ -199,11 +199,10 @@ diagnostic = []#["threat"]
 def threat(chosen, team):
     return len([w for w in team if winner(w, chosen)>=0])
 
-def cpu_eval_threat(current_a, current_i, next_a, next_i):
+def cpu_eval_threat(current_a, current_i, next_a, next_i, eps=0.0001):
     '''Compute an evaluation function based on threat formula'''
     te = -1.5 # threat exponent
     td = 0.8 # time discount
-    eps = 0.0001 # fudge factor
     cteam = current_a + current_i
     nteam = next_a + next_i
     cas = [(threat(w, nteam)+eps)**te for w in current_a] # current_a score
@@ -247,7 +246,7 @@ def lsub(list1, list2):
     '''List subtraction'''
     return [v for v in list1 if v not in list2]
 
-def ai_threat_based(rng, gamestate):
+def ai_threat_based(rng, gamestate, allow_resign=True, eps=0.0001):
     cpu_active = gamestate["cpu_active"]
     cpu_inactive = gamestate["cpu_inactive"]
     pl_active = gamestate["pl_active"]
@@ -260,8 +259,8 @@ def ai_threat_based(rng, gamestate):
         if "threat" in diagnostic:
             print(mv)
         ns = cpu_move_update(gamestate, mv)
-        threatvals.append(cpu_eval_threat(ns["pl_active"], ns["pl_inactive"], ns["cpu_active"], ns["cpu_inactive"]))
-    if np.max(threatvals) < -1000.0:
+        threatvals.append(cpu_eval_threat(ns["pl_active"], ns["pl_inactive"], ns["cpu_active"], ns["cpu_inactive"], eps))
+    if np.max(threatvals) < -1000.0 and allow_resign:
         if "threat" in diagnostic:
             print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         return {"move":"resign"}
@@ -272,6 +271,13 @@ def ai_threat_based(rng, gamestate):
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
     return moves[np.argmax(threatvals)]
 
+def ai_threat_based_subsample(rng, gamestate, n_samples=5):
+    gamestate2 = {}
+    gamestate2["cpu_active"] = list(rng.choice(gamestate["cpu_active"], min(n_samples, len(gamestate["cpu_active"])), replace=False))
+    gamestate2["pl_active"] = list(rng.choice(gamestate["pl_active"], min(n_samples, len(gamestate["pl_active"])), replace=False))
+    gamestate2["cpu_inactive"] = gamestate["cpu_inactive"]
+    gamestate2["pl_inactive"] = gamestate["pl_inactive"]
+    return ai_threat_based(rng, gamestate2, allow_resign=False, eps=0.5)
 
 n_army = 11
 current_level = 7
@@ -483,9 +489,14 @@ while game_flag:
                         "pl_active": pl_active,
                         "pl_inactive": pl_inactive
                     }
-                    cpu_ai = ai_threat_based #ai_fighter_based #ai_target_based
-                    if z <= 5:
+                    if len(cpu_active + cpu_inactive + pl_active + pl_inactive) > 10:
+                        cpu_ai = lambda rng, gamestate : ai_threat_based_subsample(rng, gamestate, 5)
+                    else:
+                        cpu_ai = ai_threat_based
+                    if z <= 3:
                         cpu_ai = ai_fighter_based
+                    elif z <= 5:
+                        cpu_ai = ai_target_based
                     cpu_move = cpu_ai(rng, gamestate)
                     if cpu_move["move"] == "*":
                         print("===** CPU recovery **===")
