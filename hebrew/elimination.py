@@ -266,7 +266,7 @@ def ai_threat_based(rng, gamestate):
             print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         return {"move":"resign"}
     # do not allow recovery if CPU guaranteed win
-    if len(threatvals) > 0 and np.max(threatvals[1:]) > 10000.0:
+    if len(threatvals) > 1 and np.max(threatvals[1:]) > 10000.0:
         threatvals[0] = 0.0
     if "threat" in diagnostic:
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
@@ -274,7 +274,7 @@ def ai_threat_based(rng, gamestate):
 
 
 n_army = 11
-current_level = 5
+current_level = 7
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
 
 print("--------------------------")
@@ -287,12 +287,12 @@ print("2. Continue")
 x = input()
 
 if x=="1":
-    n_lib = 50 # number of words in pool to draw from
+    n_lib = 100 # number of words in pool to draw from
     flag = True
     while flag:
         print("===New team:===")
         w_pool = wds[:n_lib]
-        player_lib = list(rng.choice(w_pool, n_army, replace=False))
+        player_lib = list(w_pool[np.sort(rng.choice(n_lib, n_army, replace=False))])
         player_team = player_lib.copy()
         for w in player_lib:
             print(word2heb(w))
@@ -475,6 +475,8 @@ while game_flag:
                         "pl_inactive": pl_inactive
                     }
                     cpu_ai = ai_threat_based #ai_fighter_based #ai_target_based
+                    if z <= 5:
+                        cpu_ai = ai_fighter_based
                     cpu_move = cpu_ai(rng, gamestate)
                     if cpu_move["move"] == "*":
                         print("===** CPU recovery **===")
