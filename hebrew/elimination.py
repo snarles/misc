@@ -205,13 +205,14 @@ def cpu_eval_threat(current_a, current_i, next_a, next_i, eps=0.0001):
     '''Compute an evaluation function based on threat formula'''
     te = -1.5 # threat exponent
     td = 0.8 # time discount
+    dm = 0.9 # defensive multiplier : how much to multiply the score of the opponent
     cteam = current_a + current_i
     nteam = next_a + next_i
     cas = [(threat(w, nteam)+eps)**te for w in current_a] # current_a score
     cis = [(threat(w, nteam)+eps)**te for w in current_i] # current_i score
     nas = [(threat(w, cteam)+eps)**te for w in next_a] # next_a score
     nis = [(threat(w, cteam)+eps)**te for w in next_i] # next_i score
-    score = np.sum(nas) + td * np.sum(nis) - td * np.sum(cas) - td * td * np.sum(cis)
+    score = dm * (np.sum(nas) + td * np.sum(nis)) - (np.sum(cas) - td * np.sum(cis))
     if "threat" in diagnostic:
         print("score %0.3f" % score + " cas %0.3f" % np.sum(cas) + " cis %0.3f" % np.sum(cis) + " nas %0.3f" % np.sum(nas) + " nis %0.3f"% np.sum(nis))
     return score
