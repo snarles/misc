@@ -202,17 +202,18 @@ def threat(chosen, team):
     return len([w for w in team if winner(w, chosen)>=0])
 
 def cpu_eval_threat(current_a, current_i, next_a, next_i, eps=0.0001):
-    '''Compute an evaluation function based on threat formula'''
+    '''Compute an evaluation function for outcome of a move based on threat formula'''
     te = -1.5 # threat exponent
     td = 0.8 # time discount
-    dm = 0.9 # defensive multiplier : how much to multiply the score of the opponent
+    dm = 1.3 # defensive multiplier : how much to multiply the score of the opponent
     cteam = current_a + current_i
     nteam = next_a + next_i
     cas = [(threat(w, nteam)+eps)**te for w in current_a] # current_a score
     cis = [(threat(w, nteam)+eps)**te for w in current_i] # current_i score
     nas = [(threat(w, cteam)+eps)**te for w in next_a] # next_a score
     nis = [(threat(w, cteam)+eps)**te for w in next_i] # next_i score
-    score = dm * (np.sum(nas) + td * np.sum(nis)) - (np.sum(cas) - td * np.sum(cis))
+    # opponent threat minus own threat
+    score = dm * (np.sum(nas) + td * np.sum(nis)) - (np.sum(cas) + td * np.sum(cis))
     if "threat" in diagnostic:
         print("score %0.3f" % score + " cas %0.3f" % np.sum(cas) + " cis %0.3f" % np.sum(cis) + " nas %0.3f" % np.sum(nas) + " nis %0.3f"% np.sum(nis))
     return score
@@ -250,6 +251,7 @@ def lsub(list1, list2):
     return [v for v in list1 if v not in list2]
 
 def ai_threat_based(rng, gamestate, allow_resign=True, eps=0.0001):
+    '''Chooses the move that results in the least threatening board state for CPU'''
     cpu_active = gamestate["cpu_active"]
     cpu_inactive = gamestate["cpu_inactive"]
     pl_active = gamestate["pl_active"]
@@ -262,17 +264,17 @@ def ai_threat_based(rng, gamestate, allow_resign=True, eps=0.0001):
         if "threat" in diagnostic:
             print(mv)
         ns = cpu_move_update(gamestate, mv)
-        threatvals.append(cpu_eval_threat(ns["pl_active"], ns["pl_inactive"], ns["cpu_active"], ns["cpu_inactive"], eps))
-    if np.max(threatvals) < -1000.0 and allow_resign:
+        threatvals.append(cpu_eval_threat(ns["cpu_active"], ns["cpu_inactive"], ns["pl_active"], ns["pl_inactive"], eps))
+    if np.min(threatvals) > 1000.0 and allow_resign: # any move results in massive threat -- give up
         if "threat" in diagnostic:
             print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         return {"move":"resign"}
     # do not allow recovery if CPU guaranteed win
-    if len(threatvals) > 1 and np.max(threatvals[1:]) > 10000.0:
+    if len(threatvals) > 1 and np.min(threatvals[1:]) < -10000.0: # there is a non-recovery move that is massively safe
         threatvals[0] = 0.0
     if "threat" in diagnostic:
         print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    return moves[np.argmax(threatvals)]
+    return moves[np.argmin(threatvals)]
 
 def ai_threat_based_subsample(rng, gamestate, n_samples=5):
     gamestate2 = {}
