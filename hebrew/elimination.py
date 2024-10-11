@@ -5,7 +5,9 @@ rng = default_rng()
 
 words = pd.read_csv("words500.txt")
 wds = words.word.values
+wds2i = {w:i for i,w in enumerate(wds)}
 table = pd.read_csv("letters.txt")
+auto_sort_lib = True
 
 lat2heb = {'A': 'א',
  'B': 'ב',
@@ -279,8 +281,11 @@ def ai_threat_based_subsample(rng, gamestate, n_samples=5):
     gamestate2["pl_inactive"] = gamestate["pl_inactive"]
     return ai_threat_based(rng, gamestate2, allow_resign=False, eps=0.5)
 
-n_army = 11
-current_level = 7
+def sort_word_list(wl):
+    return list(wds[np.sort([wds2i[w] for w in wl])])
+
+size_team = 11
+current_level = 5
 n_multi_armies = [1]*10 + [2]*20 + [3]*20
 
 print("--------------------------")
@@ -293,12 +298,12 @@ print("2. Continue")
 x = input()
 
 if x=="1":
-    n_lib = 100 # number of words in pool to draw from
+    n_lib = 30 # number of words in pool to draw from
     flag = True
     while flag:
         print("===New team:===")
         w_pool = wds[:n_lib]
-        player_lib = list(w_pool[np.sort(rng.choice(n_lib, n_army, replace=False))])
+        player_lib = list(w_pool[np.sort(rng.choice(n_lib, size_team, replace=False))])
         player_team = player_lib.copy()
         for w in player_lib:
             print(word2heb(w))
@@ -336,12 +341,14 @@ for j in range(3):
     armies = []
     for i in range(21):
         sub_wds = wds[:min(len(wds),(i*10+20))]
-        armies.append(r0.choice(sub_wds, 11, False))
+        armies.append(sort_word_list(r0.choice(sub_wds, size_team, False)))
     multi_armies[j] = armies
 
 game_flag=True
 
 while game_flag:
+    if auto_sort_lib:
+        player_lib = sort_word_list(player_lib)
     check_flag = True
     while check_flag:
         print("==Choose an opponent (1-%i), 0 to quit==" % current_level)
@@ -383,8 +390,8 @@ while game_flag:
                 if w not in player_lib:
                     print("%s not in library." % w)
                     valid_flag = False
-            if len(army) != n_army:
-                print("Team needs %i unique words." % n_army)
+            if len(army) != size_team:
+                print("Team needs %i unique words." % size_team)
                 valid_flag = False
             if valid_flag:
                 player_team = army
@@ -493,9 +500,9 @@ while game_flag:
                         cpu_ai = lambda rng, gamestate : ai_threat_based_subsample(rng, gamestate, 5)
                     else:
                         cpu_ai = ai_threat_based
-                    if z <= 3:
+                    if z <= 1:
                         cpu_ai = ai_fighter_based
-                    elif z <= 5:
+                    elif z <= 3:
                         cpu_ai = ai_target_based
                     cpu_move = cpu_ai(rng, gamestate)
                     if cpu_move["move"] == "*":
@@ -532,5 +539,17 @@ while game_flag:
                             pl_inactive = [w for w in pl_inactive if w != target]
                             input()
                 if len(pl_active) + len(pl_inactive)==0:
+                    print("@@@ You lost! @@@")
+                    n_kills = size_team - len(cpu_active + cpu_inactive)
+                    print("But you managed to defeat %i out of %i of the opponent's words." % (n_kills, size_team))
+                    input()
+                    if rng.random() < (n_kills/size_team):
+                        w_pool = wds[:min(len(wds),(z*10+20))]
+                        w_pool = list(set(w_pool).difference(set(player_lib)))
+                        if len(w_pool) > 0:
+                            w_new = rng.choice(w_pool)
+                            print("You gain a word: " + word2heb(w_new))
+                            player_lib.append(w_new)
+                        input()
                     battle_flag=False
                     war_flag=False
