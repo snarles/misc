@@ -1,0 +1,71 @@
+winner,loser,explanation
+A,H,Ox (A) is a beast immune to human Happiness (H).
+A,Z,Ox (A) cannot be locked up by Handcuffs (Z).
+A,IX,Ox (A) stronger than unarmed Humans (IX).
+A,NQ,Ox (A) stronger than other beasts (NQ).
+A,P,Ox (A) is a beast that is flexible against Bending (P).
+A,C,Ox (A) is a beast that eats Plant (C).
+A,M,Ox (A) survives Flood (M).
+A,T,Ox (A) is a beast that ignores Law (T).
+G,T,Guerillas (G) rebel against Law (T).
+D,J,Door (D) creates opening in Fence (J).
+H,M,Happiness (H) overcomes Tears (M).
+H,Z,Happiness (H) joyful even in Prison (Z) -- see Acts 16:25.
+H,C,Happiness (H) enjoys incense made from Plant (C).
+H,T,Revelers (H) ignore Law (T).
+V,A,Hook (V) controls Ox (A).
+V,H,Hook (V) controls addict through Happiness (H).
+V,J,Hook (V) allows scaling of Wall (J).
+V,P,Hook (V) reinforced by Bending (P).
+V,C,Scythe (V) is only weapon that can harvest Plant (C).
+Z,G,Police (Z) capture Guerillas (G).
+Z,R,Judiciary (Z) prosecutes King (R).
+Y,T,Chariot (Y) delivers Edicts (T).
+I,G,Villager (I) roots out Guerillas (G).
+I,X,Villager (I) supports Weaponsmith (X).
+I,M,Villager (I) strong enough to swim in Water (M).
+X,V,Weaponsmith (X) made Weapons (V).
+L,A,Goad (L) controls Ox (A).
+L,G,Provocation (L) leads Guerilla (G) into trap.
+L,H,Temptation (L) causing Revelers (H) to excess -- see Daniel 5.
+L,Z,Goad (L) outranges Handcuffs (Z).
+L,R,Temptation (L) causes King (R) to stumble -- see 2 Samuel 11.
+J,B,Fence (J) protects/surrounds House (B).
+N,H,Serpent (N) is a beast immune to human Happiness (H).
+N,M,Serpent (N) is a beast that swims in water (M).
+N,S,Serpent (N) climbs Pillar (S).
+N,P,Serpent (N) is a beast that is flexible against Bending (P).
+N,C,Serpent (N) is a beast that travels in Forest (C).
+N,T,Serpent (N) is a beast that ignores Law (T).
+S,A,Pillar (S) stronger than Ox (A).
+S,B,Pillar (S) supports House (B).
+S,G,Pedestal (S) eludes status-hungry Guerilla (G).
+S,D,Battering Ram (S) breaks Door (D).
+S,J,Ladder (S) allows scaling of Wall (J).
+S,M,Stilts (S) protect against Flood (M).
+E,A,Magician (E) sacrifices Ox (A).
+E,G,Magician (E) curses Guerilla (G).
+E,H,Magician (E) too arrogant for Happiness (H).
+E,V,Magician (E) disciplined against Addiction (V).
+E,M,Magician (E) commands Water (M).
+P,Z,Earthquake (P) breaks Chains (Z) -- see Acts 16:26.
+P,Y,Bending (P) breaks rigid Chariot (Y).
+P,C,Earthquake (P) uproots Plant (C).
+P,R,Instability (P) topples rigid Ruler (R).
+C,BDJS,Vines (P) grow on Structures (BDJS).
+C,GLW,Plants (P) too numerous to be destroyed by most Weapons (GLW).
+C,Z,Plant (P) cannot be locked up by Lock (Z).
+Q,D,Monkey (Q) smart enough to open Door (D).
+Q,H,Monkey (Q) is a beast immune to human Happiness (H).
+Q,M,Monkey (Q) is a beast that swims in water (M).
+Q,S,Monkey (Q) climbs Pillar (S).
+Q,P,Monkey (Q) is a beast that is flexible against Bending (P).
+Q,C,Monkey (Q) is a beast that eats fruits from Plant (C).
+Q,T,Monkey (Q) is a beast that ignores Law (T).
+R,A,King (R) commands Ox (A) according to Jeremiah 27:6.
+R,V,King (R) commands Hookman (V).
+R,T,King (R) vetoes Legislature (T).
+W,Y,Archer (W) snipes driver of Chariot (Y).
+T,BDJS,Law (T) controls building and demolition of Structures (BDJS).
+T,VIXLEW,Law (T) has authority over lawful Humans (VIXLEW).
+T,Z,Legislature (T) controls law that is enforced by Judiciary (Z).
