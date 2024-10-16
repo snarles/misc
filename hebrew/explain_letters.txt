@@ -1,13 +1,21 @@
 winner,loser,explanation
-A,H,Ox (A) is a beast immune to human Happiness (H).
-A,Z,Ox (A) cannot be locked up by Handcuffs (Z).
-A,IX,Ox (A) stronger than unarmed Humans (IX).
-A,NQ,Ox (A) stronger than other beasts (NQ).
-A,P,Ox (A) is a beast that is flexible against Bending (P).
-A,C,Ox (A) is a beast that eats Plant (C).
-A,M,Ox (A) survives Flood (M).
-A,T,Ox (A) is a beast that ignores Law (T).
-G,T,Guerillas (G) rebel against Law (T).
+A,D,Ox א can break down Door ד.
+A,H,Ox א is a beast immune to human Happiness ה.
+A,IXR,Ox א stronger than unarmed Humans יכר.
+A,NQ,Ox א stronger than other beasts נק.
+A,P,Ox א is a beast that is flexible against Bending פ.
+A,C,Ox א is a beast that eats Plant צ.
+A,M,Ox א survives Flood מ.
+A,T,Ox א is a beast that ignores Law ת.
+B,ANQ,House ב is a structure that keeps beasts אנק out.
+B,VZLW,House ב is a structure that is sturdy against non-explosive weapons וזלש.
+B,E,House ב is a sacred space immmune to Magician ע.
+G,ANQ,Guerilla ג throws bombs at beasts אנק.
+G,BDJY,Guerilla ג uses explosives to destroy most structures בדחט.
+G,V,Guerilla ג has religious fervor that protects against addiction ו.
+G,P,Guerilla ג thrives in times of Instability פ.
+G,R,Guerilla ג assisinates King ר.
+G,T,Guerilla ג rebels against Law ת.
 D,J,Door (D) creates opening in Fence (J).
 H,M,Happiness (H) overcomes Tears (M).
 H,Z,Happiness (H) joyful even in Prison (Z) -- see Acts 16:25.
