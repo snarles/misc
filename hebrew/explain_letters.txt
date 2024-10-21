@@ -16,11 +16,19 @@ G,V,Guerilla ג has religious fervor that protects against addiction ו.
 G,P,Guerilla ג thrives in times of Instability פ.
 G,R,Guerilla ג assisinates King ר.
 G,T,Guerilla ג rebels against Law ת.
-D,J,Door (D) creates opening in Fence (J).
-H,M,Happiness (H) overcomes Tears (M).
-H,Z,Happiness (H) joyful even in Prison (Z) -- see Acts 16:25.
-H,C,Happiness (H) enjoys incense made from Plant (C).
-H,T,Revelers (H) ignore Law (T).
+D,BJ,Door ד creates opening in House ב and Fence ח.
+D,VLW,Door ד blocks most weapons ולש.
+D,Y,Door ד blocks Chariot ט.
+D,IXE,Door ד blocks most unarmed humans יכע.
+D,N,Door ד blocks Serpent נ.
+H,BD,Happiness ה opens Homes ב and Doors ד.
+H,GXR,Happiness ה overcomes passionate humans גכר.
+H,Z,Happiness ה joyful even in Prison ז -- see Acts 16:25.
+H,M,Happiness ה overcomes Tears מ.
+H,S,Happiness ה elevates one to a High Position ס.
+H,P,Happiness ה allows resilience against Instability פ.
+H,C,Happiness ה enjoys incense made from Plant צ.
+H,T,Revelers ה ignore Law ת.
 V,A,Hook (V) controls Ox (A).
 V,H,Hook (V) controls addict through Happiness (H).
 V,J,Hook (V) allows scaling of Wall (J).
