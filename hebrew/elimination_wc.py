@@ -85,10 +85,11 @@ def winner(w1, w2):
     else:
         w1 = wrap(w1, w2)
         n_ties = 0
-        l1 = w1[i]
-        l2 = w2[i]
-        if l2 in reverses_to[l1]:
-            n_ties += 1
+        for i in range(len(w2)):
+            l1 = w1[i]
+            l2 = w2[i]
+            if l2 in reverses_to[l1]:
+                n_ties += 1
         if n_ties % 2 == 0:
             return winner_wo_reverse(w1, w2)
         else:
