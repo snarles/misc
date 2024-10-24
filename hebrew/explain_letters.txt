@@ -29,9 +29,12 @@ H,S,Happiness ה elevates one to a High Position ס.
 H,P,Happiness ה allows resilience against Instability פ.
 H,C,Happiness ה enjoys incense made from Plant צ.
 H,T,Revelers ה ignore Law ת.
-V,A,Hook (V) controls Ox (A).
+V,ANQ,Hook (V) controls beasts .
 V,H,Hook (V) controls addict through Happiness (H).
+V,Z,Hook (V) outranges Shackles .
 V,J,Hook (V) allows scaling of Wall (J).
+V,Y,Hook  arrests wheels of Chariot .
+V,IE,Addiction  afflicts Worker  and Magician. .
 V,P,Hook (V) reinforced by Bending (P).
 V,C,Scythe (V) is only weapon that can harvest Plant (C).
 Z,G,Police (Z) capture Guerillas (G).
