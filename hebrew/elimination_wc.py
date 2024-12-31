@@ -6,8 +6,8 @@ rng = default_rng()
 words = pd.read_csv("words500.txt")
 wds = words.word.values
 wds2i = {w:i for i,w in enumerate(wds)}
-table = pd.read_csv("letters_penta.txt")
-tablr = pd.read_csv("letters_reverses.txt")
+table = pd.read_csv("letters_wc_beats.txt")
+tablr = pd.read_csv("letters_wc_reverses.txt")
 auto_sort_lib = True
 
 lat2heb = {'A': 'א',
