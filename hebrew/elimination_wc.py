@@ -55,8 +55,8 @@ def word2heb(w):
     return w2
 
 
-loses_to = {table.loc[i, "letter"]: table.loc[i, "beats"] for i in range(26)}
-reverses_to = {tablr.loc[i, "letter"]: tablr.loc[i, "reverses"] for i in range(26)}
+loses_to = {table.loc[i, "letter"]: table.loc[i, "beats"] for i in range(len(table))}
+reverses_to = {tablr.loc[i, "letter"]: tablr.loc[i, "reverses"] for i in range(len(table))}
 
 letters = table.letter.values
 # check for errors in letter table
