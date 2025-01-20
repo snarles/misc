@@ -393,6 +393,15 @@ while game_flag:
         for i in range(m):
             print("==CPU team %i-%i==" % (z, i+1))
             print(", ".join([word2heb(w) for w in multi_armies[i][z]]))
+            print("")
+            print("==Recommended==\n")
+            scores = np.array([np.sum(np.array([winner(wp,wc) for wc in multi_armies[i][z]])==1) for wp in player_lib])
+            for score_val in [11,10,9,8,7,6]:
+                if np.sum(scores == score_val) > 0:
+                    print("Beats %i:" % score_val)
+                    s = ",".join([word2heb(w) for w in np.array(player_lib)[scores == score_val]])
+                    print(s)
+                    print("")
         input()
         print("==Player army==")
         print(",".join([word2heb(w) for w in player_lib]))
