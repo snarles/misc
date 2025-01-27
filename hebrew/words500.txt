@@ -223,7 +223,27 @@ LA,lo,no
 LAY,le-at,slowly
 LB,lev,heart
 LBD,le-vad,alone
-LVN,la-van,white
+LBN,la-van,white
 LBRIAVT,liv-ri-ut,bless you
-LHITRAVT,le-hit-ra-ot,see you later
+LHTRAVT,le-hit-ra-ot,see you later
 LJIIM,le-kha-yim,cheers!
+LJM,le-khem,bread
+LYAH,le-ta-a,lizard
+LILH,lai-la,night
+LIMVN,li-mon,lemon
+LMH,la-ma,why
+LMYH,le-ma-ta,down
+LMELH,le-ma-la,up
+LPNI,lif-nei,before
+M,me,from
+MAVD,me-od,very
+MAVJR,me-u-khar,late
+MAPH,ma-a-fe,pastry
+MAPIIH,ma-a-fi-ya,bakery
+MBJN,miv-khan,test/exam
+MGBT,ma-ge-vet,towel
+MDBR,mid-bar,desert
+MDINH,me-di-na,country
+MDEN,mad-an,scientist
+MDPST,mad-pe-set,printer
+MDRJH,mid-ra-kha,sidewalk
