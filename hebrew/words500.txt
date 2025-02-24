@@ -278,7 +278,7 @@ MIQRVGL,mik-ro-gal,microwave
 MIWHV,mi-she-hu,someone
 MXVNIT,me-kho-nit,car
 MXVER,me-kho-ar,ugly
-MXNSIM,mikh-na-sa-yim
+MXNSIM,mikh-na-sa-yim,pants
 MXNSIM QCRIM,mikh-na-sa-yim k-tsar-im,shorts
 MLA,ma-le,full
 MLHIB,mal-hiv,exciting
