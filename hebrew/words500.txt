@@ -312,3 +312,16 @@ MWQL,mish-kal,weight
 MWRD,mis-rad,office
 MTVQ,ma-tok,sweet
 MTI,ma-tai,when
+NBVN,na-von,intelligent
+NHG,na-hag,driver
+NHR,na-har,river
+NIIR,ni-yar,paper
+NXVN,na-khon,correct
+NMVX,ma-mukh,low
+NML TEVPH,na-mal te-u-fa,airport
+NMLH,ne-ma-la,ant
+NELIIM,na-a-la-yim,shoes
+NQYRINH,nek-ta-ri-na,nectarine
+NQI,na-ki,clean
+NWVI,na-su-i,married
+NWQ,ne-shek,weapon
