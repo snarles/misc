@@ -238,7 +238,7 @@ disp_counters(gs, "pl2", max(0, nb-1))
 
 ## Game 2
 
-#     P2         P1
+#     P1         P2 (goes first)
 #     - pre-draft -
 # p1- LES  (0)   KL3  (1)
 # p2- WES  (1)   CAM  (2)
