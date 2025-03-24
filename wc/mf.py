@@ -92,8 +92,10 @@ ucodons = np.unique(codons)
 # display most promising 2-letter/position combinations
 import pandas as pd
 double_pos = [[1,2],[0,2],[0,1]]
+all_doubs = []
 for ii in range(3):
     doubs = [cd[double_pos[ii][0]] + cd[double_pos[ii][1]] for cd in ucodons]
+    all_doubs.append(np.array(doubs))
     vc = pd.Series(doubs).value_counts()
     temp = ["?","?","?"]
     temp[double_pos[ii][0]] = "1"
@@ -151,22 +153,6 @@ for ii in range(3):
 # TR    2
 # dtype: int64
 
-
-## Game 1
-
-#     P2         P1
-#     - pre-draft -
-# p1- LES  (0)   KL3  (1)
-# p2- WES  (1)   DOA  (2)
-# p3- HES  (1)   COCu (3)
-# p4- SPS  (3)   CAA  (4)
-# p5- HL2  (4)   BRA  (5)
-# p6- SHB  (5)   D3P  (4)
-#     --- draft ---
-
-
-
-
 def disp_counters(gs, pl, nb=0):
     pos = -len(gs[pl])
     old_cands = []
@@ -184,6 +170,23 @@ def disp_nbeat(gs, pl):
     nb = nbeat(gs[pl][-1], gs[oppo[pl]])
     print(pl.upper() + " scores " + str(nb)+ " with "+gs[pl][-1])
     return nb
+
+
+
+## Game 1
+
+#     P2         P1
+#     - pre-draft -
+# p1- LES  (0)   KL3  (1)
+# p2- WES  (1)   DOA  (2)
+# p3- HES  (1)   COCu (3)
+# p4- SPS  (3)   CAA  (4)
+# p5- HL2  (4)   BRA  (5)
+# p6- SHB  (5)   D3P  (4)
+#     --- draft ---
+# discontinued to refine opening
+
+
 
 gs = {'pl1': ['LES'], 'pl2': ['KL3']}
 nb = disp_nbeat(gs, "pl2")
@@ -232,3 +235,64 @@ gs = {
 
 nb = disp_nbeat(gs, "pl2")
 disp_counters(gs, "pl2", max(0, nb-1))
+
+## Game 2
+
+#     P2         P1
+#     - pre-draft -
+# p1- LES  (0)   KL3  (1)
+# p2- WES  (1)   CAM  (2)
+# p3- WAS  (3)   GOM  (3)
+# p4- JAC  (3)   DBM  (4)
+# p5- GAD  (4)   GOA  (5)
+# p6- ING  (5)   MAM  (5)
+
+gs = {'pl1': ['LES', 'WES'], 'pl2': ['KL3']}
+doub_codons = ucodons[all_doubs[0]=="ES"]
+print(filter_codons(ucodons, doub_codons))
+#['BUB', 'CAA', 'CAM', 'CIW', 'COC', 'SHU', 'SPG', 'STK', 'WAS']
+gs['pl2'].append('CAM')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+
+gs['pl1'].append('WAS')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+
+gs['pl2'].append('GOM')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+
+gs['pl1'].append('JAC')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+
+gs['pl2'].append('DBM')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+
+gs['pl1'].append('GAD')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+
+gs['pl2'].append('GOA')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+
+gs['pl1'].append('ING')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+
+gs['pl2'].append('MAM')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 5 with MAM
+# 6
+# HL2,HL3,MUL,RUR
+# 5
+# ROR
+# 4
+# D2U,DR2,DR3,DR5,SPG,SPS
+
+print(gs)
+# {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MAM']}
