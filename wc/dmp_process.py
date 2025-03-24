@@ -120,6 +120,20 @@ nmatches = np.array([len(codon_dict[cd]) for cd in ucodons])
 
 
 
+
+# display most promising 2-letter/position combinations
+import pandas as pd
+double_pos = [[1,2],[0,2],[0,1]]
+for ii in range(3):
+    doubs = [cd[double_pos[ii][0]] + cd[double_pos[ii][1]] for cd in ucodons]
+    vc = pd.Series(doubs).value_counts()
+    temp = ["?","?","?"]
+    temp[double_pos[ii][0]] = "1"
+    temp[double_pos[ii][1]] = "2"
+    print(temp[0]+temp[1]+temp[2])
+    print(vc[:np.sum(vc > 15)])
+
+
 #for ii in range(50):
 #    cd1 = choice(ucodons)
 #    cd2 = choice(ucodons)
