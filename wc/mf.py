@@ -245,7 +245,13 @@ disp_counters(gs, "pl2", max(0, nb-1))
 # p3- WAS  (3)   GOM  (3)
 # p4- JAC  (3)   DBM  (4)
 # p5- GAD  (4)   GOA  (5)
-# p6- ING  (5)   MAM  (5)
+# p6- ING  (5)   MOC  (5)
+#  1- HL2  (6)   TNR  (6)
+#  2- SPG  (5)   DR3  (5)
+# [Takebacks]
+# p6b. MAM  (5)-> MOC  (5), due to seeing 1a. ROR  (5)
+# (2x) 3b. SHU  (5)-> DR3  (5), since 2b. SHU  (5), 3a. DR5  (6)!, 3b. MEG  (5) forced, 3b. DRA!!, 3c. [no move]
+
 
 gs = {'pl1': ['LES', 'WES'], 'pl2': ['KL3']}
 doub_codons = ucodons[all_doubs[0]=="ES"]
@@ -282,6 +288,9 @@ disp_counters(gs, "pl2", max(0, nb-1))
 gs['pl1'].append('ING')
 nb = disp_nbeat(gs, "pl1")
 disp_counters(gs, "pl1", max(0, nb-1))
+# PL1 scores 5 with ING
+# 5
+# KL4,MAM,MOC,TNR
 
 gs['pl2'].append('MAM')
 nb = disp_nbeat(gs, "pl2")
@@ -296,3 +305,85 @@ disp_counters(gs, "pl2", max(0, nb-1))
 
 print(gs)
 # {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MAM']}
+
+# Would KL4, MOC or TNR prevent ROR?
+
+cands = filter_codons(ucodons, gs["pl1"][1:6])
+print(filter_codons(cands, ['ROR']))
+# ['MOC']
+
+# Change p6b to MOC
+
+gs['pl2'][5] = 'MOC'
+print(gs)
+# {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MOC']}
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 5 with MOC
+# 6
+# HL2,HL3,RUR
+# 5
+# FUK,KL3
+# 4
+# D2U,DR5,SPG,SPS
+
+gs['pl1'].append('HL2')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1
+# PL1 scores 6 with HL2
+# 6
+# KL4,TNR
+
+gs['pl2'].append('TNR')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 6 with TNR
+# 5
+# D2U,DR5,SPG
+
+gs['pl1'].append('SPG')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+# PL1 scores 5 with SPG
+# 5
+# DR2,DR3,SHU
+# 4
+# ANM,EXK,MEG
+
+gs['pl2'].append('SHU')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 5 with SHU
+# 6
+# DR5
+# 5
+# DRA
+
+gs['pl1'].append('DR5')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+# PL1 scores 6 with DR5
+# 5
+# MEG
+
+gs['pl2'].append('MEG')
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 5 with MEG
+# 6
+# DRA
+# 4
+# BRA
+
+gs['pl1'].append('DRA')
+nb = disp_nbeat(gs, "pl1")
+disp_counters(gs, "pl1", max(0, nb-1))
+# PL1 scores 6 with DRA
+
+## Implement Takebacks
+gs = {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING', 'HL2', 'SPG'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MOC', 'TNR', 'DR3']}
+nb = disp_nbeat(gs, "pl2")
+disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 5 with DR3
+# 6
+# D2U,DR5
