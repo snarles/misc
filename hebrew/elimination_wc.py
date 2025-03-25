@@ -66,7 +66,20 @@ for let1 in letters:
             w1 = let2 in loses_to[let1]
             w2 = let1 in loses_to[let2]
             if w1 == w2:
+                print("Versus anti-symmetry violated.")
                 print(let1, let2)
+for let1 in letters:
+    if let1 not in reverses_to[let1]:
+        print("Self-reverse violated.")
+        print(let1)
+for let1 in letters:
+    for let2 in letters:
+        w1 = let2 in reverses_to[let1]
+        w2 = let1 in reverses_to[let2]
+        if w1 != w2:
+            print("Reverse symmetry violated.")
+            print(let1, let2)
+
 #for let in letters:
 #    print(let + " " + str(len(loses_to[let])))
 
