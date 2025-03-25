@@ -174,7 +174,7 @@ def disp_nbeat(gs, pl, verbose=True):
         print(pl.upper() + " scores " + str(nb)+ " with "+gs[pl][-1])
     return nb
 
-def forecast_counters(gs, pl1='', pl2=''):
+def forecast_counters(gs, pl1='', pl2='', nres=6):
     p1c = gs['pl1']
     p2c = gs['pl2']
     if pl1 != '':
@@ -183,32 +183,35 @@ def forecast_counters(gs, pl1='', pl2=''):
         p2c = np.concatenate((p2c, [pl2]))
     if len(p1c) == len(p2c):
         curr = 'pl2'
+        nb = len(p2c)
     else:
         curr = 'pl1'
-    nb = disp_nbeat({'pl1':p1c, 'pl2':p2c}, curr, verbose=False)
-    if nb <= 1:
-        counters = ucodons
-    else:
-        counters = disp_counters({'pl1':p1c, 'pl2':p2c}, curr, nb-1, verbose=False)
+        nb = len(p1c)
+    counters = disp_counters({'pl1':p1c, 'pl2':p2c}, curr, min(nres, nb), verbose=False)
     return counters
 
-## Game 3
+## Game 4
+# 6x pre-draft
+# restrict-6 for first 50 turns, then restrict-5
 
 #     P1         P2 (goes first)
 #     - pre-draft -
-# p1- DRA  (0)   CAA  (0)
-# p2- COO  (0)   HES  (2)
-# p3- DR5  (1)   BEF  (3)
-# p4- COCu (3)   THW  (3)
-# p5- IRM  (4)   CAM  (3)
-# p6- PLA  (4)   DOS  (4)
-#  1- SPM  (3)   GOM  (4)
+# p1- DRA  (0)   CAM  (1)
+# p2- COO  (1)   BEF  (2)
+# p3- GRO  (3)   BLP  (3)
+# p4- RUR  (4)   ---
+# p5-
+# p6-
+#  1-
 #  2-      ( )        ( )
 # [Takebacks]
+# @p4b, p2b. BEF -> b/c p2b. BEF, p3a. GRO!, p3b. BLP, p4a. RUR!!
 
+nres=6
 gs = {'pl1': ['DRA'], 'pl2': []}
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
+counters = disp_counters(gs, "pl1", 1)
+# 1
+# ANM,BEF,BLP,BRA,BUB,CAM,COC,D2U,D3P,DOA,DR4,DR5,FAL,GOM,GRO,HES,HL1,ILL,ING,INW,JAC,KL4,LKD,LOK,LWB,MUL,NHB,PAB,PL4,ROR,RUR,SCB,SHA,SHB,SPG,STK,TES,TEU,THO,WIW,WOP
 
 ## find good counters for DR?...
 
@@ -219,174 +222,76 @@ print(ucodons[score == np.max(score)-1])
 # ['CAM' 'FAL' 'LOK' 'MUL']
 # ['BEF' 'BLP' 'BRA' 'BUB' 'COC' 'D2U' 'D3P' 'DOA' 'GRO' 'HES' 'HL1' 'JAC' 'NHB' 'ROR' 'RUR' 'SHA' 'SHB' 'STK' 'TES' 'TEU' 'WIW' 'WOP']
 
-gs['pl2'].append('CAA')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
+gs['pl2'].append('CAM')
+counters = disp_counters(gs, "pl2", 1)
+# 1
+# ANM,BLP,BRA,BRF,COO,D2U,FAL,FUK,GAD,GOM,GRO,HAW,HL1,HL2,HL3,HUL,ING,INW,JAC,KL3,KL4,LDT,MOC,MUL,NHB,PL2,PL3,PL4,PLA,POV,PYP,RAT,ROR,RUR,SCB,SHB,SPM,STK,STL,THA,THW,TNR,TRH,TSH,WAF,WAS,WIW
 
-## find best complement for DRA
-
-score = np.array([len(filter_codons(ucodons, ['DRA', cd])) for cd in ucodons])
-print(ucodons[score == np.min(score)])
-# ['COO']
 gs['pl1'].append('COO')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
-
-gs['pl2'].append('HES')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('DR5')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
+counters = disp_counters(gs, "pl1", 2)
+# 2
+# BEF,BLP,BUB,DOA,DR4,HES,ILL,LKD,SPG,STK,TEU
 
 gs['pl2'].append('BEF')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 3 with BEF
-# 3
-# CAM,CIW,COC,GOW,ILL,IRM,MAM,MUL,RAT,SHU,TRK,WAS
+counters = disp_counters(gs, "pl2", 2)
 # 2
-# BRF,BUB,GAD,GRO,HAW,INW,PL2,PL4,PLA,SPG,WES
+# BRF,GAD,GOM,GRO,HAW,HL1,HL2,HUL,INW,KL4,LDT,MUL,NHB,PL2,PL4,PLA,POV,PYP,RAT,ROR,RUR,SHB,TNR,WAS
 
-gs['pl1'].append('COC')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 3 with COC
+gs['pl1'].append('GRO')
+counters = disp_counters(gs, "pl1", 3)
 # 3
-# DID,GAM,GOW,SHU,THW
+# BLP,BUB,ILL,SPG,TEU
+
+gs['pl2'].append('BLP')
+counters = disp_counters(gs, "pl2", 3)
+# 3
+# HL1,HL2,HUL,MUL,NHB,POV,RAT,RUR,SHB,TNR,WAS
+
+print(filter_codons(counters, "BLP,BUB,ILL,SPG,TEU".split(",")))
+# ['RUR']
+
+gs['pl1'].append('RUR')
+counters = disp_counters(gs, "pl1", 4)
+#
+
+## implement takebacks
+gs = {'pl1': ['DRA', 'COO'], 'pl2': ['CAM']}
+counters = disp_counters(gs, "pl1", 2)
 # 2
-# AVE,CAM,COO,DOS,FAL,GUG,HL1,KL4,LOK,LWB,PAB,PL4,SCB,SGG,SPM,SPS
-
-# offensive picking
-score = np.array([len(forecast_counters(gs, pl2=cd)) for cd in counters])
-print([(a,b) for a,b in np.array(list(zip(counters, score)))[np.argsort(score)[:5]]])
-# [('THW', '22'), ('SHU', '24'), ('GAM', '26'), ('DID', '31'), ('GOW', '35')]
-
-gs['pl2'].append('THW')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 3 with THW
-# 4
-# GOW,IRM,SHU
-# 3
-# HAW,PL4,PLA,WES
-# 2
-# ARE,AVE,DR3,GOA,HL1,HL2,LDT,NHB,PAB,PYP,ROR,RUR,SHA,UWY,WOP
-
-gs['pl1'].append('IRM')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 4 with IRM
-# 3
-# AVE,CAM,DOS,KL4,SCB,SGG,SPM
-
-# offensive picking
-score = np.array([len(forecast_counters(gs, pl2=cd)) for cd in counters])
-print([(a,b) for a,b in np.array(list(zip(counters, score)))[np.argsort(score)[:5]]])
-# [('CAM', '20'), ('SPM', '20'), ('DOS', '21'), ('KL4', '22'), ('SCB', '22')]
-
-gs['pl2'].append('CAM')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 3 with CAM
-# 4
-# HAW,PL4,PLA
-# 3
-# HL1,HL2,LDT,NHB,PYP,ROR,RUR
-# 2
-# ANM,BRA,D2U,ING,PL3,SPM,STL,THA,WAF,WIW
-print(gs)
-# {'pl1': ['DRA', 'COO', 'DR5', 'COC', 'IRM'], 'pl2': ['CAA', 'HES', 'BEF', 'THW', 'CAM']}
-
-# offensive picking
-score = np.array([len(forecast_counters(gs, pl1=cd)) for cd in counters])
-print([(a,b) for a,b in np.array(list(zip(counters, score)))[np.argsort(score)[:5]]])
-# [('HAW', '11'), ('PL4', '11'), ('PLA', '15'), ('NHB', '17'), ('ROR', '18')]
-
-gs['pl1'].append('PLA')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 4 with PLA
-# 4
-# DOS,SGG,SPM
-# 3
-# BLP,BRF,DBM,DR5,GAD,GOM,GRO,NHB,PYP,SHB,THO,WOP
+# BEF,BLP,BUB,DOA,DR4,HES,ILL,LKD,SPG,STK,TEU
 
 # forecasts
-print(",".join(forecast_counters(gs, pl2='DOS')))
-print(",".join(forecast_counters(gs, pl2='SGG')))
-print(",".join(forecast_counters(gs, pl2='SPM')))
-# LDT,NHB,RUR,ANM,SPM,THA,WIW
-# PL4,HL1,LDT,NHB,ROR,RUR,BRA,D2U,ING,THA,WAF,WIW
-# HAW,HL2,PYP,ROR,BRA,ING,PL3,THA
-
-gs['pl2'].append('DOS')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 4 with DOS
-# 4
-# LDT,NHB,RUR
-# 3
-# ANM,SPM,THA,WIW
-
-#     P1         P2 (goes first)
-#     - pre-draft -
-# p1- DRA  (0)   CAA  (0)
-# p2- COO  (0)   HES  (2)
-# p3- DR5  (1)   BEF  (3)
-# p4- COCu (3)   THW  (3)
-# p5- IRM  (4)   CAM  (3)
-# p6- PLA  (4)   DOS  (4)
-
-# forecasts
-print(",".join(forecast_counters(gs, pl1='LDT')))
-# SPM,BLP,DBM,GOM,GRO,PYP,SHB,BRA,BUB,DRA,MAM,RAT,STK,TNR
-print(",".join(forecast_counters(gs, pl1='RUR')))
-# SPM,DR5,GAD,GRO,THO,MUL,STK,TNR,ZAC
-print(",".join(forecast_counters(gs, pl1='ANM')))
-# SGG,SPM,BLP,DR5,NHB,PYP,SHB,THO,BUB,EXK,MUL,RAT,TNR,CAA,COO,D2U,EG1,FAD,HAW,HOH,IRM,JAC,LDT,LES,MEG,PL4,RUR
-print(",".join(forecast_counters(gs, pl1='SPM')))
-# SGG,BLP,BRF,GAD,GOM,PYP,SHB,BRA,BUB,DR4,DRA,EXK,MAM,MUL,TNR,ZAC,CAA,COO,EG1,FAD,HAW,HOH,INW,JAC,LES,MEG,SHA,SPS
-print(",".join(forecast_counters(gs, pl1='THA')))
-# BLP,BRF,DBM,DR5,GAD,GRO,PYP,SHB,THO,WOP,BRA,BUB,DR4,DRA,EXK,MOC,RAT,STK,ZAC,CAA,D2U,FAD,HAW,HL1,IRM,JAC,LDT,LES,MEG,PL4,RUR,SHA
-
-gs['pl1'].append('SPM')
-nb = disp_nbeat(gs, "pl1")
-counters = disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 3 with SPM
-# 5
-# SGG
-# 4
-# BLP,BRF,GAD,GOM,PYP,SHB
-# 3
-# BRA,BUB,DR4,DRA,EXK,MAM,MUL,TNR,ZAC
-# 2
-# CAA,COO,EG1,FAD,HAW,HOH,INW,JAC,LES,MEG,SHA,SPS
-
-# forecasts
-print(",".join(forecast_counters(gs, pl2='SGG')))
-# LDT,NHB,RUR,THA,WIW
+print(",".join(forecast_counters(gs, pl2='BEF')))
+# BRF,GAD,GOM,GRO,HAW,HL1,HL2,HUL,INW,KL4,LDT,MUL,NHB,PL2,PL4,PLA,POV,PYP,RAT,ROR,RUR,SHB,TNR,WAS
 print(",".join(forecast_counters(gs, pl2='BLP')))
-# NHB,RUR,WIW,HUL,MOC,POV,RAT,SHB,TNR,WAS
-print(",".join(forecast_counters(gs, pl2='GOM')))
-# NHB,RUR,ANM,THA,COO,INW,MOC,SHB
-
-gs['pl2'].append('GOM')
-nb = disp_nbeat(gs, "pl2")
-counters = disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 4 with GOM
-# 5
-# NHB,RUR
-# 4
-# ANM,THA
-# 3
-# COO,INW,MOC,SHB
-
-# forecasts
-print(",".join(forecast_counters(gs, pl1='RUR')))
-# GAD,MUL,TNR,ZAC
-print(",".join(forecast_counters(gs, pl1='ANM')))
-# SGG,BLP,PYP,SHB,BUB,EXK,MUL,TNR,CAA,COO,EG1,FAD,HAW,HOH,JAC,LES,MEG
-print(",".join(forecast_counters(gs, pl1='THA')))
-# BLP,BRF,GAD,PYP,SHB,BRA,BUB,DR4,DRA,EXK,ZAC,CAA,FAD,HAW,JAC,LES,MEG,SHA
+# FUK,HL1,HL2,HL3,HUL,MOC,MUL,NHB,POV,RAT,RUR,SHB,STL,THW,TNR,TRH,TSH,WAS,WIW
+print(",".join(forecast_counters(gs, pl2='BUB')))
+# FAL,HL1,HL2,HL3,HUL,ING,INW,JAC,MOC,MUL,NHB,RUR,SCB,SHB,STK,STL,THW,TNR,WAF
+print(",".join(forecast_counters(gs, pl2='DOA')))
+# ANM,BRA,BRF,D2U,FAL,FUK,GOM,GRO,INW,JAC,KL3,KL4,MUL,NHB,PL2,PL3,PL4,PLA,PYP,ROR,RUR,SCB,SHB,SPM,WIW
+print(",".join(forecast_counters(gs, pl2='DR4')))
+# ANM,BLP,BRA,D2U,FAL,GOM,GRO,HL1,HL2,INW,JAC,LDT,MUL,NHB,PL2,ROR,RUR,SCB,SHB,TNR,WIW
+print(",".join(forecast_counters(gs, pl2='HES')))
+# BRA,BRF,D2U,GAD,GRO,HAW,INW,JAC,MOC,MUL,PL2,PL3,PL4,PLA,RAT,STK,THW,TRH,TSH,WAF,WAS,WIW
+print(",".join(forecast_counters(gs, pl2='ILL')))
+# ANM,FAL,FUK,GAD,GOM,HL2,HL3,HUL,ING,INW,MOC,MUL,PL2,PL3,PL4,PLA,POV,PYP,RAT,RUR,SCB,SPM,THA,THW,TRH,TSH,WAS
+print(",".join(forecast_counters(gs, pl2='LKD')))
+# ANM,BRF,D2U,FUK,GRO,HAW,HL2,HL3,HUL,ING,KL3,LDT,NHB,PL2,PL3,POV,RAT,RUR,SCB,SPM,STK,STL,THA,THW,TNR,TRH,TSH,WAS
+print(",".join(forecast_counters(gs, pl2='SPG')))
+# ANM,D2U,HL2,INW,JAC,KL4,PL3,PLA,POV,RUR,SCB,SHB,STL,THW,TRH,TSH,WAF
+print(",".join(forecast_counters(gs, pl2='STK')))
+# ANM,BLP,BRF,D2U,FAL,GAD,GRO,HL1,ING,KL3,PL4,ROR,SCB,SHB,SPM,STL,THW,TNR,TRH,TSH
+print(",".join(forecast_counters(gs, pl2='TEU')))
+# ANM,BRF,D2U,FAL,GAD,GOM,HUL,ING,JAC,MUL,NHB,PL2,PL3,PL4,PLA,POV,PYP,RAT,ROR,RUR,SPM,STK,STL,THA,TNR,WAS
+print(",".join(forecast_counters(gs, pl2='SPG', pl1='D2U')))
+# BEF,BLP,BUB,ILL
+print(",".join(forecast_counters(gs, pl2='SPG', pl1='POV')))
+# BUB,DOA,DR4,HES,STK
+print(",".join(forecast_counters(gs, pl2='BLP', pl1='MOC')))
+# BEF,DOA,DR4,LKD,SPG,STK,TEU
+print(",".join(forecast_counters(gs, pl2='BLP', pl1='FUK')))
+# BEF,BUB,DR4,HES,SPG,STK,TEU
+print(",".join(forecast_counters(gs, pl2='BLP', pl1='HL2')))
+# DOA,HES,STK,TEU
+print(",".join(forecast_counters(gs, pl2='BLP', pl1='RUR')))
+# HES,STK
