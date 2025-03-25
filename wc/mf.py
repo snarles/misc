@@ -153,17 +153,19 @@ for ii in range(3):
 # TR    2
 # dtype: int64
 
-def disp_counters(gs, pl, nb=0):
+def disp_counters(gs, pl, nb=0, verbose=True):
     pos = -len(gs[pl])
     old_cands = []
     while pos <= -nb and pos < 0:
         new_cands = filter_codons(ucodons, gs[pl][pos:])
         print_cands = np.sort(np.array(list(set(new_cands).difference(set(old_cands)))))
         if len(print_cands) > 0:
-            print(-pos)
-            print(",".join(print_cands))
+            if verbose:
+                print(-pos)
+                print(",".join(print_cands))
         old_cands = np.concatenate([old_cands, new_cands])
         pos += 1
+    return old_cands
 
 def disp_nbeat(gs, pl):
     oppo = {"pl1":"pl2", "pl2":"pl1"}
@@ -172,218 +174,68 @@ def disp_nbeat(gs, pl):
     return nb
 
 
-
-## Game 1
-
-#     P2         P1
-#     - pre-draft -
-# p1- LES  (0)   KL3  (1)
-# p2- WES  (1)   DOA  (2)
-# p3- HES  (1)   COCu (3)
-# p4- SPS  (3)   CAA  (4)
-# p5- HL2  (4)   BRA  (5)
-# p6- SHB  (5)   D3P  (4)
-#     --- draft ---
-# discontinued to refine opening
-
-
-
-gs = {'pl1': ['LES'], 'pl2': ['KL3']}
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs = {'pl1': ['LES', 'WES'], 'pl2': ['KL3']}
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs = {'pl1': ['LES', 'WES'], 'pl2': ['KL3', 'DOA']}
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs = {'pl1': ['LES', 'WES', 'HES'], 'pl2': ['KL3', 'DOA']}
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs = {'pl1': ['LES', 'WES', 'HES'], 'pl2': ['KL3', 'DOA', 'COC']}
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('SPS')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs['pl2'].append('CAA')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('HL2')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs['pl2'].append('BRA')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('SHB')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs['pl2'].append('D3P')
-gs = {
-    'pl1': ['LES', 'WES', 'HES', 'SPS', 'HL2', 'SHB'],
-    'pl2': ['KL3', 'DOA', 'COC', 'CAA', 'BRA', 'D3P']}
-
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-## Game 2
+## Game 3
 
 #     P1         P2 (goes first)
 #     - pre-draft -
-# p1- LES  (0)   KL3  (1)
-# p2- WES  (1)   CAM  (2)
-# p3- WAS  (3)   GOM  (3)
-# p4- JAC  (3)   DBM  (4)
-# p5- GAD  (4)   GOA  (5)
-# p6- ING  (5)   MOC  (5)
-#  1- HL2  (6)   TNR  (6)
-#  2- SPG  (5)   DR3  (5)
+# p1- DRA  (0)   CAA  (0)
+# p2- COO  (0)   HES  (2)
+# p3- DR5  (1)   BEF  (3)
+# p4- COC  (3)
+# p5-
+# p6-
+#  1-
+#  2-      ( )        ( )
 # [Takebacks]
-# p6b. MAM  (5)-> MOC  (5), due to seeing 1a. ROR  (5)
-# (2x) 3b. SHU  (5)-> DR3  (5), since 2b. SHU  (5), 3a. DR5  (6)!, 3b. MEG  (5) forced, 3b. DRA!!, 3c. [no move]
 
-
-gs = {'pl1': ['LES', 'WES'], 'pl2': ['KL3']}
-doub_codons = ucodons[all_doubs[0]=="ES"]
-print(filter_codons(ucodons, doub_codons))
-#['BUB', 'CAA', 'CAM', 'CIW', 'COC', 'SHU', 'SPG', 'STK', 'WAS']
-gs['pl2'].append('CAM')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('WAS')
+gs = {'pl1': ['DRA'], 'pl2': []}
 nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
+counters = disp_counters(gs, "pl1", max(0, nb-1))
 
-gs['pl2'].append('GOM')
+## find good counters for DR?...
+
+cands = ucodons[all_doubs[2]=="DR"]
+score = np.array([np.sum([winner(cd, cand)==1 for cand in cands]) for cd in ucodons])
+print(ucodons[score == np.max(score)])
+print(ucodons[score == np.max(score)-1])
+# ['CAM' 'FAL' 'LOK' 'MUL']
+# ['BEF' 'BLP' 'BRA' 'BUB' 'COC' 'D2U' 'D3P' 'DOA' 'GRO' 'HES' 'HL1' 'JAC' 'NHB' 'ROR' 'RUR' 'SHA' 'SHB' 'STK' 'TES' 'TEU' 'WIW' 'WOP']
+
+gs['pl2'].append('CAA')
 nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
+counters = disp_counters(gs, "pl2", max(0, nb-1))
 
-gs['pl1'].append('JAC')
+## find best complement for DRA
+
+score = np.array([len(filter_codons(ucodons, ['DRA', cd])) for cd in ucodons])
+print(ucodons[score == np.min(score)])
+# ['COO']
+gs['pl1'].append('COO')
 nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
+counters = disp_counters(gs, "pl1", max(0, nb-1))
 
-gs['pl2'].append('DBM')
+gs['pl2'].append('HES')
 nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('GAD')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-
-gs['pl2'].append('GOA')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-
-gs['pl1'].append('ING')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 5 with ING
-# 5
-# KL4,MAM,MOC,TNR
-
-gs['pl2'].append('MAM')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 5 with MAM
-# 6
-# HL2,HL3,MUL,RUR
-# 5
-# ROR
-# 4
-# D2U,DR2,DR3,DR5,SPG,SPS
-
-print(gs)
-# {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MAM']}
-
-# Would KL4, MOC or TNR prevent ROR?
-
-cands = filter_codons(ucodons, gs["pl1"][1:6])
-print(filter_codons(cands, ['ROR']))
-# ['MOC']
-
-# Change p6b to MOC
-
-gs['pl2'][5] = 'MOC'
-print(gs)
-# {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MOC']}
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 5 with MOC
-# 6
-# HL2,HL3,RUR
-# 5
-# FUK,KL3
-# 4
-# D2U,DR5,SPG,SPS
-
-gs['pl1'].append('HL2')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1
-# PL1 scores 6 with HL2
-# 6
-# KL4,TNR
-
-gs['pl2'].append('TNR')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 6 with TNR
-# 5
-# D2U,DR5,SPG
-
-gs['pl1'].append('SPG')
-nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 5 with SPG
-# 5
-# DR2,DR3,SHU
-# 4
-# ANM,EXK,MEG
-
-gs['pl2'].append('SHU')
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 5 with SHU
-# 6
-# DR5
-# 5
-# DRA
+counters = disp_counters(gs, "pl2", max(0, nb-1))
 
 gs['pl1'].append('DR5')
 nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 6 with DR5
-# 5
-# MEG
+counters = disp_counters(gs, "pl1", max(0, nb-1))
 
-gs['pl2'].append('MEG')
+gs['pl2'].append('BEF')
 nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 5 with MEG
-# 6
-# DRA
-# 4
-# BRA
+counters = disp_counters(gs, "pl2", max(0, nb-1))
+# PL2 scores 3 with BEF
+# 3
+# CAM,CIW,COC,GOW,ILL,IRM,MAM,MUL,RAT,SHU,TRK,WAS
+# 2
+# BRF,BUB,GAD,GRO,HAW,INW,PL2,PL4,PLA,SPG,WES
 
-gs['pl1'].append('DRA')
+gs['pl1'].append('COC')
 nb = disp_nbeat(gs, "pl1")
-disp_counters(gs, "pl1", max(0, nb-1))
-# PL1 scores 6 with DRA
-
-## Implement Takebacks
-gs = {'pl1': ['LES', 'WES', 'WAS', 'JAC', 'GAD', 'ING', 'HL2', 'SPG'], 'pl2': ['KL3', 'CAM', 'GOM', 'DBM', 'GOA', 'MOC', 'TNR', 'DR3']}
-nb = disp_nbeat(gs, "pl2")
-disp_counters(gs, "pl2", max(0, nb-1))
-# PL2 scores 5 with DR3
-# 6
-# D2U,DR5
+counters = disp_counters(gs, "pl1", max(0, nb-1))
+# PL1 scores 3 with COC
+# 3
+# DID,GAM,GOW,SHU,THW
+# 2
+# AVE,CAM,COO,DOS,FAL,GUG,HL1,KL4,LOK,LWB,PAB,PL4,SCB,SGG,SPM,SPS
