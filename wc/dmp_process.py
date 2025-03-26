@@ -156,19 +156,24 @@ def filter_codons(cods, cset):
 
 from numpy.random import choice
 
-def pick_card(gs, limit=7, max_disp=30):
+def pick_card(gs, max_disp=30):
     if len(gs["pl1"]) == len(gs["pl2"]):
         cset = gs["pl2"]
         player = "pl1"
     else:
         cset = gs["pl1"]
         player = "pl2"
-    if len(cset) > limit:
-        cset = cset[-limit:]
-    if len(cset) > 0:
-        cands = filter_codons(ucodons, cset)
-    else:
+    if len(cset) == 0:
         cands = ucodons
+    else:
+        pos = len(cset)
+        flag = True
+        while flag:
+            cands = filter_codons(ucodons, cset[-pos:])
+            if len(cands) == 0:
+                pos -= 1
+            else:
+                flag=False
     if len(cands) > max_disp:
         cands = choice(cands, 30, replace=False)
     for cd in cands:
