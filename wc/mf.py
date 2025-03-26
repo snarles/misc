@@ -153,19 +153,22 @@ for ii in range(3):
 # TR    2
 # dtype: int64
 
-def disp_counters(gs, pl, nb=0, verbose=True):
-    pos = -len(gs[pl])
-    old_cands = []
-    while pos <= -nb and pos < 0:
-        new_cands = filter_codons(ucodons, gs[pl][pos:])
-        print_cands = np.sort(np.array(list(set(new_cands).difference(set(old_cands)))))
-        if len(print_cands) > 0:
-            if verbose:
-                print(-pos)
-                print(",".join(print_cands))
-        old_cands = np.concatenate([old_cands, print_cands])
-        pos += 1
-    return old_cands
+def disp_counters(codons, gs, pl, limit=4, verbose=True):
+    pos = min(limit, len(gs[pl]))
+    if pos == 0:
+        cands = codons
+    else:
+        flag = True
+        while flag:
+            cands = filter_codons(codons, gs[pl][-pos:])
+            if len(cands) > 0:
+                flag = False
+            else:
+                pos -= 1
+    if verbose:
+        print(pos)
+        print(",".join(cands))
+    return cands
 
 def disp_nbeat(gs, pl, verbose=True):
     oppo = {"pl1":"pl2", "pl2":"pl1"}
@@ -174,7 +177,7 @@ def disp_nbeat(gs, pl, verbose=True):
         print(pl.upper() + " scores " + str(nb)+ " with "+gs[pl][-1])
     return nb
 
-def forecast_counters(gs, pl1='', pl2='', nres=6):
+def forecast_counters(gs, pl1='', pl2='', limit=4, verbose=True):
     p1c = gs['pl1']
     p2c = gs['pl2']
     if pl1 != '':
@@ -187,7 +190,8 @@ def forecast_counters(gs, pl1='', pl2='', nres=6):
     else:
         curr = 'pl1'
         nb = len(p1c)
-    counters = disp_counters({'pl1':p1c, 'pl2':p2c}, curr, min(nres, nb), verbose=False)
+    gs2 = {'pl1':p1c, 'pl2':p2c}
+    counters = disp_counters(remain_codons(gs2), gs2, curr, limit, verbose)
     return counters
 
 ## Game 4
@@ -196,172 +200,177 @@ def forecast_counters(gs, pl1='', pl2='', nres=6):
 
 #     P1         P2 (goes first)
 #     - pre-draft -
-# p1- DRA  (0)   DR4  (1)
-# p2- GRO  (1)   D2U  (2)
-# p3-   (3)     (3)
-# p4-   (4)   ---
-# p5-
-# p6-
-#  1-
-#  2-      ( )        ( )
+# p1- DRA  (0)   CAM  (1)
+# p2- COO  (1)   BLP  (2)
+# p3- RUR  (2)   STK  (3)
+# p4- TNR  (3)   HES  (4)
+# p5- THW  (4)   GOW  (4)
+# p6- DOS  (4)   WIW  (4)
+#  1- PL4  (4)   CAA  (3)
+#  2- SHU  (4)   NHB  (4)
+#  3- PAB  (4)   EG1  (4)
+#  4- DR4  (4)        (
+#  5-      ( )        (
+#  6-      ( )        (
+#     -remove pre-draft-
 # [Takebacks]
 # @p4b, p1b. CAM -> b/c p2a. COO too strong
 
-nres=6
+def remain_codons(gs):
+    used = np.concatenate((gs['pl1'], gs['pl2']))
+    if np.sum(used == "COC") >= 3:
+        used = np.unique(used)
+    else:
+        used = np.unique(list(set(used).difference(set(["COC"]))))
+    rcodons = np.sort(list(set(ucodons).difference(set(used))))
+    return rcodons
+
+# remain_codons({'pl1': ['DRA', 'COC'], 'pl2': ['COC']})
+# remain_codons({'pl1': ['DRA', 'COC'], 'pl2': ['COC', 'COC']})
+
 gs = {'pl1': ['DRA'], 'pl2': []}
-counters = disp_counters(gs, "pl1", 1)
+counters = disp_counters(remain_codons(gs), gs, "pl1")
 # 1
 # ANM,BEF,BLP,BRA,BUB,CAM,COC,D2U,D3P,DOA,DR4,DR5,FAL,GOM,GRO,HES,HL1,ILL,ING,INW,JAC,KL4,LKD,LOK,LWB,MUL,NHB,PAB,PL4,ROR,RUR,SCB,SHA,SHB,SPG,STK,TES,TEU,THO,WIW,WOP
 
-## find good counters for DR?...
-
-cands = ucodons[all_doubs[2]=="DR"]
-score = np.array([np.sum([winner(cd, cand)==1 for cand in cands]) for cd in ucodons])
-print(ucodons[score == np.max(score)])
-print(ucodons[score == np.max(score)-1])
-# ['CAM' 'FAL' 'LOK' 'MUL']
-# ['BEF' 'BLP' 'BRA' 'BUB' 'COC' 'D2U' 'D3P' 'DOA' 'GRO' 'HES' 'HL1' 'JAC' 'NHB' 'ROR' 'RUR' 'SHA' 'SHB' 'STK' 'TES' 'TEU' 'WIW' 'WOP']
-
 gs['pl2'].append('CAM')
-counters = disp_counters(gs, "pl2", 1)
+counters = disp_counters(remain_codons(gs), gs, "pl2")
 # 1
 # ANM,BLP,BRA,BRF,COO,D2U,FAL,FUK,GAD,GOM,GRO,HAW,HL1,HL2,HL3,HUL,ING,INW,JAC,KL3,KL4,LDT,MOC,MUL,NHB,PL2,PL3,PL4,PLA,POV,PYP,RAT,ROR,RUR,SCB,SHB,SPM,STK,STL,THA,THW,TNR,TRH,TSH,WAF,WAS,WIW
 
 gs['pl1'].append('COO')
-counters = disp_counters(gs, "pl1", 2)
+counters = disp_counters(remain_codons(gs), gs, "pl1")
 # 2
 # BEF,BLP,BUB,DOA,DR4,HES,ILL,LKD,SPG,STK,TEU
-
-gs['pl2'].append('BEF')
-counters = disp_counters(gs, "pl2", 2)
-# 2
-# BRF,GAD,GOM,GRO,HAW,HL1,HL2,HUL,INW,KL4,LDT,MUL,NHB,PL2,PL4,PLA,POV,PYP,RAT,ROR,RUR,SHB,TNR,WAS
-
-gs['pl1'].append('GRO')
-counters = disp_counters(gs, "pl1", 3)
-# 3
-# BLP,BUB,ILL,SPG,TEU
 
 gs['pl2'].append('BLP')
-counters = disp_counters(gs, "pl2", 3)
-# 3
-# HL1,HL2,HUL,MUL,NHB,POV,RAT,RUR,SHB,TNR,WAS
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 2
+# FUK,HL1,HL2,HL3,HUL,MOC,MUL,NHB,POV,RAT,RUR,SHB,STL,THW,TNR,TRH,TSH,WAS,WIW
 
-print(filter_codons(counters, "BLP,BUB,ILL,SPG,TEU".split(",")))
-# ['RUR']
+# offensive scores
+scores = np.array([len(forecast_counters(gs, pl1=cd, verbose=False)) for cd in counters])
+print((np.min(scores), counters[scores == np.min(scores)]))
+# (2, array(['RUR'], dtype='<U3'))
 
 gs['pl1'].append('RUR')
-counters = disp_counters(gs, "pl1", 4)
-#
-
-## implement takebacks
-gs = {'pl1': ['DRA', 'COO'], 'pl2': ['CAM']}
-counters = disp_counters(gs, "pl1", 2)
-# 2
-# BEF,BLP,BUB,DOA,DR4,HES,ILL,LKD,SPG,STK,TEU
-
-# forecasts
-print(",".join(forecast_counters(gs, pl2='BEF')))
-# BRF,GAD,GOM,GRO,HAW,HL1,HL2,HUL,INW,KL4,LDT,MUL,NHB,PL2,PL4,PLA,POV,PYP,RAT,ROR,RUR,SHB,TNR,WAS
-print(",".join(forecast_counters(gs, pl2='BLP')))
-# FUK,HL1,HL2,HL3,HUL,MOC,MUL,NHB,POV,RAT,RUR,SHB,STL,THW,TNR,TRH,TSH,WAS,WIW
-print(",".join(forecast_counters(gs, pl2='BUB')))
-# FAL,HL1,HL2,HL3,HUL,ING,INW,JAC,MOC,MUL,NHB,RUR,SCB,SHB,STK,STL,THW,TNR,WAF
-print(",".join(forecast_counters(gs, pl2='DOA')))
-# ANM,BRA,BRF,D2U,FAL,FUK,GOM,GRO,INW,JAC,KL3,KL4,MUL,NHB,PL2,PL3,PL4,PLA,PYP,ROR,RUR,SCB,SHB,SPM,WIW
-print(",".join(forecast_counters(gs, pl2='DR4')))
-# ANM,BLP,BRA,D2U,FAL,GOM,GRO,HL1,HL2,INW,JAC,LDT,MUL,NHB,PL2,ROR,RUR,SCB,SHB,TNR,WIW
-print(",".join(forecast_counters(gs, pl2='HES')))
-# BRA,BRF,D2U,GAD,GRO,HAW,INW,JAC,MOC,MUL,PL2,PL3,PL4,PLA,RAT,STK,THW,TRH,TSH,WAF,WAS,WIW
-print(",".join(forecast_counters(gs, pl2='ILL')))
-# ANM,FAL,FUK,GAD,GOM,HL2,HL3,HUL,ING,INW,MOC,MUL,PL2,PL3,PL4,PLA,POV,PYP,RAT,RUR,SCB,SPM,THA,THW,TRH,TSH,WAS
-print(",".join(forecast_counters(gs, pl2='LKD')))
-# ANM,BRF,D2U,FUK,GRO,HAW,HL2,HL3,HUL,ING,KL3,LDT,NHB,PL2,PL3,POV,RAT,RUR,SCB,SPM,STK,STL,THA,THW,TNR,TRH,TSH,WAS
-print(",".join(forecast_counters(gs, pl2='SPG')))
-# ANM,D2U,HL2,INW,JAC,KL4,PL3,PLA,POV,RUR,SCB,SHB,STL,THW,TRH,TSH,WAF
-print(",".join(forecast_counters(gs, pl2='STK')))
-# ANM,BLP,BRF,D2U,FAL,GAD,GRO,HL1,ING,KL3,PL4,ROR,SCB,SHB,SPM,STL,THW,TNR,TRH,TSH
-print(",".join(forecast_counters(gs, pl2='TEU')))
-# ANM,BRF,D2U,FAL,GAD,GOM,HUL,ING,JAC,MUL,NHB,PL2,PL3,PL4,PLA,POV,PYP,RAT,ROR,RUR,SPM,STK,STL,THA,TNR,WAS
-print(",".join(forecast_counters(gs, pl2='SPG', pl1='D2U')))
-# BEF,BLP,BUB,ILL
-print(",".join(filter_codons("ANM,D2U,HL2,INW,JAC,KL4,PL3,PLA,POV,RUR,SCB,SHB,STL,THW,TRH,TSH,WAF".split(","), "BEF,BLP,BUB,ILL".split(","))))
-# HL2,RUR
-print(",".join(forecast_counters(gs, pl2='SPG', pl1='POV')))
-# BUB,DOA,DR4,HES,STK
-print(",".join(forecast_counters(gs, pl2='BLP', pl1='MOC')))
-# BEF,DOA,DR4,LKD,SPG,STK,TEU
-print(",".join(forecast_counters(gs, pl2='BLP', pl1='FUK')))
-# BEF,BUB,DR4,HES,SPG,STK,TEU
-print(",".join(forecast_counters(gs, pl2='BLP', pl1='HL2')))
-# DOA,HES,STK,TEU
-print(",".join(forecast_counters(gs, pl2='BLP', pl1='RUR')))
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 3
 # HES,STK
 
-## implement further takebacks
-gs = {'pl1': ['DRA'], 'pl2': []}
-counters = disp_counters(gs, "pl1", 1)
-
-# defensive scores
-tree1 = {cd: forecast_counters(gs, pl2=cd) for cd in counters}
-tree2 = {cd1: [(cd2, len(forecast_counters(gs, pl2=cd1, pl1=cd2))) for cd2 in tree1[cd1]] for cd1 in counters}
-scores = np.array([np.min(np.array(tree2[cd])[:,1].astype(int)) for cd in counters])
-print((np.max(scores), ",".join(counters[scores == np.max(scores)])))
-# (14, 'DR4,LKD')
-
-gs['pl2'].append('DR4')
-counters = disp_counters(gs, "pl2", 1)
-# 1
-# ANM,BEF,BLP,BRA,BUB,CAM,COC,D2U,D3P,DOA,DR2,FAL,GOM,GRO,GUG,HES,HL1,HL2,ILL,INW,JAC,LDT,LKD,LOK,LWB,MUL,NHB,PAB,PL2,ROR,RUR,SCB,SGG,SHA,SHB,TES,TEU,TNR,WIW,WOP
-
-# offensive scores
-scores = np.array([len(forecast_counters(gs, pl1=cd)) for cd in counters])
-print((np.min(scores), ",".join(counters[scores == np.min(scores)])))
-# (14, 'GRO,RUR')
-
-gs['pl1'].append('GRO')
-counters = disp_counters(gs, "pl1", 2)
-# 2
-# ANM,BLP,BRA,BUB,D2U,DR5,GOM,HL1,ILL,INW,JAC,PL4,SPG,TEU
-
-# offensive scores
-scores = np.array([len(forecast_counters(gs, pl2=cd)) for cd in counters])
-print((np.min(scores), ",".join(counters[scores == np.min(scores)])))
-# (15, 'D2U,JAC')
-
-gs['pl2'].append('D2U')
-counters = disp_counters(gs, "pl2", 2)
-# 2
-# BEF,BLP,BRA,BUB,COC,D3P,HL1,HL2,ILL,JAC,LWB,MUL,PAB,SCB,WIW
-
-# offensive scores
-scores = np.array([len(forecast_counters(gs, pl1=cd)) for cd in counters])
-print((np.min(scores), ",".join(counters[scores == np.min(scores)])))
-# (3, 'MUL')
-
-gs['pl1'].append('MUL')
-counters = disp_counters(gs, "pl1", 3)
+fc = forecast_counters(gs, pl2="HES")
 # 3
-# HL1,JAC,SPG
+# MOC,MUL,RAT,THW,TRH,TSH,WAS,WIW
+fc = forecast_counters(gs, pl2="STK")
+# 3
+# HL1,SHB,STL,THW,TNR,TRH,TSH
 
-# forecasts
-print(",".join(forecast_counters(gs, pl2='HL1')))
-# BRA,ILL,SCB
-print(",".join(forecast_counters(gs, pl2='JAC')))
-# BEF,BLP,HL1,ILL,PAB,WIW
-print(",".join(forecast_counters(gs, pl2='SPG')))
-# BUB,COC,D3P,HL2,ILL,JAC,SCB
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='BRA')))
-# JAC,SPG
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='ILL')))
-#
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='SCB')))
-# JAC
+gs['pl2'].append('STK')
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 3
+# HL1,SHB,STL,THW,TNR,TRH,TSH
 
+scores = np.array([len(forecast_counters(gs, pl1=cd, verbose=False)) for cd in counters])
+print((np.min(scores), counters[scores == np.min(scores)]))
+# (1, array(['HL1', 'SHB', 'STL', 'TNR'], dtype='<U3'))
 
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='BRA', nres=3)))
-# JAC,SPG,CIW,COO,DOS,GAD,HL2,HL3
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='ILL', nres=3)))
-# CIW,DID,DOS,EXK,GAD,HL2,HL3,MOC,THW,UWY,WAS,WES
-print(",".join(forecast_counters(gs, pl2='HL1', pl1='SCB', nres=3)))
-# JAC,CIW,COO,DOS,GAD,HL2,HL3,LES,THW,TNR,WAS,WES
+gs['pl1'].append('TNR')
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 4
+# HES
+
+gs['pl2'].append('HES')
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 4
+# THW,TRH,TSH
+
+scores = np.array([len(forecast_counters(gs, pl1=cd, verbose=False)) for cd in counters])
+print((np.min(scores), counters[scores == np.min(scores)]))
+# (1, array(['THW', 'TRH'], dtype='<U3'))
+gs['pl1'].append('THW')
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 4
+# GOW
+
+gs['pl2'].append('GOW')
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 4
+# DOS,ILL,SHU,SPG,THO
+
+scores = np.array([len(forecast_counters(gs, pl1=cd, verbose=False)) for cd in counters])
+print((np.min(scores), counters[scores == np.min(scores)]))
+# (1, array(['DOS', 'SHU'], dtype='<U3'))
+
+gs['pl1'].append('DOS')
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 4
+# WIW
+
+gs['pl2'].append('WIW')
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 4
+# BRF,GAD,GRO,ILL,PL4,SHU,SPG,THO
+fc = forecast_counters(gs, pl1="PL4")
+fc = forecast_counters(gs, pl1="GRO")
+fc = forecast_counters(gs, pl1="SHU")
+fc = forecast_counters(gs, pl1="SPG")
+fc = forecast_counters(gs, pl1="THO")
+# 3
+# CAA,DR4,NHB,SPM
+# 3
+# ANM,CAA,DID,SPM,TEU,UWY,WES
+# 4
+# DR3,PAB,THA
+# 3
+# ANM,CAA,DR4,SHU,UWY
+# 4
+# PAB
+gs['pl1'].append('PL4')
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 3
+# CAA,DR4,NHB,SPM
+fc = forecast_counters(gs, pl2="CAA")
+fc = forecast_counters(gs, pl2="DR4")
+fc = forecast_counters(gs, pl2="SPM")
+# 4
+# ILL,MOC,RAT,SHU,THO
+# 4
+# BUB,GRO,ILL,PL2,TES,TEU
+# 4
+# BRF,BUB,GAD,PL2,SHU,SPG
+gs['pl2'].append('CAA')
+counters = disp_counters(remain_codons(gs), gs, "pl2")
+# 4
+# ILL,MOC,RAT,SHU,THO
+fc = forecast_counters(gs, pl1="SHU")
+fc = forecast_counters(gs, pl1="THO")
+# 4
+# DR4,NHB
+# 4
+# DR4,NHB,SPM
+gs['pl1'].append('SHU')
+fc = forecast_counters(gs, pl2="DR4")
+fc = forecast_counters(gs, pl2="NHB")
+# 4
+# ILL,LDT,LKD,PAB,SHA,SHB
+# 4
+# ILL,ING,LDT,PAB,SHA,SHB
+gs['pl2'].append('NHB')
+fc = forecast_counters(gs, pl1="PAB")
+# 4
+# DBM,DR2,EG1
+fc = forecast_counters(gs, pl2="DBM")
+fc = forecast_counters(gs, pl2="DR2")
+fc = forecast_counters(gs, pl2="EG1")
+# 4
+# DR4
+# 4
+# DR4
+# 4
+# DR4
+gs['pl2'].append('EG1')
+gs['pl1'].append('DR4')
+counters = disp_counters(remain_codons(gs), gs, "pl1")
+# 4
+# DR2,GOM,LKD
+print(gs)
