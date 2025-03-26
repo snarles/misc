@@ -194,7 +194,7 @@ def forecast_counters(gs, pl1='', pl2='', limit=4, verbose=True):
     counters = disp_counters(remain_codons(gs2), gs2, curr, limit, verbose)
     return counters
 
-## Game 4
+## Game 5
 # 6x pre-draft
 # restrict-6 for first 50 turns, then restrict-5
 
