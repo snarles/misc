@@ -333,7 +333,7 @@ SGVR,sa-gur,closed
 SDIN,sa-din,sheet
 SVXR,su-kar,sugar
 SVP,sof,end
-SVQ WBVE,sof sha-vu-a,weekend
+SVP WBVE,sof sha-vu-a,weekend
 SVPRMRQY,su-per-mar-ket,supermarket
 SYVDNY,stu-dent,student
 SIPVR,si-pur,story
