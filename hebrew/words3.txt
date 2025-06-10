@@ -1,0 +1,41 @@
+word,pronunciation,gloss
+ABA,a-ba,dad
+BYJ,,to secure (historically uncertain)
+ABB,,to blossom (springtime)
+ABL,a-val,but
+GDL,,to grow (thumb = “big finger”)
+GZZ,,to cut/shell (related to nut)
+AGS,a-gas,pear
+ADM,,red
+AZN,,ear
+BVS,,bus
+AXL,,to eat
+APN,,wheel
+AJR,,after/behind
+AIX,eikh,how
+AIN,ein,there isn't/aren't
+AWH,i-sha,wife
+ANJ,,to sigh or groan (collective pronoun)
+ANI,a-ni,(i)
+ASR,,to forbid/to bind
+IWR,,to permit
+CBE,,to point
+ARJ,,to prepare a meal
+BQR,,morning/dawn
+ERB,,evening
+CHR,,a light (window)
+ATH,a-tah,you (m.)
+ATM,a-tem,you (m.p.)
+ATN,a-ten,you (f.p.)
+BQW,,request/ask
+BGD,,garment/clothing
+CLJ,,succeed
+JVC,khuts,outside/exterior
+BTN,be-ten,stomach/abdomen/tummy
+IJD,ya-khad,together
+BIC,,egg?
+BIT,ba-yit,house
+XNS,,gathering
+RQJ,,perfume
+SPR,se-fer,book
+BLI,bli,without
