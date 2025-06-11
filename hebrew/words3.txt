@@ -4,7 +4,9 @@ BYJ,,to secure (historically uncertain)
 ABB,,to blossom (springtime)
 ABL,a-val,but
 GDL,,to grow (thumb = “big finger”)
-GZZ,,to cut/shell (related to nut)
+GZZ,,to cut
+AGZ,,walnut
+MLX,,king
 AGS,a-gas,pear
 ADM,,red
 AZN,,ear
