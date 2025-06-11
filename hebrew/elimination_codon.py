@@ -520,9 +520,9 @@ while game_flag:
                     if current_opp == m-1:
                         print("@@@ DEFEATED ALL TEAMS! @@@")
                         war_flag = False
-                        if z > current_level -5:
+                        if z > current_level -2:
                             print("Level up!")
-                            current_level = z + 5
+                            current_level = z + 2
                     input()
                 elif resign_flag == True:
                     battle_flag = False
