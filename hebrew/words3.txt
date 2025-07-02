@@ -20,7 +20,7 @@ AWH,i-sha,wife
 ANJ,,to sigh or groan (collective pronoun)
 ANI,a-ni,(i)
 ASR,,to forbid/to bind
-IWR,,to permit
+IWR,,straight/honest
 CBE,,to point
 ARJ,,to prepare a meal
 BQR,,morning/dawn
@@ -41,3 +41,8 @@ XNS,,gathering
 RQJ,,perfume
 SPR,se-fer,book
 BLI,bli,without
+DVD,dod,uncle
+BNH,,to build
+BNQ,bank,bank
+SDR,seder,order
+BEL,ba-al,husband
