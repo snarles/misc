@@ -46,3 +46,6 @@ BNH,,to build
 BNQ,bank,bank
 SDR,seder,order
 BEL,ba-al,husband
+BCL,ba-tsal,onion
+BQR,ba-kar,beef
+QRB,karáv,to approach
