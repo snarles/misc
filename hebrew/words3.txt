@@ -46,6 +46,12 @@ BNH,,to build
 BNQ,bank,bank
 SDR,seder,order
 BEL,ba-al,husband
+PNH,pānā,to face/turn/address/speak to
 BCL,ba-tsal,onion
 BQR,ba-kar,beef
 QRB,karáv,to approach
+BRA,,related to creation/health/strength/fatness/clearing woods/cutting trees
+BWR,ba-sar,meat
+GVQ,juk,cockroach
+GNB,,related to theft
+GBH,,related to height
