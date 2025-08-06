@@ -55,3 +55,16 @@ BWR,ba-sar,meat
 GVQ,juk,cockroach
 GNB,,related to theft
 GBH,,related to height
+GVP,guf,body
+GZR,gezer,carrot
+GLD,,ice/frost
+GRB,gerev,sock
+GWM,ge-shem,rain
+DBW,dvash,honey
+DAR,do-ar,mail/post office
+DVR,,house
+DLT,de-let,door
+DQH,da-ka,minute
+DRM,da-rom,(s)outh
+DRX,,stepping/guiding/paths
+DTI,da-ti,religious
