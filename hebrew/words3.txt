@@ -68,3 +68,16 @@ DQH,da-ka,minute
 DRM,da-rom,(s)outh
 DRX,,stepping/guiding/paths
 DTI,da-ti,religious
+HBA,ha-ba,next
+HVA,hu/hevé,he/to be|exist|fall|befall
+HDV,ho-du,turkey (animal) -- literally (i)ndia fowl
+HVH,ho-ve,present (tense)
+HRH,[vb]hará/[adj]haré,[vb]to conceive|become pregnant|imagine|think up/[adj] pregnant
+IRH,[rt]/[vb]yará,[rt]related to guiding or casting out/[vb]flow as water|lay or throw|establish
+HIA,hi,she
+IVM,[rt]/[n]yom,[rt]related to days/[n]day|daylight
+PSQ,[vb]pasák,[vb]cease|desist|stop||decide|rule
+RBH,[vb]ravá,[vb]increase|multiply
+EML,[vb]amál,[vb]work|labour
+JLI,[n]chóli/[n]ḥălî,[n]sickness/[n]jewelry
+JLH,[n]khalá/[rt],[n]challah|cake/[rt]disease
