@@ -81,3 +81,30 @@ RBH,[vb]ravá,[vb]increase|multiply
 EML,[vb]amál,[vb]work|labour
 JLI,[n]chóli/[n]ḥălî,[n]sickness/[n]jewelry
 JLH,[n]khalá/[rt],[n]challah|cake/[rt]disease
+ZVL,zol,cheap
+ZIT,za-yit,olive
+ZMN,zman,time
+ZQN,za-ken,old (person)
+JBR,kha-ver,friend
+JGG,[vb]khagág,[vb]to celebrate
+JGR,[vb]khagár,[vb]to put on a belt|to gird
+JDR,khe-der,room
+JDW,kha-dash,new
+JLC,[rt],[rt]rescue|equip for war|detach oneself
+JVM,khum,brown
+JVP,khof,beach
+JPW,[rt],[rt]free
+JRP,[rt]/[vb]kharáf,[rt]winter/[vb]hibernate|winter|insult|aggravate
+JZH,kha-ze,chest
+JZQ,kha-zak,strong
+JLB,kha-lav,milk
+JLL,[n]khalál,[n]space|void/outer space/cavity/casualty/son of kohen and non-kohen woman
+JLN,[rt],[rt]window/secular
+JMM,[rt],[rt]related to heating
+JMA,[rt],[rt]butter/to butter up
+JMC,[rt]/[vb]khaméts/[n]khaméts,[rt]related to souring/[vb]to leaven|ferment/[n]chametz (leavened food)
+JNH,[rt]/[vb]khaná/[name]khaná,[rt]declining|laying camp|parking/kindness/[vb]to park
+JSH,kha-sa,lettuce
+JCI,khe-tsi,half (of something)
+JWB,[vb]khasháv,[vb]to think
+JTL,[rt],[rt]cat/[rt]diaper
