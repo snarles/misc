@@ -52,7 +52,7 @@ The type of comparison depends on the characters in the pair.
 
 #### Shape Classification
 * **Classes:**
-    * **Straight:** 1, 4, 7, A, E, F, I, K, L, M, N, T, V, W, X, Y, Z
+    * **Straight:** 1, 4, 7, A, E, F, H, I, K, L, M, N, T, V, W, X, Y, Z
     * **Curved:** 2, 3, 5, C, G, J, S, U
     * **Loopy:** 0, 6, 8, 9, B, D, O, P, Q, R
 * **Hierarchy:** The hierarchy is cyclic: **Straight > Loopy > Curved > Straight**.
@@ -62,7 +62,7 @@ The type of comparison depends on the characters in the pair.
 * **Letters only:**
     * **Vowels:** A, E, I, O, U, Y
     * **Hard Consonants:** B, C, D, G, K, P, Q, T
-    * **Soft Consonants:** F, H, J, L, M, N, R, S, V, W, Z
+    * **Soft Consonants:** F, H, J, L, M, N, R, S, V, W, X, Z
 * **Hierarchy:** The hierarchy is cyclic: **Vowels > Hard > Soft > Vowels**.
 * If letters are in different classes, outclassing determines the winner.
 
