@@ -91,7 +91,7 @@ GOD vs SIN
 |winner | X|  | outclass (sound) | | |
 |Pair 2 | O | I | | I, O | no (IJKLM...O)|
 |winner | X |  | outrank (vowels) | | |
-|Pair 2 | D | N | | H, N | no (DEFGH...N)|
+|Pair 2 | D | N | | D, N | no (DEFGH...N)|
 |winner | X |  | outclass (sound) | | |
 | Conventional winner | GOD |  | 3-0 | | |
 | Final winner | GOD | | | 0 reversals | no (even) |
