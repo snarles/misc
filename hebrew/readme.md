@@ -78,3 +78,33 @@ The type of comparison depends on the characters in the pair.
 The final winner is determined by the conventional outcome and the reversal count.
 * **Even number of reversals (including zero):** The overall winner is the conventional winner.
 * **Odd number of reversals:** The overall outcome is reversed (winner ↔ loser; a tie remains a tie).
+
+---
+
+### Examples
+
+F35 vs DR1
+
+|Battle | F35| DR1 | win by | reversal check  | reversal? |
+|-|-|-|-|-|-|
+|Pair 1 | F | D | | F, D | yes |
+|winner | | X | outclass (sound) | | |
+|Pair 2 | 3 | R | | E, R | no |
+|winner | | X | outclass (shape) | | |
+|Pair 2 | 5 | 1 | | 5, 1 | no |
+|winner | X |  | outclass (shape) | | |
+| Conventional winner | | DR1 | 2-1 | | |
+| Final winner | F35 | | | 1 reversal | yes (odd) |
+
+MCE vs MEN
+
+|Battle | MCE | MEN | win by | reversal check  | reversal? |
+|-|-|-|-|-|-|
+|Pair 1 | M | M | | M, M | yes |
+|winner | |  | tied | | |
+|Pair 2 | C | E | | C, E | yes |
+|winner | | X | outclass (sound) | | |
+|Pair 2 | E | N | | E, N | no |
+|winner |  | X | outclass (sound) | | |
+| Conventional winner | | MEN | 2-1 | | |
+| Final winner |  | MEN | | 2 reversals | no (even) |
