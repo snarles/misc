@@ -91,7 +91,7 @@ GOD vs SIN
 |winner | X|  | outclass (sound) | | |
 |Pair 2 | O | I | | I, O | no (IJKLM...O)|
 |winner | X |  | outrank (vowels) | | |
-|Pair 2 | D | N | | D, N | no (DEFGH...N)|
+|Pair 3 | D | N | | D, N | no (DEFGH...N)|
 |winner | X |  | outclass (sound) | | |
 | Conventional winner | GOD |  | 3-0 | | |
 | Final winner | GOD | | | 0 reversals | no (even) |
@@ -104,7 +104,7 @@ F35 vs DR1
 |winner | | X | outclass (sound) | | |
 |Pair 2 | 3 | R | | E, R | no (EFGHI...R)|
 |winner | | X | outclass (shape) | | |
-|Pair 2 | 5 | 1 | | 5, 1 | no (12...5)|
+|Pair 3 | 5 | 1 | | 5, 1 | no (12...5)|
 |winner | X |  | outclass (shape) | | |
 | Conventional winner | | DR1 | 2-1 | | |
 | Final winner | F35 | | | 1 reversal | yes (odd) |
@@ -117,7 +117,7 @@ MCE vs MEN
 |winner | |  | tied | | |
 |Pair 2 | C | E | | C, E | yes (CDEF) |
 |winner | | X | outclass (sound) | | |
-|Pair 2 | E | N | | E, N | no (EFGHI...L)|
+|Pair 3 | E | N | | E, N | no (EFGHI...L)|
 |winner |  | X | outclass (sound) | | |
 | Conventional winner | | MEN | 2-1 | | |
 | Final winner |  | MEN | | 2 reversals | no (even) |
@@ -130,7 +130,7 @@ MCE vs MEN
 |winner | | X | outrank (loop) | | |
 |Pair 2 | A | 4 | | A, A | yes (A) |
 |winner | X |  | outrank (straight) | | |
-|Pair 2 | B | X | | B, X | yes (XYZAB)|
+|Pair 3 | B | X | | B, X | yes (XYZAB)|
 |winner | X |  | outclass (sound) | | |
 | Conventional winner | 0AB |  | 2-1 | | |
 | Final winner |  | 94X | | 3 reversals | yes (odd) |
