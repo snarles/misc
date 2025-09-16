@@ -83,6 +83,19 @@ The final winner is determined by the conventional outcome and the reversal coun
 
 ### Examples
 
+GOD vs SIN
+
+|Battle | GOD | SIN | win by | reversal check  | reversal? |
+|-|-|-|-|-|-|
+|Pair 1 | G | S | | G, S | no (GHIJK...S) |
+|winner | X|  | outclass (sound) | | |
+|Pair 2 | O | I | | I, O | no (IJKLM...O)|
+|winner | X |  | outrank (vowels) | | |
+|Pair 2 | D | N | | H, N | no (DEFGH...N)|
+|winner | X |  | outclass (sound) | | |
+| Conventional winner | GOD |  | 3-0 | | |
+| Final winner | GOD | | | 0 reversals | no (even) |
+
 F35 vs DR1
 
 |Battle | F35| DR1 | win by | reversal check  | reversal? |
