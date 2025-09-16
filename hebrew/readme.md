@@ -115,7 +115,7 @@ MCE vs MEN
 |-|-|-|-|-|-|
 |Pair 1 | M | M | | M, M | yes (M) |
 |winner | |  | tied | | |
-|Pair 2 | C | E | | C, E | yes (CDEF) |
+|Pair 2 | C | E | | C, E | yes (CDE) |
 |winner | | E | outclass (sound) | | |
 |Pair 3 | E | N | | E, N | no (EFGHI...L)|
 |winner |  | N | outclass (sound) | | |
