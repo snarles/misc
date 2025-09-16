@@ -88,11 +88,11 @@ GOD vs SIN
 |Battle | GOD | SIN | win by | reversal check  | reversal? |
 |-|-|-|-|-|-|
 |Pair 1 | G | S | | G, S | no (GHIJK...S) |
-|winner | X|  | outclass (sound) | | |
+|winner | G|  | outclass (sound) | | |
 |Pair 2 | O | I | | I, O | no (IJKLM...O)|
-|winner | X |  | outrank (vowels) | | |
+|winner | O |  | outrank (vowels) | | |
 |Pair 3 | D | N | | D, N | no (DEFGH...N)|
-|winner | X |  | outclass (sound) | | |
+|winner | D |  | outclass (sound) | | |
 | Conventional winner | GOD |  | 3-0 | | |
 | Final winner | GOD | | | 0 reversals | no (even) |
 
@@ -101,11 +101,11 @@ F35 vs DR1
 |Battle | F35| DR1 | win by | reversal check  | reversal? |
 |-|-|-|-|-|-|
 |Pair 1 | F | D | | F, D | yes (DEF) |
-|winner | | X | outclass (sound) | | |
+|winner | | D | outclass (sound) | | |
 |Pair 2 | 3 | R | | E, R | no (EFGHI...R)|
-|winner | | X | outclass (shape) | | |
+|winner | | R | outclass (shape) | | |
 |Pair 3 | 5 | 1 | | 5, 1 | no (12...5)|
-|winner | X |  | outclass (shape) | | |
+|winner | 5 |  | outclass (shape) | | |
 | Conventional winner | | DR1 | 2-1 | | |
 | Final winner | F35 | | | 1 reversal | yes (odd) |
 
@@ -116,9 +116,9 @@ MCE vs MEN
 |Pair 1 | M | M | | M, M | yes (M) |
 |winner | |  | tied | | |
 |Pair 2 | C | E | | C, E | yes (CDEF) |
-|winner | | X | outclass (sound) | | |
+|winner | | E | outclass (sound) | | |
 |Pair 3 | E | N | | E, N | no (EFGHI...L)|
-|winner |  | X | outclass (sound) | | |
+|winner |  | N | outclass (sound) | | |
 | Conventional winner | | MEN | 2-1 | | |
 | Final winner |  | MEN | | 2 reversals | no (even) |
 
@@ -127,10 +127,10 @@ MCE vs MEN
 |Battle | 0AB | 94X | win by | reversal check  | reversal? |
 |-|-|-|-|-|-|
 |Pair 1 | 0 | 9 | | 0, 9 | yes (90) |
-|winner | | X | outrank (loop) | | |
+|winner | | 9 | outrank (loop) | | |
 |Pair 2 | A | 4 | | A, A | yes (A) |
-|winner | X |  | outrank (straight) | | |
+|winner | A |  | outrank (straight) | | |
 |Pair 3 | B | X | | B, X | yes (XYZAB)|
-|winner | X |  | outclass (sound) | | |
+|winner | B |  | outclass (sound) | | |
 | Conventional winner | 0AB |  | 2-1 | | |
 | Final winner |  | 94X | | 3 reversals | yes (odd) |
