@@ -117,7 +117,7 @@ MCE vs MEN
 |winner | |  | tied | | |
 |Pair 2 | C | E | | C, E | yes (CDE) |
 |winner | | E | outclass (sound) | | |
-|Pair 3 | E | N | | E, N | no (EFGHI...L)|
+|Pair 3 | E | N | | E, N | no (EFGHI...N)|
 |winner |  | N | outclass (sound) | | |
 | Conventional winner | | MEN | 2-0 | | |
 | Final winner |  | MEN | | 2 reversals | no (even) |
