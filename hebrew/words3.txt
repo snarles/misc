@@ -34,7 +34,7 @@ BGD,,garment/clothing
 CLJ,,succeed
 JVC,khuts,outside/exterior
 BTN,be-ten,stomach/abdomen/tummy
-IJD,ya-khad,together
+IJD,[rt]/ya-khad,[rt]1/together
 BIC,,egg?
 BIT,ba-yit,house
 XNS,,gathering
@@ -120,7 +120,6 @@ RBE,[rt],[rt]4
 WLW,[rt],[rt]3
 WNI,[no]shnei,[no]2
 WWH,[no]shishá,[no]6
-IJD,[rt],[rt]1
 IIN,ya-yin,wine
 ILD,ye-led,boy
 IMN,[rt],[rt]right|south|skill|hydrogen
