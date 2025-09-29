@@ -108,3 +108,26 @@ JSH,kha-sa,lettuce
 JCI,khe-tsi,half (of something)
 JWB,[vb]khasháv,[vb]to think
 JTL,[rt],[rt]cat/[rt]diaper
+YVB,tov,good
+YIL,[rt],[rt]trip|hike|tour|voyage|promenade|esplanade
+YLH,ta-le,lamb
+YEM,[n]tá'am,[n]taste|flavour|logic|reason|point|interest|stress|accent|cantillation mark
+IDH,[rt],[rt]thank|acknowledge|(j)ewish
+IVM,yom,day
+JMW,[no]khamésh,[no]5
+RAW,[rt],[rt]head
+RBE,[rt],[rt]4
+WLW,[rt],[rt]3
+WNI,[no]shnei,[no]2
+WWH,[no]shishá,[no]6
+IJD,[rt],[rt]1
+IIN,ya-yin,wine
+ILD,ye-led,boy
+IMN,[rt],[rt]right|south|skill|hydrogen
+IPH,ya-fe,beautiful
+ICA,[vb]yatsá,[vb]go out|come out|exit|leave|depart|get out|turn out to be|to be exempt
+IQR,ya-kar,expensive
+IRQ,ya-rok,green
+IRJ,ya-re-akh,moon
+IWN,ya-shan,old (thing)
+ITW,[rt],[rt]mosquito
