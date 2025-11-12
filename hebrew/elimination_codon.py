@@ -316,8 +316,8 @@ def sort_word_list(wl):
     return list(wds[np.sort([wds2i[w] for w in wl])])
 
 size_team = 11
-current_level = 1
-n_multi_armies = [1]*3 + [2]*3 + [3]*50
+current_level = 5
+n_multi_armies = [1]*3 + [2]*5 + [3]*50
 
 print("--------------------------")
 print("    Elimination Game      ")
@@ -329,7 +329,7 @@ print("2. Continue")
 x = input()
 
 if x=="1":
-    n_lib = 20 # number of words in pool to draw from
+    n_lib = 50 # number of words in pool to draw from
     flag = True
     while flag:
         print("===New team:===")
@@ -369,11 +369,11 @@ elif x=="2":
 r0 = default_rng(0)
 multi_armies = {}
 for j in range(3):
-    armies = []
-    for i in range(21):
-        sub_wds = wds[:min(len(wds),(i*5+15))]
-        armies.append(sort_word_list(r0.choice(sub_wds, size_team, False)))
-    multi_armies[j] = armies
+    multi_armies[j] = []
+for i in range(21):
+    for j in range(3):
+        sub_wds = wds[:min(len(wds),(i*20+20))]
+        multi_armies[j].append(sort_word_list(r0.choice(sub_wds, size_team, False)))
 
 game_flag=True
 

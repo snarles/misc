@@ -369,11 +369,11 @@ elif x=="2":
 r0 = default_rng(0)
 multi_armies = {}
 for j in range(3):
-    armies = []
-    for i in range(21):
-        sub_wds = wds[:min(len(wds),(i*10+20))]
-        armies.append(sort_word_list(r0.choice(sub_wds, size_team, False)))
-    multi_armies[j] = armies
+    multi_armies[j] = []
+for i in range(21):
+    for j in range(3):
+        sub_wds = wds[:min(len(wds),(i*20+20))]
+        multi_armies[j].append(sort_word_list(r0.choice(sub_wds, size_team, False)))
 
 game_flag=True
 
