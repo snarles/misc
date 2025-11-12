@@ -33,7 +33,7 @@ BQW,,request/ask
 BGD,,garment/clothing
 CLJ,,succeed
 JVC,khuts,outside/exterior
-BTN,be-ten,stomach/abdomen/tummy
+BYN,be-ten,stomach/abdomen/tummy
 IJD,[rt]/ya-khad,[rt]1/together
 BIC,,egg?
 BIT,ba-yit,house
@@ -113,7 +113,6 @@ YIL,[rt],[rt]trip|hike|tour|voyage|promenade|esplanade
 YLH,ta-le,lamb
 YEM,[n]tá'am,[n]taste|flavour|logic|reason|point|interest|stress|accent|cantillation mark
 IDH,[rt],[rt]thank|acknowledge|(j)ewish
-IVM,yom,day
 JMW,[no]khamésh,[no]5
 RAW,[rt],[rt]head
 RBE,[rt],[rt]4
@@ -130,3 +129,36 @@ IRQ,ya-rok,green
 IRJ,ya-re-akh,moon
 IWN,ya-shan,old (thing)
 ITW,[rt],[rt]mosquito
+XAB,ke-ev,pain/ache
+XBW,[v]kavásh,[v]conquer|subjugate|tread down|level|overcome one's instincts|hold back
+DVR,[n]dor,[n]generation
+XDR,[rt],[rt]to be round
+RGL,[n]régel,[n]foot|leg|foot (len)|leg (furniture)|time|instance|occurence|pilgrimage|festival|spy|informant
+SLL,[rt],[rt]basket|track|spool|coil|battery
+QBE,[n]kéva'/[v]kavá',[n]permanence|career service/[v]determine|decide|fix firmly
+XBE,[rt],hat
+XXB,[rt],[rt]star|asterisk
+XVS,kos,glass/cup
+XES,ko-es,angry
+XJL,ka-khol,blue
+XSA,ki-se,chair
+XTH,ki-ta,classroom
+XLL,[rt],[rt]general|rule|anemone|all|bride|finish|destroy completely
+XLB,ke-lev,dog
+XMH,ka-ma,how much
+XVN,[rt],[rt]yes|ready|direct|build|prepare|intend|shelves|cage|correct
+XSP,ke-sef,money|silver
+XPP,[v]kafáf,[v]to bend
+XRB,[r],[r]cabbage|cauliflower
+XWR,[a]ka-sher,[a]kosher|fit|proper|legitimate/[r]fit|proper|legitimate|chemical preparation|device|tool|implement|to train|capability
+XTB,[v]katáv,[v]to write/[r]address|to write|label|caption|marriage contract
+XTM,[n]kétem/[a]katóm,[n]stain|spot/[a]orange
+LAY,le-at,slowly
+AYY,,[r]related to slowness
+LBB,,[r]heart|potato pancakes|frying
+LBD,le-vad,alone
+BDD,,[r]aloneness|cloth|rods
+LBN,la-van,white
+RAH,ra'á,to see
+JIH,,[r]related to life
+JII,,[r]related to life

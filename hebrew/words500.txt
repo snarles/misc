@@ -53,7 +53,7 @@ BHCLJH,be-hats-la-kha,good luck
 BVQR,bo-ker,morning
 BJVC,ba-khuts,outside
 BYYH,ba-ta-ta,sweet potato
-BTN,be-ten,stomach/abdomen/tummy
+BYN,be-ten,stomach/abdomen/tummy
 BIJD,be-ya-khad,together
 BINVNI,bei-no-ni,medium
 BICH,bei-tsa,egg
