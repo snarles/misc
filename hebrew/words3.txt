@@ -162,3 +162,10 @@ LBN,la-van,white
 RAH,ra'á,to see
 JIH,,[r]related to life
 JII,,[r]related to life
+LJM,,[r]fighting|food|welding
+LYA,,[r]lizard
+LIL,[n]láyil,[n]night
+LMH,la-ma,why
+MYH,[n]maté/[v]maté/[n]mitá/[adv]máta,[n]stick|headquarters|tribe/[v]tilt/[n]bed/[adv]downwards
+NYH,,[r]inclination
+ELH,,[r]ascent|foliage
