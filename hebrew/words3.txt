@@ -13,7 +13,7 @@ AZN,,ear
 BVS,,bus
 AXL,,to eat
 APN,,wheel
-AJR,,after/behind
+AJR,[r],[r]lateness|being behind|posteriority
 AIX,eikh,how
 AIN,ein,there isn't/aren't
 AWH,i-sha,wife
@@ -85,7 +85,7 @@ ZVL,zol,cheap
 ZIT,za-yit,olive
 ZMN,zman,time
 ZQN,za-ken,old (person)
-JBR,kha-ver,friend
+JBR,[n]kha-ver/[r],[n]friend/[r]friendship|connection|sorcery
 JGG,[vb]khagág,[vb]to celebrate
 JGR,[vb]khagár,[vb]to put on a belt|to gird
 JDR,khe-der,room
@@ -169,3 +169,25 @@ LMH,la-ma,why
 MYH,[n]maté/[v]maté/[n]mitá/[adv]máta,[n]stick|headquarters|tribe/[v]tilt/[n]bed/[adv]downwards
 NYH,,[r]inclination
 ELH,,[r]ascent|foliage
+MAD,me-od,very
+APH,[r],[r]related to baking/character|nature|disposition
+BJN,[r],[r]testing|inspection/fortresses|towers|castles
+NGB,[r],[r]wiping|towel
+DBR,[r],[r]conducting|guiding|following/plague|pestilence|destruction/saying|speaking/bees
+DIN,[r],[r]judgment|deliberation|law
+IDE,[r],[r]knowing
+DPS,[r],[r]pattern|printing
+MHR,[r],[r]fast|bride price
+MVJ,mo-akh,brain
+XVN,[r],[r]firmness|establishment
+MNH,[r],[r]number|to count|taxicab
+QDM,[r],[r]oldness|antiquity|precedence
+IRH,[r],[r]guiding|casting out
+MZG,[v]mazág/[n]mézeg/[r],[v]to pour/[n]temper|temperament/[r]mixing
+ZLG,[r],[r]fork
+ZRJ,[r],[r]shining|citizenship|east
+MJR,ma-khar,tomorrow
+YBJ,[n]tabákh,[n]butcher|cook|chef
+YGN,[r],[r]frying
+YVS,[r],[r]flying
+MYR,[r],[r]rain/meter
