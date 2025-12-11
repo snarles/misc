@@ -189,3 +189,4 @@ YBJ,[n]tabákh,[n]butcher|cook|chef
 YGN,[r],[r]frying
 YVS,[r],[r]flying
 MYR,[r],[r]rain/meter
+MLL,[r],[r]stuffing|filling|hotel|dictionary
