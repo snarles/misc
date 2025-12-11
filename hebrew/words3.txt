@@ -146,7 +146,7 @@ XTH,ki-ta,classroom
 XLL,[rt],[rt]general|rule|anemone|all|bride|finish|destroy completely
 XLB,ke-lev,dog
 XMH,ka-ma,how much
-XVN,[rt],[rt]yes|ready|direct|build|prepare|intend|shelves|cage|correct
+XVN,[rt],[rt]yes|ready|direct|build|prepare|intend|shelves|cage|correct/firmness|establishment
 XSP,ke-sef,money|silver
 XPP,[v]kafáf,[v]to bend
 XRB,[r],[r]cabbage|cauliflower
@@ -179,10 +179,8 @@ IDE,[r],[r]knowing
 DPS,[r],[r]pattern|printing
 MHR,[r],[r]fast|bride price
 MVJ,mo-akh,brain
-XVN,[r],[r]firmness|establishment
 MNH,[r],[r]number|to count|taxicab
 QDM,[r],[r]oldness|antiquity|precedence
-IRH,[r],[r]guiding|casting out
 MZG,[v]mazág/[n]mézeg/[r],[v]to pour/[n]temper|temperament/[r]mixing
 ZLG,[r],[r]fork
 ZRJ,[r],[r]shining|citizenship|east
