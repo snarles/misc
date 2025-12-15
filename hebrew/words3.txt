@@ -37,9 +37,9 @@ BYN,be-ten,stomach/abdomen/tummy
 IJD,[rt]/ya-khad,[rt]1/together
 BIC,,egg?
 BIT,ba-yit,house
-XNS,,gathering
+XNS,[r]/[v]kanás,[r]gathering/[v]to cover|hide
 RQJ,,perfume
-SPR,se-fer,book
+SPR,[n]se-fer/[r],book/[r]telling|counting|haircut
 BLI,bli,without
 DVD,dod,uncle
 BNH,,to build
@@ -146,7 +146,7 @@ XTH,ki-ta,classroom
 XLL,[rt],[rt]general|rule|anemone|all|bride|finish|destroy completely
 XLB,ke-lev,dog
 XMH,ka-ma,how much
-XVN,[rt],[rt]yes|ready|direct|build|prepare|intend|shelves|cage|correct/firmness|establishment
+XVN,[rt],[rt]yes|ready|direct|build|prepare|intend|shelves|cage|correct/firmness|establishment/machine
 XSP,ke-sef,money|silver
 XPP,[v]kafáf,[v]to bend
 XRB,[r],[r]cabbage|cauliflower
@@ -179,7 +179,7 @@ IDE,[r],[r]knowing
 DPS,[r],[r]pattern|printing
 MHR,[r],[r]fast|bride price
 MVJ,mo-akh,brain
-MNH,[r],[r]number|to count|taxicab
+MNH,[r]/[n]maná,[r]number|to count|taxicab/[n]portion|dose;share|dish|quotient|rebuke
 QDM,[r],[r]oldness|antiquity|precedence
 MZG,[v]mazág/[n]mézeg/[r],[v]to pour/[n]temper|temperament/[r]mixing
 ZLG,[r],[r]fork
@@ -190,3 +190,15 @@ YGN,[r],[r]frying
 YVS,[r],[r]flying
 MYR,[r],[r]rain/meter
 MLL,[r],[r]stuffing|filling|hotel|dictionary
+MIM,ma-yim,water
+MIC,[r]/[n]mits,[r]squeezing|pressing/[n]juice
+XER,[r],ugly
+QCR,[adj]katsár,short length or duration
+MLA,ma-le,full
+LHB,[r],flame|blaze|exciting|Christian rapture
+MLJ,[n]mélaḥ,salt|permanence;continuity
+MWL,[v]mashál,to rule|reign|govern
+NHL,[r],management|to conduct|protocol|administrative
+NHR,[n]na-har/[r],[n]river/[r]tunnel
+SED,[r],meals|support
+SRJ,[v]sarach,to extend|lap|decayed
