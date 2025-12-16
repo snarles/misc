@@ -24,7 +24,7 @@ IWR,,straight/honest
 CBE,,to point
 ARJ,,to prepare a meal
 BQR,,morning/dawn
-ERB,,evening
+ERB,[r],evening|(w)est
 CHR,,a light (window)
 ATH,a-tah,you (m.)
 ATM,a-tem,you (m.p.)
@@ -202,3 +202,12 @@ NHL,[r],management|to conduct|protocol|administrative
 NHR,[n]na-har/[r],[n]river/[r]tunnel
 SED,[r],meals|support
 SRJ,[v]sarach,to extend|lap|decayed
+ENH,[r],answer|interesting/afflicted/period
+MPH,[r],map/tablecloth
+PTJ,[r],opening|developing
+CIN,[r],marking
+CJQ,[r],laughter
+CLM,[r],images|photos
+QVM,[r],establish|protest
+QRR,[r],cold
+MRQ,ma-rak,soup
