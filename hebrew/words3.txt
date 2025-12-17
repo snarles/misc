@@ -211,3 +211,10 @@ CLM,[r],images|photos
 QVM,[r],establish|protest
 QRR,[r],cold
 MRQ,ma-rak,soup
+WJQ,[v]saḥáq,to laugh
+WYR,[r],scribe|overseer|police
+WPJ,[r],family
+WQL,[n]shékel/[v]shakál,[n]shekel/[v]to weigh|ponder
+WRD,[v]sarád/[r],[v]to survive/[r]survival|relic|records|office
+MTQ,[r],sweet
+MTI,ma-tai,when
