@@ -218,3 +218,13 @@ WQL,[n]shékel/[v]shakál,[n]shekel/[v]to weigh|ponder
 WRD,[v]sarád/[r],[v]to survive/[r]survival|relic|records|office
 MTQ,[r],sweet
 MTI,ma-tai,when
+NHG,[v]nahág/[n]nahág or nehág,[v]to do something out of habit|to behave|to lead:guide|to drive/[n]driver
+NHR,na-har,river|to flow
+NIR,ni-yar,paper
+NMX,[r],lower
+NML,[n]na-mal/[r],[n]port/[r]ant
+EVP,[r],flight|bird|to toss|kite|volleyball
+NEL,na'ál,[n]shoe|[v]put on|wear|lock
+NQI,na-ki,clean
+NWA,[v]nasá/[r],[v]lift|bear|endure|deliver/[r]married|be arrogant
+NWQ,ne-shek,weapon
