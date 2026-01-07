@@ -218,6 +218,7 @@ WQL,[n]shékel/[v]shakál,[n]shekel/[v]to weigh|ponder
 WRD,[v]sarád/[r],[v]to survive/[r]survival|relic|records|office
 MTQ,[r],sweet
 MTI,ma-tai,when
+BIN,[p]ben/[r],[p]between|amid/[r]understanding:intelligent|son
 NHG,[v]nahág/[n]nahág or nehág,[v]to do something out of habit|to behave|to lead:guide|to drive/[n]driver
 NHR,na-har,river|to flow
 NIR,ni-yar,paper
