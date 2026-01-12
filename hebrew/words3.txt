@@ -229,3 +229,9 @@ NEL,na'ál,[n]shoe|[v]put on|wear|lock
 NQI,na-ki,clean
 NWA,[v]nasá/[r],[v]lift|bear|endure|deliver/[r]married|be arrogant
 NWQ,ne-shek,weapon
+SBA,sa-ba,grandfather
+SBN,[v]sibén,to soap:lather
+SBH,[n]savá',grandmother
+SGL,sa-gol,purple
+SGR,[v]sagár/[r],[v]to close/[r]to close|turn in|gold|metal workshop
+SDN,[r],bedsheet
