@@ -235,3 +235,8 @@ SBH,[n]savá',grandmother
 SGL,sa-gol,purple
 SGR,[v]sagár/[r],[v]to close/[r]to close|turn in|gold|metal workshop
 SDN,[r],bedsheet
+SXR,[r],sugar|dam:to block
+SVP,[n]sof/[r],[n]end/[r]end|storm
+WBE,[r],seven|promises:oaths
+SXN,[r],dangerous|risk|agent|knife:blade
+SLY,sa-lat,salad
