@@ -240,3 +240,8 @@ SVP,[n]sof/[r],[n]end/[r]end|storm
 WBE,[r],seven|promises:oaths
 SXN,[r],dangerous|risk|agent|knife:blade
 SLY,sa-lat,salad
+SLJ,[v]salákh,to forgive; excuse
+SLQ,[v]/[n]sélek/[v]silék,[v]to ascend/[n]beet/[v]eliminate|discard
+SPH,sa-pa,sofa
+SRY,[v]/[n]séret,[v]to scratch; draw/[n]ribbon|film
+STV,stav,(f)all
