@@ -172,6 +172,43 @@ def ml_features(state, to_move):
     return feats
 
 
+def _build_symmetries():
+    funcs = [
+        lambda r, c: (r, c),                # identity
+        lambda r, c: (c, 3 - r),            # rot90
+        lambda r, c: (3 - r, 3 - c),        # rot180
+        lambda r, c: (3 - c, r),            # rot270
+        lambda r, c: (r, 3 - c),            # flip-h
+        lambda r, c: (3 - r, c),            # flip-v
+        lambda r, c: (c, r),                # flip-diag
+        lambda r, c: (3 - c, 3 - r),        # flip-anti
+    ]
+    perms = []
+    for f in funcs:
+        perm = {}
+        for L, (r, c) in LETTER_TO_RC.items():
+            perm[L] = RC_TO_LETTER[f(r, c)]
+        perms.append(perm)
+    return perms
+
+
+SYMMETRIES = _build_symmetries()
+
+
+def apply_symmetry(state, perm):
+    s1, s2 = state
+    s1_new = "".join(sorted(perm[L] for L in s1))
+    s2_new = "".join(sorted(perm[L] for L in s2))
+    return (s1_new, s2_new)
+
+
+def canonical_form(state, to_move):
+    own = state[to_move - 1]
+    opp = state[2 - to_move]
+    pov = (own, opp)
+    return min(apply_symmetry(pov, p) for p in SYMMETRIES)
+
+
 def visualize(state):
     s1, s2 = state
     cells = []
@@ -276,6 +313,22 @@ if __name__ == "__main__":
     assert immediate_win_cells(("AB", ""), 1) == {"C"}
     assert immediate_win_cells(("AE", ""), 1) == {"I"}
     assert immediate_win_cells(("AB", "C"), 1) == set()  # opp blocks the line
+
+    # Canonical-form examples (matches the table in the plan)
+    assert len(SYMMETRIES) == 8
+    assert canonical_form(("A", ""), 1) == ("A", "")          # 1
+    assert canonical_form(("D", ""), 1) == ("A", "")          # 2 rot270
+    assert canonical_form(("", "A"), 2) == ("A", "")          # 3 player swap
+    assert canonical_form(("F", ""), 1) == ("F", "")          # 4 interior
+    assert canonical_form(("B", ""), 1) == ("B", "")          # 5 edge
+    assert canonical_form(("A", "B"), 1) == ("A", "B")        # 6
+    assert canonical_form(("D", "C"), 1) == ("A", "B")        # 7 flip-h
+    assert canonical_form(("F", "K"), 1) == ("F", "K")        # 8 flip-diag fixes
+    assert canonical_form(("K", "F"), 1) == ("F", "K")        # 9 rot180
+    assert canonical_form(("AF", "BG"), 1) == ("AF", "BG")    # 10
+    assert canonical_form(("DG", "HK"), 1) == ("AF", "BG")    # 11 rot270
+    assert canonical_form(("AF", "BG"), 2) == ("BG", "AF")    # 12 distinct class
+    assert canonical_form(("LP", ""), 1) == ("AB", "")        # 13 flip-anti = rot90 ∘ flip-h
 
     print("sanity asserts passed")
     print()

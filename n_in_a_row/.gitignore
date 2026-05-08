@@ -1,3 +1,4 @@
 data.tsv
+merged_*.tsv
 __pycache__/
 *.pyc
