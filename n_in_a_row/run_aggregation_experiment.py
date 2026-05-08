@@ -109,7 +109,7 @@ def run_config(label, p, n_sims, pool_rows, seed_games, seed_sims, out_path):
     print(f"  total sims:         {total_sims}")
     print(f"  subsample time:     {t1 - t0:.2f}s")
     print(f"  merge time:         {t2 - t1:.2f}s")
-    print(f"  per-state sim time: {t3 - t2:.1f}s")
+    print(f"  sim wall time:      {t3 - t2:.1f}s")
     print(f"  wrote {out_path}")
     print(f"  Coefficients (matrix-only 7-feature, weighted OLS):")
     print(f"    {'feature':<14} {'coef':>10} {'lo':>10} {'hi':>10} {'width':>10}")
@@ -125,7 +125,7 @@ def run_config(label, p, n_sims, pool_rows, seed_games, seed_sims, out_path):
         "total_sims": total_sims,
         "time_subsample": t1 - t0,
         "time_merge": t2 - t1,
-        "time_sim": t3 - t2,
+        "time_sim_wall": t3 - t2,
         "coef": coef,
         "lo": lo,
         "hi": hi,
@@ -181,8 +181,8 @@ def write_report(results, path):
         f"| merge time (s)          | {a['time_merge']:.2f} | {b['time_merge']:.2f} | — |"
     )
     lines.append(
-        f"| per-state sim time (s)  | {a['time_sim']:.1f} | {b['time_sim']:.1f} | "
-        f"{b['time_sim']/a['time_sim']:.2f} |"
+        f"| sim wall time (s)       | {a['time_sim_wall']:.1f} | {b['time_sim_wall']:.1f} | "
+        f"{b['time_sim_wall']/a['time_sim_wall']:.2f} |"
     )
     lines.append("")
     lines.append("### CI widths per feature (95% bootstrap)\n")

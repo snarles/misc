@@ -25,7 +25,7 @@ Configuration (b) stores ~5× fewer rows. Question: do the 7-feature regression 
 | total sims              | 246,040 | 293,300 | 1.19 |
 | subsample time (s)      | 0.04 | 0.04 | — |
 | merge time (s)          | 0.61 | 0.11 | — |
-| per-state sim time (s)  | 9.5 | 10.8 | 1.14 |
+| sim wall time (s)       | 9.5 | 10.8 | 1.14 |
 
 ### CI widths per feature (95% bootstrap)
 

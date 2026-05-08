@@ -184,7 +184,7 @@ def main():
     print(f"total sims:         {len(merged) * args.n_sims}")
     print(f"games-collect time: {t1-t0:.1f}s")
     print(f"merge time:         {t2-t1:.2f}s")
-    print(f"per-state sim time: {t3-t2:.1f}s")
+    print(f"sim wall time:      {t3-t2:.1f}s")
     print(f"wrote {args.out}")
 
 
