@@ -64,13 +64,21 @@ def test_engine_agrees_on_derived_quantities():
         assert bool(engine.IS_FLY_ALL[index]) == (codon.type == "Fly")
 
 
-def test_best_codon_loses_to_worst_codon():
-    """Non-transitivity, as reported in report.md: ENP has the highest P(win)
-    of any codon and PGE the lowest, yet PGE beats ENP head-to-head.
+def test_best_codon_loses_to_a_near_worst_codon():
+    """Non-transitivity, as reported in report.md: BFN has the highest P(win)
+    of any codon (0.6925) yet loses head-to-head to AFF, whose 0.3693 is the
+    second-lowest of all 8,436 multisets.
     """
-    outcome = engine.outcomes_against_all("ENP")[engine.codon_index("PGE")]
+    outcome = engine.outcomes_against_all("BFN")[engine.codon_index("AFF")]
     assert outcome == -1
-    assert reference_outcome("ENP", "PGE") == -1
+    assert reference_outcome("BFN", "AFF") == -1
+
+
+def test_beat_relation_contains_cycles():
+    """A strict ranking of codons cannot exist: HB1 > VTS > GKB > HB1."""
+    cycle = ("HB1", "VTS", "GKB")
+    for attacker, defender in zip(cycle, cycle[1:] + cycle[:1]):
+        assert reference_outcome(attacker, defender) == 1, f"{attacker}>{defender}"
 
 
 def test_codon_draws_against_itself():

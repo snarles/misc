@@ -92,12 +92,16 @@ UPSIDE_DOWN_STABILITY = _table(
     ],
 )
 
-T_JUNCTIONS = _table(
-    "T-junctions",
+#: T-junctions plus loops tangent to the floor. The loop term is what
+#: distinguishes 0/6/8/B/D/O - characters whose enclosed space rests on the
+#: floor - from 9/P/Q/R/A, whose loops sit clear of it.
+T_JUNCTIONS_AND_FLOOR_LOOPS = _table(
+    "T-junctions plus floor-tangent loops",
     [
-        (0, "234578CDGJKLMNOSUVWXYZ"),
-        (1, "169BEFPQT"),
-        (2, "0AHIR"),
+        (0, "23457CGJKLMNSUVWXYZ"),
+        (1, "189DEFOPQT"),
+        (2, "6ABHIR"),
+        (3, "0"),
     ],
 )
 
@@ -137,7 +141,8 @@ CONTESTS: tuple[tuple[str, dict[str, int]], ...] = (
     ("number of top and bottom bumps", TOP_BOTTOM_BUMPS),
     ("number of junctions", JUNCTIONS),
     ("upside-down stability", UPSIDE_DOWN_STABILITY),
-    ("number of T-junctions", T_JUNCTIONS),
+    ("number of T-junctions plus loops tangent to the floor",
+     T_JUNCTIONS_AND_FLOOR_LOOPS),
     ("number of left-descending slanted line segments", LEFT_DESCENDING_SLANTS),
     ("number of side bumps", SIDE_BUMPS),
     ("number of valleys", VALLEYS),

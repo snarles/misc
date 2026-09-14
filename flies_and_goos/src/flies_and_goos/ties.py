@@ -7,7 +7,10 @@ sweeping 46656^2 matchups:
 A contest is tied when both players take the same number of positions. Friend
 gives a position to the *lower* score and Foe to the *higher*, so either way the
 tie condition is ``#{a<b} == #{a>b}`` - relationship status cannot affect
-whether a matchup is a draw. Writing ``v(x, y)`` for the 10-vector of
+whether a matchup is a draw. Nor can the tiebreak direction: Friend steps back
+through the contests and Foe forward, but stepping +-1 mod 10 visits all ten
+either way, so "ties every contest" is order-independent. Writing ``v(x, y)``
+for the 10-vector of
 ``sign(score_c(x) - score_c(y))``, codons A and B tie every contest iff
 
     v(a1, b1) + v(a2, b2) + v(a3, b3) = 0   (in Z^10)

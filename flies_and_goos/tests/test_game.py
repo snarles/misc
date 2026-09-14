@@ -68,8 +68,59 @@ def test_worked_examples_type_and_stability(
     assert codon.stability == expected_stability
 
 
+def test_friend_tiebreak_steps_backwards():
+    """Friend pairs decrement the contest on a tie, Foe pairs increment.
+
+    1A7 vs T3P ties contest #6 and is decided on #5. Under the old always-
+    incrementing rule it would go to #7 and T3P would win instead, so this
+    pins the direction rather than merely exercising it.
+    """
+    result = face_off("1A7", "T3P")
+    assert result.relationship == FRIEND
+    assert [r.contest for r in result.rounds] == [6, 5]
+    assert str(result.winner) == "1A7"
+
+
+def test_friend_tiebreak_wraps_from_zero_to_nine():
+    result = face_off("1UP", "Y2K")
+    assert result.relationship == FRIEND
+    assert [r.contest for r in result.rounds] == [9, 8, 7]
+    assert str(result.winner) == "1UP"
+
+
+def test_foe_tiebreak_steps_forwards():
+    result = face_off("GR8", "3PO")
+    assert result.relationship == FOE
+    assert [r.contest for r in result.rounds] == [7, 8, 9]
+    assert str(result.winner) == "GR8"
+
+
+@pytest.mark.parametrize(
+    "a,b,expected",
+    [
+        ("2ZL", "SLD", "2ZL"),
+        ("WQ2", "T84", "WQ2"),
+        ("MTQ", "S8R", "MTQ"),
+        ("OYT", "KEY", "OYT"),
+        ("H8L", "PTU", "PTU"),
+    ],
+)
+def test_contest_six_counts_floor_tangent_loops(a, b, expected):
+    """Each of these is decided on contest #6 and flips if the loop term is
+    dropped - i.e. they fail against the old T-junctions-only table.
+    """
+    result = face_off(a, b)
+    assert result.rounds[-1].contest == 6
+    assert str(result.winner) == expected
+
+
 def test_intro_example_needs_a_tiebreaker():
-    """IGW vs U2B: ties on contest #4, then Phil's U2B takes contest #5."""
+    """IGW vs U2B: ties on contest #4, then Phil's U2B takes the tiebreaker.
+
+    A Friend pair, so the tie steps *back* to contest #3, matching the worked
+    example in rules.docx: IGW takes position 1 on top-and-bottom bumps, Phil
+    takes positions 2 and 3, "With 2 positions to 1, Phil wins the contest!"
+    """
     result = face_off("IGW", "U2B")
     assert result.relationship == FRIEND
     assert opening_contest(result.a, result.b) == 4
@@ -77,7 +128,7 @@ def test_intro_example_needs_a_tiebreaker():
     first, second = result.rounds
     assert (first.contest, first.a_positions, first.b_positions) == (4, 1, 1)
     assert first.winner is None
-    assert (second.contest, second.a_positions, second.b_positions) == (5, 0, 1)
+    assert (second.contest, second.a_positions, second.b_positions) == (3, 1, 2)
     assert str(result.winner) == "U2B"
 
 

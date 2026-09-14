@@ -24,7 +24,7 @@ from flies_and_goos.engine import (
     outcomes_against_all,
 )
 
-TIES_FROM_SIGNATURE_METHOD = 423580
+TIES_FROM_SIGNATURE_METHOD = 366468
 """Draw count independently derived by ``analysis/ties.py``; see cross-check."""
 
 

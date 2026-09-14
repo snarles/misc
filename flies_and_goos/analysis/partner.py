@@ -1,10 +1,10 @@
 """Find the best partner for a codon: the codon defeating the most of its
 conquerors.
 
-ENP is the strongest codon against a uniform opponent, but 17,287 codons still
+BFN is the strongest codon against a uniform opponent, but 14,343 codons still
 beat it. This asks which single codon cleans up the most of that set.
 
-Run: UV_CACHE_DIR=.uv-cache uv run python analysis/partner.py [--codon ENP]
+Run: UV_CACHE_DIR=.uv-cache uv run python analysis/partner.py [--codon BFN]
 """
 
 import argparse
@@ -69,7 +69,7 @@ def load_pwin(path="winrates.tsv"):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--codon", default="ENP")
+    parser.add_argument("--codon", default="BFN")
     parser.add_argument("--top", type=int, default=15)
     args = parser.parse_args()
 

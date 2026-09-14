@@ -3,8 +3,8 @@
 A codon is 3 characters drawn from A-Z and 0-9. Two codons face off: their
 types decide whether the contest is friendly (lower score takes a position) or
 unfriendly (higher takes it), their combined stability picks the opening
-contest, and ties push the contest number forward by one until someone wins or
-all 10 contests have been used.
+contest, and ties step the contest number by one - forward for Foe, back for
+Friend - until someone wins or all 10 contests have been used.
 """
 
 from dataclasses import dataclass
@@ -142,10 +142,16 @@ def face_off(a: Codon | str, b: Codon | str) -> FaceOff:
     friendly = status == FRIEND
     start = opening_contest(a, b)
 
+    # Foe pairs step forward through the contests on a tie, Friend pairs step
+    # back; either way all 10 are visited before the face-off is exhausted.
+    direction = -1 if friendly else 1
+
     rounds: list[Round] = []
     winner_index: int | None = None
     for offset in range(NUM_CONTESTS):
-        current = play_round(a, b, (start + offset) % NUM_CONTESTS, friendly)
+        current = play_round(
+            a, b, (start + offset * direction) % NUM_CONTESTS, friendly
+        )
         rounds.append(current)
         if current.winner is not None:
             winner_index = current.winner

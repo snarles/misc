@@ -41,13 +41,15 @@ Codon("A1S").stability     # 6
 
 Exhaustive results over all 46,656 codons are written up in
 [`report.md`](report.md). Headlines: non-identical codons that tie all 10
-contests do exist (376,924 ordered pairs, settling the open question in
-`rules.docx`); the best codon against a uniform opponent is `ENP` at P(win)
-0.6294; and P(win) depends only on a codon's *multiset* of characters, so there
-are 8,436 distinct strategies rather than 46,656.
+contests do exist (319,812 ordered pairs, and no two characters are
+functionally identical, so every tie is earned); the best codon against a
+uniform opponent is `BFN` at P(win) 0.6925; and P(win) depends only on a
+codon's *multiset* of characters, so there are 8,436 distinct strategies rather
+than 46,656.
 
-And the best partner for `ENP` is `EGP` — the *worst* codon in the game — which
-defeats 88.4% of the codons that beat `ENP`; only 4.27% of codons beat both.
+The best partner for `BFN` is `BPN`, which defeats 85.8% of the codons that beat
+`BFN`; only 4.37% of codons beat both. There is no meaningful ranking of codons
+though — in 44.9% of matchups the lower-rated codon wins.
 
 ```sh
 UV_CACHE_DIR=.uv-cache uv run python analysis/ties.py       # ~0.5s

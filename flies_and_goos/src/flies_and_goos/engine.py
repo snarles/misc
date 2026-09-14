@@ -88,13 +88,15 @@ def outcomes_against_all(codon: Codon | str) -> np.ndarray:
     friendly = IS_FLY_ALL != is_fly
     signed = np.where(friendly, -contest_outcomes, contest_outcomes)
 
-    # Start at the units digit of the combined stability, then step forward
-    # through the contests, locking in the first one that is not a tie.
+    # Start at the units digit of the combined stability, then step through the
+    # contests, locking in the first one that is not a tie. Foe pairs step
+    # forward and Friend pairs back, so the direction varies per opponent.
     stability = int(SCORES[0][chars].sum())
     start = (stability + STABILITY_ALL) % NUM_CONTESTS
+    direction = np.where(friendly, -1, 1)
     columns = np.arange(N_CODONS)
     result = np.zeros(N_CODONS, dtype=np.int8)
     for step in range(NUM_CONTESTS):
-        candidate = signed[(start + step) % NUM_CONTESTS, columns]
+        candidate = signed[(start + step * direction) % NUM_CONTESTS, columns]
         np.copyto(result, candidate, where=result == 0)
     return result
