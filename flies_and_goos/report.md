@@ -1,10 +1,13 @@
 # Flies and Goos: exhaustive analysis
 
-Three exhaustive analyses over the full codon space (36³ = 46,656 codons):
-which codons tie on every contest, which codon is strongest against a random
-opponent, and which codon best covers the strongest one's losses.
+Four analyses over the full codon space (36³ = 46,656 codons): which codons tie
+on every contest, which codon is strongest against a random opponent, which
+codon best covers the strongest one's losses, and which *triples* of codons
+nothing can sweep.
 
-Every result is exact — nothing here is sampled or estimated. The numbers come
+Parts 1-3 are exact — nothing in them is sampled or estimated. Part 4 is a
+sampled heuristic search and says so throughout; its existence claims are
+proven, its rarity claims are not. The numbers come
 from `flies_and_goos.engine`, a vectorized evaluator validated against
 `flies_and_goos.game`, the readable reference implementation that passes the 10
 supplied test cases. See [Correctness](#correctness) for how the two are
@@ -12,8 +15,9 @@ cross-checked.
 
 ```sh
 UV_CACHE_DIR=.uv-cache uv run python analysis/ties.py       # ~0.5s
-UV_CACHE_DIR=.uv-cache uv run python analysis/winrates.py   # ~105s, writes beat_matrix.npy
+UV_CACHE_DIR=.uv-cache uv run python analysis/winrates.py   # ~6min, writes beat_matrix.npy
 UV_CACHE_DIR=.uv-cache uv run python analysis/partner.py    # ~30s, needs the above
+UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py   # ~22min, needs the above
 ```
 
 > **Rules version.** These results reflect `rules.docx` as of commit 8b58140,
@@ -32,6 +36,8 @@ UV_CACHE_DIR=.uv-cache uv run python analysis/partner.py    # ~30s, needs the ab
 | **No ranking exists** | The beat relation is full of cycles: in 44.9% of matchups the lower-rated codon wins. `BFN` loses to `AFF`, the second-weakest multiset. |
 | **Best partner for `BFN`** | `BPN` defeats 85.8% of the codons that beat `BFN`. Only 4.37% of codons beat both. |
 | **…but arrangement matters there** | Unlike P(win), partner coverage is *not* permutation-invariant: `BPN` covers 12,302 where `PNB` covers 10,300. |
+| **Perfect 3-fortresses exist** | Three codons sharing no characters, which *nothing* beats: `005` `CX4` `JNJ`, `CNV` `P5W` `JJJ`, `055` `JJJ` `3MV`. |
+| **Fortresses must mix Fly and Goo** | All 100 searched fortresses are mixed-type; the best same-type triple found is 10x worse. |
 
 ---
 
@@ -290,6 +296,127 @@ one.
 
 ---
 
+## 4. 3-fortresses: triples nothing can sweep
+
+A **3-fortress** is three codons no two of which share a character (repeats
+*inside* one codon are allowed). A **totalizer** is a codon that beats all
+three. A fortress is strong when it has few totalizers — pick one of its three
+codons and no single opponent is favoured against your whole hand.
+
+Unlike parts 1-3 this part is **not exhaustive**. There are ~10^13 valid
+triples; this samples 100 at random and hill-climbs each by replacing one codon
+at a time with whichever legal codon most reduces the totalizer count, stopping
+at a local optimum. Existence claims below are proven; absence and rarity claims
+are not.
+
+```sh
+UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py --seeds 100
+```
+
+### Perfect fortresses exist: three triples that nothing beats
+
+Three of the 100 climbs reached **zero totalizers** — not one of the 46,656
+codons defeats all three members.
+
+| fortress | types | stability | found from | steps |
+|---|---|---|---:|---:|
+| **`005` `CX4` `JNJ`** | Goo/Fly/Goo | 3/3/4 | 5,274 | 5 |
+| **`CNV` `P5W` `JJJ`** | Fly/Goo/Goo | 3/3/3 | 8,865 | 4 |
+| **`055` `JJJ` `3MV`** | Goo/Goo/Fly | 3/3/3 | 3,921 | 8 |
+
+So "very few totalizers" bottoms out at none. Against any opponent, at least one
+of the three codons is not beaten — the opponent either loses to it or draws.
+
+These are the one place a transposed matrix read would produce a spectacular
+false positive, so each was re-confirmed against `game.face_off`: every codon
+beating exactly two members (22,046, 25,530 and 24,580 respectively) was
+replayed through the reference rules, and none beats the third.
+
+### The reachable range
+
+Random valid triples start around 5,500 totalizers and greedy takes them to a
+median of **102** — a median 45x reduction — in 2 to 12 swaps. All 100 climbs
+converged rather than hitting the step cap.
+
+| percentile | 0 | 10 | 25 | 50 | 75 | 90 | 100 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| final totalizers | 0 | 10 | 65 | 102 | 207 | 313 | 565 |
+
+23 of 100 finished at 50 or fewer, 50 at 100 or fewer.
+
+### Mixing Fly and Goo is effectively mandatory
+
+**All 100 final fortresses are mixed** — 66 Fly/Fly/Goo and 34 Fly/Goo/Goo. The
+random seeds included 10 all-Fly and 8 all-Goo triples, and the climb moved
+every one of them out of homogeneity.
+
+This is not an artefact of where the search happened to start. Sampling 4,000
+random same-type triples directly, the best all-Fly triple found has 1,672
+totalizers and the best all-Goo 1,177 — an order of magnitude worse than the
+median mixed result of 102.
+
+The mechanism is the Friend/Foe rule. An attacking Fly is a Foe to Fly members
+(higher score takes the position) but a Friend to Goo members (lower score takes
+it). A mixed fortress therefore demands that a totalizer be simultaneously
+high-scoring and low-scoring on the contests it lands in. A homogeneous fortress
+imposes one consistent direction, and a single extremal codon can sweep it.
+
+### Strong fortresses are letter-heavy
+
+Character slots in the strongest third are **16% digits**, against 32% in the
+weakest third — the climb systematically trades digits away for letters.
+
+| | strongest third | weakest third |
+|---|---:|---:|
+| `W` | 26 | 10 |
+| `R` | 16 | 6 |
+| `L` | 12 | 4 |
+| `2` | 2 | 13 |
+| `0` | 5 | 15 |
+| `M` | 7 | 15 |
+
+The `B`/`W`/`6`/`0` characters that sit at the extremes of the most contests
+show no group effect here (0.42 vs 0.38 occurrences per codon); `W` alone
+carries the signal.
+
+### Repeated characters look helpful, but the evidence is soft
+
+Codons using a character twice or three times are 54% of the strongest third and
+31% of the weakest, and every zero-totalizer fortress contains one — no
+repeat-free fortress got below 79 totalizers. That is suggestive rather than
+established: the rank correlation is only −0.328 and the bucket medians are not
+monotonic (one repeated-character codon is *worse* on median than none, 171 vs
+131).
+
+It is a striking pairing with part 2 regardless, where repeated-character codons
+are individually among the weakest — `AFF` has the third-worst P(win) in the
+game. Being easy to beat one-on-one and being useful in a fortress are
+apparently unrelated properties.
+
+### The landscape is rugged, and these are local optima
+
+100 climbs produced **91 distinct local optima** (counted up to the simultaneous
+permutation symmetry below), and the starting score barely predicts the finish:
+Spearman −0.151 between initial and final totalizers. Greedy converges fast and
+to wildly different places.
+
+**No claim of optimality is made here.** The zero-totalizer fortresses are
+proven to exist, but whether they are rare or abundant is not settled by 100
+samples, and nothing here bounds how far a local optimum sits from the global
+best.
+
+### A symmetry worth knowing
+
+Permuting the character positions of *all three* members the same way leaves the
+totalizer count unchanged, because the engine satisfies a full conjugation:
+`outcome(σ·a, σ·b) == outcome(a, b)`. So `{KKX, WZW, LUR}` and `{KKX, ULR, ZWW}`
+are the same fortress wearing different clothes, and distinct results must be
+counted up to that 6-fold symmetry or diversity is overstated. Note this is
+*simultaneous* permutation only — permuting one member alone changes the count,
+consistent with part 3.
+
+---
+
 ## Effect of the rules update
 
 Commit 8b58140 changed two things, and both moved the results:
@@ -352,6 +479,18 @@ plausible but wrong answer, so `analysis/partner.py` re-derives the top 10
 partners by replaying those matchups through the engine and asserts agreement
 before printing anything.
 
+Part 4 reads the same matrix and reports a count of *zero*, which is precisely
+the result a transposed or mis-masked read would manufacture. `analysis/fortress.py`
+therefore asserts, before printing: the best fortress's totalizer count
+re-derived by replaying matchups through the engine; the candidate sweep that
+drives every swap agreeing with direct per-triple counts on 20 random probes
+(a wrong sweep would steer the climb while leaving the reported totals
+self-consistent); every triple being at most as beatable as each pair inside it;
+no member totalizing its own fortress; and every emitted triple being
+character-disjoint. The three zero-totalizer fortresses were additionally
+confirmed against `game.face_off` by replaying all 72,156 matchups involving a
+codon that beats exactly two of their members.
+
 ## Not done
 
 The **unrestricted** two-codon search — the best duo over all ~1.09 billion
@@ -359,3 +498,10 @@ pairs, rather than pairs containing `BFN` — is still open. Part 3 gives the be
 `BFN` duo at 4.37%, which upper-bounds the global optimum but does not attain
 it. `flies_and_goos.duo.coverage_counts` is written generically over a target
 set, so it is the building block for that sweep.
+
+For part 4, **how common perfect fortresses are** is open. Three turned up in
+100 climbs, but greedy from random starts gives no estimate of their density and
+no bound on the gap to the global optimum. Whether a *4*-fortress can reach zero
+totalizers under the same no-overlap rule is also untouched, and the disjointness
+constraint caps such a set at 12 members before the 36-character alphabet is
+exhausted.
