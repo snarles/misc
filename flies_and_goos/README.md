@@ -7,15 +7,29 @@ in `rules.docx`.
 ## Setup
 
 The uv cache is kept inside this directory (the default `~/.cache/uv` is outside
-the sandbox), so every uv command needs the `UV_CACHE_DIR` prefix:
+the sandbox), so every uv command needs the `UV_CACHE_DIR` prefix. The first
+sync additionally needs to be pointed at an interpreter, because uv cannot
+download its own under the sandbox and the bare `miniconda3/bin/python3` is
+3.8 - too old for this project's `requires-python = ">=3.12"`:
 
 ```sh
-UV_CACHE_DIR=.uv-cache uv sync --extra dev
-UV_CACHE_DIR=.uv-cache uv run pytest
+UV_CACHE_DIR=.uv-cache \
+  UV_PYTHON_DOWNLOADS=never \
+  UV_PYTHON=~/miniconda3/envs/rrr/bin/python3.13 \
+  uv sync --extra dev
 ```
 
-Python 3.13 from miniconda is used; uv cannot download its own interpreters
-under the sandbox.
+Any miniconda env with a 3.12+ interpreter works; `rrr`, `stan`, `dandi`,
+`gemini`, and `rnn_cross_modal` all carry 3.13, matching `.python-version`.
+Without `UV_PYTHON` the sync fails with "resolved to Python 3.8.18, which is
+incompatible"; without `UV_PYTHON_DOWNLOADS=never` it fails earlier still,
+trying to write an interpreter into `~/.local/share/uv/python`.
+
+Once `.venv` exists, later commands need only the cache prefix:
+
+```sh
+UV_CACHE_DIR=.uv-cache uv run pytest
+```
 
 ## Usage
 
