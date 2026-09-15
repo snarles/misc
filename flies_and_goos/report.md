@@ -312,6 +312,7 @@ Existence claims below are proven; absence and rarity claims are not.
 
 ```sh
 UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py --seeds 100
+UV_CACHE_DIR=.uv-cache uv run python analysis/polarizer.py --csv fortresses.csv
 ```
 
 ### Perfect fortresses exist, and there are at least eleven
@@ -444,6 +445,123 @@ from 300 to 500.
 | `1` | 8 | 44 |
 | `2` | 15 | 49 |
 
+### Character frequency at the strong end
+
+Narrowing to the 71 climbs that finished at 30 totalizers or fewer, and
+deduplicating by the permutation symmetry, leaves **42 distinct fortresses** —
+126 codons, 378 character slots. Counts below are against a baseline of the
+characters in all 500 final fortresses rather than a uniform 1/36, so the lift
+isolates what makes a fortress *strong* rather than what makes it a fortress at
+all.
+
+| char | count | share | baseline | lift |
+|---|---:|---:|---:|---:|
+| **`J`** | **62** | **16.40%** | 5.20% | **3.15x** |
+| `W` | 31 | 8.20% | 6.64% | 1.23x |
+| `5` | 26 | 6.88% | 3.93% | 1.75x |
+| `X` | 21 | 5.56% | 3.20% | 1.74x |
+| `L` | 18 | 4.76% | 3.16% | 1.51x |
+| `0` | 17 | 4.50% | 3.80% | 1.18x |
+| `M` | 17 | 4.50% | 4.73% | 0.95x |
+| `U` | 16 | 4.23% | 3.62% | 1.17x |
+| `K` | 15 | 3.97% | 2.27% | 1.75x |
+| `V` | 15 | 3.97% | 1.76% | **2.26x** |
+| `B` | 15 | 3.97% | 4.40% | 0.90x |
+| `4` | 14 | 3.70% | 4.33% | 0.85x |
+
+The most depleted are `8` (0.10x), `1` (0.16x), `I` (0.19x), `2` (0.23x),
+`H` (0.31x) and `7` (0.37x).
+
+`J` dominates by a wide margin — 3.15x the fortress baseline, 5.9x uniform, and
+more than double the share of the next character. `V` is the only other strong
+outlier at 2.26x. But **every one of the 36 characters appears at least once**,
+so nothing is disqualified from a strong fortress; the effect is distributional,
+not a hard constraint.
+
+The letter/digit skew is milder here than the tercile split above suggests:
+79.4% letters against a 74.9% baseline. Digits are not excluded so much as
+concentrated — `5` is the third-commonest character of all, with `0` and `4` also
+near the top, while `1`, `2`, `7` and `8` are close to absent. Curved and
+straight characters are split 51.1% / 48.9%, and the codons divide 62 Fly to 64
+Goo, so neither glyph class nor codon type discriminates at this threshold. It is
+the identity of the character that matters, not its shape family.
+
+One caveat on `J`'s 16.40%: it comes from repetition within codons more than from
+breadth. `J` occurs somewhere in 29 of the 42 fortresses (69%), but only 20 of 42
+(48%) contain a J-*repeating* codon. The 11-of-11 J-repeat pattern belongs to the
+**perfect** fortresses specifically; a 30-totalizer threshold is loose enough to
+admit many strong fortresses built on other characters entirely.
+
+### Strong fortresses divide labour between a polarizer and two mop-ups
+
+The `JJJ` mechanism above is not a quirk of one codon. Define a codon's
+**polarity** as `wF - wG`, the difference between the fraction of the 23,328
+Flies and the fraction of the 23,328 Goos it defeats; call the member with the
+largest `|polarity|` the **polarizer** and the other two the **mop-ups**. The
+structure sharpens monotonically with fortress strength:
+
+| band | n | mean \|polarity\| | polarizer's cover of its type | mop-ups' cover of the other type |
+|---|---:|---:|---:|---:|
+| **perfect (0)** | 11 | **0.833** | **0.888** | **0.994** |
+| ≤ 30 | 42 | 0.699 | 0.847 | 0.965 |
+| 31-120 | 124 | 0.596 | 0.812 | 0.956 |
+| > 120 | 226 | 0.469 | 0.758 | 0.924 |
+| random seed triples | 200 | 0.412 | 0.703 | 0.757 |
+
+Against a mean `|polarity|` of 0.246 across all 46,656 codons, every band is
+polarized above chance and the perfect fortresses are extreme: their polarizer
+defeats 88.8% of one whole type, and their two mop-ups between them defeat 99.4%
+of the other. `analysis/polarizer.py` produces the table; figures are over the
+392 distinct fortresses, deduplicated by the permutation symmetry.
+
+### The route split is what forces type-mixing
+
+Classifying *how* each member covers its type — **Foe-high** when member and
+covered type match, so the higher score takes the position, **Friend-low** when
+they differ and the lower score does — gives two signatures that are perfect
+across all eleven zero-totalizer fortresses:
+
+- the polarizer covers its type **Friend-low in 11 of 11**;
+- the two mop-ups are **exactly one Foe-high and one Friend-low in 11 of 11**.
+
+That second fact is the type-mixing result derived from the other direction. A
+fortress needs both routes represented, and having both requires members of both
+types. Weaker bands break the pattern freely: at > 120 totalizers, 38 fortresses
+pair two Foe-high mop-ups and 19 pair two Friend-low.
+
+There is also a clean asymmetry. **Every perfect fortress polarizes against
+Flies, never Goos** (11 of 11; 34 of 42 in the ≤ 30 band), while the weak bands
+are an even split. No Goo-side mirror of `JJJ` turned up anywhere in the search:
+Goo-polarized fortresses stall well short of perfection.
+
+### Where the hypothesis is only half right
+
+The natural strong reading — that the mop-ups handle the type the polarizer
+leaves open, so the surviving totalizers should sit on the mop-ups' side — does
+**not** hold. Splitting each fortress's totalizers by opponent type gives a
+roughly even division in every band:
+
+| band | totalizers of the polarizer's type | of the other type |
+|---|---:|---:|
+| ≤ 30 | 246 | 185 |
+| 31-120 | 5,174 | 4,302 |
+| > 120 | 28,005 | 30,716 |
+
+So the division of labour is real in *coverage* but not in *residue*. The
+polarizer takes the bulk of one type and the mop-ups take almost all of the
+other, yet the 11% of its own type the polarizer misses is large enough that the
+mop-ups must cover that too — and what survives is split evenly rather than
+concentrated. A fortress is not two independent halves.
+
+One near-perfect fortress takes a different route entirely: `06Q` `4AV` `WWW` at
+1 totalizer is polarized by `WWW` **Foe-high**, with `|polarity|` only 0.403 —
+below the average for the > 120 band. Polarization is a strong tendency at the
+top, not a requirement.
+
+These results are correlational. They establish that strong fortresses have this
+structure, not that the structure is what makes them strong; no fortress was
+constructed from the theory to test that.
+
 ### The landscape is rugged, and these are local optima
 
 500 climbs produced **392 distinct local optima**, and the starting score is
@@ -451,10 +569,10 @@ essentially uninformative about the finish: Spearman −0.034 between initial an
 final totalizers. Consecutive batches of ten swung between medians of 39 and
 256. Greedy converges fast and to wildly different places.
 
-Some optima are nevertheless found repeatedly: `KKK` `WWE` `DUH` at 10
-totalizers was reached four separate times from unrelated seeds, and five of the
+Some optima are nevertheless found repeatedly: `DHU` `KKK` `WEW` at 10
+totalizers was reached six separate times from unrelated seeds, and four of the
 eleven perfect fortresses were hit more than once. The landscape has many basins,
-but they are not uniformly small.
+but they are not uniformly small — see below.
 
 **No claim of optimality is made here.** The eleven perfect fortresses are
 proven to exist, but whether they are rare or abundant is not settled, and
@@ -462,6 +580,57 @@ nothing here bounds how far a local optimum sits from the global best. The
 16-in-500 hit rate is a property of this search procedure, not an estimate of
 their density. New perfect fortresses were still appearing in the final batch of
 500, so the count is a floor and nothing suggests it has saturated.
+
+### The largest basins of attraction
+
+Counting how many of the 500 climbs converge to each optimum estimates the
+relative size of its basin — how much of the seed space drains into it. 392
+distinct optima came out of 500 climbs, but they are far from equally reachable:
+
+| optima | reached | climbs |
+|---:|---:|---:|
+| 3 | 6 times each | 18 |
+| 8 | 4 times each | 32 |
+| 15 | 3 times each | 45 |
+| 39 | twice each | 78 |
+| 327 | once | 327 |
+
+**65 optima account for 173 of the 500 climbs (35%)**, while 327 were seen
+exactly once. The most-reached:
+
+| hits | totalizers | fortress |
+|---:|---:|---|
+| 6 | 79 | `9DN` `GIL` `WRM` |
+| 6 | 10 | `DHU` `KKK` `WEW` |
+| 6 | 60 | `8JN` `RBB` `WHP` |
+| 4 | 1 | `9KU` `QWW` `YJL` |
+| 4 | 2 | `ANY` `BBR` `JMJ` |
+| 4 | 38 | `44X` `55V` `WWR` |
+| 4 | 38 | `444` `5BB` `MDW` |
+| 4 | 64 | `23B` `LLL` `MWE` |
+| 4 | 177 | `0VW` `3NN` `UGM` |
+| 4 | 205 | `58D` `KIK` `MFB` |
+| 4 | 247 | `123` `AAE` `TIH` |
+
+**Bigger basins tend to hold better fortresses.** Optima reached more than once
+have a median of 71 totalizers against 163 for those reached exactly once, and
+the rank correlation between hits and totalizer count is −0.205. That is a
+mildly encouraging property for this kind of search: the strong solutions are not
+needles, and random restarts find them disproportionately often. It is not
+universal, though — `9DN` `GIL` `WRM` at 79 and `123` `AAE` `TIH` at 247 both
+have large basins and mediocre counts.
+
+Among the perfect fortresses the basins are smaller. `005` `CX4` `JNJ` was
+reached three times, `055` `JJJ` `3MV`, `555` `3MV` `JJJ` and `055` `JJJ` `SNV`
+twice each, and the remaining seven once. So perfection does not come with an
+unusually wide basin — those eleven are found because there are several of them,
+not because any one is especially easy to fall into.
+
+Two caveats. A hit count estimates basin volume only under this particular
+sampler, which draws the first member uniformly and each subsequent one uniformly
+from what stays disjoint — not uniformly over triples. And at 500 samples the
+difference between a 6-hit and a 4-hit basin is well inside noise; only the broad
+split between repeatedly-found and once-found optima is solid.
 
 ### A symmetry worth knowing
 
@@ -561,7 +730,11 @@ set, so it is the building block for that sweep.
 
 For part 4, **how common perfect fortresses are** is open. Sixteen turned up in
 500 climbs, but greedy from random starts gives no estimate of their density and
-no bound on the gap to the global optimum. Whether a *4*-fortress can reach zero
-totalizers under the same no-overlap rule is also untouched, and the disjointness
+no bound on the gap to the global optimum. A *Goo*-side mirror of the `JJJ`
+keystone is partly ruled out: every perfect fortress found polarizes against
+Flies, and no Goo-polarized triple reached zero, though whether that is a real
+asymmetry in the rules or a limit of this search is unresolved. Whether a
+*4*-fortress can reach zero totalizers under the same no-overlap rule is also
+untouched, and the disjointness
 constraint caps such a set at 12 members before the 36-character alphabet is
 exhausted.
