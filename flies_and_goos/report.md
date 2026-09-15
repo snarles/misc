@@ -38,6 +38,7 @@ UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py   # ~22min, needs the 
 | **…but arrangement matters there** | Unlike P(win), partner coverage is *not* permutation-invariant: `BPN` covers 12,302 where `PNB` covers 10,300. |
 | **Perfect 3-fortresses exist** | Eleven of them found — three codons sharing no characters which *nothing* beats, e.g. `005` `CX4` `JNJ` and `555` `3MV` `JJJ`. |
 | **Fortresses must mix Fly and Goo** | All 500 searched fortresses are mixed-type; the best same-type triple found is 10x worse. |
+| **Most codons have no good partner** | Fewer than 2% of codons can reach a pair below 2,000 totalizers; the median codon's best partner still concedes 4,031. |
 | **Specialisation needs three** | `JJJ` anchors every perfect triple but is *harmful* in a pair (4,003 totalizers): with two members nothing covers a keystone's blind side. |
 | **Best pair overall** | `BDW` `BEW`, beaten by only 390 codons (0.84%) — `{BFN, BPN}` at 2,041 is 5.2x off. Best pair sharing no character: `035` `64W` at 1,119. |
 | **A pair has a floor; a triple does not** | No legal pair concedes fewer than 1,119 totalizers, yet eleven triples concede none. |
@@ -834,6 +835,69 @@ affordable and even useful. **In a pair there is no slack** — whatever one mem
 concedes, the other must cover alone — so the optimum is a balanced pair of
 moderate specialists rather than a pair of extremists. Specialisation is a
 three-member luxury.
+
+### Every codon's best partner: most codons cannot make a strong pair
+
+The optimum above is one pair. Sweeping the best *legal* partner for every codon
+turns it into a distribution. Best-partner strength is permutation-invariant — σ
+preserves both character sets and totalizer counts — so the 8,436 multiset
+classes determine the value for all 46,656 codons, and the figures below weight
+each class by its size (6, 3 or 1) so they count codons rather than classes.
+
+```sh
+UV_CACHE_DIR=.uv-cache uv run python analysis/pair.py --partners   # ~14min
+```
+
+| percentile | p0 | p5 | p25 | p50 | p75 | p95 | p100 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| best-partner totalizers | 1,119 | 2,376 | 3,288 | **4,031** | 4,788 | 5,963 | 7,643 |
+
+A 6.8x spread from best to worst, and the strong end is thin:
+
+| best partner concedes | codons | share |
+|---|---:|---:|
+| ≤ 1,500 | 138 | 0.30% |
+| ≤ 2,000 | 824 | 1.77% |
+| ≤ 3,000 | 7,953 | 17.05% |
+| ≤ 4,000 | 22,888 | 49.06% |
+
+**Under 2% of codons can reach a pair below 2,000 totalizers**, and half of all
+codons bottom out above 4,000 — nearly four times the global optimum. Whether a
+codon can appear in a strong 2-fortress is therefore a property of the codon, not
+a matter of finding the right partner. Most codons have no good partner at all.
+
+### What makes a codon partnerable
+
+| feature | Spearman with best-partner totalizers |
+|---|---:|
+| **max(`wF`, `wG`)** | **−0.513** |
+| P(win) | −0.481 |
+| \|polarity\| | −0.325 |
+| stability | −0.316 |
+| min(`wF`, `wG`) | +0.080 |
+| digits / distinct characters / partner-pool size | ≈ 0 |
+
+The best predictor is how much of its **better** type a codon beats. Its record
+against its *worse* type carries no information at all (+0.080) — that is the
+partner's job. This is the codon-level counterpart of the pair-level result
+above, not a contradiction of it: a codon earns its place by being strong on one
+side, while a *pair* is judged on the weaker side of what the two cover together.
+
+Two candidate explanations are ruled out. Partner-pool size correlates at −0.010
+and distinct-character count at −0.005, so the fact that repeated-character
+codons have more legal partners (they exclude fewer characters) buys them
+nothing. Stability's −0.316 also understates a real but non-monotonic effect:
+stability 6 codons median 3,106 while stability 0 codons median 5,513.
+
+Character composition separates the extremes sharply. Comparing the best and
+worst 5% of classes, `B` appears 89 times against 3, `N` 112 against 25, `M` 108
+against 25, `5` 70 against 5; `P` appears once against 105, `F` 6 against 109,
+`T` 4 against 74. `J` is unremarkable here (45 against 22) despite anchoring
+every perfect 3-fortress — the same split part 4 and this part keep producing.
+
+The most partnerable codons are all stability-3 and digit-bearing: `035`, `46W`,
+`058`, `059`, `05S`. The least are `NPP`, `FNY`, `FNV`, `GPP` — and `VVV`, whose
+best legal partner still concedes 7,425.
 
 ### Greedy finds the optimum here, but that does not transfer
 

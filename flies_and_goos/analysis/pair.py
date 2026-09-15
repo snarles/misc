@@ -20,8 +20,16 @@ import time
 
 import numpy as np
 
-from flies_and_goos.duo import BeatMatrixMissing, load_beat_matrix
-from flies_and_goos.engine import N_CODONS, codon_index, codon_text, outcomes_against_all
+from itertools import permutations
+
+from flies_and_goos.duo import BeatMatrixMissing, coverage_counts, load_beat_matrix
+from flies_and_goos.engine import (
+    IS_FLY_ALL,
+    N_CODONS,
+    codon_index,
+    codon_text,
+    outcomes_against_all,
+)
 from flies_and_goos.tables import ALPHABET
 
 PAIR_SIZE = 2
@@ -112,7 +120,7 @@ def climb(words, masks, members, max_steps):
     return members, trail, False
 
 
-def exhaustive(words, masks, top, report_every=500):
+def exhaustive(words, masks, report_every=500):
     """Sweep every pair up to the permutation symmetry. Returns (legal, any)."""
     firsts = sorted_codons()
     best_legal, best_any = [], []
@@ -138,7 +146,48 @@ def exhaustive(words, masks, top, report_every=500):
 
     best_legal.sort()
     best_any.sort()
-    return best_legal[:top], best_any[:top]
+    return best_legal, best_any
+
+
+def type_coverage(matrix):
+    """``wF``, ``wG`` for every codon: the fraction of each type it defeats."""
+    fly = np.flatnonzero(IS_FLY_ALL)
+    goo = np.flatnonzero(~IS_FLY_ALL)
+    return (coverage_counts(fly, matrix) / len(fly),
+            coverage_counts(goo, matrix) / len(goo))
+
+
+def class_size(text: str) -> int:
+    """How many codons share this multiset: 6, 3 or 1."""
+    return len({"".join(p) for p in permutations(text)})
+
+
+def load_winrates(path="winrates.tsv"):
+    """type, stability and P(win) per codon, or {} if the file is absent."""
+    try:
+        with open(path) as handle:
+            next(handle)
+            out = {}
+            for line in handle:
+                f = line.rstrip("\n").split("\t")
+                out[f[0]] = (f[1], int(f[2]), float(f[6]))
+            return out
+    except OSError:
+        return {}
+
+
+def histogram(values, weights, bins=20, width=52):
+    """Aligned ASCII histogram, weighted so it counts codons not classes."""
+    lo, hi = min(values), max(values)
+    edges = np.linspace(lo, hi + 1e-9, bins + 1)
+    idx = np.clip(np.digitize(values, edges) - 1, 0, bins - 1)
+    tally = np.zeros(bins)
+    for i, w in zip(idx, weights):
+        tally[i] += w
+    peak = tally.max()
+    for b in range(bins):
+        bar = "#" * int(round(width * tally[b] / peak)) if peak else ""
+        print(f"  {edges[b]:>7.0f}-{edges[b + 1]:>7.0f} {int(tally[b]):>7}  {bar}")
 
 
 def show(title, rows):
@@ -157,6 +206,8 @@ def main() -> None:
     parser.add_argument("--out", default="pairs.csv")
     parser.add_argument("--top", type=int, default=12)
     parser.add_argument("--exhaustive", action="store_true")
+    parser.add_argument("--partners", metavar="PATH", nargs="?", const="partners.tsv",
+                        help="write the best legal partner for every codon")
     parser.add_argument("--time-slice", type=int, default=0,
                         help="time this many sweep scans, extrapolate, and stop")
     args = parser.parse_args()
@@ -251,10 +302,10 @@ def main() -> None:
     print(f"\npairs -> {args.out}")
 
     # --- exhaustive sweep -------------------------------------------------
-    if args.exhaustive:
+    if args.exhaustive or args.partners:
         print(f"\nsweeping {len(sorted_codons())} first-members "
               f"(every pair, up to simultaneous permutation)")
-        legal, unrestricted = exhaustive(words, masks, args.top)
+        legal, unrestricted = exhaustive(words, masks)
 
         count, a, b = legal[0]
         independent = totalizers_by_engine(codon_text(a), codon_text(b))
@@ -272,8 +323,92 @@ def main() -> None:
               f"members disjoint; at least as good as the known bar "
               f"{KNOWN_LEGAL_BAR}; no climb beat it")
 
-        show("Best character-disjoint pairs (provable optimum):", legal)
-        show("Best pairs with the disjointness rule dropped:", unrestricted)
+        show("Best character-disjoint pairs (provable optimum):", legal[: args.top])
+        show("Best pairs with the disjointness rule dropped:", unrestricted[: args.top])
+
+        # --- per-codon best partner ---------------------------------------
+        if args.partners:
+            by_first = {a: (count, b) for count, a, b in legal}
+            assert len(by_first) == len(sorted_codons()), (
+                f"{len(by_first)} first-members swept, expected "
+                f"{len(sorted_codons())}"
+            )
+            wf, wg = type_coverage(matrix)
+            winrates = load_winrates()
+
+            # The 8,436-row table stands in for all 46,656 codons only because
+            # best-partner count is permutation-invariant. Assert it.
+            for probe in rng.choice(list(by_first), size=5, replace=False):
+                text = codon_text(int(probe))
+                for order in ((1, 0, 2), (2, 1, 0), (1, 2, 0), (2, 0, 1)):
+                    other = codon_index("".join(text[i] for i in order))
+                    pool = np.flatnonzero((masks & masks[other]) == 0)
+                    probe_counts = pair_counts(words, words[other])
+                    probe_counts[other] = np.iinfo(np.int32).max
+                    assert int(probe_counts[pool].min()) == by_first[int(probe)][0], (
+                        f"best-partner count differs across permutations of {text}"
+                    )
+
+            # Distinct names: `a`, `b` and `count` already hold the global
+            # optimum for the summary printed below this block.
+            rows_out, sizes = [], 0
+            for first, (best_count, mate) in sorted(by_first.items()):
+                text, partner = codon_text(first), codon_text(mate)
+                size = class_size(text)
+                sizes += size
+                kind, stab, pwin = winrates.get(text, ("", -1, float("nan")))
+                rows_out.append((
+                    text, size, partner, best_count, kind, stab, pwin,
+                    float(wf[first]), float(wg[first]),
+                    abs(float(wf[first] - wg[first])),
+                    len(set(text)), sum(c.isdigit() for c in text),
+                    int(np.count_nonzero((masks & masks[first]) == 0)),
+                ))
+            assert sizes == N_CODONS, f"class sizes sum to {sizes}, expected {N_CODONS}"
+
+            counts_arr = np.array([r[3] for r in rows_out])
+            weights = np.array([r[1] for r in rows_out])
+            assert counts_arr.min() == legal[0][0], (
+                f"table minimum {counts_arr.min()} disagrees with the sweep "
+                f"optimum {legal[0][0]}"
+            )
+            for probe_row in rng.choice(len(rows_out), size=5, replace=False):
+                text, _, partner, stored = rows_out[probe_row][:4]
+                assert not (set(text) & set(partner)), f"{text}/{partner} overlap"
+                assert totalizers(
+                    words, codon_index(text), codon_index(partner)
+                ) == stored, f"{text}/{partner} recount disagrees with {stored}"
+
+            print(f"\nverified: best-partner count is permutation-invariant on 5 "
+                  f"probes; class sizes sum to {N_CODONS}; table minimum matches "
+                  f"the sweep optimum; 5 rows re-counted directly")
+
+            header = ("codon", "class_size", "best_partner", "totalizers", "type",
+                      "stability", "p_win", "w_fly", "w_goo", "abs_polarity",
+                      "distinct_chars", "digits", "legal_partners")
+            with open(args.partners, "w") as handle:
+                handle.write("\t".join(header) + "\n")
+                for r in rows_out:
+                    handle.write("\t".join(
+                        f"{v:.6f}" if isinstance(v, float) else str(v) for v in r
+                    ) + "\n")
+            print(f"\nbest partners -> {args.partners} ({len(rows_out)} classes, "
+                  f"{N_CODONS} codons)")
+
+            print(f"\nBest-partner totalizers, weighted by class size "
+                  f"(so it counts codons, not classes):")
+            histogram(counts_arr, weights)
+            order_w = np.argsort(counts_arr)
+            cum = np.cumsum(weights[order_w])
+            med = counts_arr[order_w][int(np.searchsorted(cum, N_CODONS / 2))]
+            print(f"\n  per-codon : min {counts_arr.min()} median {med} "
+                  f"max {counts_arr.max()}")
+            print(f"  per-class : min {counts_arr.min()} "
+                  f"median {int(np.median(counts_arr))} max {counts_arr.max()}")
+
+        assert count == legal[0][0], (
+            f"summary lost the optimum: {count} vs {legal[0][0]}"
+        )
         gap = int(finals.min()) - count
         print(f"\ngreedy best {int(finals.min())} vs optimum {count}: "
               f"gap {gap} ({gap / max(count, 1):+.1%})")
