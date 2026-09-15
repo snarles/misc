@@ -7,3 +7,4 @@ __pycache__/
 *.tsv
 .DS_Store
 fortresses.csv
+fortresses_run2.csv

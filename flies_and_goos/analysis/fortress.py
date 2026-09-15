@@ -231,14 +231,21 @@ def main() -> None:
         )
         results.append((seed_members, members, trail, converged))
 
-        if (run + 1) % 10 == 0:
-            elapsed = time.monotonic() - started
-            rate = (run + 1) / elapsed
-            print(
-                f"  {run + 1:>4}/{args.seeds} seeds "
-                f"({elapsed:.0f}s elapsed, {(args.seeds - run - 1) / rate:.0f}s left)",
-                flush=True,
-            )
+        elapsed = time.monotonic() - started
+        rate = (run + 1) / elapsed
+        pace = (
+            f"  [{elapsed:.0f}s elapsed, {(args.seeds - run - 1) / rate:.0f}s left]"
+            if (run + 1) % 10 == 0
+            else ""
+        )
+        print(
+            f"  {run + 1:>4}/{args.seeds} "
+            f"{' '.join(codon_text(m) for m in members):20} "
+            f"{trail[-1]:>6} totalizers  (from {trail[0]:>6} in "
+            f"{len(trail) - 1:>2} swaps){'' if converged else ' UNCONVERGED'}"
+            f"{pace}",
+            flush=True,
+        )
 
     finals = np.array([trail[-1] for _, _, trail, _ in results])
     initials = np.array([trail[0] for _, _, trail, _ in results])
