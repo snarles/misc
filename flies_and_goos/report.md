@@ -556,11 +556,68 @@ concentrated. A fortress is not two independent halves.
 One near-perfect fortress takes a different route entirely: `06Q` `4AV` `WWW` at
 1 totalizer is polarized by `WWW` **Foe-high**, with `|polarity|` only 0.403 —
 below the average for the > 120 band. Polarization is a strong tendency at the
-top, not a requirement.
+top, not a requirement, and the next section takes that apart.
 
 These results are correlational. They establish that strong fortresses have this
 structure, not that the structure is what makes them strong; no fortress was
 constructed from the theory to test that.
+
+### Two routes to a strong fortress: keystone and committee
+
+Polarization is strongly predictive but far from deterministic — the rank
+correlation between a fortress's `|polarity|` and its totalizer count is −0.449,
+and the residuals are not noise. They mark a second architecture.
+
+Define a fortress's **teamwork premium** as how much the three members together
+cover beyond what its best single member covers, averaged over the two types.
+Premium and polarity are near-perfect substitutes, at a rank correlation of
+**−0.902**: a fortress either has one member that does the work, or three that
+divide it.
+
+| | n | median totalizers | best | mean premium |
+|---|---:|---:|---:|---:|
+| **keystone** (`\|polarity\|` ≥ 0.5) | 223 | 99 | **0** | +0.199 |
+| **committee** (`\|polarity\|` < 0.5) | 169 | 201 | 1 | +0.315 |
+
+The clearest committee is `TTO` `544` `7Q3` at 28 totalizers, the largest
+residual in the sample. Its *most* polarized member sits at 0.236 — below the
+0.246 mean for an average codon — so it has no polarizer at all:
+
+| codon | type | beats Flies | beats Goos | \|polarity\| |
+|---|---|---:|---:|---:|
+| `TTO` | Fly | 0.367 | 0.603 | 0.236 |
+| `544` | Fly | 0.653 | 0.517 | 0.136 |
+| `7Q3` | Goo | 0.603 | 0.456 | 0.147 |
+
+No member beats more than 65% of either type, yet between them they beat 100.0%
+of Flies and 99.9% of Goos, because their misses barely overlap. Its premium is
++0.347 on Flies and +0.396 on Goos, against +0.109 and +0.151 for the keystone
+fortress `055` `JJJ` `3MV`. Three mediocre generalists, carefully
+non-overlapping, versus one specialist and two passengers.
+
+### The committee route has a ceiling
+
+Committees reach 25-28 totalizers and stop. Every perfect fortress is
+keystone-built, and the threshold is sharp:
+
+| `\|polarity\|` | n | best totalizer count | zeros |
+|---|---:|---:|---:|
+| 0.0 - 0.3 | 51 | 28 | 0 |
+| 0.3 - 0.4 | 56 | 25 | 0 |
+| 0.4 - 0.5 | 62 | 1 | 0 |
+| 0.5 - 0.6 | 74 | 3 | 0 |
+| 0.6 - 0.7 | 65 | 2 | 0 |
+| **0.7 - 1.0** | 84 | **0** | **11** |
+
+**No fortress below 0.7 polarity reached zero**, and all eleven that did sit
+above it. Coordination gets you to within a couple of totalizers of perfection —
+`06Q` `4AV` `WWW` manages 1 at a polarity of 0.403 — but closing the last gap
+appears to need a specialist that erases most of one type single-handedly.
+
+Polarization is not sufficient either. `JYY` `70Q` `MWB` has `|polarity|` 0.844,
+close to `JJJ`'s 0.848, and still concedes 317 totalizers: a keystone whose
+partners fail to cover the complement buys nothing. Both halves of the structure
+have to hold.
 
 ### The landscape is rugged, and these are local optima
 
