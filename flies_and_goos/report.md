@@ -1,11 +1,11 @@
 # Flies and Goos: exhaustive analysis
 
-Four analyses over the full codon space (36³ = 46,656 codons): which codons tie
+Five analyses over the full codon space (36³ = 46,656 codons): which codons tie
 on every contest, which codon is strongest against a random opponent, which
-codon best covers the strongest one's losses, and which *triples* of codons
-nothing can sweep.
+codon best covers the strongest one's losses, which *triples* of codons nothing
+can sweep, and the strongest *pair* of codons sharing no character.
 
-Parts 1-3 are exact — nothing in them is sampled or estimated. Part 4 is a
+Parts 1-3 and 5 are exact — nothing in them is sampled or estimated. Part 4 is a
 sampled heuristic search over 500 climbs and says so throughout; its existence claims are
 proven, its rarity claims are not. The numbers come
 from `flies_and_goos.engine`, a vectorized evaluator validated against
@@ -38,6 +38,9 @@ UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py   # ~22min, needs the 
 | **…but arrangement matters there** | Unlike P(win), partner coverage is *not* permutation-invariant: `BPN` covers 12,302 where `PNB` covers 10,300. |
 | **Perfect 3-fortresses exist** | Eleven of them found — three codons sharing no characters which *nothing* beats, e.g. `005` `CX4` `JNJ` and `555` `3MV` `JJJ`. |
 | **Fortresses must mix Fly and Goo** | All 500 searched fortresses are mixed-type; the best same-type triple found is 10x worse. |
+| **Specialisation needs three** | `JJJ` anchors every perfect triple but is *harmful* in a pair (4,003 totalizers): with two members nothing covers a keystone's blind side. |
+| **Best pair overall** | `BDW` `BEW`, beaten by only 390 codons (0.84%) — `{BFN, BPN}` at 2,041 is 5.2x off. Best pair sharing no character: `035` `64W` at 1,119. |
+| **A pair has a floor; a triple does not** | No legal pair concedes fewer than 1,119 totalizers, yet eleven triples concede none. |
 | **`JJJ` is a keystone** | All 11 perfect fortresses contain a J-repeating codon, and such fortresses have a median 9 totalizers against 135 — yet `JJJ` alone has a below-average P(win) of 0.4671. |
 
 ---
@@ -244,8 +247,9 @@ UV_CACHE_DIR=.uv-cache uv run python analysis/partner.py --codon BFN
 | RUM | 11,920 | 0.8311 | 2,419 | 0.4934 |
 | E5U | 11,877 | 0.8281 | 2,465 | 0.5097 |
 
-`BPN` is simultaneously the *global* minimiser of "codons that beat both", at
-2,041. The two objectives pick the same codon, as expected — coverage and shared
+`BPN` is simultaneously the minimiser of "codons that beat both" *among BFN's
+partners*, at 2,041 — not the global minimiser over all pairs, which part 5
+shows is far lower. The two objectives pick the same codon, as expected — coverage and shared
 losses sum to 14,343 minus the handful of draws.
 
 ### As a pair, `{BFN, BPN}` is very hard to sweep
@@ -295,6 +299,23 @@ arrangement matters — picking `PNB` instead of `BPN` throws away a sixth of th
 coverage. Choosing a partner is a genuinely 46,656-way choice, not an 8,436-way
 one.
 
+### The unrestricted best duo: `BDW` `BEW` at 390
+
+The question this part does not answer — the best duo over all ~1.09 billion
+pairs rather than pairs containing `BFN` — is settled in
+[part 5](#5-2-fortresses-the-strongest-legal-pair), which sweeps every pair
+exhaustively. The answer is **`BDW` `BEW`, beaten by only 390 codons (0.84%)**.
+
+So `{BFN, BPN}` at 2,041 is **5.2x away from the global optimum**. Building a duo
+around the strongest single codon is a poor strategy: `BFN` is the best codon in
+the game on its own and appears nowhere in the top unrestricted duos, which are
+all `B?W` shapes. Individual strength and partnership value are close to
+unrelated, which the "Partner quality is unrelated to codon quality" result above
+already hinted at from the other direction.
+
+`BDW` and `BEW` share `B` and `W`, so this duo is legal here but not a
+2-fortress; part 5 gives the best character-disjoint pair separately.
+
 ---
 
 ## 4. 3-fortresses: triples nothing can sweep
@@ -313,6 +334,7 @@ Existence claims below are proven; absence and rarity claims are not.
 ```sh
 UV_CACHE_DIR=.uv-cache uv run python analysis/fortress.py --seeds 100
 UV_CACHE_DIR=.uv-cache uv run python analysis/polarizer.py --csv fortresses.csv
+UV_CACHE_DIR=.uv-cache uv run python analysis/pair.py --exhaustive  # ~15min
 ```
 
 ### Perfect fortresses exist, and there are at least eleven
@@ -702,6 +724,152 @@ alone changes the count, consistent with part 3.
 
 ---
 
+## 5. 2-fortresses: the strongest legal pair
+
+A **2-fortress** is two codons sharing no character, scored like a 3-fortress by
+its **totalizers** — the codons that beat both. Part 4 raised the question: no
+pair inside any 3-fortress came close to the strength of the triples containing
+it, and it was unclear whether the disjointness rule or the fortresses themselves
+were responsible.
+
+Unlike part 4, **this part is exhaustive**. A pair sweep looks infeasible at
+~1.09 billion pairs, but for a fixed first member the totalizer count against
+every second member is one pass over the beat-matrix, and the
+simultaneous-permutation symmetry means only the 8,436 codons with non-decreasing
+characters need to be the first member. Every pair is equivalent to one of those.
+The whole sweep runs in about 13 minutes.
+
+```sh
+UV_CACHE_DIR=.uv-cache uv run python analysis/pair.py --seeds 200 --exhaustive
+```
+
+### The answer: `035` `64W`, beaten by 1,119 codons (2.40%)
+
+| pair | totalizers | fraction |
+|---|---:|---:|
+| **`035` `64W`** | **1,119** | 0.0240 |
+| `058` `6W4` | 1,162 | 0.0249 |
+| `059` `6W4` | 1,170 | 0.0251 |
+| `05S` `6W4` | 1,314 | 0.0282 |
+| `48W` `595` | 1,337 | 0.0287 |
+| `49W` `585` | 1,348 | 0.0289 |
+| `KUU` `YNN` | 1,390 | 0.0298 |
+
+This is a proved optimum, not a search result, and it was re-counted by replaying
+all 1,119 matchups through `game.face_off`. The top of the table is narrow:
+`6W4` or a permutation of it appears in five of the seven, always paired with a
+codon made of `0`, `5` and one other digit.
+
+### Dropping the disjointness rule is worth 3x
+
+The same sweep without the character mask gives **`BDW` `BEW` at 390 (0.84%)**,
+also verified against the reference rules. So the no-overlap constraint costs
+729 totalizers — the best legal pair concedes nearly three times as many as the
+best pair outright. The constraint is expensive, which is worth remembering when
+comparing 2- and 3-fortress figures against part 3's duo numbers.
+
+### A pair cannot go below 1,119, and that reframes part 4
+
+Part 4 observed that no pair inside any 3-fortress concedes fewer than 500
+totalizers. That is true but not meaningful on its own: **no legal pair anywhere
+in the game concedes fewer than 1,119**, so 500 was never reachable.
+
+The real statement is stronger. The best possible pair leaves 1,119 codons
+beating it; eleven *triples* leave none at all. Adding a third codon is not an
+incremental improvement on a duo — it crosses a floor that no pair can reach,
+whatever its members. Against that, the best pair occurring inside a 3-fortress
+(1,476) is only 32% off the global pair optimum, while the median fortress's best
+internal pair is around 4,500. Fortresses do not generally contain good pairs;
+they do not need to.
+
+### Polarization: opposite signs, but moderate ones
+
+Applying part 4's polarity measure (`wF - wG`) to pairs gives a structure that is
+universal at the top and then inverts part 4's lesson.
+
+**Every strong pair splits the opponent space between its members.** All eight
+best disjoint pairs and all four best unrestricted duos have members of opposite
+polarity — one Fly-killer, one Goo-killer. Across the 92 distinct local optima
+from the sampled search, 84 (91%) are opposite-sign, against 53% for random
+disjoint pairs, so the climb selects hard for it.
+
+| pair | totalizers | pol(a) | pol(b) | covers Flies | covers Goos |
+|---|---:|---:|---:|---:|---:|
+| **`035` `64W`** | **1,119** | −0.415 | +0.375 | 0.979 | 0.973 |
+| `058` `6W4` | 1,162 | −0.549 | +0.375 | 0.965 | 0.984 |
+| `KUU` `YNN` | 1,390 | +0.644 | −0.471 | 0.992 | 0.948 |
+| `BDW` `BEW` (unrestricted) | 390 | −0.808 | +0.808 | 0.991 | 0.992 |
+
+The route also differs from part 4. Pairs cover almost entirely **Foe-high** on
+both sides, where all eleven perfect triples had a **Friend-low** polarizer.
+`KUU` `YNN` is the only Friend-low pair in the table.
+
+### More polarization is worse, which is the opposite of part 4
+
+The natural guess — that the disjointness rule costs 3x by blocking extreme
+opposite polarization, since `BDW` and `BEW` share `B` and `W` — is **wrong**.
+The most oppositely-polarized *disjoint* pair, `JJT` `5BM`, has a polarity spread
+of 1.728, effectively equal to the unrestricted maximum of 1.744. Extreme
+opposite pairs are available under the constraint. They are simply bad:
+
+| pair | totalizers | spread | covers Flies | covers Goos |
+|---|---:|---:|---:|---:|
+| `JJT` `5BM` — most polarized disjoint | 3,243 | 1.728 | 0.928 | 0.933 |
+| `JJJ` `5BM` — the part 4 keystone, paired | 4,003 | 1.710 | 0.895 | 0.933 |
+| `BDW` `BEW` — best unrestricted | 390 | 1.617 | 0.991 | 0.992 |
+| `035` `64W` — best disjoint | 1,119 | 0.790 | 0.979 | 0.973 |
+
+Maximal polarization scores eight times worse than the optimum, and `JJJ` —
+indispensable in every perfect 3-fortress — is actively harmful in a pair.
+
+What predicts pair strength is not how extreme the members are but whether the
+**weaker side of the partnership is still near-total**. Over 400 random disjoint
+pairs, the rank correlation with totalizers is −0.252 for polarity spread and
+**−0.829** for the worse of the two type-coverages.
+
+The reason is structural, and it mirrors part 4 exactly. A codon becomes extreme
+by conceding its off-type badly: `JJJ` beats 89.1% of Flies and 4.3% of Goos. In
+a triple, two partners cover that blind side, so the keystone's lopsidedness is
+affordable and even useful. **In a pair there is no slack** — whatever one member
+concedes, the other must cover alone — so the optimum is a balanced pair of
+moderate specialists rather than a pair of extremists. Specialisation is a
+three-member luxury.
+
+### Greedy finds the optimum here, but that does not transfer
+
+200 sampled climbs, hill-climbing exactly as part 4 does, reached **1,119 — the
+proved optimum — with a gap of zero**. That is the only place in this report
+where a search can be scored against a known answer.
+
+It should not be read as a licence to trust part 4's search. The optimum's basin
+is ordinary: it was reached in 6 of 200 climbs (3.0%), so greedy found it through
+sheer coverage of a small space rather than through any reliable pull toward it.
+At the same 3% rate on a space 10,000 times larger, part 4's triples would very
+plausibly miss theirs.
+
+### The pair landscape is smoother than the triple one
+
+| | 2-fortress | 3-fortress |
+|---|---:|---:|
+| climbs | 200 | 500 |
+| distinct optima | 92 | 392 |
+| optima per climb | **0.46** | **0.78** |
+| climbs landing in a repeated basin | **76%** | 35% |
+| singleton optima | 52% | 83% |
+| median steps to converge | 3 | 4 |
+
+Pairs produce roughly half as many optima per climb and land in a repeated basin
+more than twice as often, which is the concrete sense in which the smaller
+problem is easier.
+
+The largest basin belongs to `BFN` `DPM`, which attracts 11 of 200 climbs at
+2,063 totalizers — nearly double the optimum. `BFN` is the strongest single codon
+from part 2, so the climb is repeatedly drawn toward the individually-best codon
+and settles for a mediocre pair. As with the triples, basin size and quality are
+only weakly related (Spearman −0.374).
+
+---
+
 ## Effect of the rules update
 
 Commit 8b58140 changed two things, and both moved the results:
@@ -764,6 +932,16 @@ plausible but wrong answer, so `analysis/partner.py` re-derives the top 10
 partners by replaying those matchups through the engine and asserts agreement
 before printing anything.
 
+Part 5 is exhaustive only because of the simultaneous-permutation symmetry, so
+`analysis/pair.py` asserts that symmetry rather than assuming it: for random
+pairs and random position permutations it checks that the totalizer count is
+unchanged. If that failed, the sweep would silently skip most of the space while
+still reporting a plausible optimum. It also reproduces part 3's `{BFN, BPN}`
+figure of 2,041 as a regression check on the pair counter, re-derives both
+optima by replaying matchups through the engine, and asserts that no sampled
+climb beat the claimed optimum. Both optima were additionally confirmed against
+`game.face_off` by replaying every one of their totalizers.
+
 Part 4 reads the same matrix and reports a count of *zero*, which is precisely
 the result a transposed or mis-masked read would manufacture. `analysis/fortress.py`
 therefore asserts, before printing: the best fortress's totalizer count
@@ -779,11 +957,10 @@ through the reference rules, with no disagreement.
 
 ## Not done
 
-The **unrestricted** two-codon search — the best duo over all ~1.09 billion
-pairs, rather than pairs containing `BFN` — is still open. Part 3 gives the best
-`BFN` duo at 4.37%, which upper-bounds the global optimum but does not attain
-it. `flies_and_goos.duo.coverage_counts` is written generically over a target
-set, so it is the building block for that sweep.
+The unrestricted two-codon search is **now closed** — part 5 sweeps every pair
+and returns `BDW` `BEW` at 390. What remains open for pairs is the *three*-codon
+equivalent: the same symmetry reduction does not make a triple sweep tractable,
+since fixing one member still leaves ~10⁹ pairs to score per first member.
 
 For part 4, **how common perfect fortresses are** is open. Sixteen turned up in
 500 climbs, but greedy from random starts gives no estimate of their density and
